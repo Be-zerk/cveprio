@@ -1,0 +1,83 @@
+{
+  "organization": "Northbeam Logistics (fictional)",
+  "fictional": true,
+  "description": "FICTIONAL example company and assets for demonstration. Names, systems and context are invented. Software versions were chosen to exercise the applicability engine: clear matches, a distro-patched package, an ambiguous bundled library, a platform-conditional match, and a non-affected version.",
+  "watchlist": [
+    "CVE-2021-44228",
+    "CVE-2022-22965",
+    "CVE-2023-44487",
+    "CVE-2024-6387",
+    "CVE-2023-38545",
+    "CVE-2024-47176",
+    "CVE-2024-3094",
+    "CVE-2026-11415",
+    "CVE-2026-99001"
+  ],
+  "assets": [
+    {
+      "id": "web-portal-01",
+      "name": "Customer shipment-tracking portal",
+      "criticality": "high",
+      "internet_facing": true,
+      "data_sensitivity": "customer PII",
+      "owner": "Web Platform team",
+      "software": [
+        {"vendor": "Apache", "product": "log4j-core", "version": "2.14.1", "cpe": "cpe:2.3:a:apache:log4j:2.14.1:*:*:*:*:*:*:*"},
+        {"vendor": "VMware", "product": "Spring Framework", "version": "5.3.17", "cpe": "cpe:2.3:a:vmware:spring_framework:5.3.17:*:*:*:*:*:*:*", "notes": "Runs on Tomcat; JDK version not recorded in inventory"},
+        {"vendor": "F5", "product": "nginx", "version": "1.25.2", "cpe": "cpe:2.3:a:f5:nginx:1.25.2:*:*:*:*:*:*:*", "notes": "Reverse proxy with HTTP/2 enabled"}
+      ]
+    },
+    {
+      "id": "bastion-01",
+      "name": "SSH bastion host",
+      "criticality": "high",
+      "internet_facing": true,
+      "owner": "Infrastructure team",
+      "software": [
+        {"vendor": "OpenBSD", "product": "OpenSSH", "version": "9.6p1", "cpe": "cpe:2.3:a:openbsd:openssh:9.6p1:*:*:*:*:*:*:*", "notes": "Upstream source build on a glibc-based Linux"}
+      ]
+    },
+    {
+      "id": "ops-ubuntu-02",
+      "name": "Internal operations server",
+      "criticality": "medium",
+      "internet_facing": false,
+      "owner": "Infrastructure team",
+      "software": [
+        {"product": "OpenSSH", "package_name": "openssh-server", "version": "1:9.6p1-3ubuntu13.4", "notes": "Ubuntu distribution package"},
+        {"vendor": "Tukaani", "product": "xz", "version": "5.4.6", "cpe": "cpe:2.3:a:tukaani:xz:5.4.6:*:*:*:*:*:*:*"},
+        {"vendor": "haxx", "product": "curl", "version": "8.3.0", "cpe": "cpe:2.3:a:haxx:libcurl:8.3.0:*:*:*:*:*:*:*"}
+      ]
+    },
+    {
+      "id": "print-srv-01",
+      "name": "Warehouse print server",
+      "criticality": "low",
+      "internet_facing": false,
+      "owner": "Warehouse IT",
+      "compensating_controls": [
+        {"description": "Host firewall drops inbound traffic to port 631 except from the warehouse printer VLAN", "applies_to": ["CVE-2024-47176"], "effect": "reduces_reachability"}
+      ],
+      "software": [
+        {"vendor": "OpenPrinting", "product": "cups-browsed", "version": "2.0.1"}
+      ]
+    },
+    {
+      "id": "dev-laptop-17",
+      "name": "Developer laptop (context not yet recorded)",
+      "software": [
+        {"vendor": "haxx", "product": "curl", "version": "8.3.0", "cpe": "cpe:2.3:a:haxx:libcurl:8.3.0:*:*:*:*:*:*:*"}
+      ]
+    },
+    {
+      "id": "legacy-billing-03",
+      "name": "Legacy billing application (vendor appliance)",
+      "criticality": "critical",
+      "internet_facing": false,
+      "owner": "Finance IT",
+      "software": [
+        {"product": "Log4j", "version": "2.x (bundled by appliance vendor)", "notes": "Exact bundled version unknown"}
+      ]
+    }
+  ]
+}

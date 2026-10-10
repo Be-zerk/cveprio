@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<title>CVE Priorities{% if run.mode == "offline_demo" %} (DEMO){% endif %}</title>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f6f6f4; --surface: #fcfcfb; --surface-2: #f0efec; --border: #dedcd6;
+  --text: #0b0b0b; --text-2: #52514e; --muted: #77756f; --link: #1f63b5;
+  --critical: #d03b3b; --serious: #ec835a; --warning: #fab219; --good: #0ca30c;
+  --critical-ink: #a32424; --serious-ink: #9a4318; --warning-ink: #7a5300; --good-ink: #006300;
+  --badge-neutral: #e6e4df; --demo-bg: #fff4d6; --demo-border: #fab219; --ai-bg: #eef3fb; --ai-border: #8fb1e0;
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --bg: #121211; --surface: #1a1a19; --surface-2: #232321; --border: #3a3936;
+    --text: #ffffff; --text-2: #c3c2b7; --muted: #9a998f; --link: #7fb0f0;
+    --critical-ink: #ff8a80; --serious-ink: #f5a582; --warning-ink: #fcd06a; --good-ink: #6fd96f;
+    --badge-neutral: #34332f; --demo-bg: #3a2f10; --ai-bg: #17233a; --ai-border: #3f6aa8;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #121211; --surface: #1a1a19; --surface-2: #232321; --border: #3a3936;
+  --text: #ffffff; --text-2: #c3c2b7; --muted: #9a998f; --link: #7fb0f0;
+  --critical-ink: #ff8a80; --serious-ink: #f5a582; --warning-ink: #fcd06a; --good-ink: #6fd96f;
+  --badge-neutral: #34332f; --demo-bg: #3a2f10; --ai-bg: #17233a; --ai-border: #3f6aa8;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+main { max-width: 1200px; margin: 0 auto; padding: 24px 16px 64px; }
+h1 { font-size: 24px; margin: 0 0 4px; }
+h2 { font-size: 18px; margin: 32px 0 12px; }
+h3 { font-size: 15px; margin: 20px 0 6px; }
+a { color: var(--link); overflow-wrap: anywhere; }
+.meta { color: var(--text-2); font-size: 13px; }
+.banner { border: 2px solid var(--demo-border); background: var(--demo-bg); border-radius: 8px; padding: 10px 14px; margin: 16px 0; font-weight: 600; }
+.banner small { display: block; font-weight: 400; color: var(--text-2); }
+.notices { color: var(--text-2); font-size: 13px; margin: 8px 0 0; padding-left: 18px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 20px; }
+.tile { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; cursor: pointer; text-align: left; color: var(--text); font: inherit; }
+.tile[aria-pressed="true"] { outline: 2px solid var(--link); }
+.tile .label { font-size: 13px; color: var(--text-2); display: flex; gap: 6px; align-items: center; }
+.tile .value { font-size: 28px; font-weight: 600; }
+.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex: none; }
+.s-critical { --c: var(--critical); --ci: var(--critical-ink); }
+.s-serious { --c: var(--serious); --ci: var(--serious-ink); }
+.s-warning { --c: var(--warning); --ci: var(--warning-ink); }
+.s-good { --c: var(--good); --ci: var(--good-ink); }
+.s-neutral { --c: var(--text-2); --ci: var(--text); }
+.s-muted { --c: var(--muted); --ci: var(--text-2); }
+.dot { background: var(--c); }
+.badge { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 2px 10px; font-size: 13px; font-weight: 600; background: var(--badge-neutral); color: var(--ci); white-space: nowrap; border-left: 4px solid var(--c); }
+.compare { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; }
+.compare li { margin: 2px 0; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 24px 0 8px; }
+.controls input { flex: 1 1 240px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); font: inherit; }
+.controls button { padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); font: inherit; cursor: pointer; }
+details.cve { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin: 10px 0; }
+details.cve > summary { list-style: none; cursor: pointer; padding: 12px 16px; display: grid; grid-template-columns: 150px minmax(190px, max-content) 1fr; gap: 8px 16px; align-items: center; }
+details.cve > summary::-webkit-details-marker { display: none; }
+details.cve[open] > summary { border-bottom: 1px solid var(--border); }
+.cveid { font-weight: 700; font-variant-numeric: tabular-nums; }
+.headline { color: var(--text-2); }
+.factors { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; color: var(--text-2); }
+.factors b { color: var(--text); font-weight: 600; }
+.body { padding: 4px 16px 16px; }
+.cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 28px; }
+.cols > div, details.cve > summary > * { min-width: 0; }
+li, td, .desc, .headline { overflow-wrap: anywhere; }
+ul.tight { margin: 4px 0; padding-left: 20px; }
+ul.tight li { margin: 3px 0; }
+.cite { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.desc { background: var(--surface-2); border-radius: 8px; padding: 8px 12px; font-size: 14px; color: var(--text-2); }
+.desc b { color: var(--text); }
+.ai { background: var(--ai-bg); border: 1px solid var(--ai-border); border-radius: 8px; padding: 10px 14px; margin-top: 16px; }
+.ai .tag { font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--link); }
+.scripted { border: 2px dashed var(--demo-border); background: var(--demo-bg); padding: 6px 10px; border-radius: 6px; font-weight: 600; margin: 6px 0; }
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { text-align: left; vertical-align: top; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+th { color: var(--text-2); font-weight: 600; }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.flag { color: var(--warning-ink); font-weight: 600; }
+.st-affected { color: var(--critical-ink); font-weight: 600; }
+.st-needs_review { color: var(--warning-ink); font-weight: 600; }
+.st-not_affected { color: var(--good-ink); font-weight: 600; }
+footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
+.hidden { display: none !important; }
+@media (max-width: 760px) {
+  details.cve > summary { grid-template-columns: 1fr; }
+  .cols { grid-template-columns: minmax(0, 1fr); }
+}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1>CVE prioritization{% if run.organization %} · {{ run.organization }}{% endif %}</h1>
+  <div class="meta">Generated {{ run.generated_at.strftime("%Y-%m-%d %H:%M UTC") }} · mode <b>{{ run.mode }}</b> · cveprio {{ run.tool_version }} · {{ run.reports|length }} CVEs</div>
+  {% if run.mode == "offline_demo" %}
+  <div class="banner" role="note">⚠ OFFLINE DEMO DATA — recorded fixtures, not live results.
+    <small>Source responses were recorded at the retrieval times shown in each evidence table and may be out of date.{% if run.fictional_context %} The inventory and business context are fictional.{% endif %}</small></div>
+  {% elif run.fictional_context %}
+  <div class="banner" role="note">⚠ Inventory and business context are FICTIONAL example data.</div>
+  {% endif %}
+  <ul class="notices">{% for n in run.notices if not n.startswith(("OFFLINE DEMO", "Inventory and business context")) %}<li>{{ n }}</li>{% endfor %}</ul>
+</header>
+
+<section aria-label="Summary">
+  <div class="tiles">
+  {% for key, label, n in tiles %}
+    {% set st = status.get(key, ("muted", "–")) %}
+    <button class="tile s-{{ st[0] }}" data-filter="{{ key }}" aria-pressed="false">
+      <span class="label"><span class="dot" aria-hidden="true"></span>{% if key != "OTHER" %}{{ key }} · {% endif %}{{ label }}</span>
+      <span class="value">{{ n }}</span>
+    </button>
+  {% endfor %}
+  </div>
+</section>
+
+<h2>Contextual rules vs severity-only baseline</h2>
+<div class="compare">
+  {% if differs %}
+  <p style="margin:0 0 6px">{{ differs|length }} of {{ run.reports|selectattr("decision.baseline_label", "ne", "N/A")|list|length }} published CVEs get a different outcome than a CVSS-only ranking:</p>
+  <ul class="tight">
+  {% for r in differs %}<li><b>{{ r.cve_id }}</b>: CVSS-only <code>{{ r.decision.baseline_label }}</code> → contextual <code>{{ r.decision.label }}</code> <span class="meta">(exploitation {{ r.decision.factors.exploitation }}, exposure {{ r.decision.factors.exposure }})</span></li>{% endfor %}
+  </ul>
+  {% else %}<p style="margin:0">No differences from the severity-only baseline.</p>{% endif %}
+  <p class="meta" style="margin:8px 0 0">Differences are expected by design; they are not evidence that either ranking is "correct". See docs/EVALUATION.md.</p>
+</div>
+
+<div class="controls">
+  <input id="q" type="search" placeholder="Filter by CVE, product, asset…" aria-label="Filter">
+  <button id="expand" type="button">Expand all</button>
+  <button id="reset" type="button">Show all</button>
+</div>
+
+<section id="list" aria-label="CVE list">
+{% for r in run.reports %}
+{% set d = r.decision %}
+{% set st = status.get(d.label, ("muted", "–")) %}
+{% set group = d.label if d.label in ("P1", "P2", "P3", "P4", "NEEDS_REVIEW") else "OTHER" %}
+<details class="cve" id="{{ r.cve_id }}" data-group="{{ group }}" data-text="{{ (r.cve_id ~ ' ' ~ (r.bundle.title or '') ~ ' ' ~ (r.applicability|map(attribute='asset_id')|join(' ')) ~ ' ' ~ (r.applicability|map(attribute='software.product')|join(' ')))|lower }}">
+  <summary>
+    <span class="cveid">{{ r.cve_id }}</span>
+    <span><span class="badge s-{{ st[0] }}"><span aria-hidden="true">{{ st[1] }}</span>{{ d.label }}{% if d.provisional %} · provisional{% endif %}</span></span>
+    <span class="headline">{{ d.headline }}</span>
+    <span class="factors">
+      <span>exploitation <b>{{ d.factors.exploitation }}</b></span>
+      <span>severity <b>{{ d.factors.severity }}</b></span>
+      <span>exposure <b>{{ d.factors.exposure }}</b></span>
+      <span>CVSS-only baseline <b>{{ d.baseline_label }}</b></span>
+      {% if r.bundle.conflicts %}<span class="flag">⚠ {{ r.bundle.conflicts|length }} source conflict{{ "s" if r.bundle.conflicts|length > 1 }}</span>{% endif %}
+      {% if r.bundle.sources|selectattr("status", "in", ["failed", "rate_limited"])|list %}<span class="flag">⚠ degraded sources</span>{% endif %}
+    </span>
+  </summary>
+  <div class="body">
+    {% if r.bundle.description %}
+    <p class="desc"><b>Source description</b> (verbatim, untrusted) <span class="cite">[CVE.desc]</span><br>{{ (r.bundle.title ~ " — ") if r.bundle.title }}{{ r.bundle.description|truncate(900) }}</p>
+    {% endif %}
+    <div class="cols">
+      <div>
+        <h3>What is known (sourced facts)</h3>
+        <ul class="tight">{% for k in r.known %}<li>{{ k }}</li>{% endfor %}</ul>
+        <h3>Why this priority</h3>
+        <ol class="tight">{% for t in d.trace %}<li>{{ t }}</li>{% endfor %}</ol>
+        <h3>Action supported by the evidence</h3>
+        <ul class="tight">{% for a in d.actions %}<li>{{ a }}</li>{% endfor %}</ul>
+      </div>
+      <div>
+        <h3>What remains uncertain</h3>
+        <ul class="tight">{% for u in r.uncertain %}<li>{{ u }}</li>{% else %}<li>Nothing flagged.</li>{% endfor %}</ul>
+        <h3>What would change the recommendation</h3>
+        <ul class="tight">{% for c in d.counterfactuals %}<li>{{ c }}</li>{% else %}<li>No single input change identified.</li>{% endfor %}</ul>
+      </div>
+    </div>
+
+    <div class="ai">
+      <div class="tag">AI-assisted assessment · judgement, not fact</div>
+      {% if r.llm.scripted %}<div class="scripted">SCRIPTED EXAMPLE — hand-written by the project author for the offline demo. Not produced by a language model.</div>{% endif %}
+      {% set a = r.llm.assessment %}
+      {% if r.llm.status == "ok" and a %}
+      <p class="meta">Provider <b>{{ r.llm.provider }}</b>, model <b>{{ r.llm.model }}</b> · claims kept after citation validation: <b>{{ r.llm.supported_claims }}/{{ r.llm.total_claims }}</b> · qualitative ratings; no calibrated probability implied.</p>
+      <div class="cols">
+        <div>
+          <h3>Exploit-development difficulty: <code>{{ a.exploit_development_difficulty.rating }}</code></h3>
+          <ul class="tight">
+          {% for title, claims in [("Prerequisite", a.exploit_development_difficulty.prerequisites), ("Complexity", a.exploit_development_difficulty.complexity_factors), ("Research", a.exploit_development_difficulty.research_availability)] %}
+            {% for c in claims %}<li><i>{{ title }} ({{ c.type }}):</i> {{ c.statement }} <span class="cite">[{{ c.evidence_ids|join(", ") }}]</span></li>{% endfor %}
+          {% endfor %}
+          </ul>
+        </div>
+        <div>
+          <h3>Existing-exploit usability: <code>{{ a.existing_exploit_usability.rating }}</code></h3>
+          <ul class="tight">
+          {% for title, claims in [("Exploit evidence", a.existing_exploit_usability.exploit_evidence), ("Reliability limit", a.existing_exploit_usability.reliability_limitations), ("Required access", a.existing_exploit_usability.required_access)] %}
+            {% for c in claims %}<li><i>{{ title }} ({{ c.type }}):</i> {{ c.statement }} <span class="cite">[{{ c.evidence_ids|join(", ") }}]</span></li>{% endfor %}
+          {% endfor %}
+          </ul>
+        </div>
+      </div>
+      {% if a.summary %}<p class="meta"><i>{{ "Scripted summary" if r.llm.scripted else "Model summary" }} (uncited free text):</i> {{ a.summary }}</p>{% endif %}
+      {% if r.llm.removed_claims or r.llm.rating_overrides %}
+      <h3>Removed or overridden by validation</h3>
+      <ul class="tight">{% for i in r.llm.removed_claims + r.llm.rating_overrides %}<li><code>{{ i.path }}</code>: {{ i.problem }}{% if i.statement %} — “{{ i.statement|truncate(160) }}”{% endif %}</li>{% endfor %}</ul>
+      {% endif %}
+      {% else %}
+      <p class="meta">Status <b>{{ r.llm.status }}</b>{% if r.llm.detail %} — {{ r.llm.detail }}{% endif %}</p>
+      {% endif %}
+    </div>
+
+    {% if r.applicability %}
+    <h3>Applicability to inventory</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Asset</th><th>Software</th><th>Status</th><th>Reasons</th></tr></thead>
+      <tbody>
+      {% for x in r.applicability %}
+      <tr><td>{{ x.asset_id }}</td><td>{{ x.software.product }} {{ x.software.version }}</td><td class="st-{{ x.status }}">{{ x.status }}</td>
+          <td><ul class="tight">{% for reason in x.reasons %}<li>{{ reason }}</li>{% endfor %}</ul></td></tr>
+      {% endfor %}
+      </tbody></table></div>
+    {% endif %}
+
+    <details>
+      <summary><b>Evidence ({{ r.bundle.evidence|length }} items) and source status</b></summary>
+      <p class="meta">Sources: {% for s in r.bundle.sources %}{{ s.source }}=<b>{{ s.status }}</b>{% if s.detail %} ({{ s.detail|truncate(120) }}){% endif %}{{ "; " if not loop.last }}{% endfor %}</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>ID</th><th>Source</th><th>Summary</th><th>Retrieved</th><th>Published / updated</th></tr></thead>
+        <tbody>
+        {% for e in r.bundle.evidence %}
+        <tr id="{{ r.cve_id }}-{{ e.id }}">
+          <td class="num">{{ e.id }}</td>
+          <td>{% if e.url|safe_url %}<a href="{{ e.url|safe_url }}" rel="noopener noreferrer nofollow">{{ e.source }}</a>{% else %}{{ e.source }}{% endif %}{% if e.demo %} <span class="meta">(demo)</span>{% endif %}</td>
+          <td>{{ e.summary }}{% if e.fields.reference_url and e.fields.reference_url|safe_url %}<br><a href="{{ e.fields.reference_url|safe_url }}" rel="noopener noreferrer nofollow">{{ e.fields.reference_url|truncate(90) }}</a>{% endif %}{% if "possible_prompt_injection" in e.flags %}<br><span class="flag">⚠ contains instruction-like text (treated as data)</span>{% endif %}</td>
+          <td class="num">{{ e.retrieved_at.strftime("%Y-%m-%d %H:%M") }}</td>
+          <td class="num">{{ (e.published or "-")[:10] }} / {{ (e.updated or "-")[:10] }}</td>
+        </tr>
+        {% endfor %}
+        </tbody></table></div>
+    </details>
+  </div>
+</details>
+{% endfor %}
+</section>
+
+<footer>
+  <p>Priorities come from documented deterministic rules (docs/PRIORITIZATION.md). AI output is validated against cited evidence and can only raise exploitation from “low_observed” to “elevated”. Passing tests do not establish that every security judgement is correct; review before acting.</p>
+</footer>
+</main>
+<script>
+(function () {
+  var q = document.getElementById("q"), items = document.querySelectorAll("details.cve"), tiles = document.querySelectorAll(".tile");
+  var active = null;
+  function apply() {
+    var term = (q.value || "").toLowerCase().trim();
+    items.forEach(function (el) {
+      var ok = (!active || el.dataset.group === active) && (!term || el.dataset.text.indexOf(term) !== -1);
+      el.classList.toggle("hidden", !ok);
+    });
+  }
+  tiles.forEach(function (t) {
+    t.addEventListener("click", function () {
+      active = active === t.dataset.filter ? null : t.dataset.filter;
+      tiles.forEach(function (x) { x.setAttribute("aria-pressed", String(x.dataset.filter === active)); });
+      apply();
+    });
+  });
+  q.addEventListener("input", apply);
+  document.getElementById("reset").addEventListener("click", function () { active = null; q.value = ""; tiles.forEach(function (x) { x.setAttribute("aria-pressed", "false"); }); apply(); });
+  document.getElementById("expand").addEventListener("click", function () { var open = this.textContent === "Expand all"; items.forEach(function (el) { el.open = open; }); this.textContent = open ? "Collapse all" : "Expand all"; });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+{
+  "about": "Small evaluation set over the recorded fixtures in fixtures/demo. Each case pairs one CVE with one software item and (optionally) asset context, plus a reference judgement: the applicability status a careful analyst should reach from the cited source fields, and the set of priority outcomes the reference reviewer considers defensible. Reference judgements were DRAFTED WITH AI ASSISTANCE (Claude Code) from the cited source data and are pending independent review by the project author; they are not expert ground truth. 14 cases cannot support claims about real-world predictive accuracy.",
+  "review_status": "drafted_with_ai_assistance_pending_author_review",
+  "cases": [
+    {
+      "id": "log4j-exposed",
+      "cve_id": "CVE-2021-44228",
+      "software": {"vendor": "Apache", "product": "log4j-core", "version": "2.14.1", "cpe": "cpe:2.3:a:apache:log4j:2.14.1:*:*:*:*:*:*:*"},
+      "asset": {"criticality": "high", "internet_facing": true},
+      "expected_applicability": "affected",
+      "acceptable_decisions": ["P1"],
+      "rationale": "NVD CPE range 2.13.0 <= v < 2.15.0 covers 2.14.1; listed in KEV; internet-facing.",
+      "sources": ["NVD.cpe (apache:log4j versionStartIncluding 2.13.0, versionEndExcluding 2.15.0)", "KEV"]
+    },
+    {
+      "id": "log4j-fixed",
+      "cve_id": "CVE-2021-44228",
+      "software": {"vendor": "Apache", "product": "log4j-core", "version": "2.17.1", "cpe": "cpe:2.3:a:apache:log4j:2.17.1:*:*:*:*:*:*:*"},
+      "asset": {"criticality": "high", "internet_facing": true},
+      "expected_applicability": "not_affected",
+      "acceptable_decisions": ["NOT_APPLICABLE"],
+      "rationale": "2.17.1 is above every NVD vulnerable range; CNA text says 2.16.0+ removed the functionality.",
+      "sources": ["NVD.cpe", "CVE.desc"]
+    },
+    {
+      "id": "log4j-bundled-unknown",
+      "cve_id": "CVE-2021-44228",
+      "software": {"product": "Log4j", "version": "2.x (bundled by appliance vendor)"},
+      "asset": {"criticality": "critical", "internet_facing": false},
+      "expected_applicability": "needs_review",
+      "acceptable_decisions": ["NEEDS_REVIEW"],
+      "rationale": "Exact version unknown and product name only similar to the CNA's 'Apache Log4j2'; a confident answer either way would be unsupported.",
+      "sources": ["CVE.affected.1"]
+    },
+    {
+      "id": "spring4shell-jdk-unknown",
+      "cve_id": "CVE-2022-22965",
+      "software": {"vendor": "VMware", "product": "Spring Framework", "version": "5.3.17", "cpe": "cpe:2.3:a:vmware:spring_framework:5.3.17:*:*:*:*:*:*:*"},
+      "asset": {"criticality": "high", "internet_facing": true},
+      "expected_applicability": "needs_review",
+      "acceptable_decisions": ["NEEDS_REVIEW", "P1"],
+      "rationale": "Version is in range, but NVD's configuration requires a JDK platform condition and the CNA text requires JDK 9+ and Tomcat WAR deployment, which the inventory does not record. Review is the careful answer; treating it as P1 pending review is also defensible given KEV.",
+      "sources": ["NVD.cpe (AND oracle:jdk)", "CVE.desc", "KEV"]
+    },
+    {
+      "id": "rapid-reset-edge",
+      "cve_id": "CVE-2023-44487",
+      "software": {"vendor": "F5", "product": "nginx", "version": "1.25.2", "cpe": "cpe:2.3:a:f5:nginx:1.25.2:*:*:*:*:*:*:*"},
+      "asset": {"criticality": "high", "internet_facing": true},
+      "expected_applicability": "affected",
+      "acceptable_decisions": ["P1"],
+      "rationale": "NVD lists f5:nginx 1.9.5 through 1.25.2; KEV-listed; internet-facing.",
+      "sources": ["NVD.cpe", "KEV"]
+    },
+    {
+      "id": "rapid-reset-internal-low",
+      "cve_id": "CVE-2023-44487",
+      "software": {"vendor": "F5", "product": "nginx", "version": "1.25.2", "cpe": "cpe:2.3:a:f5:nginx:1.25.2:*:*:*:*:*:*:*"},
+      "asset": {"criticality": "low", "internet_facing": false},
+      "expected_applicability": "affected",
+      "acceptable_decisions": ["P1", "P2"],
+      "rationale": "Known-exploited, but a denial-of-service on an internal low-criticality host; reviewers could reasonably choose P1 (KEV policy) or P2.",
+      "sources": ["NVD.cpe", "KEV", "CVE.cvss.1"]
+    },
+    {
+      "id": "regresshion-upstream",
+      "cve_id": "CVE-2024-6387",
+      "software": {"vendor": "OpenBSD", "product": "OpenSSH", "version": "9.6p1", "cpe": "cpe:2.3:a:openbsd:openssh:9.6p1:*:*:*:*:*:*:*"},
+      "asset": {"criticality": "high", "internet_facing": true},
+      "expected_applicability": "affected",
+      "acceptable_decisions": ["P1", "P2"],
+      "rationale": "CNA range 8.5p1..9.7p1 includes 9.6p1; public PoC material and SSVC poc; not in KEV at capture; AC:H. P1 or P2 both defensible for an internet-facing bastion.",
+      "sources": ["CVE.affected.1", "CVE.ssvc", "NVD.ref.*", "KEV (absence)"]
+    },
+    {
+      "id": "regresshion-ubuntu-package",
+      "cve_id": "CVE-2024-6387",
+      "software": {"product": "OpenSSH", "package_name": "openssh-server", "version": "1:9.6p1-3ubuntu13.4"},
+      "asset": {"criticality": "medium", "internet_facing": false},
+      "expected_applicability": "needs_review",
+      "acceptable_decisions": ["NEEDS_REVIEW"],
+      "rationale": "Distribution package versions carry backported fixes; the upstream range cannot decide this. Check the Ubuntu advisory.",
+      "sources": ["CVE.affected.1"]
+    },
+    {
+      "id": "xz-unaffected",
+      "cve_id": "CVE-2024-3094",
+      "software": {"vendor": "Tukaani", "product": "xz", "version": "5.4.6", "cpe": "cpe:2.3:a:tukaani:xz:5.4.6:*:*:*:*:*:*:*"},
+      "asset": {"criticality": "medium", "internet_facing": false},
+      "expected_applicability": "not_affected",
+      "acceptable_decisions": ["NOT_APPLICABLE"],
+      "rationale": "Only 5.6.0 and 5.6.1 are listed (CNA defaultStatus unaffected; NVD exact versions).",
+      "sources": ["CVE.affected.1", "NVD.cpe"]
+    },
+    {
+      "id": "xz-backdoored-internal",
+      "cve_id": "CVE-2024-3094",
+      "software": {"vendor": "Tukaani", "product": "xz", "version": "5.6.1", "cpe": "cpe:2.3:a:tukaani:xz:5.6.1:*:*:*:*:*:*:*"},
+      "asset": {"criticality": "medium", "internet_facing": false},
+      "expected_applicability": "affected",
+      "acceptable_decisions": ["P1"],
+      "rationale": "A deliberately backdoored release of a core library: reviewer judgement is to remove it immediately regardless of exposure. This is expected to DISAGREE with the rules (which give P2: no KEV, internal medium asset) and documents a known limitation: the rules have no notion of 'supply-chain compromise'.",
+      "sources": ["CVE.desc", "CVE.cvss.1", "EPSS"]
+    },
+    {
+      "id": "curl-internal",
+      "cve_id": "CVE-2023-38545",
+      "software": {"vendor": "haxx", "product": "curl", "version": "8.3.0", "cpe": "cpe:2.3:a:haxx:libcurl:8.3.0:*:*:*:*:*:*:*"},
+      "asset": {"criticality": "medium", "internet_facing": false},
+      "expected_applicability": "affected",
+      "acceptable_decisions": ["P2", "P3"],
+      "rationale": "NVD range 7.69.0 <= v < 8.4.0; exploitation requires a SOCKS5 proxy path and attacker-influenced hostname; SSVC poc; not KEV. Internal medium asset.",
+      "sources": ["NVD.cpe", "CVE.ssvc", "CVE.desc"]
+    },
+    {
+      "id": "cups-firewalled",
+      "cve_id": "CVE-2024-47176",
+      "software": {"vendor": "OpenPrinting", "product": "cups-browsed", "version": "2.0.1"},
+      "asset": {"criticality": "low", "internet_facing": false, "controls": ["reduces_reachability"]},
+      "expected_applicability": "affected",
+      "acceptable_decisions": ["P3", "P4"],
+      "rationale": "Affected per CNA '<= 2.0.1'; medium CVSS; impact depends on chaining; host firewall limits port 631.",
+      "sources": ["CVE.affected.1", "CVE.desc", "CVE.cvss.1"]
+    },
+    {
+      "id": "rejected-id",
+      "cve_id": "CVE-2026-11415",
+      "software": {"product": "anything", "version": "1.0"},
+      "asset": {"criticality": "high", "internet_facing": true},
+      "expected_applicability": "no_product_match",
+      "acceptable_decisions": ["NO_ACTION_REJECTED"],
+      "rationale": "Record state REJECTED.",
+      "sources": ["CVE.state", "CVE.rejected"]
+    },
+    {
+      "id": "reserved-id",
+      "cve_id": "CVE-2026-99001",
+      "software": {"product": "anything", "version": "1.0"},
+      "asset": {"criticality": "high", "internet_facing": true},
+      "expected_applicability": "no_product_match",
+      "acceptable_decisions": ["INVALID_OR_UNPUBLISHED"],
+      "rationale": "ID is RESERVED; no public record.",
+      "sources": ["CVE.state"]
+    }
+  ]
+}

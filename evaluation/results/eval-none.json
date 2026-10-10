@@ -1,0 +1,235 @@
+{
+  "generated_at": "2026-10-10T21:39:19.318957+00:00",
+  "review_status": "drafted_with_ai_assistance_pending_author_review",
+  "about": "Small evaluation set over the recorded fixtures in fixtures/demo. Each case pairs one CVE with one software item and (optionally) asset context, plus a reference judgement: the applicability status a careful analyst should reach from the cited source fields, and the set of priority outcomes the reference reviewer considers defensible. Reference judgements were DRAFTED WITH AI ASSISTANCE (Claude Code) from the cited source data and are pending independent review by the project author; they are not expert ground truth. 14 cases cannot support claims about real-world predictive accuracy.",
+  "summary": {
+    "cases": 14,
+    "contextual_agreement": 13,
+    "baseline_agreement": 6,
+    "applicability_match": 14,
+    "applicability_conservative_review": 0,
+    "applicability_wrong_definite": 0,
+    "deterministic_citations_valid": "230/230"
+  },
+  "model_quality": {
+    "provider": "none",
+    "model": null
+  },
+  "cases": [
+    {
+      "id": "log4j-exposed",
+      "cve": "CVE-2021-44228",
+      "expected_applicability": "affected",
+      "applicability": "affected",
+      "applicability_result": "match",
+      "acceptable": [
+        "P1"
+      ],
+      "contextual": "P1",
+      "contextual_agrees": true,
+      "baseline": "P1",
+      "baseline_agrees": true,
+      "rationale": "NVD CPE range 2.13.0 <= v < 2.15.0 covers 2.14.1; listed in KEV; internet-facing."
+    },
+    {
+      "id": "log4j-fixed",
+      "cve": "CVE-2021-44228",
+      "expected_applicability": "not_affected",
+      "applicability": "not_affected",
+      "applicability_result": "match",
+      "acceptable": [
+        "NOT_APPLICABLE"
+      ],
+      "contextual": "NOT_APPLICABLE",
+      "contextual_agrees": true,
+      "baseline": "P1",
+      "baseline_agrees": false,
+      "rationale": "2.17.1 is above every NVD vulnerable range; CNA text says 2.16.0+ removed the functionality."
+    },
+    {
+      "id": "log4j-bundled-unknown",
+      "cve": "CVE-2021-44228",
+      "expected_applicability": "needs_review",
+      "applicability": "needs_review",
+      "applicability_result": "match",
+      "acceptable": [
+        "NEEDS_REVIEW"
+      ],
+      "contextual": "NEEDS_REVIEW",
+      "contextual_agrees": true,
+      "baseline": "P1",
+      "baseline_agrees": false,
+      "rationale": "Exact version unknown and product name only similar to the CNA's 'Apache Log4j2'; a confident answer either way would be unsupported."
+    },
+    {
+      "id": "spring4shell-jdk-unknown",
+      "cve": "CVE-2022-22965",
+      "expected_applicability": "needs_review",
+      "applicability": "needs_review",
+      "applicability_result": "match",
+      "acceptable": [
+        "NEEDS_REVIEW",
+        "P1"
+      ],
+      "contextual": "NEEDS_REVIEW",
+      "contextual_agrees": true,
+      "baseline": "P1",
+      "baseline_agrees": true,
+      "rationale": "Version is in range, but NVD's configuration requires a JDK platform condition and the CNA text requires JDK 9+ and Tomcat WAR deployment, which the inventory does not record. Review is the careful answer; treating it as P1 pending review is also defensible given KEV."
+    },
+    {
+      "id": "rapid-reset-edge",
+      "cve": "CVE-2023-44487",
+      "expected_applicability": "affected",
+      "applicability": "affected",
+      "applicability_result": "match",
+      "acceptable": [
+        "P1"
+      ],
+      "contextual": "P1",
+      "contextual_agrees": true,
+      "baseline": "P2",
+      "baseline_agrees": false,
+      "rationale": "NVD lists f5:nginx 1.9.5 through 1.25.2; KEV-listed; internet-facing."
+    },
+    {
+      "id": "rapid-reset-internal-low",
+      "cve": "CVE-2023-44487",
+      "expected_applicability": "affected",
+      "applicability": "affected",
+      "applicability_result": "match",
+      "acceptable": [
+        "P1",
+        "P2"
+      ],
+      "contextual": "P1",
+      "contextual_agrees": true,
+      "baseline": "P2",
+      "baseline_agrees": true,
+      "rationale": "Known-exploited, but a denial-of-service on an internal low-criticality host; reviewers could reasonably choose P1 (KEV policy) or P2."
+    },
+    {
+      "id": "regresshion-upstream",
+      "cve": "CVE-2024-6387",
+      "expected_applicability": "affected",
+      "applicability": "affected",
+      "applicability_result": "match",
+      "acceptable": [
+        "P1",
+        "P2"
+      ],
+      "contextual": "P1",
+      "contextual_agrees": true,
+      "baseline": "P2",
+      "baseline_agrees": true,
+      "rationale": "CNA range 8.5p1..9.7p1 includes 9.6p1; public PoC material and SSVC poc; not in KEV at capture; AC:H. P1 or P2 both defensible for an internet-facing bastion."
+    },
+    {
+      "id": "regresshion-ubuntu-package",
+      "cve": "CVE-2024-6387",
+      "expected_applicability": "needs_review",
+      "applicability": "needs_review",
+      "applicability_result": "match",
+      "acceptable": [
+        "NEEDS_REVIEW"
+      ],
+      "contextual": "NEEDS_REVIEW",
+      "contextual_agrees": true,
+      "baseline": "P2",
+      "baseline_agrees": false,
+      "rationale": "Distribution package versions carry backported fixes; the upstream range cannot decide this. Check the Ubuntu advisory."
+    },
+    {
+      "id": "xz-unaffected",
+      "cve": "CVE-2024-3094",
+      "expected_applicability": "not_affected",
+      "applicability": "not_affected",
+      "applicability_result": "match",
+      "acceptable": [
+        "NOT_APPLICABLE"
+      ],
+      "contextual": "NOT_APPLICABLE",
+      "contextual_agrees": true,
+      "baseline": "P1",
+      "baseline_agrees": false,
+      "rationale": "Only 5.6.0 and 5.6.1 are listed (CNA defaultStatus unaffected; NVD exact versions)."
+    },
+    {
+      "id": "xz-backdoored-internal",
+      "cve": "CVE-2024-3094",
+      "expected_applicability": "affected",
+      "applicability": "affected",
+      "applicability_result": "match",
+      "acceptable": [
+        "P1"
+      ],
+      "contextual": "P2",
+      "contextual_agrees": false,
+      "baseline": "P1",
+      "baseline_agrees": true,
+      "rationale": "A deliberately backdoored release of a core library: reviewer judgement is to remove it immediately regardless of exposure. This is expected to DISAGREE with the rules (which give P2: no KEV, internal medium asset) and documents a known limitation: the rules have no notion of 'supply-chain compromise'."
+    },
+    {
+      "id": "curl-internal",
+      "cve": "CVE-2023-38545",
+      "expected_applicability": "affected",
+      "applicability": "affected",
+      "applicability_result": "match",
+      "acceptable": [
+        "P2",
+        "P3"
+      ],
+      "contextual": "P2",
+      "contextual_agrees": true,
+      "baseline": "P1",
+      "baseline_agrees": false,
+      "rationale": "NVD range 7.69.0 <= v < 8.4.0; exploitation requires a SOCKS5 proxy path and attacker-influenced hostname; SSVC poc; not KEV. Internal medium asset."
+    },
+    {
+      "id": "cups-firewalled",
+      "cve": "CVE-2024-47176",
+      "expected_applicability": "affected",
+      "applicability": "affected",
+      "applicability_result": "match",
+      "acceptable": [
+        "P3",
+        "P4"
+      ],
+      "contextual": "P3",
+      "contextual_agrees": true,
+      "baseline": "P3",
+      "baseline_agrees": true,
+      "rationale": "Affected per CNA '<= 2.0.1'; medium CVSS; impact depends on chaining; host firewall limits port 631."
+    },
+    {
+      "id": "rejected-id",
+      "cve": "CVE-2026-11415",
+      "expected_applicability": "no_product_match",
+      "applicability": "no_product_match",
+      "applicability_result": "match",
+      "acceptable": [
+        "NO_ACTION_REJECTED"
+      ],
+      "contextual": "NO_ACTION_REJECTED",
+      "contextual_agrees": true,
+      "baseline": "N/A",
+      "baseline_agrees": false,
+      "rationale": "Record state REJECTED."
+    },
+    {
+      "id": "reserved-id",
+      "cve": "CVE-2026-99001",
+      "expected_applicability": "no_product_match",
+      "applicability": "no_product_match",
+      "applicability_result": "match",
+      "acceptable": [
+        "INVALID_OR_UNPUBLISHED"
+      ],
+      "contextual": "INVALID_OR_UNPUBLISHED",
+      "contextual_agrees": true,
+      "baseline": "N/A",
+      "baseline_agrees": false,
+      "rationale": "ID is RESERVED; no public record."
+    }
+  ]
+}
