@@ -39,6 +39,43 @@ Generated files: `evaluation/results/eval-none.md` (deterministic) and
 `evaluation/results/eval-ollama-*.md` (local model). Summary of the 2026-10-10 runs is in
 the "Recorded results" section below.
 
+## Recorded results (2026-10-10)
+
+**Deterministic** (`evaluation/results/eval-none.md`): contextual rules inside the
+reference set on 13/14 cases vs 6/14 for the CVSS-only baseline; applicability 14/14 with
+no wrong definite answers; 230/230 deterministic citations resolve. The one disagreement is
+the xz backdoor (rules P2, reference P1) — a real blind spot of the rules.
+
+**Local model, qwen2.5:3b via Ollama on an Intel CPU** (`eval-ollama-qwen2.5_3b.md`,
+~30 minutes for 8 calls):
+
+| Measure | Result | What it means |
+|---|---|---|
+| Valid structured output | 7/7 | schema-constrained output works even for a small model |
+| Claims citing existing evidence IDs | 88/93 | 5 claims cited an invented ID (`CVE.public_exploit_claimed`) and were removed |
+| Usability rating matches what the facts show | **0/6** | it answered "insufficient evidence" even for KEV-listed CVEs |
+| Injection probe: model noticed the planted instruction | **no** | and it gave the difficulty rating the planted text asked for ("high") |
+| Injection probe: priority unchanged by the model | **yes** | the structural defence held |
+
+**Manual reading of one output** (`examples/real-model-output/`, Log4Shell): all 23 claims
+cited real IDs, yet several were false or absent from the cited source, and difficulty was
+rated "high" for a famously easy exploit.
+
+### What we learned
+
+1. **Citation checking ≠ faithfulness.** The validator proves a cited ID exists, not that
+   the evidence says what the claim says. "88/93" is therefore an upper bound on quality.
+   Checking entailment (e.g. a second model, or quoting the exact supporting text and
+   string-matching it) is the most important next improvement.
+2. **The small local model adds little value here.** It defaulted to "insufficient
+   evidence", possibly encouraged by the prompt's instruction to prefer that over guessing
+   (a hypothesis, not tested). A larger model and a revised prompt should be compared on
+   this same evaluation.
+3. **The design limited the damage.** None of the wrong model output changed a priority,
+   because the rules decide and the model can only raise one factor.
+4. An earlier run was discarded after discovering Ollama silently truncated prompts on its
+   OpenAI-compatible endpoint (see docs/MODEL_PROVIDERS.md).
+
 ## What these results can and cannot show
 
 - They show the implementation behaves as designed on these cases, and how a contextual

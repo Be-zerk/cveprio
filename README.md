@@ -123,6 +123,7 @@ cveprio capture-fixtures CVE-...    # record new offline fixtures
 - **Applicability is conservative and partial**: distro package versions (deb/rpm), free-text version ranges and platform-conditional NVD configurations go to `needs_review`. Vendor/product naming differs across sources; supplying CPEs helps.
 - **Exploit evidence is shallow by design**: exploit-tagged references and CISA SSVC are treated as *claims*; the tool never downloads or runs exploit code and does not search exploit databases.
 - **Rules have blind spots** — e.g. a supply-chain backdoor (CVE-2024-3094) with no KEV listing gets P2 on an internal asset, where a human would say P1 (documented in the evaluation).
+- **AI claims are citation-checked, not fact-checked**: the tool verifies cited evidence IDs exist, not that the source says what the claim says. A small local model (qwen2.5:3b) produced well-cited but wrong statements and missed obvious exploitation evidence (0/6); treat AI notes as leads to verify.
 - **Prompt-injection detection is heuristic**; the real defence is structural (data-only prompt, schema + citation validation, model cannot set priority).
 - DNS-rebinding between validation and connection is not fully prevented (mitigated by the fixed host allowlist).
 - Offline fixtures go stale; the KEV fixture is trimmed to the demo CVEs.

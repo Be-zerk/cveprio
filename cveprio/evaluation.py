@@ -122,6 +122,21 @@ def _injection_probe(provider: Provider) -> dict[str, Any]:
     }
 
 
+def _usability_supported_by_facts(report: CveReport) -> str | None:
+    """The usability rating the deterministic findings support (None = facts don't decide it).
+
+    The validator only overrides ratings that OVERSTATE or DENY the facts. A model that answers
+    'insufficient_evidence' when KEV says exploited is under-calling; that is not overridden (it
+    cannot lower priority) but it is a quality problem, so it is measured here.
+    """
+    f = report.bundle.findings
+    if f.get("exploited_in_wild") and f["exploited_in_wild"].value.value == "true":
+        return "exploitation_reported"
+    if f.get("public_exploit_claimed") and f["public_exploit_claimed"].value.value == "true":
+        return "public_exploit_claimed"
+    return None
+
+
 def run_evaluation(settings: Settings, provider_name: str | None, out_dir: Path) -> Path:
     spec = json.loads(CASES.read_text())
     rt = make_runtime(settings, offline=True, provider_name=provider_name or "none")
@@ -129,6 +144,7 @@ def run_evaluation(settings: Settings, provider_name: str | None, out_dir: Path)
     rt.provider = memo
     rows: list[dict[str, Any]] = []
     llm_by_cve: dict[str, Any] = {}
+    facts_by_cve: dict[str, str | None] = {}
     cite_ok = cite_total = 0
     for case in spec["cases"]:
         ctx = case.get("asset", {})
@@ -156,6 +172,7 @@ def run_evaluation(settings: Settings, provider_name: str | None, out_dir: Path)
                      "rationale": case["rationale"]})
         if report.llm.status != LlmStatus.NOT_CONFIGURED:
             llm_by_cve[case["cve_id"]] = report.llm
+            facts_by_cve[case["cve_id"]] = _usability_supported_by_facts(report)
 
     n = len(rows)
     summary = {
@@ -177,10 +194,12 @@ def run_evaluation(settings: Settings, provider_name: str | None, out_dir: Path)
             "claims_removed": sum(len(v.removed_claims) for v in llm_by_cve.values()),
             "rating_overrides": sum(len(v.rating_overrides) for v in llm_by_cve.values()),
             "scripted": any(v.scripted for v in llm_by_cve.values()),
+            "usability_matches_facts": f"{sum(1 for k, v in llm_by_cve.items() if facts_by_cve.get(k) and v.assessment and v.assessment.existing_exploit_usability.rating == facts_by_cve[k])}/{sum(1 for k in llm_by_cve if facts_by_cve.get(k))}",
             "per_cve": {k: {"status": v.status.value, "detail": v.detail, "supported": v.supported_claims,
                             "total": v.total_claims,
                             "difficulty": v.assessment.exploit_development_difficulty.rating if v.assessment else None,
                             "usability": v.assessment.existing_exploit_usability.rating if v.assessment else None,
+                            "usability_supported_by_facts": facts_by_cve.get(k),
                             "removed": [i.model_dump() for i in v.removed_claims],
                             "overrides": [i.model_dump() for i in v.rating_overrides]}
                         for k, v in sorted(llm_by_cve.items())},
@@ -233,9 +252,12 @@ def _markdown(r: dict[str, Any]) -> str:
             lines.append("> These are SCRIPTED EXAMPLES written by the author, not model outputs; the numbers only "
                          "show that validation works.")
         lines += [f"- CVEs assessed: {m['cves_assessed']} · statuses: {m['statuses']} · model calls: {m['model_calls']}",
-                  f"- Claims supported by valid citations: {m['claims_supported']}/{m['claims_total']} "
-                  f"(removed: {m['claims_removed']}) · rating overrides: {m['rating_overrides']}", ""]
-        lines += ["| CVE | Status | Difficulty | Usability | Supported claims | Overrides |", "|---|---|---|---|---|---|"]
+                  f"- Claims citing existing evidence IDs: {m['claims_supported']}/{m['claims_total']} "
+                  "(checks the IDs exist, not that the evidence says what the claim says) "
+                  f"(removed: {m['claims_removed']}) · rating overrides: {m['rating_overrides']}",
+                  f"- Usability rating matches what deterministic facts show (where facts decide it): "
+                  f"{m.get('usability_matches_facts', 'n/a')}", ""]
+        lines += ["| CVE | Status | Difficulty | Usability | Claims with valid IDs | Overrides |", "|---|---|---|---|---|---|"]
         for k, v in m["per_cve"].items():
             lines.append(f"| {k} | {v['status']} | {v['difficulty']} | {v['usability']} | {v['supported']}/{v['total']} | "
                          f"{len(v['overrides'])} |")
@@ -254,5 +276,7 @@ def _markdown(r: dict[str, Any]) -> str:
               "- The severity-only baseline has no notion of rejected/reserved records, so it cannot match those cases.",
               "- Reference judgements were drafted with AI assistance and await independent review.",
               "- 'Agreement' means the outcome is inside a set the reviewer considers defensible, not that it is correct.",
+              "- Citation checking verifies that cited evidence IDs exist, not that the evidence supports the "
+              "claim; a manual read of qwen2.5:3b's Log4Shell output found claims that contradict their cited source.",
               "- Model-quality numbers depend on the model, prompt version and fixtures; rerun after any change."]
     return "\n".join(lines) + "\n"

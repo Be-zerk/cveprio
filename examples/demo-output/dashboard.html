@@ -1,0 +1,1921 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<title>CVE Priorities (DEMO)</title>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f6f6f4; --surface: #fcfcfb; --surface-2: #f0efec; --border: #dedcd6;
+  --text: #0b0b0b; --text-2: #52514e; --muted: #77756f; --link: #1f63b5;
+  --critical: #d03b3b; --serious: #ec835a; --warning: #fab219; --good: #0ca30c;
+  --critical-ink: #a32424; --serious-ink: #9a4318; --warning-ink: #7a5300; --good-ink: #006300;
+  --badge-neutral: #e6e4df; --demo-bg: #fff4d6; --demo-border: #fab219; --ai-bg: #eef3fb; --ai-border: #8fb1e0;
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --bg: #121211; --surface: #1a1a19; --surface-2: #232321; --border: #3a3936;
+    --text: #ffffff; --text-2: #c3c2b7; --muted: #9a998f; --link: #7fb0f0;
+    --critical-ink: #ff8a80; --serious-ink: #f5a582; --warning-ink: #fcd06a; --good-ink: #6fd96f;
+    --badge-neutral: #34332f; --demo-bg: #3a2f10; --ai-bg: #17233a; --ai-border: #3f6aa8;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #121211; --surface: #1a1a19; --surface-2: #232321; --border: #3a3936;
+  --text: #ffffff; --text-2: #c3c2b7; --muted: #9a998f; --link: #7fb0f0;
+  --critical-ink: #ff8a80; --serious-ink: #f5a582; --warning-ink: #fcd06a; --good-ink: #6fd96f;
+  --badge-neutral: #34332f; --demo-bg: #3a2f10; --ai-bg: #17233a; --ai-border: #3f6aa8;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+main { max-width: 1200px; margin: 0 auto; padding: 24px 16px 64px; }
+h1 { font-size: 24px; margin: 0 0 4px; }
+h2 { font-size: 18px; margin: 32px 0 12px; }
+h3 { font-size: 15px; margin: 20px 0 6px; }
+a { color: var(--link); overflow-wrap: anywhere; }
+.meta { color: var(--text-2); font-size: 13px; }
+.banner { border: 2px solid var(--demo-border); background: var(--demo-bg); border-radius: 8px; padding: 10px 14px; margin: 16px 0; font-weight: 600; }
+.banner small { display: block; font-weight: 400; color: var(--text-2); }
+.notices { color: var(--text-2); font-size: 13px; margin: 8px 0 0; padding-left: 18px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 20px; }
+.tile { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; cursor: pointer; text-align: left; color: var(--text); font: inherit; }
+.tile[aria-pressed="true"] { outline: 2px solid var(--link); }
+.tile .label { font-size: 13px; color: var(--text-2); display: flex; gap: 6px; align-items: center; }
+.tile .value { font-size: 28px; font-weight: 600; }
+.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex: none; }
+.s-critical { --c: var(--critical); --ci: var(--critical-ink); }
+.s-serious { --c: var(--serious); --ci: var(--serious-ink); }
+.s-warning { --c: var(--warning); --ci: var(--warning-ink); }
+.s-good { --c: var(--good); --ci: var(--good-ink); }
+.s-neutral { --c: var(--text-2); --ci: var(--text); }
+.s-muted { --c: var(--muted); --ci: var(--text-2); }
+.dot { background: var(--c); }
+.badge { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 2px 10px; font-size: 13px; font-weight: 600; background: var(--badge-neutral); color: var(--ci); white-space: nowrap; border-left: 4px solid var(--c); }
+.compare { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; }
+.compare li { margin: 2px 0; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 24px 0 8px; }
+.controls input { flex: 1 1 240px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); font: inherit; }
+.controls button { padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); font: inherit; cursor: pointer; }
+details.cve { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin: 10px 0; }
+details.cve > summary { list-style: none; cursor: pointer; padding: 12px 16px; display: grid; grid-template-columns: 150px minmax(190px, max-content) 1fr; gap: 8px 16px; align-items: center; }
+details.cve > summary::-webkit-details-marker { display: none; }
+details.cve[open] > summary { border-bottom: 1px solid var(--border); }
+.cveid { font-weight: 700; font-variant-numeric: tabular-nums; }
+.headline { color: var(--text-2); }
+.factors { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; color: var(--text-2); }
+.factors b { color: var(--text); font-weight: 600; }
+.body { padding: 4px 16px 16px; }
+.cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 28px; }
+.cols > div, details.cve > summary > * { min-width: 0; }
+li, td, .desc, .headline { overflow-wrap: anywhere; }
+ul.tight { margin: 4px 0; padding-left: 20px; }
+ul.tight li { margin: 3px 0; }
+.cite { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.desc { background: var(--surface-2); border-radius: 8px; padding: 8px 12px; font-size: 14px; color: var(--text-2); }
+.desc b { color: var(--text); }
+.ai { background: var(--ai-bg); border: 1px solid var(--ai-border); border-radius: 8px; padding: 10px 14px; margin-top: 16px; }
+.ai .tag { font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--link); }
+.scripted { border: 2px dashed var(--demo-border); background: var(--demo-bg); padding: 6px 10px; border-radius: 6px; font-weight: 600; margin: 6px 0; }
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { text-align: left; vertical-align: top; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+th { color: var(--text-2); font-weight: 600; }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.flag { color: var(--warning-ink); font-weight: 600; }
+.st-affected { color: var(--critical-ink); font-weight: 600; }
+.st-needs_review { color: var(--warning-ink); font-weight: 600; }
+.st-not_affected { color: var(--good-ink); font-weight: 600; }
+footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
+.hidden { display: none !important; }
+@media (max-width: 760px) {
+  details.cve > summary { grid-template-columns: 1fr; }
+  .cols { grid-template-columns: minmax(0, 1fr); }
+}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1>CVE prioritization · Northbeam Logistics (fictional)</h1>
+  <div class="meta">Generated 2026-10-10 22:17 UTC · mode <b>offline_demo</b> · cveprio 0.1.0 · 9 CVEs</div>
+  <div class="banner" role="note">⚠ OFFLINE DEMO DATA — recorded fixtures, not live results.
+    <small>Source responses were recorded at the retrieval times shown in each evidence table and may be out of date. The inventory and business context are fictional.</small></div>
+  <ul class="notices"><li>This product uses the NVD API but is not endorsed or certified by the NVD.</li><li>CVE records: CVE Program (cve.org). KEV: CISA Known Exploited Vulnerabilities catalogue (CC0). EPSS: FIRST.org Exploit Prediction Scoring System (https://www.first.org/epss).</li></ul>
+</header>
+
+<section aria-label="Summary">
+  <div class="tiles">
+    <button class="tile s-critical" data-filter="P1" aria-pressed="false">
+      <span class="label"><span class="dot" aria-hidden="true"></span>P1 · Act now</span>
+      <span class="value">3</span>
+    </button>
+    <button class="tile s-serious" data-filter="P2" aria-pressed="false">
+      <span class="label"><span class="dot" aria-hidden="true"></span>P2 · Next patch cycle</span>
+      <span class="value">1</span>
+    </button>
+    <button class="tile s-warning" data-filter="NEEDS_REVIEW" aria-pressed="false">
+      <span class="label"><span class="dot" aria-hidden="true"></span>NEEDS_REVIEW · Needs review</span>
+      <span class="value">1</span>
+    </button>
+    <button class="tile s-neutral" data-filter="P3" aria-pressed="false">
+      <span class="label"><span class="dot" aria-hidden="true"></span>P3 · Scheduled</span>
+      <span class="value">1</span>
+    </button>
+    <button class="tile s-muted" data-filter="P4" aria-pressed="false">
+      <span class="label"><span class="dot" aria-hidden="true"></span>P4 · Backlog</span>
+      <span class="value">0</span>
+    </button>
+    <button class="tile s-muted" data-filter="OTHER" aria-pressed="false">
+      <span class="label"><span class="dot" aria-hidden="true"></span>No action / not applicable</span>
+      <span class="value">3</span>
+    </button>
+  </div>
+</section>
+
+<h2>Contextual rules vs severity-only baseline</h2>
+<div class="compare">
+  <p style="margin:0 0 6px">5 of 7 published CVEs get a different outcome than a CVSS-only ranking:</p>
+  <ul class="tight">
+<li><b>CVE-2023-44487</b>: CVSS-only <code>P2</code> → contextual <code>P1</code> <span class="meta">(exploitation confirmed, exposure high)</span></li><li><b>CVE-2024-6387</b>: CVSS-only <code>P2</code> → contextual <code>P1</code> <span class="meta">(exploitation elevated, exposure high)</span></li><li><b>CVE-2023-38545</b>: CVSS-only <code>P1</code> → contextual <code>P2</code> <span class="meta">(exploitation elevated, exposure context_unknown)</span></li><li><b>CVE-2022-22965</b>: CVSS-only <code>P1</code> → contextual <code>NEEDS_REVIEW</code> <span class="meta">(exploitation confirmed, exposure needs_review)</span></li><li><b>CVE-2024-3094</b>: CVSS-only <code>P1</code> → contextual <code>NOT_APPLICABLE</code> <span class="meta">(exploitation elevated, exposure not_affected)</span></li>  </ul>
+  <p class="meta" style="margin:8px 0 0">Differences are expected by design; they are not evidence that either ranking is "correct". See docs/EVALUATION.md.</p>
+</div>
+
+<div class="controls">
+  <input id="q" type="search" placeholder="Filter by CVE, product, asset…" aria-label="Filter">
+  <button id="expand" type="button">Expand all</button>
+  <button id="reset" type="button">Show all</button>
+</div>
+
+<section id="list" aria-label="CVE list">
+<details class="cve" id="CVE-2021-44228" data-group="P1" data-text="cve-2021-44228 apache log4j2 jndi features do not protect against attacker controlled ldap and other jndi related endpoints web-portal-01 legacy-billing-03 log4j-core log4j">
+  <summary>
+    <span class="cveid">CVE-2021-44228</span>
+    <span><span class="badge s-critical"><span aria-hidden="true">▲</span>P1</span></span>
+    <span class="headline">P1: Act now: emergency change / out-of-band patching</span>
+    <span class="factors">
+      <span>exploitation <b>confirmed</b></span>
+      <span>severity <b>critical</b></span>
+      <span>exposure <b>high</b></span>
+      <span>CVSS-only baseline <b>P1</b></span>
+    </span>
+  </summary>
+  <div class="body">
+    <p class="desc"><b>Source description</b> (verbatim, untrusted) <span class="cite">[CVE.desc]</span><br>Apache Log4j2 JNDI features do not protect against attacker controlled LDAP and other JNDI related endpoints — Apache Log4j2 2.0-beta9 through 2.15.0 (excluding security releases 2.12.2, 2.12.3, and 2.3.1) JNDI features used in configuration, log messages, and parameters do not protect against attacker controlled LDAP and other JNDI related endpoints. An attacker who can control log messages or log message parameters can execute arbitrary code loaded from LDAP servers when message lookup substitution is enabled. From log4j 2.15.0, this behavior has been disabled by default. From version 2.16.0 (along with 2.12.2, 2.12.3, and 2.3.1), this functionality has been completely removed. Note that this vulnerability is specific to log4j-core and does not affect log4net, log4cxx, or other Apache Logging Services projects.</p>
+    <div class="cols">
+      <div>
+        <h3>What is known (sourced facts)</h3>
+        <ul class="tight"><li>CVE record state PUBLISHED (assigner apache, data version 5.1). [CVE.state]</li><li>Most severe CVSS 3.1: 10.0 CRITICAL (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H) from ADP:CISA-ADP [CVE.cvss.1]</li><li>Weakness: CWE-20, CWE-400, CWE-502, CWE-917 [CVE.cwe, NVD.cwe]</li><li>Kev listed: true — Listed in the CISA Known Exploited Vulnerabilities catalogue. [KEV]</li><li>Exploited in wild: true — Positive evidence of exploitation in the wild (KEV listing and/or CISA SSVC Exploitation=active). [KEV, CVE.ssvc]</li><li>Public exploit claimed: true — 12 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. [CVE.ssvc, NVD.ref.1, NVD.ref.2, NVD.ref.3, NVD.ref.4, NVD.ref.5, NVD.ref.6, NVD.ref.7, NVD.ref.8, NVD.ref.11, NVD.ref.14, NVD.ref.15]</li><li>CISA-ADP SSVC decision points: Exploitation=active, Automatable=yes, Technical Impact=total (assessed 2025-02-04T14:25:34.416117Z). [CVE.ssvc]</li><li>EPSS 1.0000 (percentile 1.0000) for 2026-10-10: estimated probability of exploitation activity being observed in the next 30 days. Not a difficulty or impact score. [EPSS]</li><li>web-portal-01: log4j-core 2.14.1 → affected [NVD.cpe] (matched by NVD apache:log4j)</li></ul>
+        <h3>Why this priority</h3>
+        <ol class="tight"><li>Base P1: exploitation confirmed (KEV and/or SSVC active).</li><li>Exposure high (internet-facing or high-criticality asset) → P1.</li><li>Other assets need version review: legacy-billing-03</li></ol>
+        <h3>Action supported by the evidence</h3>
+        <ul class="tight"><li>Upgrade log4j-core 2.14.1 on web-portal-01 to a fixed release (sources indicate fixed at/after 2.15.0) [NVD.ref.9, NVD.ref.10, NVD.ref.12].</li><li>Confirm the exact build/version (and any platform condition) of Log4j 2.x (bundled by appliance vendor) on legacy-billing-03, then re-run; see reasons [CVE.affected.1].</li><li>CISA KEV required action (quoted source text) [KEV]: For all affected software assets for which updates exist, the only acceptable remediation actions are: 1) Apply updates; OR 2) remove affected assets from agency networks. Temporary mitigations using one of the measures provided at https://www.cisa.gov/uscert/ed-22-02-apache-log4j-recommended-mitigation-measures are only acceptable until updates are available.</li></ul>
+      </div>
+      <div>
+        <h3>What remains uncertain</h3>
+        <ul class="tight"><li>legacy-billing-03: Log4j 2.x (bundled by appliance vendor) → needs_review [CVE.affected.1] — No exact product match; similar product names found (similarity does not establish that this deployment is affected):; CNA:apache: similar name: &#39;log4j&#39; vs &#39;apache log4j2&#39;</li></ul>
+        <h3>What would change the recommendation</h3>
+        <ul class="tight"><li>If a verified compensating control removes reachability → P2</li><li>Once the fix is applied and verified → NOT_APPLICABLE</li></ul>
+      </div>
+    </div>
+
+    <div class="ai">
+      <div class="tag">AI-assisted assessment · judgement, not fact</div>
+      <p class="meta">Status <b>not_configured</b> — not_configured: no scripted example for CVE-2021-44228</p>
+    </div>
+
+    <h3>Applicability to inventory</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Asset</th><th>Software</th><th>Status</th><th>Reasons</th></tr></thead>
+      <tbody>
+      <tr><td>web-portal-01</td><td>log4j-core 2.14.1</td><td class="st-affected">affected</td>
+          <td><ul class="tight"><li>[affected] NVD apache:log4j: in range ≥2.13.0 &lt;2.15.0</li></ul></td></tr>
+      <tr><td>legacy-billing-03</td><td>Log4j 2.x (bundled by appliance vendor)</td><td class="st-needs_review">needs_review</td>
+          <td><ul class="tight"><li>No exact product match; similar product names found (similarity does not establish that this deployment is affected):</li><li>CNA:apache: similar name: &#39;log4j&#39; vs &#39;apache log4j2&#39;</li></ul></td></tr>
+      </tbody></table></div>
+
+    <details>
+      <summary><b>Evidence (31 items) and source status</b></summary>
+      <p class="meta">Sources: cve_org=<b>ok</b>; nvd=<b>ok</b>; cisa_kev=<b>ok</b>; first_epss=<b>ok</b></p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>ID</th><th>Source</th><th>Summary</th><th>Retrieved</th><th>Published / updated</th></tr></thead>
+        <tbody>
+        <tr id="CVE-2021-44228-CVE.state">
+          <td class="num">CVE.state</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2021-44228" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CVE record state PUBLISHED (assigner apache, data version 5.1).</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">2021-12-10 / 2025-10-21</td>
+        </tr>
+        <tr id="CVE-2021-44228-CVE.desc">
+          <td class="num">CVE.desc</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2021-44228" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA description of the vulnerability (verbatim, untrusted text).</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">2021-12-10 / 2025-10-21</td>
+        </tr>
+        <tr id="CVE-2021-44228-CVE.cwe">
+          <td class="num">CVE.cwe</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2021-44228" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA weakness classification: CWE-20, CWE-400, CWE-502</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2021-44228-CVE.affected.1">
+          <td class="num">CVE.affected.1</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2021-44228" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA:apache lists affected product &#39;Apache Software Foundation / Apache Log4j2&#39; with 1 version statement(s); default status unspecified.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2021-44228-CVE.cvss.1">
+          <td class="num">CVE.cvss.1</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2021-44228" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CVSS 3.1 base score 10 (CRITICAL) from ADP:CISA-ADP [adp]</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2021-44228-CVE.ssvc">
+          <td class="num">CVE.ssvc</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2021-44228" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CISA-ADP SSVC decision points: Exploitation=active, Automatable=yes, Technical Impact=total (assessed 2025-02-04T14:25:34.416117Z).</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / 2025-02-04</td>
+        </tr>
+        <tr id="CVE-2021-44228-NVD.status">
+          <td class="num">NVD.status</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD analysis status: Analyzed (last modified 2026-08-11T19:33:44.513).</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">2021-12-10 / 2026-08-11</td>
+        </tr>
+        <tr id="CVE-2021-44228-NVD.cvss.1">
+          <td class="num">NVD.cvss.1</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>CVSS 3.1 base score 10.0 (CRITICAL) from nvd@nist.gov [Primary]</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2021-44228-NVD.cvss.2">
+          <td class="num">NVD.cvss.2</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>CVSS 3.1 base score 10.0 (CRITICAL) from 134c704f-9b21-4f2e-91b3-4a467353bcc0 [Secondary]</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2021-44228-NVD.cvss.3">
+          <td class="num">NVD.cvss.3</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>CVSS 2.0 base score 9.3 (HIGH) from nvd@nist.gov [Primary]</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2021-44228-NVD.cwe">
+          <td class="num">NVD.cwe</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD weakness classification: CWE-20, CWE-400, CWE-502, CWE-917</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2021-44228-NVD.cpe">
+          <td class="num">NVD.cpe</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD lists 373 vulnerable CPE match criteria.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / 2026-08-11</td>
+        </tr>
+        <tr id="CVE-2021-44228-NVD.ref.1">
+          <td class="num">NVD.ref.1</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged &#39;Exploit&#39; — indicates public exploit or PoC material may exist at this URL. Not verified, not downloaded; reliability unknown.<br><a href="http://packetstormsecurity.com/files/165261/Apache-Log4j2-2.14.1-Information-Disclosure.html" rel="noopener noreferrer nofollow">http://packetstormsecurity.com/files/165261/Apache-Log4j2-2.14.1-Information-Disclosure.html</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2021-44228-NVD.ref.2">
+          <td class="num">NVD.ref.2</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged &#39;Exploit&#39; — indicates public exploit or PoC material may exist at this URL. Not verified, not downloaded; reliability unknown.<br><a href="http://packetstormsecurity.com/files/165270/Apache-Log4j2-2.14.1-Remote-Code-Execution.html" rel="noopener noreferrer nofollow">http://packetstormsecurity.com/files/165270/Apache-Log4j2-2.14.1-Remote-Code-Execution.html</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2021-44228-NVD.ref.3">
+          <td class="num">NVD.ref.3</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged &#39;Exploit&#39; — indicates public exploit or PoC material may exist at this URL. Not verified, not downloaded; reliability unknown.<br><a href="http://packetstormsecurity.com/files/165371/VMware-Security-Advisory-2021-0028.4.html" rel="noopener noreferrer nofollow">http://packetstormsecurity.com/files/165371/VMware-Security-Advisory-2021-0028.4.html</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2021-44228-NVD.ref.4">
+          <td class="num">NVD.ref.4</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged &#39;Exploit&#39; — indicates public exploit or PoC material may exist at this URL. Not verified, not downloaded; reliability unknown.<br><a href="http://packetstormsecurity.com/files/165532/Log4Shell-HTTP-Header-Injection.html" rel="noopener noreferrer nofollow">http://packetstormsecurity.com/files/165532/Log4Shell-HTTP-Header-Injection.html</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2021-44228-NVD.ref.5">
+          <td class="num">NVD.ref.5</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged &#39;Exploit&#39; — indicates public exploit or PoC material may exist at this URL. Not verified, not downloaded; reliability unknown.<br><a href="http://packetstormsecurity.com/files/165642/VMware-vCenter-Server-Unauthenticated-Log4Shell-JNDI-Injection-Remote-Code-Execution.html" rel="noopener noreferrer nofollow">http://packetstormsecurity.com/files/165642/VMware-vCenter-Server-Unauthenticated-Log4S...</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2021-44228-NVD.ref.6">
+          <td class="num">NVD.ref.6</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged &#39;Exploit&#39; — indicates public exploit or PoC material may exist at this URL. Not verified, not downloaded; reliability unknown.<br><a href="http://packetstormsecurity.com/files/165673/UniFi-Network-Application-Unauthenticated-Log4Shell-Remote-Code-Execution.html" rel="noopener noreferrer nofollow">http://packetstormsecurity.com/files/165673/UniFi-Network-Application-Unauthenticated-L...</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2021-44228-NVD.ref.7">
+          <td class="num">NVD.ref.7</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged &#39;Exploit&#39; — indicates public exploit or PoC material may exist at this URL. Not verified, not downloaded; reliability unknown.<br><a href="http://packetstormsecurity.com/files/167917/MobileIron-Log4Shell-Remote-Command-Execution.html" rel="noopener noreferrer nofollow">http://packetstormsecurity.com/files/167917/MobileIron-Log4Shell-Remote-Command-Execution.html</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2021-44228-NVD.ref.8">
+          <td class="num">NVD.ref.8</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged &#39;Exploit&#39; — indicates public exploit or PoC material may exist at this URL. Not verified, not downloaded; reliability unknown.<br><a href="http://seclists.org/fulldisclosure/2022/Dec/2" rel="noopener noreferrer nofollow">http://seclists.org/fulldisclosure/2022/Dec/2</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2021-44228-NVD.ref.9">
+          <td class="num">NVD.ref.9</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged Mailing List, Mitigation, Third Party Advisory.<br><a href="http://www.openwall.com/lists/oss-security/2021/12/10/1" rel="noopener noreferrer nofollow">http://www.openwall.com/lists/oss-security/2021/12/10/1</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2021-44228-NVD.ref.10">
+          <td class="num">NVD.ref.10</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged Mailing List, Mitigation, Third Party Advisory.<br><a href="http://www.openwall.com/lists/oss-security/2021/12/10/2" rel="noopener noreferrer nofollow">http://www.openwall.com/lists/oss-security/2021/12/10/2</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2021-44228-NVD.ref.11">
+          <td class="num">NVD.ref.11</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged &#39;Exploit&#39; — indicates public exploit or PoC material may exist at this URL. Not verified, not downloaded; reliability unknown.<br><a href="https://github.com/nu11secur1ty/CVE-mitre/tree/main/CVE-2021-44228" rel="noopener noreferrer nofollow">https://github.com/nu11secur1ty/CVE-mitre/tree/main/CVE-2021-44228</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2021-44228-NVD.ref.12">
+          <td class="num">NVD.ref.12</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged Release Notes, Vendor Advisory.<br><a href="https://logging.apache.org/log4j/2.x/security.html" rel="noopener noreferrer nofollow">https://logging.apache.org/log4j/2.x/security.html</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2021-44228-NVD.ref.13">
+          <td class="num">NVD.ref.13</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged Patch, Third Party Advisory, Vendor Advisory.<br><a href="https://msrc-blog.microsoft.com/2021/12/11/microsofts-response-to-cve-2021-44228-apache-log4j2/" rel="noopener noreferrer nofollow">https://msrc-blog.microsoft.com/2021/12/11/microsofts-response-to-cve-2021-44228-apache-log4j2/</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2021-44228-NVD.ref.14">
+          <td class="num">NVD.ref.14</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged &#39;Exploit&#39; — indicates public exploit or PoC material may exist at this URL. Not verified, not downloaded; reliability unknown.<br><a href="https://twitter.com/kurtseifried/status/1469345530182455296" rel="noopener noreferrer nofollow">https://twitter.com/kurtseifried/status/1469345530182455296</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2021-44228-NVD.ref.15">
+          <td class="num">NVD.ref.15</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged &#39;Exploit&#39; — indicates public exploit or PoC material may exist at this URL. Not verified, not downloaded; reliability unknown.<br><a href="https://www.nu11secur1ty.com/2021/12/cve-2021-44228.html" rel="noopener noreferrer nofollow">https://www.nu11secur1ty.com/2021/12/cve-2021-44228.html</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2021-44228-NVD.ref.16">
+          <td class="num">NVD.ref.16</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged Patch, Third Party Advisory.<br><a href="https://www.oracle.com/security-alerts/cpuapr2022.html" rel="noopener noreferrer nofollow">https://www.oracle.com/security-alerts/cpuapr2022.html</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2021-44228-NVD.ref.17">
+          <td class="num">NVD.ref.17</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged Patch, Third Party Advisory.<br><a href="https://www.oracle.com/security-alerts/cpujan2022.html" rel="noopener noreferrer nofollow">https://www.oracle.com/security-alerts/cpujan2022.html</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2021-44228-KEV">
+          <td class="num">KEV</td>
+          <td><a href="https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json" rel="noopener noreferrer nofollow">cisa_kev</a> <span class="meta">(demo)</span></td>
+          <td>Listed in CISA KEV (added 2021-12-10; known ransomware use: Known; federal due date 2021-12-24).</td>
+          <td class="num">2026-10-10 21:14</td>
+          <td class="num">2021-12-10 / -</td>
+        </tr>
+        <tr id="CVE-2021-44228-EPSS">
+          <td class="num">EPSS</td>
+          <td><a href="https://api.first.org/data/v1/epss?cve=CVE-2021-44228" rel="noopener noreferrer nofollow">first_epss</a> <span class="meta">(demo)</span></td>
+          <td>EPSS 1.0000 (percentile 1.0000) for 2026-10-10: estimated probability of exploitation activity being observed in the next 30 days. Not a difficulty or impact score.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">2026-10-10 / -</td>
+        </tr>
+        </tbody></table></div>
+    </details>
+  </div>
+</details>
+<details class="cve" id="CVE-2023-44487" data-group="P1" data-text="cve-2023-44487  web-portal-01 nginx">
+  <summary>
+    <span class="cveid">CVE-2023-44487</span>
+    <span><span class="badge s-critical"><span aria-hidden="true">▲</span>P1</span></span>
+    <span class="headline">P1: Act now: emergency change / out-of-band patching</span>
+    <span class="factors">
+      <span>exploitation <b>confirmed</b></span>
+      <span>severity <b>high</b></span>
+      <span>exposure <b>high</b></span>
+      <span>CVSS-only baseline <b>P2</b></span>
+    </span>
+  </summary>
+  <div class="body">
+    <p class="desc"><b>Source description</b> (verbatim, untrusted) <span class="cite">[CVE.desc]</span><br>The HTTP/2 protocol allows a denial of service (server resource consumption) because request cancellation can reset many streams quickly, as exploited in the wild in August through October 2023.</p>
+    <div class="cols">
+      <div>
+        <h3>What is known (sourced facts)</h3>
+        <ul class="tight"><li>CVE record state PUBLISHED (assigner mitre, data version 5.2). [CVE.state]</li><li>Most severe CVSS 3.1: 7.5 HIGH (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H) from ADP:CISA-ADP [CVE.cvss.1]</li><li>Weakness: CWE-400 [NVD.cwe]</li><li>Kev listed: true — Listed in the CISA Known Exploited Vulnerabilities catalogue. [KEV]</li><li>Exploited in wild: true — Positive evidence of exploitation in the wild (KEV listing and/or CISA SSVC Exploitation=active). [KEV, CVE.ssvc]</li><li>Public exploit claimed: true — 3 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. [CVE.ssvc, NVD.ref.11, NVD.ref.12]</li><li>CISA-ADP SSVC decision points: Exploitation=active, Automatable=yes, Technical Impact=partial (assessed 2024-07-23T20:34:21.334116Z). [CVE.ssvc]</li><li>EPSS 1.0000 (percentile 1.0000) for 2026-10-10: estimated probability of exploitation activity being observed in the next 30 days. Not a difficulty or impact score. [EPSS]</li><li>web-portal-01: nginx 1.25.2 → affected [NVD.cpe] (matched by NVD f5:nginx)</li></ul>
+        <h3>Why this priority</h3>
+        <ol class="tight"><li>Base P1: exploitation confirmed (KEV and/or SSVC active).</li><li>Exposure high (internet-facing or high-criticality asset) → P1.</li></ol>
+        <h3>Action supported by the evidence</h3>
+        <ul class="tight"><li>Upgrade nginx 1.25.2 on web-portal-01 per the vendor advisory [NVD.ref.1, NVD.ref.2, NVD.ref.3].</li><li>CISA KEV required action (quoted source text) [KEV]: Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.</li></ul>
+      </div>
+      <div>
+        <h3>What remains uncertain</h3>
+        <ul class="tight"><li>Nothing flagged.</li></ul>
+        <h3>What would change the recommendation</h3>
+        <ul class="tight"><li>If a verified compensating control removes reachability → P2</li><li>Once the fix is applied and verified → NOT_APPLICABLE</li></ul>
+      </div>
+    </div>
+
+    <div class="ai">
+      <div class="tag">AI-assisted assessment · judgement, not fact</div>
+      <p class="meta">Status <b>not_configured</b> — not_configured: no scripted example for CVE-2023-44487</p>
+    </div>
+
+    <h3>Applicability to inventory</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Asset</th><th>Software</th><th>Status</th><th>Reasons</th></tr></thead>
+      <tbody>
+      <tr><td>web-portal-01</td><td>nginx 1.25.2</td><td class="st-affected">affected</td>
+          <td><ul class="tight"><li>[affected] NVD f5:nginx: in range ≥1.9.5 ≤1.25.2</li></ul></td></tr>
+      </tbody></table></div>
+
+    <details>
+      <summary><b>Evidence (25 items) and source status</b></summary>
+      <p class="meta">Sources: cve_org=<b>ok</b>; nvd=<b>ok</b>; cisa_kev=<b>ok</b>; first_epss=<b>ok</b></p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>ID</th><th>Source</th><th>Summary</th><th>Retrieved</th><th>Published / updated</th></tr></thead>
+        <tbody>
+        <tr id="CVE-2023-44487-CVE.state">
+          <td class="num">CVE.state</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2023-44487" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CVE record state PUBLISHED (assigner mitre, data version 5.2).</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">2023-10-10 / 2026-07-14</td>
+        </tr>
+        <tr id="CVE-2023-44487-CVE.desc">
+          <td class="num">CVE.desc</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2023-44487" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA description of the vulnerability (verbatim, untrusted text).</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">2023-10-10 / 2026-07-14</td>
+        </tr>
+        <tr id="CVE-2023-44487-CVE.affected.1">
+          <td class="num">CVE.affected.1</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2023-44487" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA:mitre lists affected product &#39;n/a / n/a&#39; with 1 version statement(s); default status unspecified.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2023-44487-CVE.cvss.1">
+          <td class="num">CVE.cvss.1</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2023-44487" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CVSS 3.1 base score 7.5 (HIGH) from ADP:CISA-ADP [adp]</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2023-44487-CVE.ssvc">
+          <td class="num">CVE.ssvc</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2023-44487" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CISA-ADP SSVC decision points: Exploitation=active, Automatable=yes, Technical Impact=partial (assessed 2024-07-23T20:34:21.334116Z).</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / 2024-07-23</td>
+        </tr>
+        <tr id="CVE-2023-44487-CVE.affected.2">
+          <td class="num">CVE.affected.2</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2023-44487" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>ADP:CISA-ADP lists affected product &#39;ietf / http&#39; with 1 version statement(s); default status unknown.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2023-44487-NVD.status">
+          <td class="num">NVD.status</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-44487" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD analysis status: Analyzed (last modified 2026-08-11T19:37:30.880).</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">2023-10-10 / 2026-08-11</td>
+        </tr>
+        <tr id="CVE-2023-44487-NVD.cvss.1">
+          <td class="num">NVD.cvss.1</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-44487" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>CVSS 3.1 base score 7.5 (HIGH) from nvd@nist.gov [Primary]</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2023-44487-NVD.cvss.2">
+          <td class="num">NVD.cvss.2</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-44487" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>CVSS 3.1 base score 7.5 (HIGH) from 134c704f-9b21-4f2e-91b3-4a467353bcc0 [Secondary]</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2023-44487-NVD.cwe">
+          <td class="num">NVD.cwe</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-44487" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD weakness classification: CWE-400</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2023-44487-NVD.cpe">
+          <td class="num">NVD.cpe</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-44487" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD lists 304 vulnerable CPE match criteria.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / 2026-08-11</td>
+        </tr>
+        <tr id="CVE-2023-44487-NVD.ref.1">
+          <td class="num">NVD.ref.1</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-44487" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged Vendor Advisory.<br><a href="https://access.redhat.com/security/cve/cve-2023-44487" rel="noopener noreferrer nofollow">https://access.redhat.com/security/cve/cve-2023-44487</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2023-44487-NVD.ref.2">
+          <td class="num">NVD.ref.2</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-44487" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged Technical Description, Vendor Advisory.<br><a href="https://blog.cloudflare.com/technical-breakdown-http2-rapid-reset-ddos-attack/" rel="noopener noreferrer nofollow">https://blog.cloudflare.com/technical-breakdown-http2-rapid-reset-ddos-attack/</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2023-44487-NVD.ref.3">
+          <td class="num">NVD.ref.3</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-44487" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged Third Party Advisory, Vendor Advisory.<br><a href="https://blog.cloudflare.com/zero-day-rapid-reset-http2-record-breaking-ddos-attack/" rel="noopener noreferrer nofollow">https://blog.cloudflare.com/zero-day-rapid-reset-http2-record-breaking-ddos-attack/</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2023-44487-NVD.ref.4">
+          <td class="num">NVD.ref.4</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-44487" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged Vendor Advisory.<br><a href="https://blog.litespeedtech.com/2023/10/11/rapid-reset-http-2-vulnerablilty/" rel="noopener noreferrer nofollow">https://blog.litespeedtech.com/2023/10/11/rapid-reset-http-2-vulnerablilty/</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2023-44487-NVD.ref.5">
+          <td class="num">NVD.ref.5</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-44487" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged Vendor Advisory.<br><a href="https://blog.vespa.ai/cve-2023-44487/" rel="noopener noreferrer nofollow">https://blog.vespa.ai/cve-2023-44487/</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2023-44487-NVD.ref.6">
+          <td class="num">NVD.ref.6</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-44487" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged Issue Tracking, Vendor Advisory.<br><a href="https://bugzilla.redhat.com/show_bug.cgi?id=2242803" rel="noopener noreferrer nofollow">https://bugzilla.redhat.com/show_bug.cgi?id=2242803</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2023-44487-NVD.ref.7">
+          <td class="num">NVD.ref.7</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-44487" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged Issue Tracking, Vendor Advisory.<br><a href="https://bugzilla.suse.com/show_bug.cgi?id=1216123" rel="noopener noreferrer nofollow">https://bugzilla.suse.com/show_bug.cgi?id=1216123</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2023-44487-NVD.ref.8">
+          <td class="num">NVD.ref.8</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-44487" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged Mailing List, Patch, Vendor Advisory.<br><a href="https://cgit.freebsd.org/ports/commit/?id=c64c329c2c1752f46b73e3e6ce9f4329be6629f9" rel="noopener noreferrer nofollow">https://cgit.freebsd.org/ports/commit/?id=c64c329c2c1752f46b73e3e6ce9f4329be6629f9</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2023-44487-NVD.ref.9">
+          <td class="num">NVD.ref.9</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-44487" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged Technical Description, Vendor Advisory.<br><a href="https://cloud.google.com/blog/products/identity-security/google-cloud-mitigated-largest-ddos-attack-peaking-above-398-million-rps/" rel="noopener noreferrer nofollow">https://cloud.google.com/blog/products/identity-security/google-cloud-mitigated-largest...</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2023-44487-NVD.ref.10">
+          <td class="num">NVD.ref.10</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-44487" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged Technical Description, Vendor Advisory.<br><a href="https://cloud.google.com/blog/products/identity-security/how-it-works-the-novel-http2-rapid-reset-ddos-attack" rel="noopener noreferrer nofollow">https://cloud.google.com/blog/products/identity-security/how-it-works-the-novel-http2-r...</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2023-44487-NVD.ref.11">
+          <td class="num">NVD.ref.11</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-44487" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged &#39;Exploit&#39; — indicates public exploit or PoC material may exist at this URL. Not verified, not downloaded; reliability unknown.<br><a href="https://github.com/micrictor/http2-rst-stream" rel="noopener noreferrer nofollow">https://github.com/micrictor/http2-rst-stream</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2023-44487-NVD.ref.12">
+          <td class="num">NVD.ref.12</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-44487" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged &#39;Exploit&#39; — indicates public exploit or PoC material may exist at this URL. Not verified, not downloaded; reliability unknown.<br><a href="https://security.netapp.com/advisory/ntap-20240621-0006/" rel="noopener noreferrer nofollow">https://security.netapp.com/advisory/ntap-20240621-0006/</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2023-44487-KEV">
+          <td class="num">KEV</td>
+          <td><a href="https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json" rel="noopener noreferrer nofollow">cisa_kev</a> <span class="meta">(demo)</span></td>
+          <td>Listed in CISA KEV (added 2023-10-10; known ransomware use: Unknown; federal due date 2023-10-31).</td>
+          <td class="num">2026-10-10 21:14</td>
+          <td class="num">2023-10-10 / -</td>
+        </tr>
+        <tr id="CVE-2023-44487-EPSS">
+          <td class="num">EPSS</td>
+          <td><a href="https://api.first.org/data/v1/epss?cve=CVE-2023-44487" rel="noopener noreferrer nofollow">first_epss</a> <span class="meta">(demo)</span></td>
+          <td>EPSS 1.0000 (percentile 1.0000) for 2026-10-10: estimated probability of exploitation activity being observed in the next 30 days. Not a difficulty or impact score.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">2026-10-10 / -</td>
+        </tr>
+        </tbody></table></div>
+    </details>
+  </div>
+</details>
+<details class="cve" id="CVE-2024-6387" data-group="P1" data-text="cve-2024-6387 openssh: regresshion - race condition in ssh allows rce/dos bastion-01 ops-ubuntu-02 openssh openssh">
+  <summary>
+    <span class="cveid">CVE-2024-6387</span>
+    <span><span class="badge s-critical"><span aria-hidden="true">▲</span>P1</span></span>
+    <span class="headline">P1: Act now: emergency change / out-of-band patching</span>
+    <span class="factors">
+      <span>exploitation <b>elevated</b></span>
+      <span>severity <b>high</b></span>
+      <span>exposure <b>high</b></span>
+      <span>CVSS-only baseline <b>P2</b></span>
+<span class="flag">⚠ 1 source conflict</span>    </span>
+  </summary>
+  <div class="body">
+    <p class="desc"><b>Source description</b> (verbatim, untrusted) <span class="cite">[CVE.desc]</span><br>Openssh: regresshion - race condition in ssh allows rce/dos — A security regression (CVE-2006-5051) was discovered in OpenSSH&#39;s server (sshd). There is a race condition which can lead sshd to handle some signals in an unsafe manner. An unauthenticated, remote attacker may be able to trigger it by failing to authenticate within a set time period.</p>
+    <div class="cols">
+      <div>
+        <h3>What is known (sourced facts)</h3>
+        <ul class="tight"><li>CVE record state PUBLISHED (assigner redhat, data version 5.2). [CVE.state]</li><li>Most severe CVSS 3.1: 8.1 HIGH (CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H) from CNA:redhat [CVE.cvss.1]</li><li>Weakness: CWE-364, CWE-362 [CVE.cwe, NVD.cwe]</li><li>Kev listed: false — Not in KEV catalogue 2026.10.08 (absence is not evidence of no exploitation). [KEV]</li><li>Public exploit claimed: true — 10 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. [CVE.ssvc, NVD.ref.1, NVD.ref.2, NVD.ref.3, NVD.ref.5, NVD.ref.6, NVD.ref.7, NVD.ref.8, NVD.ref.12, NVD.ref.13]</li><li>CISA-ADP SSVC decision points: Exploitation=poc, Automatable=no, Technical Impact=total (assessed 2024-07-02T13:18:34.695298Z). [CVE.ssvc]</li><li>EPSS 0.9951 (percentile 0.9994) for 2026-10-10: estimated probability of exploitation activity being observed in the next 30 days. Not a difficulty or impact score. [EPSS]</li><li>bastion-01: OpenSSH 9.6p1 → affected [CVE.affected.1, NVD.cpe] (matched by CNA:redhat &#39;OpenSSH&#39;)</li></ul>
+        <h3>Why this priority</h3>
+        <ol class="tight"><li>Base P2: exploitation signal elevated (public exploit claimed, EPSS ≥ 0.10, or validated AI difficulty=low).</li><li>Exposure high (internet-facing or high-criticality asset) → P1.</li><li>Other assets need version review: ops-ubuntu-02</li></ol>
+        <h3>Action supported by the evidence</h3>
+        <ul class="tight"><li>Upgrade OpenSSH 9.6p1 on bastion-01 per the vendor advisory [NVD.ref.4, NVD.ref.9, NVD.ref.10].</li><li>Confirm the exact build/version (and any platform condition) of OpenSSH 1:9.6p1-3ubuntu13.4 on ops-ubuntu-02, then re-run; see reasons [CVE.affected.1].</li></ul>
+      </div>
+      <div>
+        <h3>What remains uncertain</h3>
+        <ul class="tight"><li>Exploited in wild: unknown — No positive evidence of in-the-wild exploitation in the sources checked. This is not proof that exploitation has not occurred. [KEV, CVE.ssvc]</li><li>ops-ubuntu-02: OpenSSH 1:9.6p1-3ubuntu13.4 → needs_review [CVE.affected.1] — [ambiguous] CNA:redhat &#39;OpenSSH&#39;: name &#39;openssh&#39;: cannot compare &#39;1:9.6p1-3ubuntu13.4&#39; with range 8.5p1..9.7p1 (custom); &#39;1:9.6p1-3ubuntu13.4&#39; looks like a distribution package version; vendors often backport fixes without changing the upstream version — check the distribution&#39;s advisory.</li><li>Conflict (stale_signal): SSVC Exploitation=poc was assessed 2024-07-02 (&gt; 180 days ago) and may no longer reflect current activity. [CVE.ssvc]</li><li>Offline demo uses a trimmed KEV fixture; absence was verified against the full catalogue at capture time only.</li><li>Open question (scripted demo example): Which builds and architectures do the public PoCs target, and how many attempts do they need?</li><li>Open question (scripted demo example): Has in-the-wild exploitation been reported since the SSVC assessment date?</li><li>Exploit-development difficulty from public evidence is inherently limited: the absence of public research does not mean exploitation is hard.</li></ul>
+        <h3>What would change the recommendation</h3>
+        <ul class="tight"><li>If a verified compensating control removes reachability → P3</li><li>Once the fix is applied and verified → NOT_APPLICABLE</li><li>Resolving the listed source conflicts could change the inputs above.</li></ul>
+      </div>
+    </div>
+
+    <div class="ai">
+      <div class="tag">AI-assisted assessment · judgement, not fact</div>
+<div class="scripted">SCRIPTED EXAMPLE — hand-written by the project author for the offline demo. Not produced by a language model.</div>      <p class="meta">Provider <b>scripted</b>, model <b>scripted-example</b> · claims with valid citation IDs: <b>6/8</b> (cited IDs exist, but whether the source actually says what the claim says is NOT checked) · qualitative ratings; no calibrated probability implied.</p>
+      <div class="cols">
+        <div>
+          <h3>Exploit-development difficulty: <code>moderate</code></h3>
+          <ul class="tight">
+<li><i>Prerequisite (fact):</i> The attacker needs only network access to sshd and no credentials; the trigger is failing to authenticate within the login time limit. <span class="cite">[CVE.desc, CVE.cvss.1]</span></li><li><i>Complexity (inference):</i> The flaw is a race condition in signal handling, and the CNA scores attack complexity as High, which suggests exploitation depends on winning a timing window. <span class="cite">[CVE.desc, CVE.cvss.1]</span></li><li><i>Research (fact):</i> Several references tagged &#39;Exploit&#39; by NVD, including a researcher advisory, indicate detailed public research exists. <span class="cite">[NVD.ref.2, NVD.ref.12]</span></li>          </ul>
+        </div>
+        <div>
+          <h3>Existing-exploit usability: <code>public_exploit_claimed</code></h3>
+          <ul class="tight">
+<li><i>Exploit evidence (fact):</i> CISA&#39;s SSVC assessment records Exploitation=poc. <span class="cite">[CVE.ssvc]</span></li><li><i>Reliability limit (inference):</i> A race-condition exploit is likely to need many connection attempts, which may be visible in authentication logs. <span class="cite">[CVE.desc, CVE.cvss.1]</span></li><li><i>Required access (fact):</i> Network reachability to the SSH service; no privileges or user interaction. <span class="cite">[CVE.cvss.1]</span></li>          </ul>
+        </div>
+      </div>
+<p class="meta"><i>Scripted summary (uncited free text):</i> Unauthenticated remote race condition in sshd with public research and PoC claims; timing complexity is the main barrier.</p>      <h3>Removed or overridden by validation</h3>
+      <ul class="tight"><li><code>difficulty.complexity_factors[1]</code>: cites unknown evidence ID(s): [&#39;NVD.ref.99&#39;] — “Exploitation is reliable on all Linux distributions.”</li><li><code>difficulty.research_availability[1]</code>: no evidence cited — “Public write-ups make weaponisation trivial.”</li><li><code>usability.rating</code>: rating &#39;exploitation_reported&#39; → &#39;public_exploit_claimed&#39;: no source in the bundle reports in-the-wild exploitation</li></ul>
+    </div>
+
+    <h3>Applicability to inventory</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Asset</th><th>Software</th><th>Status</th><th>Reasons</th></tr></thead>
+      <tbody>
+      <tr><td>bastion-01</td><td>OpenSSH 9.6p1</td><td class="st-affected">affected</td>
+          <td><ul class="tight"><li>[affected] CNA:redhat &#39;OpenSSH&#39;: name &#39;openssh&#39;: in range 8.5p1..≤9.7p1 → affected</li><li>[affected] NVD openbsd:openssh: in range ≥8.6 ≤9.8</li></ul></td></tr>
+      <tr><td>ops-ubuntu-02</td><td>OpenSSH 1:9.6p1-3ubuntu13.4</td><td class="st-needs_review">needs_review</td>
+          <td><ul class="tight"><li>[ambiguous] CNA:redhat &#39;OpenSSH&#39;: name &#39;openssh&#39;: cannot compare &#39;1:9.6p1-3ubuntu13.4&#39; with range 8.5p1..9.7p1 (custom)</li><li>&#39;1:9.6p1-3ubuntu13.4&#39; looks like a distribution package version; vendors often backport fixes without changing the upstream version — check the distribution&#39;s advisory.</li></ul></td></tr>
+      </tbody></table></div>
+
+    <details>
+      <summary><b>Evidence (42 items) and source status</b></summary>
+      <p class="meta">Sources: cve_org=<b>ok</b>; nvd=<b>ok</b>; cisa_kev=<b>ok</b>; first_epss=<b>ok</b></p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>ID</th><th>Source</th><th>Summary</th><th>Retrieved</th><th>Published / updated</th></tr></thead>
+        <tbody>
+        <tr id="CVE-2024-6387-CVE.state">
+          <td class="num">CVE.state</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-6387" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CVE record state PUBLISHED (assigner redhat, data version 5.2).</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">2024-07-01 / 2026-09-01</td>
+        </tr>
+        <tr id="CVE-2024-6387-CVE.desc">
+          <td class="num">CVE.desc</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-6387" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA description of the vulnerability (verbatim, untrusted text).</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">2024-07-01 / 2026-09-01</td>
+        </tr>
+        <tr id="CVE-2024-6387-CVE.cwe">
+          <td class="num">CVE.cwe</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-6387" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA weakness classification: CWE-364</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-CVE.cvss.1">
+          <td class="num">CVE.cvss.1</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-6387" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CVSS 3.1 base score 8.1 (HIGH) from CNA:redhat [cna]</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-CVE.affected.1">
+          <td class="num">CVE.affected.1</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-6387" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA:redhat lists affected product &#39;- / OpenSSH&#39; with 1 version statement(s); default status unaffected.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-CVE.affected.2">
+          <td class="num">CVE.affected.2</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-6387" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA:redhat lists affected product &#39;Red Hat / Red Hat Enterprise Linux 9&#39; with 1 version statement(s); default status affected.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-CVE.affected.3">
+          <td class="num">CVE.affected.3</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-6387" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA:redhat lists affected product &#39;Red Hat / Red Hat Enterprise Linux 9&#39; with 1 version statement(s); default status affected.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-CVE.affected.4">
+          <td class="num">CVE.affected.4</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-6387" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA:redhat lists affected product &#39;Red Hat / Red Hat Enterprise Linux 9.0 Update Services for SAP Solutions&#39; with 1 version statement(s); default status affected.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-CVE.affected.5">
+          <td class="num">CVE.affected.5</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-6387" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA:redhat lists affected product &#39;Red Hat / Red Hat Enterprise Linux 9.2 Extended Update Support&#39; with 1 version statement(s); default status affected.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-CVE.affected.6">
+          <td class="num">CVE.affected.6</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-6387" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA:redhat lists affected product &#39;Red Hat / Red Hat OpenShift Container Platform 4.13&#39; with 1 version statement(s); default status affected.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-CVE.affected.7">
+          <td class="num">CVE.affected.7</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-6387" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA:redhat lists affected product &#39;Red Hat / Red Hat OpenShift Container Platform 4.14&#39; with 1 version statement(s); default status affected.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-CVE.affected.8">
+          <td class="num">CVE.affected.8</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-6387" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA:redhat lists affected product &#39;Red Hat / Red Hat OpenShift Container Platform 4.15&#39; with 1 version statement(s); default status affected.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-CVE.affected.9">
+          <td class="num">CVE.affected.9</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-6387" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA:redhat lists affected product &#39;Red Hat / Red Hat OpenShift Container Platform 4.16&#39; with 1 version statement(s); default status affected.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-CVE.affected.10">
+          <td class="num">CVE.affected.10</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-6387" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA:redhat lists affected product &#39;Red Hat / Red Hat Ceph Storage 5&#39; with 0 version statement(s); default status unaffected.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-CVE.affected.11">
+          <td class="num">CVE.affected.11</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-6387" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA:redhat lists affected product &#39;Red Hat / Red Hat Ceph Storage 6&#39; with 0 version statement(s); default status unaffected.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-CVE.affected.12">
+          <td class="num">CVE.affected.12</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-6387" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA:redhat lists affected product &#39;Red Hat / Red Hat Ceph Storage 7&#39; with 0 version statement(s); default status unaffected.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-CVE.affected.13">
+          <td class="num">CVE.affected.13</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-6387" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA:redhat lists affected product &#39;Red Hat / Red Hat Enterprise Linux 10&#39; with 0 version statement(s); default status unaffected.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-CVE.affected.14">
+          <td class="num">CVE.affected.14</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-6387" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA:redhat lists affected product &#39;Red Hat / Red Hat Enterprise Linux 6&#39; with 0 version statement(s); default status unaffected.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-CVE.affected.15">
+          <td class="num">CVE.affected.15</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-6387" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA:redhat lists affected product &#39;Red Hat / Red Hat Enterprise Linux 7&#39; with 0 version statement(s); default status unaffected.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-CVE.affected.16">
+          <td class="num">CVE.affected.16</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-6387" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA:redhat lists affected product &#39;Red Hat / Red Hat Enterprise Linux 8&#39; with 0 version statement(s); default status unaffected.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-CVE.affected.17">
+          <td class="num">CVE.affected.17</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-6387" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA:redhat lists affected product &#39;Red Hat / Red Hat OpenShift Container Platform 4&#39; with 0 version statement(s); default status affected.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-CVE.ssvc">
+          <td class="num">CVE.ssvc</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-6387" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CISA-ADP SSVC decision points: Exploitation=poc, Automatable=no, Technical Impact=total (assessed 2024-07-02T13:18:34.695298Z).</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / 2024-07-02</td>
+        </tr>
+        <tr id="CVE-2024-6387-NVD.status">
+          <td class="num">NVD.status</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-6387" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD analysis status: Modified (last modified 2026-09-01T12:17:13.423).</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">2024-07-01 / 2026-09-01</td>
+        </tr>
+        <tr id="CVE-2024-6387-NVD.cvss.1">
+          <td class="num">NVD.cvss.1</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-6387" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>CVSS 3.1 base score 8.1 (HIGH) from secalert@redhat.com [Secondary]</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-NVD.cvss.2">
+          <td class="num">NVD.cvss.2</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-6387" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>CVSS 3.1 base score 8.1 (HIGH) from nvd@nist.gov [Primary]</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-NVD.cwe">
+          <td class="num">NVD.cwe</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-6387" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD weakness classification: CWE-362, CWE-364</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-NVD.cpe">
+          <td class="num">NVD.cpe</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-6387" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD lists 92 vulnerable CPE match criteria.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / 2026-09-01</td>
+        </tr>
+        <tr id="CVE-2024-6387-NVD.ref.1">
+          <td class="num">NVD.ref.1</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-6387" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged &#39;Exploit&#39; — indicates public exploit or PoC material may exist at this URL. Not verified, not downloaded; reliability unknown.<br><a href="https://santandersecurityresearch.github.io/blog/sshing_the_masses.html" rel="noopener noreferrer nofollow">https://santandersecurityresearch.github.io/blog/sshing_the_masses.html</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-NVD.ref.2">
+          <td class="num">NVD.ref.2</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-6387" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged &#39;Exploit&#39; — indicates public exploit or PoC material may exist at this URL. Not verified, not downloaded; reliability unknown.<br><a href="https://www.qualys.com/2024/07/01/cve-2024-6387/regresshion.txt" rel="noopener noreferrer nofollow">https://www.qualys.com/2024/07/01/cve-2024-6387/regresshion.txt</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-NVD.ref.3">
+          <td class="num">NVD.ref.3</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-6387" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged &#39;Exploit&#39; — indicates public exploit or PoC material may exist at this URL. Not verified, not downloaded; reliability unknown.<br><a href="http://www.openwall.com/lists/oss-security/2024/07/03/11" rel="noopener noreferrer nofollow">http://www.openwall.com/lists/oss-security/2024/07/03/11</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-NVD.ref.4">
+          <td class="num">NVD.ref.4</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-6387" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged Mailing List, Patch.<br><a href="http://www.openwall.com/lists/oss-security/2024/07/03/3" rel="noopener noreferrer nofollow">http://www.openwall.com/lists/oss-security/2024/07/03/3</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-NVD.ref.5">
+          <td class="num">NVD.ref.5</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-6387" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged &#39;Exploit&#39; — indicates public exploit or PoC material may exist at this URL. Not verified, not downloaded; reliability unknown.<br><a href="http://www.openwall.com/lists/oss-security/2024/07/04/2" rel="noopener noreferrer nofollow">http://www.openwall.com/lists/oss-security/2024/07/04/2</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-NVD.ref.6">
+          <td class="num">NVD.ref.6</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-6387" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged &#39;Exploit&#39; — indicates public exploit or PoC material may exist at this URL. Not verified, not downloaded; reliability unknown.<br><a href="http://www.openwall.com/lists/oss-security/2024/07/08/2" rel="noopener noreferrer nofollow">http://www.openwall.com/lists/oss-security/2024/07/08/2</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-NVD.ref.7">
+          <td class="num">NVD.ref.7</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-6387" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged &#39;Exploit&#39; — indicates public exploit or PoC material may exist at this URL. Not verified, not downloaded; reliability unknown.<br><a href="http://www.openwall.com/lists/oss-security/2024/07/09/5" rel="noopener noreferrer nofollow">http://www.openwall.com/lists/oss-security/2024/07/09/5</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-NVD.ref.8">
+          <td class="num">NVD.ref.8</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-6387" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged &#39;Exploit&#39; — indicates public exploit or PoC material may exist at this URL. Not verified, not downloaded; reliability unknown.<br><a href="http://www.openwall.com/lists/oss-security/2024/07/10/1" rel="noopener noreferrer nofollow">http://www.openwall.com/lists/oss-security/2024/07/10/1</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-NVD.ref.9">
+          <td class="num">NVD.ref.9</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-6387" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged Patch.<br><a href="https://github.com/openela-main/openssh/commit/e1f438970e5a337a17070a637c1b9e19697cad09" rel="noopener noreferrer nofollow">https://github.com/openela-main/openssh/commit/e1f438970e5a337a17070a637c1b9e19697cad09</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-NVD.ref.10">
+          <td class="num">NVD.ref.10</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-6387" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged Mailing List, Patch.<br><a href="https://lists.mindrot.org/pipermail/openssh-unix-dev/2024-July/041431.html" rel="noopener noreferrer nofollow">https://lists.mindrot.org/pipermail/openssh-unix-dev/2024-July/041431.html</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-NVD.ref.11">
+          <td class="num">NVD.ref.11</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-6387" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged Issue Tracking, Patch.<br><a href="https://news.ycombinator.com/item?id=40843778" rel="noopener noreferrer nofollow">https://news.ycombinator.com/item?id=40843778</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-NVD.ref.12">
+          <td class="num">NVD.ref.12</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-6387" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged &#39;Exploit&#39; — indicates public exploit or PoC material may exist at this URL. Not verified, not downloaded; reliability unknown.<br><a href="https://www.exploit-db.com/exploits/52269" rel="noopener noreferrer nofollow">https://www.exploit-db.com/exploits/52269</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-NVD.ref.13">
+          <td class="num">NVD.ref.13</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-6387" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged &#39;Exploit&#39; — indicates public exploit or PoC material may exist at this URL. Not verified, not downloaded; reliability unknown.<br><a href="https://www.vicarius.io/vsociety/posts/regresshion-an-openssh-regression-error-cve-2024-6387" rel="noopener noreferrer nofollow">https://www.vicarius.io/vsociety/posts/regresshion-an-openssh-regression-error-cve-2024-6387</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-KEV">
+          <td class="num">KEV</td>
+          <td><a href="https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json" rel="noopener noreferrer nofollow">cisa_kev</a> <span class="meta">(demo)</span></td>
+          <td>Not listed in CISA KEV catalogue version 2026.10.08. Absence does NOT show the vulnerability is unexploited — only that CISA has not added it.</td>
+          <td class="num">2026-10-10 21:14</td>
+          <td class="num">2026-10-08 / -</td>
+        </tr>
+        <tr id="CVE-2024-6387-EPSS">
+          <td class="num">EPSS</td>
+          <td><a href="https://api.first.org/data/v1/epss?cve=CVE-2024-6387" rel="noopener noreferrer nofollow">first_epss</a> <span class="meta">(demo)</span></td>
+          <td>EPSS 0.9951 (percentile 0.9994) for 2026-10-10: estimated probability of exploitation activity being observed in the next 30 days. Not a difficulty or impact score.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">2026-10-10 / -</td>
+        </tr>
+        </tbody></table></div>
+    </details>
+  </div>
+</details>
+<details class="cve" id="CVE-2023-38545" data-group="P2" data-text="cve-2023-38545  ops-ubuntu-02 dev-laptop-17 curl curl">
+  <summary>
+    <span class="cveid">CVE-2023-38545</span>
+    <span><span class="badge s-serious"><span aria-hidden="true">◆</span>P2 · provisional</span></span>
+    <span class="headline">P2: Next patch cycle, ahead of routine work (provisional)</span>
+    <span class="factors">
+      <span>exploitation <b>elevated</b></span>
+      <span>severity <b>critical</b></span>
+      <span>exposure <b>context_unknown</b></span>
+      <span>CVSS-only baseline <b>P1</b></span>
+<span class="flag">⚠ 2 source conflicts</span>    </span>
+  </summary>
+  <div class="body">
+    <p class="desc"><b>Source description</b> (verbatim, untrusted) <span class="cite">[CVE.desc]</span><br>This flaw makes curl overflow a heap based buffer in the SOCKS5 proxy
+handshake.
+
+When curl is asked to pass along the host name to the SOCKS5 proxy to allow
+that to resolve the address instead of it getting done by curl itself, the
+maximum length that host name can be is 255 bytes.
+
+If the host name is detected to be longer, curl switches to local name
+resolving and instead passes on the resolved address only. Due to this bug,
+the local variable that means &#34;let the host resolve the name&#34; could get the
+wrong value during a slow SOCKS5 handshake, and contrary to the intention,
+copy the too long host name to the target buffer instead of copying just the
+resolved address there.
+
+The target buffer being a heap based buffer, and the host name coming from the
+URL that curl has been told to operate with.</p>
+    <div class="cols">
+      <div>
+        <h3>What is known (sourced facts)</h3>
+        <ul class="tight"><li>CVE record state PUBLISHED (assigner hackerone, data version 5.2). [CVE.state]</li><li>Most severe CVSS 3.1: 9.8 CRITICAL (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H) from nvd@nist.gov [NVD.cvss.1]</li><li>Weakness: CWE-787 [NVD.cwe]</li><li>Kev listed: false — Not in KEV catalogue 2026.10.08 (absence is not evidence of no exploitation). [KEV]</li><li>Public exploit claimed: true — 1 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. [CVE.ssvc]</li><li>CISA-ADP SSVC decision points: Exploitation=poc, Automatable=no, Technical Impact=total (assessed 2024-10-17T21:11:03.346985Z). [CVE.ssvc]</li><li>EPSS 0.7848 (percentile 0.9958) for 2026-10-10: estimated probability of exploitation activity being observed in the next 30 days. Not a difficulty or impact score. [EPSS]</li><li>ops-ubuntu-02: curl 8.3.0 → affected [NVD.cpe] (matched by NVD haxx:libcurl)</li><li>dev-laptop-17: curl 8.3.0 → affected [NVD.cpe] (matched by NVD haxx:libcurl)</li></ul>
+        <h3>Why this priority</h3>
+        <ol class="tight"><li>Base P2: exploitation signal elevated (public exploit claimed, EPSS ≥ 0.10, or validated AI difficulty=low).</li><li>Asset context missing (internet exposure/criticality not supplied) → unchanged, provisional.</li><li>dev-laptop-17: context missing (internet_facing, criticality); not assumed.</li></ol>
+        <h3>Action supported by the evidence</h3>
+        <ul class="tight"><li>Upgrade curl 8.3.0 on ops-ubuntu-02 to a fixed release (sources indicate fixed at/after 8.4.0) [NVD.ref.1, NVD.ref.2].</li><li>Upgrade curl 8.3.0 on dev-laptop-17 to a fixed release (sources indicate fixed at/after 8.4.0) [NVD.ref.1, NVD.ref.2].</li></ul>
+      </div>
+      <div>
+        <h3>What remains uncertain</h3>
+        <ul class="tight"><li>Exploited in wild: unknown — No positive evidence of in-the-wild exploitation in the sources checked. This is not proof that exploitation has not occurred. [KEV, CVE.ssvc]</li><li>Conflict (cvss_disagreement): Sources disagree on CVSS 3.1 base score: ADP:CISA-ADP 8.8; nvd@nist.gov 9.8; 134c704f-9b21-4f2e-91b3-4a467353bcc0 8.8. Rules use the most severe value; verify against the vendor advisory. [CVE.cvss.1, NVD.cvss.1, NVD.cvss.2]</li><li>Conflict (stale_signal): SSVC Exploitation=poc was assessed 2024-10-17 (&gt; 180 days ago) and may no longer reflect current activity. [CVE.ssvc]</li><li>Offline demo uses a trimmed KEV fixture; absence was verified against the full catalogue at capture time only.</li><li>Exploit-development difficulty from public evidence is inherently limited: the absence of public research does not mean exploitation is hard.</li></ul>
+        <h3>What would change the recommendation</h3>
+        <ul class="tight"><li>If exploitation in the wild is reported (e.g. KEV listing) → P1</li><li>If the affected asset is internet-facing or high-criticality → P1</li><li>Resolving the listed source conflicts could change the inputs above.</li></ul>
+      </div>
+    </div>
+
+    <div class="ai">
+      <div class="tag">AI-assisted assessment · judgement, not fact</div>
+      <p class="meta">Status <b>not_configured</b> — not_configured: no scripted example for CVE-2023-38545</p>
+    </div>
+
+    <h3>Applicability to inventory</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Asset</th><th>Software</th><th>Status</th><th>Reasons</th></tr></thead>
+      <tbody>
+      <tr><td>ops-ubuntu-02</td><td>curl 8.3.0</td><td class="st-affected">affected</td>
+          <td><ul class="tight"><li>[affected] NVD haxx:libcurl: in range ≥7.69.0 &lt;8.4.0</li></ul></td></tr>
+      <tr><td>dev-laptop-17</td><td>curl 8.3.0</td><td class="st-affected">affected</td>
+          <td><ul class="tight"><li>[affected] NVD haxx:libcurl: in range ≥7.69.0 &lt;8.4.0</li></ul></td></tr>
+      </tbody></table></div>
+
+    <details>
+      <summary><b>Evidence (14 items) and source status</b></summary>
+      <p class="meta">Sources: cve_org=<b>ok</b>; nvd=<b>ok</b>; cisa_kev=<b>ok</b>; first_epss=<b>ok</b></p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>ID</th><th>Source</th><th>Summary</th><th>Retrieved</th><th>Published / updated</th></tr></thead>
+        <tbody>
+        <tr id="CVE-2023-38545-CVE.state">
+          <td class="num">CVE.state</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2023-38545" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CVE record state PUBLISHED (assigner hackerone, data version 5.2).</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">2023-10-18 / 2026-07-14</td>
+        </tr>
+        <tr id="CVE-2023-38545-CVE.desc">
+          <td class="num">CVE.desc</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2023-38545" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA description of the vulnerability (verbatim, untrusted text).</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">2023-10-18 / 2026-07-14</td>
+        </tr>
+        <tr id="CVE-2023-38545-CVE.affected.1">
+          <td class="num">CVE.affected.1</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2023-38545" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA:hackerone lists affected product &#39;curl / curl&#39; with 2 version statement(s); default status unspecified.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2023-38545-CVE.cvss.1">
+          <td class="num">CVE.cvss.1</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2023-38545" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CVSS 3.1 base score 8.8 (HIGH) from ADP:CISA-ADP [adp]</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2023-38545-CVE.ssvc">
+          <td class="num">CVE.ssvc</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2023-38545" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CISA-ADP SSVC decision points: Exploitation=poc, Automatable=no, Technical Impact=total (assessed 2024-10-17T21:11:03.346985Z).</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / 2024-10-17</td>
+        </tr>
+        <tr id="CVE-2023-38545-NVD.status">
+          <td class="num">NVD.status</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-38545" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD analysis status: Modified (last modified 2026-06-17T06:10:41.627).</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">2023-10-18 / 2026-06-17</td>
+        </tr>
+        <tr id="CVE-2023-38545-NVD.cvss.1">
+          <td class="num">NVD.cvss.1</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-38545" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>CVSS 3.1 base score 9.8 (CRITICAL) from nvd@nist.gov [Primary]</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2023-38545-NVD.cvss.2">
+          <td class="num">NVD.cvss.2</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-38545" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>CVSS 3.1 base score 8.8 (HIGH) from 134c704f-9b21-4f2e-91b3-4a467353bcc0 [Secondary]</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2023-38545-NVD.cwe">
+          <td class="num">NVD.cwe</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-38545" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD weakness classification: CWE-787</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2023-38545-NVD.cpe">
+          <td class="num">NVD.cpe</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-38545" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD lists 14 vulnerable CPE match criteria.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / 2026-06-17</td>
+        </tr>
+        <tr id="CVE-2023-38545-NVD.ref.1">
+          <td class="num">NVD.ref.1</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-38545" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged Patch, Third Party Advisory.<br><a href="https://curl.se/docs/CVE-2023-38545.html" rel="noopener noreferrer nofollow">https://curl.se/docs/CVE-2023-38545.html</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2023-38545-NVD.ref.2">
+          <td class="num">NVD.ref.2</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-38545" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged Patch, Third Party Advisory.<br><a href="https://www.secpod.com/blog/high-severity-heap-buffer-overflow-vulnerability/" rel="noopener noreferrer nofollow">https://www.secpod.com/blog/high-severity-heap-buffer-overflow-vulnerability/</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2023-38545-KEV">
+          <td class="num">KEV</td>
+          <td><a href="https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json" rel="noopener noreferrer nofollow">cisa_kev</a> <span class="meta">(demo)</span></td>
+          <td>Not listed in CISA KEV catalogue version 2026.10.08. Absence does NOT show the vulnerability is unexploited — only that CISA has not added it.</td>
+          <td class="num">2026-10-10 21:14</td>
+          <td class="num">2026-10-08 / -</td>
+        </tr>
+        <tr id="CVE-2023-38545-EPSS">
+          <td class="num">EPSS</td>
+          <td><a href="https://api.first.org/data/v1/epss?cve=CVE-2023-38545" rel="noopener noreferrer nofollow">first_epss</a> <span class="meta">(demo)</span></td>
+          <td>EPSS 0.7848 (percentile 0.9958) for 2026-10-10: estimated probability of exploitation activity being observed in the next 30 days. Not a difficulty or impact score.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">2026-10-10 / -</td>
+        </tr>
+        </tbody></table></div>
+    </details>
+  </div>
+</details>
+<details class="cve" id="CVE-2022-22965" data-group="NEEDS_REVIEW" data-text="cve-2022-22965  web-portal-01 spring framework">
+  <summary>
+    <span class="cveid">CVE-2022-22965</span>
+    <span><span class="badge s-warning"><span aria-hidden="true">?</span>NEEDS_REVIEW · provisional</span></span>
+    <span class="headline">Needs version review (would be P1 if affected)</span>
+    <span class="factors">
+      <span>exploitation <b>confirmed</b></span>
+      <span>severity <b>critical</b></span>
+      <span>exposure <b>needs_review</b></span>
+      <span>CVSS-only baseline <b>P1</b></span>
+    </span>
+  </summary>
+  <div class="body">
+    <p class="desc"><b>Source description</b> (verbatim, untrusted) <span class="cite">[CVE.desc]</span><br>A Spring MVC or Spring WebFlux application running on JDK 9+ may be vulnerable to remote code execution (RCE) via data binding. The specific exploit requires the application to run on Tomcat as a WAR deployment. If the application is deployed as a Spring Boot executable jar, i.e. the default, it is not vulnerable to the exploit. However, the nature of the vulnerability is more general, and there may be other ways to exploit it.</p>
+    <div class="cols">
+      <div>
+        <h3>What is known (sourced facts)</h3>
+        <ul class="tight"><li>CVE record state PUBLISHED (assigner vmware, data version 5.1). [CVE.state]</li><li>Most severe CVSS 3.1: 9.8 CRITICAL (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H) from ADP:CISA-ADP [CVE.cvss.1]</li><li>Weakness: CWE-94 [CVE.cwe, NVD.cwe]</li><li>Kev listed: true — Listed in the CISA Known Exploited Vulnerabilities catalogue. [KEV]</li><li>Exploited in wild: true — Positive evidence of exploitation in the wild (KEV listing and/or CISA SSVC Exploitation=active). [KEV, CVE.ssvc]</li><li>Public exploit claimed: true — 2 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. [CVE.ssvc, NVD.ref.1]</li><li>CISA-ADP SSVC decision points: Exploitation=active, Automatable=yes, Technical Impact=total (assessed 2025-01-29T17:52:10.886552Z). [CVE.ssvc]</li><li>EPSS 0.9964 (percentile 0.9995) for 2026-10-10: estimated probability of exploitation activity being observed in the next 30 days. Not a difficulty or impact score. [EPSS]</li></ul>
+        <h3>Why this priority</h3>
+        <ol class="tight"><li>Base P1: exploitation confirmed (KEV and/or SSVC active).</li><li>Applicability ambiguous → NEEDS_REVIEW; would be P1 if confirmed affected.</li></ol>
+        <h3>Action supported by the evidence</h3>
+        <ul class="tight"><li>Confirm the exact build/version (and any platform condition) of Spring Framework 5.3.17 on web-portal-01, then re-run; see reasons [CVE.affected.1, NVD.cpe].</li><li>CISA KEV required action (quoted source text) [KEV]: Apply updates per vendor instructions.</li></ul>
+      </div>
+      <div>
+        <h3>What remains uncertain</h3>
+        <ul class="tight"><li>web-portal-01: Spring Framework 5.3.17 → needs_review [CVE.affected.1, NVD.cpe] — [ambiguous] CNA:vmware &#39;Spring Framework&#39;: name &#39;spring framework&#39;: version statement &#39;Spring Framework versions 5.3.X prior to 5.3.18+, 5.2.x prior to 5.2.20+ and all&#39; is not machine-comparable; [ambiguous] NVD vmware:spring_framework: in range ≥5.3.0 &lt;5.3.18; NVD applies this only in combination with cpe:2.3:a:oracle:jdk:*:*:*:*:*:*:*:* (AND configuration) — confirm that platform condition for this deployment</li></ul>
+        <h3>What would change the recommendation</h3>
+        <ul class="tight"><li>If the affected asset is internet-facing or high-criticality → P1</li><li>If the affected asset is internal and low/medium criticality → P1</li><li>If the deployed version is confirmed NOT affected → NOT_APPLICABLE</li></ul>
+      </div>
+    </div>
+
+    <div class="ai">
+      <div class="tag">AI-assisted assessment · judgement, not fact</div>
+      <p class="meta">Status <b>not_configured</b> — not_configured: no scripted example for CVE-2022-22965</p>
+    </div>
+
+    <h3>Applicability to inventory</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Asset</th><th>Software</th><th>Status</th><th>Reasons</th></tr></thead>
+      <tbody>
+      <tr><td>web-portal-01</td><td>Spring Framework 5.3.17</td><td class="st-needs_review">needs_review</td>
+          <td><ul class="tight"><li>[ambiguous] CNA:vmware &#39;Spring Framework&#39;: name &#39;spring framework&#39;: version statement &#39;Spring Framework versions 5.3.X prior to 5.3.18+, 5.2.x prior to 5.2.20+ and all&#39; is not machine-comparable</li><li>[ambiguous] NVD vmware:spring_framework: in range ≥5.3.0 &lt;5.3.18; NVD applies this only in combination with cpe:2.3:a:oracle:jdk:*:*:*:*:*:*:*:* (AND configuration) — confirm that platform condition for this deployment</li></ul></td></tr>
+      </tbody></table></div>
+
+    <details>
+      <summary><b>Evidence (18 items) and source status</b></summary>
+      <p class="meta">Sources: cve_org=<b>ok</b>; nvd=<b>ok</b>; cisa_kev=<b>ok</b>; first_epss=<b>ok</b></p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>ID</th><th>Source</th><th>Summary</th><th>Retrieved</th><th>Published / updated</th></tr></thead>
+        <tbody>
+        <tr id="CVE-2022-22965-CVE.state">
+          <td class="num">CVE.state</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2022-22965" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CVE record state PUBLISHED (assigner vmware, data version 5.1).</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">2022-04-01 / 2025-10-21</td>
+        </tr>
+        <tr id="CVE-2022-22965-CVE.desc">
+          <td class="num">CVE.desc</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2022-22965" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA description of the vulnerability (verbatim, untrusted text).</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">2022-04-01 / 2025-10-21</td>
+        </tr>
+        <tr id="CVE-2022-22965-CVE.cwe">
+          <td class="num">CVE.cwe</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2022-22965" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA weakness classification: CWE-94</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2022-22965-CVE.affected.1">
+          <td class="num">CVE.affected.1</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2022-22965" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA:vmware lists affected product &#39;n/a / Spring Framework&#39; with 1 version statement(s); default status unspecified.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2022-22965-CVE.cvss.1">
+          <td class="num">CVE.cvss.1</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2022-22965" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CVSS 3.1 base score 9.8 (CRITICAL) from ADP:CISA-ADP [adp]</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2022-22965-CVE.ssvc">
+          <td class="num">CVE.ssvc</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2022-22965" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CISA-ADP SSVC decision points: Exploitation=active, Automatable=yes, Technical Impact=total (assessed 2025-01-29T17:52:10.886552Z).</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / 2025-01-29</td>
+        </tr>
+        <tr id="CVE-2022-22965-NVD.status">
+          <td class="num">NVD.status</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2022-22965" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD analysis status: Analyzed (last modified 2026-06-17T04:29:15.610).</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">2022-04-01 / 2026-06-17</td>
+        </tr>
+        <tr id="CVE-2022-22965-NVD.cvss.1">
+          <td class="num">NVD.cvss.1</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2022-22965" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>CVSS 3.1 base score 9.8 (CRITICAL) from nvd@nist.gov [Primary]</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2022-22965-NVD.cvss.2">
+          <td class="num">NVD.cvss.2</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2022-22965" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>CVSS 3.1 base score 9.8 (CRITICAL) from 134c704f-9b21-4f2e-91b3-4a467353bcc0 [Secondary]</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2022-22965-NVD.cvss.3">
+          <td class="num">NVD.cvss.3</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2022-22965" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>CVSS 2.0 base score 7.5 (HIGH) from nvd@nist.gov [Primary]</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2022-22965-NVD.cwe">
+          <td class="num">NVD.cwe</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2022-22965" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD weakness classification: CWE-94</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2022-22965-NVD.cpe">
+          <td class="num">NVD.cpe</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2022-22965" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD lists 97 vulnerable CPE match criteria.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / 2026-06-17</td>
+        </tr>
+        <tr id="CVE-2022-22965-NVD.ref.1">
+          <td class="num">NVD.ref.1</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2022-22965" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged &#39;Exploit&#39; — indicates public exploit or PoC material may exist at this URL. Not verified, not downloaded; reliability unknown.<br><a href="http://packetstormsecurity.com/files/166713/Spring4Shell-Code-Execution.html" rel="noopener noreferrer nofollow">http://packetstormsecurity.com/files/166713/Spring4Shell-Code-Execution.html</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2022-22965-NVD.ref.2">
+          <td class="num">NVD.ref.2</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2022-22965" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged Patch, Third Party Advisory.<br><a href="https://cert-portal.siemens.com/productcert/pdf/ssa-254054.pdf" rel="noopener noreferrer nofollow">https://cert-portal.siemens.com/productcert/pdf/ssa-254054.pdf</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2022-22965-NVD.ref.3">
+          <td class="num">NVD.ref.3</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2022-22965" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged Mitigation, Vendor Advisory.<br><a href="https://tanzu.vmware.com/security/cve-2022-22965" rel="noopener noreferrer nofollow">https://tanzu.vmware.com/security/cve-2022-22965</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2022-22965-NVD.ref.4">
+          <td class="num">NVD.ref.4</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2022-22965" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged Patch, Third Party Advisory.<br><a href="https://www.oracle.com/security-alerts/cpujul2022.html" rel="noopener noreferrer nofollow">https://www.oracle.com/security-alerts/cpujul2022.html</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2022-22965-KEV">
+          <td class="num">KEV</td>
+          <td><a href="https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json" rel="noopener noreferrer nofollow">cisa_kev</a> <span class="meta">(demo)</span></td>
+          <td>Listed in CISA KEV (added 2022-04-04; known ransomware use: Unknown; federal due date 2022-04-25).</td>
+          <td class="num">2026-10-10 21:14</td>
+          <td class="num">2022-04-04 / -</td>
+        </tr>
+        <tr id="CVE-2022-22965-EPSS">
+          <td class="num">EPSS</td>
+          <td><a href="https://api.first.org/data/v1/epss?cve=CVE-2022-22965" rel="noopener noreferrer nofollow">first_epss</a> <span class="meta">(demo)</span></td>
+          <td>EPSS 0.9964 (percentile 0.9995) for 2026-10-10: estimated probability of exploitation activity being observed in the next 30 days. Not a difficulty or impact score.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">2026-10-10 / -</td>
+        </tr>
+        </tbody></table></div>
+    </details>
+  </div>
+</details>
+<details class="cve" id="CVE-2024-47176" data-group="P3" data-text="cve-2024-47176 cups-browsed binds to `inaddr_any:631`, trusting any packet from any source print-srv-01 cups-browsed">
+  <summary>
+    <span class="cveid">CVE-2024-47176</span>
+    <span><span class="badge s-neutral"><span aria-hidden="true">●</span>P3</span></span>
+    <span class="headline">P3: Scheduled remediation in normal maintenance</span>
+    <span class="factors">
+      <span>exploitation <b>elevated</b></span>
+      <span>severity <b>medium</b></span>
+      <span>exposure <b>reduced</b></span>
+      <span>CVSS-only baseline <b>P3</b></span>
+<span class="flag">⚠ 1 source conflict</span>    </span>
+  </summary>
+  <div class="body">
+    <p class="desc"><b>Source description</b> (verbatim, untrusted) <span class="cite">[CVE.desc]</span><br>cups-browsed binds to `INADDR_ANY:631`, trusting any packet from any source — CUPS is a standards-based, open-source printing system, and `cups-browsed` contains network printing functionality including, but not limited to, auto-discovering print services and shared printers. `cups-browsed` binds to `INADDR_ANY:631`, causing it to trust any packet from any source, and can cause the `Get-Printer-Attributes` IPP request to an attacker controlled URL. When combined with other vulnerabilities, such as CVE-2024-47076, CVE-2024-47175, and CVE-2024-47177, an attacker can execute arbitrary commands remotely on the target machine without authentication when a malicious printer is printed to.</p>
+    <div class="cols">
+      <div>
+        <h3>What is known (sourced facts)</h3>
+        <ul class="tight"><li>CVE record state PUBLISHED (assigner GitHub_M, data version 5.2). [CVE.state]</li><li>Most severe CVSS 3.1: 5.3 MEDIUM (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N) from CNA:GitHub_M [CVE.cvss.1]</li><li>Weakness: CWE-1327 [CVE.cwe, NVD.cwe]</li><li>Kev listed: false — Not in KEV catalogue 2026.10.08 (absence is not evidence of no exploitation). [KEV]</li><li>Public exploit claimed: true — 3 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. [CVE.ssvc, NVD.ref.1, NVD.ref.2]</li><li>CISA-ADP SSVC decision points: Exploitation=poc, Automatable=no, Technical Impact=partial (assessed 2024-09-27T18:10:15.456578Z). [CVE.ssvc]</li><li>EPSS 0.5060 (percentile 0.9889) for 2026-10-10: estimated probability of exploitation activity being observed in the next 30 days. Not a difficulty or impact score. [EPSS]</li><li>print-srv-01: cups-browsed 2.0.1 → affected [CVE.affected.1] (matched by CNA:GitHub_M &#39;cups-browsed&#39;)</li></ul>
+        <h3>Why this priority</h3>
+        <ol class="tight"><li>Base P2: exploitation signal elevated (public exploit claimed, EPSS ≥ 0.10, or validated AI difficulty=low).</li><li>Exposure reduced by a documented compensating control → P3.</li><li>print-srv-01: compensating control (reduces_reachability): Host firewall drops inbound traffic to port 631 except from the warehouse printer VLAN — operator-supplied, not verified by this tool.</li></ol>
+        <h3>Action supported by the evidence</h3>
+        <ul class="tight"><li>Upgrade cups-browsed 2.0.1 on print-srv-01 per the vendor advisory [NVD.ref.3].</li><li>Verify the claimed control on print-srv-01 is in place until patched: Host firewall drops inbound traffic to port 631 except from the warehouse printer VLAN.</li></ul>
+      </div>
+      <div>
+        <h3>What remains uncertain</h3>
+        <ul class="tight"><li>Exploited in wild: unknown — No positive evidence of in-the-wild exploitation in the sources checked. This is not proof that exploitation has not occurred. [KEV, CVE.ssvc]</li><li>Conflict (stale_signal): SSVC Exploitation=poc was assessed 2024-09-27 (&gt; 180 days ago) and may no longer reflect current activity. [CVE.ssvc]</li><li>Offline demo uses a trimmed KEV fixture; absence was verified against the full catalogue at capture time only.</li><li>Open question (scripted demo example): The bundle does not describe the other chained CVEs, so the difficulty of the full chain cannot be assessed from this evidence.</li><li>Exploit-development difficulty from public evidence is inherently limited: the absence of public research does not mean exploitation is hard.</li></ul>
+        <h3>What would change the recommendation</h3>
+        <ul class="tight"><li>If exploitation in the wild is reported (e.g. KEV listing) → P2</li><li>Resolving the listed source conflicts could change the inputs above.</li></ul>
+      </div>
+    </div>
+
+    <div class="ai">
+      <div class="tag">AI-assisted assessment · judgement, not fact</div>
+<div class="scripted">SCRIPTED EXAMPLE — hand-written by the project author for the offline demo. Not produced by a language model.</div>      <p class="meta">Provider <b>scripted</b>, model <b>scripted-example</b> · claims with valid citation IDs: <b>7/7</b> (cited IDs exist, but whether the source actually says what the claim says is NOT checked) · qualitative ratings; no calibrated probability implied.</p>
+      <div class="cols">
+        <div>
+          <h3>Exploit-development difficulty: <code>insufficient_evidence</code></h3>
+          <ul class="tight">
+<li><i>Prerequisite (fact):</i> cups-browsed listens on port 631 on all interfaces and trusts packets from any source. <span class="cite">[CVE.desc]</span></li><li><i>Prerequisite (fact):</i> Code execution is described only when chained with other CVEs and when a user prints to the attacker&#39;s printer. <span class="cite">[CVE.desc]</span></li><li><i>Complexity (inference):</i> On its own this CVE is scored as integrity-low with no confidentiality or availability impact; the severe outcome depends on the chain. <span class="cite">[CVE.cvss.1, CVE.desc]</span></li><li><i>Research (fact):</i> NVD tags a researcher write-up and the vendor advisory as exploit references. <span class="cite">[NVD.ref.1, NVD.ref.2]</span></li>          </ul>
+        </div>
+        <div>
+          <h3>Existing-exploit usability: <code>public_exploit_claimed</code></h3>
+          <ul class="tight">
+<li><i>Exploit evidence (fact):</i> CISA SSVC records Exploitation=poc and Automatable=no. <span class="cite">[CVE.ssvc]</span></li><li><i>Reliability limit (inference):</i> Full impact requires user interaction (printing to a malicious printer), which limits automated exploitation. <span class="cite">[CVE.desc, CVE.ssvc]</span></li><li><i>Required access (fact):</i> Network access to port 631 on the target; no authentication. <span class="cite">[CVE.desc, CVE.cvss.1]</span></li>          </ul>
+        </div>
+      </div>
+<p class="meta"><i>Scripted summary (uncited free text):</i> Network-reachable cups-browsed accepts attacker-supplied printer data; serious impact requires chaining and a user print action.</p>    </div>
+
+    <h3>Applicability to inventory</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Asset</th><th>Software</th><th>Status</th><th>Reasons</th></tr></thead>
+      <tbody>
+      <tr><td>print-srv-01</td><td>cups-browsed 2.0.1</td><td class="st-affected">affected</td>
+          <td><ul class="tight"><li>[affected] CNA:GitHub_M &#39;cups-browsed&#39;: name &#39;cups browsed&#39;: matches free-text constraint &#39;&lt;= 2.0.1&#39; (parsed as &lt;= 2.0.1)</li></ul></td></tr>
+      </tbody></table></div>
+
+    <details>
+      <summary><b>Evidence (16 items) and source status</b></summary>
+      <p class="meta">Sources: cve_org=<b>ok</b>; nvd=<b>ok</b>; cisa_kev=<b>ok</b>; first_epss=<b>ok</b></p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>ID</th><th>Source</th><th>Summary</th><th>Retrieved</th><th>Published / updated</th></tr></thead>
+        <tbody>
+        <tr id="CVE-2024-47176-CVE.state">
+          <td class="num">CVE.state</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-47176" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CVE record state PUBLISHED (assigner GitHub_M, data version 5.2).</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">2024-09-26 / 2025-11-04</td>
+        </tr>
+        <tr id="CVE-2024-47176-CVE.desc">
+          <td class="num">CVE.desc</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-47176" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA description of the vulnerability (verbatim, untrusted text).</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">2024-09-26 / 2025-11-04</td>
+        </tr>
+        <tr id="CVE-2024-47176-CVE.cwe">
+          <td class="num">CVE.cwe</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-47176" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA weakness classification: CWE-1327</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-47176-CVE.cvss.1">
+          <td class="num">CVE.cvss.1</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-47176" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CVSS 3.1 base score 5.3 (MEDIUM) from CNA:GitHub_M [cna]</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-47176-CVE.affected.1">
+          <td class="num">CVE.affected.1</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-47176" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA:GitHub_M lists affected product &#39;OpenPrinting / cups-browsed&#39; with 1 version statement(s); default status unspecified.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-47176-CVE.ssvc">
+          <td class="num">CVE.ssvc</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-47176" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CISA-ADP SSVC decision points: Exploitation=poc, Automatable=no, Technical Impact=partial (assessed 2024-09-27T18:10:15.456578Z).</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / 2024-09-27</td>
+        </tr>
+        <tr id="CVE-2024-47176-CVE.affected.2">
+          <td class="num">CVE.affected.2</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-47176" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>ADP:CISA-ADP lists affected product &#39;openprinting / cups&#39; with 1 version statement(s); default status unknown.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-47176-NVD.status">
+          <td class="num">NVD.status</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-47176" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD analysis status: Modified (last modified 2026-06-17T07:56:40.690).</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">2024-09-26 / 2026-06-17</td>
+        </tr>
+        <tr id="CVE-2024-47176-NVD.cvss.1">
+          <td class="num">NVD.cvss.1</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-47176" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>CVSS 3.1 base score 5.3 (MEDIUM) from security-advisories@github.com [Secondary]</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-47176-NVD.cwe">
+          <td class="num">NVD.cwe</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-47176" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD weakness classification: CWE-1327</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-47176-NVD.cpe">
+          <td class="num">NVD.cpe</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-47176" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD lists 1 vulnerable CPE match criteria.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / 2026-06-17</td>
+        </tr>
+        <tr id="CVE-2024-47176-NVD.ref.1">
+          <td class="num">NVD.ref.1</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-47176" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged &#39;Exploit&#39; — indicates public exploit or PoC material may exist at this URL. Not verified, not downloaded; reliability unknown.<br><a href="https://github.com/OpenPrinting/cups-browsed/security/advisories/GHSA-rj88-6mr5-rcw8" rel="noopener noreferrer nofollow">https://github.com/OpenPrinting/cups-browsed/security/advisories/GHSA-rj88-6mr5-rcw8</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-47176-NVD.ref.2">
+          <td class="num">NVD.ref.2</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-47176" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged &#39;Exploit&#39; — indicates public exploit or PoC material may exist at this URL. Not verified, not downloaded; reliability unknown.<br><a href="https://www.evilsocket.net/2024/09/26/Attacking-UNIX-systems-via-CUPS-Part-I" rel="noopener noreferrer nofollow">https://www.evilsocket.net/2024/09/26/Attacking-UNIX-systems-via-CUPS-Part-I</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-47176-NVD.ref.3">
+          <td class="num">NVD.ref.3</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-47176" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged Patch.<br><a href="https://github.com/OpenPrinting/cups-browsed/commit/1debe6b140c37e0aa928559add4abcc95ce54aa2" rel="noopener noreferrer nofollow">https://github.com/OpenPrinting/cups-browsed/commit/1debe6b140c37e0aa928559add4abcc95ce54aa2</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-47176-KEV">
+          <td class="num">KEV</td>
+          <td><a href="https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json" rel="noopener noreferrer nofollow">cisa_kev</a> <span class="meta">(demo)</span></td>
+          <td>Not listed in CISA KEV catalogue version 2026.10.08. Absence does NOT show the vulnerability is unexploited — only that CISA has not added it.</td>
+          <td class="num">2026-10-10 21:14</td>
+          <td class="num">2026-10-08 / -</td>
+        </tr>
+        <tr id="CVE-2024-47176-EPSS">
+          <td class="num">EPSS</td>
+          <td><a href="https://api.first.org/data/v1/epss?cve=CVE-2024-47176" rel="noopener noreferrer nofollow">first_epss</a> <span class="meta">(demo)</span></td>
+          <td>EPSS 0.5060 (percentile 0.9889) for 2026-10-10: estimated probability of exploitation activity being observed in the next 30 days. Not a difficulty or impact score.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">2026-10-10 / -</td>
+        </tr>
+        </tbody></table></div>
+    </details>
+  </div>
+</details>
+<details class="cve" id="CVE-2024-3094" data-group="OTHER" data-text="cve-2024-3094 xz: malicious code in distributed source ops-ubuntu-02 xz">
+  <summary>
+    <span class="cveid">CVE-2024-3094</span>
+    <span><span class="badge s-good"><span aria-hidden="true">✓</span>NOT_APPLICABLE</span></span>
+    <span class="headline">Not applicable to the supplied inventory</span>
+    <span class="factors">
+      <span>exploitation <b>elevated</b></span>
+      <span>severity <b>critical</b></span>
+      <span>exposure <b>not_affected</b></span>
+      <span>CVSS-only baseline <b>P1</b></span>
+<span class="flag">⚠ 1 source conflict</span>    </span>
+  </summary>
+  <div class="body">
+    <p class="desc"><b>Source description</b> (verbatim, untrusted) <span class="cite">[CVE.desc]</span><br>Xz: malicious code in distributed source — Malicious code was discovered in the upstream tarballs of xz, starting with version 5.6.0. 
+Through a series of complex obfuscations, the liblzma build process extracts a prebuilt object file from a disguised test file existing in the source code, which is then used to modify specific functions in the liblzma code. This results in a modified liblzma library that can be used by any software linked against this library, intercepting and modifying the data interaction with this library.</p>
+    <div class="cols">
+      <div>
+        <h3>What is known (sourced facts)</h3>
+        <ul class="tight"><li>CVE record state PUBLISHED (assigner redhat, data version 5.2). [CVE.state]</li><li>Most severe CVSS 3.1: 10.0 CRITICAL (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H) from CNA:redhat [CVE.cvss.1]</li><li>Weakness: CWE-506 [CVE.cwe, NVD.cwe]</li><li>Kev listed: false — Not in KEV catalogue 2026.10.08 (absence is not evidence of no exploitation). [KEV]</li><li>CISA-ADP SSVC decision points: Exploitation=none, Automatable=yes, Technical Impact=total (assessed 2024-04-02T04:00:23.138684Z). [CVE.ssvc]</li><li>EPSS 0.8597 (percentile 0.9973) for 2026-10-10: estimated probability of exploitation activity being observed in the next 30 days. Not a difficulty or impact score. [EPSS]</li><li>ops-ubuntu-02: xz 5.4.6 → not_affected [CVE.affected.1, NVD.cpe]</li></ul>
+        <h3>Why this priority</h3>
+        <ol class="tight"><li>Base P2: exploitation signal elevated (public exploit claimed, EPSS ≥ 0.10, or validated AI difficulty=low).</li><li>All matching inventory items are not affected → no priority.</li></ol>
+        <h3>Action supported by the evidence</h3>
+        <ul class="tight"><li>No action for the listed assets. Keep the inventory accurate; re-assess if versions change.</li></ul>
+      </div>
+      <div>
+        <h3>What remains uncertain</h3>
+        <ul class="tight"><li>Exploited in wild: unknown — No positive evidence of in-the-wild exploitation in the sources checked. This is not proof that exploitation has not occurred. [KEV, CVE.ssvc]</li><li>Public exploit claimed: unknown — No exploit-tagged references or SSVC PoC signal found. Exploit databases were not searched.</li><li>Conflict (stale_signal): SSVC Exploitation=none was assessed 2024-04-02 (&gt; 180 days ago) and may no longer reflect current activity. [CVE.ssvc]</li><li>Offline demo uses a trimmed KEV fixture; absence was verified against the full catalogue at capture time only.</li><li>Exploit-development difficulty from public evidence is inherently limited: the absence of public research does not mean exploitation is hard.</li></ul>
+        <h3>What would change the recommendation</h3>
+        <ul class="tight"><li>Resolving the listed source conflicts could change the inputs above.</li></ul>
+      </div>
+    </div>
+
+    <div class="ai">
+      <div class="tag">AI-assisted assessment · judgement, not fact</div>
+      <p class="meta">Status <b>not_configured</b> — not_configured: no scripted example for CVE-2024-3094</p>
+    </div>
+
+    <h3>Applicability to inventory</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Asset</th><th>Software</th><th>Status</th><th>Reasons</th></tr></thead>
+      <tbody>
+      <tr><td>ops-ubuntu-02</td><td>xz 5.4.6</td><td class="st-not_affected">not_affected</td>
+          <td><ul class="tight"><li>[not_affected] CNA:redhat &#39;xz&#39;: name &#39;xz&#39;: version not listed; source default status is &#39;unaffected&#39;</li><li>[not_affected] NVD tukaani:xz: version 5.4.6 outside all 2 NVD ranges</li></ul></td></tr>
+      </tbody></table></div>
+
+    <details>
+      <summary><b>Evidence (24 items) and source status</b></summary>
+      <p class="meta">Sources: cve_org=<b>ok</b>; nvd=<b>ok</b>; cisa_kev=<b>ok</b>; first_epss=<b>ok</b></p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>ID</th><th>Source</th><th>Summary</th><th>Retrieved</th><th>Published / updated</th></tr></thead>
+        <tbody>
+        <tr id="CVE-2024-3094-CVE.state">
+          <td class="num">CVE.state</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-3094" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CVE record state PUBLISHED (assigner redhat, data version 5.2).</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">2024-03-29 / 2026-08-04</td>
+        </tr>
+        <tr id="CVE-2024-3094-CVE.desc">
+          <td class="num">CVE.desc</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-3094" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA description of the vulnerability (verbatim, untrusted text).</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">2024-03-29 / 2026-08-04</td>
+        </tr>
+        <tr id="CVE-2024-3094-CVE.cwe">
+          <td class="num">CVE.cwe</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-3094" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA weakness classification: CWE-506</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-3094-CVE.cvss.1">
+          <td class="num">CVE.cvss.1</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-3094" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CVSS 3.1 base score 10 (CRITICAL) from CNA:redhat [cna]</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-3094-CVE.affected.1">
+          <td class="num">CVE.affected.1</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-3094" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA:redhat lists affected product &#39;- / xz&#39; with 2 version statement(s); default status unaffected.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-3094-CVE.affected.2">
+          <td class="num">CVE.affected.2</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-3094" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA:redhat lists affected product &#39;Red Hat / Red Hat Enterprise Linux 10&#39; with 0 version statement(s); default status unaffected.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-3094-CVE.affected.3">
+          <td class="num">CVE.affected.3</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-3094" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA:redhat lists affected product &#39;Red Hat / Red Hat Enterprise Linux 6&#39; with 0 version statement(s); default status unaffected.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-3094-CVE.affected.4">
+          <td class="num">CVE.affected.4</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-3094" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA:redhat lists affected product &#39;Red Hat / Red Hat Enterprise Linux 7&#39; with 0 version statement(s); default status unaffected.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-3094-CVE.affected.5">
+          <td class="num">CVE.affected.5</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-3094" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA:redhat lists affected product &#39;Red Hat / Red Hat Enterprise Linux 8&#39; with 0 version statement(s); default status unaffected.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-3094-CVE.affected.6">
+          <td class="num">CVE.affected.6</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-3094" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA:redhat lists affected product &#39;Red Hat / Red Hat Enterprise Linux 9&#39; with 0 version statement(s); default status unaffected.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-3094-CVE.affected.7">
+          <td class="num">CVE.affected.7</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-3094" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CNA:redhat lists affected product &#39;Red Hat / Red Hat JBoss Enterprise Application Platform 8&#39; with 0 version statement(s); default status unaffected.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-3094-CVE.ssvc">
+          <td class="num">CVE.ssvc</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2024-3094" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CISA-ADP SSVC decision points: Exploitation=none, Automatable=yes, Technical Impact=total (assessed 2024-04-02T04:00:23.138684Z).</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / 2024-04-02</td>
+        </tr>
+        <tr id="CVE-2024-3094-NVD.status">
+          <td class="num">NVD.status</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-3094" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD analysis status: Modified (last modified 2026-06-17T07:43:17.830).</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">2024-03-29 / 2026-06-17</td>
+        </tr>
+        <tr id="CVE-2024-3094-NVD.cvss.1">
+          <td class="num">NVD.cvss.1</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-3094" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>CVSS 3.1 base score 10.0 (CRITICAL) from secalert@redhat.com [Secondary]</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-3094-NVD.cvss.2">
+          <td class="num">NVD.cvss.2</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-3094" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>CVSS 3.1 base score 10.0 (CRITICAL) from nvd@nist.gov [Primary]</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-3094-NVD.cwe">
+          <td class="num">NVD.cwe</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-3094" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD weakness classification: CWE-506</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-3094-NVD.cpe">
+          <td class="num">NVD.cpe</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-3094" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD lists 2 vulnerable CPE match criteria.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / 2026-06-17</td>
+        </tr>
+        <tr id="CVE-2024-3094-NVD.ref.1">
+          <td class="num">NVD.ref.1</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-3094" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged Vendor Advisory.<br><a href="https://access.redhat.com/security/cve/CVE-2024-3094" rel="noopener noreferrer nofollow">https://access.redhat.com/security/cve/CVE-2024-3094</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-3094-NVD.ref.2">
+          <td class="num">NVD.ref.2</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-3094" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged Issue Tracking, Vendor Advisory.<br><a href="https://bugzilla.redhat.com/show_bug.cgi?id=2272210" rel="noopener noreferrer nofollow">https://bugzilla.redhat.com/show_bug.cgi?id=2272210</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-3094-NVD.ref.3">
+          <td class="num">NVD.ref.3</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-3094" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged Vendor Advisory.<br><a href="https://www.redhat.com/en/blog/urgent-security-alert-fedora-41-and-rawhide-users" rel="noopener noreferrer nofollow">https://www.redhat.com/en/blog/urgent-security-alert-fedora-41-and-rawhide-users</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-3094-NVD.ref.4">
+          <td class="num">NVD.ref.4</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-3094" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged Mailing List, Vendor Advisory.<br><a href="https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1068024" rel="noopener noreferrer nofollow">https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1068024</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-3094-NVD.ref.5">
+          <td class="num">NVD.ref.5</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-3094" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD reference tagged Issue Tracking, Vendor Advisory.<br><a href="https://tukaani.org/xz-backdoor/" rel="noopener noreferrer nofollow">https://tukaani.org/xz-backdoor/</a></td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        <tr id="CVE-2024-3094-KEV">
+          <td class="num">KEV</td>
+          <td><a href="https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json" rel="noopener noreferrer nofollow">cisa_kev</a> <span class="meta">(demo)</span></td>
+          <td>Not listed in CISA KEV catalogue version 2026.10.08. Absence does NOT show the vulnerability is unexploited — only that CISA has not added it.</td>
+          <td class="num">2026-10-10 21:14</td>
+          <td class="num">2026-10-08 / -</td>
+        </tr>
+        <tr id="CVE-2024-3094-EPSS">
+          <td class="num">EPSS</td>
+          <td><a href="https://api.first.org/data/v1/epss?cve=CVE-2024-3094" rel="noopener noreferrer nofollow">first_epss</a> <span class="meta">(demo)</span></td>
+          <td>EPSS 0.8597 (percentile 0.9973) for 2026-10-10: estimated probability of exploitation activity being observed in the next 30 days. Not a difficulty or impact score.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">2026-10-10 / -</td>
+        </tr>
+        </tbody></table></div>
+    </details>
+  </div>
+</details>
+<details class="cve" id="CVE-2026-11415" data-group="OTHER" data-text="cve-2026-11415   ">
+  <summary>
+    <span class="cveid">CVE-2026-11415</span>
+    <span><span class="badge s-muted"><span aria-hidden="true">✕</span>NO_ACTION_REJECTED</span></span>
+    <span class="headline">Rejected CVE — no remediation needed</span>
+    <span class="factors">
+      <span>exploitation <b>n/a</b></span>
+      <span>severity <b>n/a</b></span>
+      <span>exposure <b>n/a</b></span>
+      <span>CVSS-only baseline <b>N/A</b></span>
+    </span>
+  </summary>
+  <div class="body">
+    <div class="cols">
+      <div>
+        <h3>What is known (sourced facts)</h3>
+        <ul class="tight"><li>CVE record state REJECTED (assigner VulnCheck, data version 5.2). [CVE.state]</li><li>Rejection reason (source text): This CVE ID has been rejected or withdrawn by its CVE Numbering Authority. [CVE.rejected]</li></ul>
+        <h3>Why this priority</h3>
+        <ol class="tight"><li>Record is REJECTED → no remediation priority.</li></ol>
+        <h3>Action supported by the evidence</h3>
+        <ul class="tight"><li>No remediation: the CVE record is rejected. Remove it from tracking and check whether the issue was re-assigned under another CVE ID [CVE.rejected].</li></ul>
+      </div>
+      <div>
+        <h3>What remains uncertain</h3>
+        <ul class="tight"><li>Nothing flagged.</li></ul>
+        <h3>What would change the recommendation</h3>
+        <ul class="tight"><li>No single input change identified.</li></ul>
+      </div>
+    </div>
+
+    <div class="ai">
+      <div class="tag">AI-assisted assessment · judgement, not fact</div>
+      <p class="meta">Status <b>skipped</b> — Not run: record is rejected.</p>
+    </div>
+
+
+    <details>
+      <summary><b>Evidence (3 items) and source status</b></summary>
+      <p class="meta">Sources: cve_org=<b>ok</b>; nvd=<b>ok</b>; cisa_kev=<b>ok</b>; first_epss=<b>not_found</b></p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>ID</th><th>Source</th><th>Summary</th><th>Retrieved</th><th>Published / updated</th></tr></thead>
+        <tbody>
+        <tr id="CVE-2026-11415-CVE.state">
+          <td class="num">CVE.state</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2026-11415" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CVE record state REJECTED (assigner VulnCheck, data version 5.2).</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / 2026-09-29</td>
+        </tr>
+        <tr id="CVE-2026-11415-CVE.rejected">
+          <td class="num">CVE.rejected</td>
+          <td><a href="https://cveawg.mitre.org/api/cve/CVE-2026-11415" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>Record is REJECTED by its CNA.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / 2026-09-29</td>
+        </tr>
+        <tr id="CVE-2026-11415-NVD.status">
+          <td class="num">NVD.status</td>
+          <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-11415" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
+          <td>NVD analysis status: Rejected (last modified 2026-09-29T20:17:18.983).</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">2026-09-29 / 2026-09-29</td>
+        </tr>
+        </tbody></table></div>
+    </details>
+  </div>
+</details>
+<details class="cve" id="CVE-2026-99001" data-group="OTHER" data-text="cve-2026-99001   ">
+  <summary>
+    <span class="cveid">CVE-2026-99001</span>
+    <span><span class="badge s-muted"><span aria-hidden="true">∅</span>INVALID_OR_UNPUBLISHED</span></span>
+    <span class="headline">No published record — cannot assess</span>
+    <span class="factors">
+      <span>exploitation <b>n/a</b></span>
+      <span>severity <b>n/a</b></span>
+      <span>exposure <b>n/a</b></span>
+      <span>CVSS-only baseline <b>N/A</b></span>
+    </span>
+  </summary>
+  <div class="body">
+    <div class="cols">
+      <div>
+        <h3>What is known (sourced facts)</h3>
+        <ul class="tight"><li>CVE ID is RESERVED: assigned but no public record has been published. [CVE.state]</li></ul>
+        <h3>Why this priority</h3>
+        <ol class="tight"><li>Record is reserved → nothing to assess.</li></ol>
+        <h3>Action supported by the evidence</h3>
+        <ul class="tight"><li>Verify the CVE ID. A reserved ID has no public details yet; re-check later [CVE.state].</li></ul>
+      </div>
+      <div>
+        <h3>What remains uncertain</h3>
+        <ul class="tight"><li>Nothing flagged.</li></ul>
+        <h3>What would change the recommendation</h3>
+        <ul class="tight"><li>No single input change identified.</li></ul>
+      </div>
+    </div>
+
+    <div class="ai">
+      <div class="tag">AI-assisted assessment · judgement, not fact</div>
+      <p class="meta">Status <b>skipped</b> — Not run: record is reserved.</p>
+    </div>
+
+
+    <details>
+      <summary><b>Evidence (1 items) and source status</b></summary>
+      <p class="meta">Sources: cve_org=<b>not_found</b> (no published record; ID endpoint returned HTTP 200); nvd=<b>not_found</b>; cisa_kev=<b>ok</b>; first_epss=<b>not_found</b></p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>ID</th><th>Source</th><th>Summary</th><th>Retrieved</th><th>Published / updated</th></tr></thead>
+        <tbody>
+        <tr id="CVE-2026-99001-CVE.state">
+          <td class="num">CVE.state</td>
+          <td><a href="https://cveawg.mitre.org/api/cve-id/CVE-2026-99001" rel="noopener noreferrer nofollow">cve_org</a> <span class="meta">(demo)</span></td>
+          <td>CVE ID is RESERVED: assigned but no public record has been published.</td>
+          <td class="num">2026-10-10 21:13</td>
+          <td class="num">- / -</td>
+        </tr>
+        </tbody></table></div>
+    </details>
+  </div>
+</details>
+</section>
+
+<footer>
+  <p>Priorities come from documented deterministic rules (docs/PRIORITIZATION.md). AI output is validated against cited evidence and can only raise exploitation from “low_observed” to “elevated”. Passing tests do not establish that every security judgement is correct; review before acting.</p>
+</footer>
+</main>
+<script>
+(function () {
+  var q = document.getElementById("q"), items = document.querySelectorAll("details.cve"), tiles = document.querySelectorAll(".tile");
+  var active = null;
+  function apply() {
+    var term = (q.value || "").toLowerCase().trim();
+    items.forEach(function (el) {
+      var ok = (!active || el.dataset.group === active) && (!term || el.dataset.text.indexOf(term) !== -1);
+      el.classList.toggle("hidden", !ok);
+    });
+  }
+  tiles.forEach(function (t) {
+    t.addEventListener("click", function () {
+      active = active === t.dataset.filter ? null : t.dataset.filter;
+      tiles.forEach(function (x) { x.setAttribute("aria-pressed", String(x.dataset.filter === active)); });
+      apply();
+    });
+  });
+  q.addEventListener("input", apply);
+  document.getElementById("reset").addEventListener("click", function () { active = null; q.value = ""; tiles.forEach(function (x) { x.setAttribute("aria-pressed", "false"); }); apply(); });
+  document.getElementById("expand").addEventListener("click", function () { var open = this.textContent === "Expand all"; items.forEach(function (el) { el.open = open; }); this.textContent = open ? "Collapse all" : "Expand all"; });
+})();
+</script>
+</body>
+</html>

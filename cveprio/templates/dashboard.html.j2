@@ -186,7 +186,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
       {% if r.llm.scripted %}<div class="scripted">SCRIPTED EXAMPLE — hand-written by the project author for the offline demo. Not produced by a language model.</div>{% endif %}
       {% set a = r.llm.assessment %}
       {% if r.llm.status == "ok" and a %}
-      <p class="meta">Provider <b>{{ r.llm.provider }}</b>, model <b>{{ r.llm.model }}</b> · claims kept after citation validation: <b>{{ r.llm.supported_claims }}/{{ r.llm.total_claims }}</b> · qualitative ratings; no calibrated probability implied.</p>
+      <p class="meta">Provider <b>{{ r.llm.provider }}</b>, model <b>{{ r.llm.model }}</b> · claims with valid citation IDs: <b>{{ r.llm.supported_claims }}/{{ r.llm.total_claims }}</b> (cited IDs exist, but whether the source actually says what the claim says is NOT checked) · qualitative ratings; no calibrated probability implied.</p>
       <div class="cols">
         <div>
           <h3>Exploit-development difficulty: <code>{{ a.exploit_development_difficulty.rating }}</code></h3>

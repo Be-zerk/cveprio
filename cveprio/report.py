@@ -156,8 +156,8 @@ def _render_llm(llm: LlmAnalysis) -> list[str]:
     if llm.status != LlmStatus.OK or not llm.assessment:
         return [*out, f"Status: `{llm.status.value}` — {llm.detail or ''}", ""]
     a = llm.assessment
-    out += [f"Provider `{llm.provider}`, model `{llm.model}`. Claims kept after citation validation: "
-            f"{llm.supported_claims}/{llm.total_claims}. Ratings are qualitative; no calibrated probability "
+    out += [f"Provider `{llm.provider}`, model `{llm.model}`. Claims with valid citation IDs: "
+            f"{llm.supported_claims}/{llm.total_claims} (cited IDs exist, but whether the source actually says what the claim says is NOT checked). Ratings are qualitative; no calibrated probability "
             "is implied.", ""]
     d, u = a.exploit_development_difficulty, a.existing_exploit_usability
     out.append(f"**Exploit-development difficulty:** `{d.rating}`")

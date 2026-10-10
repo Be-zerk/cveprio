@@ -28,7 +28,11 @@ them is at the end of this file.
 - `ruff check cveprio tests`: clean. `mypy cveprio`: clean.
 - `cveprio demo`: completes offline, exit code 0.
 - Live end-to-end: `cveprio analyze CVE-2024-3400 CVE-2023-4966 --inventory examples/inventory.json` → exit 0, all sources `ok`.
-- `cveprio evaluate` (deterministic) and `cveprio evaluate --llm ollama` (qwen2.5:3b, local) — results in `evaluation/results/`.
+- `cveprio evaluate` (deterministic): rules 13/14 within reference set vs baseline 6/14.
+- `cveprio evaluate --llm ollama` (qwen2.5:3b, local, ~30 min): 7/7 valid outputs, 88/93 claims with
+  valid citation IDs, but usability matched the facts 0/6 and the model did not notice the
+  injection probe; priority unchanged by the model. A manual read found well-cited false claims.
+  An earlier run was discarded because Ollama silently truncated prompts.
 
 ## Not tested / blockers
 
@@ -43,6 +47,10 @@ them is at the end of this file.
 - Git: the repository is initialised but **nothing has been committed** (no commit was requested).
 
 ## Known issues / limitations
+
+- **Highest-priority improvement:** check that cited evidence actually supports each AI claim
+  (faithfulness), not just that the ID exists. Then retest with a stronger model and a
+  revised prompt on the same evaluation.
 
 See README "Limitations". The most important: the evaluation set is small and not held
 out; the rules under-rank a supply-chain backdoor without KEV listing; distro package
@@ -75,7 +83,7 @@ resolve `needs_review` for package versions; NVD CPE-based CVE discovery from an
 | AC8 exact identity + unambiguous version | yes | applicability tests (log4j, xz, OpenSSH upstream) |
 | AC9 ambiguity → review | yes | distro version, fuzzy name, AND config, malformed range, disagreement tests |
 | AC10 schema-invalid output → status | yes | `test_unparseable_output…`, `test_schema_violation_rejected` |
-| AC11 citations validated | yes | `test_unsupported_and_fabricated_citations_removed` |
+| AC11 citations validated | partly — IDs verified to exist; claim faithfulness not verified | `test_unsupported_and_fabricated_citations_removed` |
 | AC12 injection handled structurally | yes | `test_injected_text_is_escaped…`, `test_priority_invariant_even_when_detector_misses`, eval probe |
 | AC13 inventory not sent to model | yes | `test_inventory_and_context_never_sent_to_model` |
 | AC14 no confidence-as-probability | yes | schema has no numeric fields; `test_assessment_schema_has_no_numeric_confidence` |

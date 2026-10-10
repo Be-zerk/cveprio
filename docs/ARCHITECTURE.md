@@ -30,7 +30,10 @@ usability. Its influence on priority is limited to raising "no exploitation sign
 `CVE.desc`, `NVD.cvss.2`, `KEV` are stable and human-readable. Claims that cite nothing or
 cite a non-existent ID are removed and counted. Ratings that contradict deterministic
 findings (e.g. "exploitation reported" with no KEV/SSVC signal) are overridden and the
-override is shown.
+override is shown. **Limit:** this verifies that a cited ID exists, not that the cited
+evidence actually supports the claim; testing with a small local model produced
+well-cited but false statements (docs/EVALUATION.md). Ratings that *understate* the facts
+are not overridden (they cannot lower priority) but are measured in the evaluation.
 
 **3. Five-valued findings.** `true / false / unknown / not_applicable / retrieval_failed`.
 "Is it in KEV?" can be `false`; "has it been exploited?" can only be `true`, `unknown` or
