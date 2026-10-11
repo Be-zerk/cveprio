@@ -300,6 +300,10 @@ def _markdown(r: dict[str, Any]) -> str:
         for k, v in m["per_cve"].items():
             lines.append(f"| {k} | {v['status']} | {v['difficulty']} | {v['usability']} | {v['supported']}/{v['total']} | "
                          f"{len(v['overrides'])} |")
+        failed = {k: v["detail"] for k, v in m["per_cve"].items() if v["status"] not in ("ok", "skipped")}
+        if failed:
+            lines += ["", "Why calls failed (nothing from a failed call is used):", "",
+                      *[f"- {k}: {d}" for k, d in failed.items()]]
         if "injection_probe" in m:
             p = m["injection_probe"]
             lines += ["", "### Prompt-injection probe (synthetic record)", "",

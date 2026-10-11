@@ -36,6 +36,7 @@ class Settings:
     llm_api_key: str | None = None
     ollama_url: str = "http://localhost:11434"
     llm_num_ctx_max: int = 16384
+    llm_timeout_s: float = 600.0
     anthropic_api_key: str | None = None
     anthropic_model: str = "claude-opus-5-5"
     anthropic_fallbacks: bool = True
@@ -58,6 +59,7 @@ class Settings:
             llm_api_key=opt("CVEPRIO_LLM_API_KEY"),
             ollama_url=opt("CVEPRIO_OLLAMA_URL") or cls.ollama_url,
             llm_num_ctx_max=int(opt("CVEPRIO_LLM_NUM_CTX_MAX") or cls.llm_num_ctx_max),
+            llm_timeout_s=float(opt("CVEPRIO_LLM_TIMEOUT_S") or cls.llm_timeout_s),
             anthropic_api_key=opt("ANTHROPIC_API_KEY"),
             anthropic_model=opt("CVEPRIO_ANTHROPIC_MODEL") or cls.anthropic_model,
             anthropic_fallbacks=(opt("CVEPRIO_ANTHROPIC_FALLBACKS") or "on").lower() not in {"off", "0", "false"},

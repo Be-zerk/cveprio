@@ -221,9 +221,11 @@ def make_provider(settings: Settings, name: str | None = None, scripted_root: Pa
     if choice == "none":
         return NoProvider()
     if choice == "openai_compatible":
-        return OpenAICompatibleProvider(settings.llm_base_url, settings.llm_model, settings.llm_api_key)
+        return OpenAICompatibleProvider(settings.llm_base_url, settings.llm_model, settings.llm_api_key,
+                                        timeout_s=settings.llm_timeout_s)
     if choice == "ollama":
-        return OllamaProvider(settings.ollama_url, settings.llm_model, settings.llm_num_ctx_max)
+        return OllamaProvider(settings.ollama_url, settings.llm_model, settings.llm_num_ctx_max,
+                              timeout_s=settings.llm_timeout_s)
     if choice == "anthropic":
         return AnthropicProvider(settings.anthropic_api_key, settings.anthropic_model, settings.anthropic_fallbacks)
     if choice == "scripted":
