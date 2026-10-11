@@ -176,6 +176,15 @@ def known_and_uncertain(bundle: EvidenceBundle, results: list[ApplicabilityResul
         rej = bundle.get("CVE.rejected")
         if rej and rej.excerpt:
             known.append(item("Reason given for rejection", f"(source text) {rej.excerpt}", [rej.id]))
+        if bundle.record_state in (RecordState.RESERVED, RecordState.NOT_FOUND):
+            unc.append(item("Nothing about this flaw is known yet",
+                            "No details are public, so the affected products, severity and attack activity are all "
+                            "unknown. This is not a sign that your systems are safe; check again after publication.",
+                            [st.id] if st else []))
+        elif bundle.record_state == RecordState.UNKNOWN:
+            unc.append(item("The CVE record could not be loaded",
+                            "No source returned it, so nothing about this CVE was checked: not whether it affects "
+                            "you, how severe it is, or whether it is being attacked. Run the analysis again.", []))
         return known, unc
 
     if bundle.primary_cvss:
@@ -240,7 +249,8 @@ def known_and_uncertain(bundle: EvidenceBundle, results: list[ApplicabilityResul
         qs = (llm.assessment.exploit_development_difficulty.open_questions
               + llm.assessment.existing_exploit_usability.open_questions)
         who = "scripted demo example" if llm.scripted else "raised by the AI assessment"
-        unc.extend(item(f"Open question: {_shorten(q)}", f"{q} (Source: {who}; not verified.)") for q in qs[:6])
+        tag = "Scripted AI example asks" if llm.scripted else "AI asks"
+        unc.extend(item(f"{tag}: {_shorten(q)}", f"{q} (Source: {who}; not verified.)") for q in qs[:6])
     elif llm.status != LlmStatus.NOT_CONFIGURED:
         unc.append(item("AI assessment unavailable", f"{llm.status.value}: {llm.detail}"))
     if bundle.record_state == RecordState.PUBLISHED and bundle.findings.get("exploited_in_wild") and \
@@ -404,7 +414,7 @@ def render_cve_markdown(r: CveReport) -> str:
     plain = {"P1": "Fix now", "P2": "Fix in the next patch cycle", "P3": "Schedule a fix", "P4": "Low priority",
              "NEEDS_REVIEW": "Needs review", "NOT_APPLICABLE": "Not affected — no action needed",
              "NOT_IN_INVENTORY": "Not installed — no action needed", "NO_ACTION_REJECTED": "Cancelled CVE — no action needed",
-             "INVALID_OR_UNPUBLISHED": "No public details yet", "RETRIEVAL_FAILED": "Data could not be loaded"}
+             "INVALID_OR_UNPUBLISHED": "Not published yet — check again later", "RETRIEVAL_FAILED": "Data could not be loaded"}
     decision = plain.get(d.label, d.label) + (f" ({d.priority})" if d.priority and d.label == d.priority else "")
     if d.label == "NEEDS_REVIEW" and d.priority:
         decision += f" (would be {d.priority} if affected)"

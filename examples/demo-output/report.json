@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-10-11T22:13:20.044621Z",
+  "generated_at": "2026-10-11T22:55:35.013717Z",
   "tool_version": "0.2.0",
   "mode": "offline_demo",
   "organization": "Northbeam Logistics (fictional)",
@@ -8,7 +8,7 @@
   "reports": [
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T22:13:19.854867Z",
+      "generated_at": "2026-10-11T22:55:34.789945Z",
       "tool_version": "0.2.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2021-44228",
@@ -6407,7 +6407,7 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T22:13:19.982727Z",
+      "generated_at": "2026-10-11T22:55:34.934026Z",
       "tool_version": "0.2.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2023-44487",
@@ -12526,7 +12526,7 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T22:13:20.020335Z",
+      "generated_at": "2026-10-11T22:55:34.980477Z",
       "tool_version": "0.2.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2024-6387",
@@ -15640,8 +15640,8 @@
         "Known to be exploited by attackers: Unknown \u2014 No positive evidence of in-the-wild exploitation in the sources checked. This is not proof that exploitation has not occurred. [KEV, CVE.ssvc]",
         "Some evidence may be out of date \u2014 SSVC Exploitation=poc was assessed 2024-07-02 (> 180 days ago) and may no longer reflect current activity. [CVE.ssvc]",
         "Demo data: the attacked-flaws list (KEV) is a reduced copy \u2014 Offline demo uses a trimmed KEV fixture; absence was verified against the full catalogue at capture time only.",
-        "Open question: Which builds and architectures do the public PoCs target, and how\u2026 \u2014 Which builds and architectures do the public PoCs target, and how many attempts do they need? (Source: scripted demo example; not verified.)",
-        "Open question: Has in-the-wild exploitation been reported since the SSVC assessment\u2026 \u2014 Has in-the-wild exploitation been reported since the SSVC assessment date? (Source: scripted demo example; not verified.)",
+        "Scripted AI example asks: Which builds and architectures do the public PoCs target, and how\u2026 \u2014 Which builds and architectures do the public PoCs target, and how many attempts do they need? (Source: scripted demo example; not verified.)",
+        "Scripted AI example asks: Has in-the-wild exploitation been reported since the SSVC assessment\u2026 \u2014 Has in-the-wild exploitation been reported since the SSVC assessment date? (Source: scripted demo example; not verified.)",
         "Little public research doesn't mean it's hard to exploit \u2014 Exploit-development difficulty judged from public evidence is inherently limited: the absence of public research does not mean exploitation is hard."
       ],
       "context_supplied": true,
@@ -15653,7 +15653,7 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T22:13:20.028122Z",
+      "generated_at": "2026-10-11T22:55:34.990392Z",
       "tool_version": "0.2.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2023-38545",
@@ -16562,7 +16562,7 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T22:13:19.893319Z",
+      "generated_at": "2026-10-11T22:55:34.832164Z",
       "tool_version": "0.2.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2022-22965",
@@ -18703,7 +18703,7 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T22:13:20.033722Z",
+      "generated_at": "2026-10-11T22:55:34.998632Z",
       "tool_version": "0.2.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2024-47176",
@@ -19507,7 +19507,7 @@
         "Known to be exploited by attackers: Unknown \u2014 No positive evidence of in-the-wild exploitation in the sources checked. This is not proof that exploitation has not occurred. [KEV, CVE.ssvc]",
         "Some evidence may be out of date \u2014 SSVC Exploitation=poc was assessed 2024-09-27 (> 180 days ago) and may no longer reflect current activity. [CVE.ssvc]",
         "Demo data: the attacked-flaws list (KEV) is a reduced copy \u2014 Offline demo uses a trimmed KEV fixture; absence was verified against the full catalogue at capture time only.",
-        "Open question: The bundle does not describe the other chained CVEs, so the\u2026 \u2014 The bundle does not describe the other chained CVEs, so the difficulty of the full chain cannot be assessed from this evidence. (Source: scripted demo example; not verified.)",
+        "Scripted AI example asks: The bundle does not describe the other chained CVEs, so the\u2026 \u2014 The bundle does not describe the other chained CVEs, so the difficulty of the full chain cannot be assessed from this evidence. (Source: scripted demo example; not verified.)",
         "Little public research doesn't mean it's hard to exploit \u2014 Exploit-development difficulty judged from public evidence is inherently limited: the absence of public research does not mean exploitation is hard."
       ],
       "context_supplied": true,
@@ -19519,7 +19519,7 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T22:13:20.042945Z",
+      "generated_at": "2026-10-11T22:55:35.009757Z",
       "tool_version": "0.2.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2024-3094",
@@ -20489,7 +20489,7 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T22:13:20.043821Z",
+      "generated_at": "2026-10-11T22:55:35.011900Z",
       "tool_version": "0.2.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2026-11415",
@@ -20672,7 +20672,7 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T22:13:20.044559Z",
+      "generated_at": "2026-10-11T22:55:35.013658Z",
       "tool_version": "0.2.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2026-99001",
@@ -20802,7 +20802,9 @@
           "No priority: there are no public details \u2014 the CVE ID is reserved but not yet published."
         ],
         "baseline_label": "N/A",
-        "counterfactuals": [],
+        "counterfactuals": [
+          "The record is published with affected products and severity \u2192 it can then be assessed like any other CVE, at any priority"
+        ],
         "actions": [
           "Check the CVE ID and look again later \u2014 a reserved ID has no public details yet [CVE.state]."
         ]
@@ -20810,7 +20812,9 @@
       "known": [
         "CVE status: Reserved, no details published yet \u2014 CVE ID is RESERVED: assigned but no public record has been published. [CVE.state]"
       ],
-      "uncertain": [],
+      "uncertain": [
+        "Nothing about this flaw is known yet \u2014 No details are public, so the affected products, severity and attack activity are all unknown. This is not a sign that your systems are safe; check again after publication. [CVE.state]"
+      ],
       "context_supplied": true,
       "summary": [
         "This CVE number has been reserved, but no details have been published yet."

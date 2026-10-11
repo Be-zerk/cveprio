@@ -15,17 +15,29 @@ from pathlib import Path
 from jinja2 import Environment, PackageLoader, select_autoescape
 
 from cveprio.cvss import explain_vector, source_name
-from cveprio.models import ApplicabilityResult, CveReport, RunReport
+from cveprio.models import ApplicabilityResult, CveReport, RunReport, SourceStatus
 from cveprio.report import plain_reason
 
 STATUS = {
+    "UNKNOWN": ("warning", "?"), "OTHER": ("good", "✓"),
     "P1": ("critical", "▲"), "P2": ("serious", "◆"), "NEEDS_REVIEW": ("warning", "?"),
     "P3": ("neutral", "●"), "P4": ("muted", "○"), "NOT_APPLICABLE": ("good", "✓"),
     "NOT_IN_INVENTORY": ("good", "–"), "NO_ACTION_REJECTED": ("muted", "✕"),
     "INVALID_OR_UNPUBLISHED": ("muted", "∅"), "RETRIEVAL_FAILED": ("warning", "!"),
 }
 TILES = [("P1", "Fix now"), ("P2", "Fix in the next patch cycle"), ("NEEDS_REVIEW", "Needs review"),
-         ("P3", "Schedule a fix"), ("P4", "Low priority"), ("OTHER", "No action needed")]
+         ("P3", "Schedule a fix"), ("P4", "Low priority"), ("OTHER", "No action needed"),
+         ("UNKNOWN", "Cannot assess yet")]
+SOURCE_LABEL = {"cve_org": "CVE.org", "nvd": "NVD", "cisa_kev": "CISA KEV", "first_epss": "EPSS", "osv": "OSV.dev",
+                "ubuntu": "Ubuntu", "redhat": "Red Hat"}
+UNASSESSED = {"INVALID_OR_UNPUBLISHED", "RETRIEVAL_FAILED"}
+
+
+def group_of(label: str) -> str:
+    """Dashboard group: a priority, review, 'cannot assess yet' (no data) or 'no action needed' (checked)."""
+    if label in ("P1", "P2", "P3", "P4", "NEEDS_REVIEW"):
+        return label
+    return "UNKNOWN" if label in UNASSESSED else "OTHER"
 
 
 # Plain-English wording for readers who are not security specialists.
@@ -33,10 +45,10 @@ PLAIN_LABEL = {
     "P1": "Fix now", "P2": "Fix in the next patch cycle", "P3": "Schedule a fix", "P4": "Low priority",
     "NEEDS_REVIEW": "Check before deciding", "NOT_APPLICABLE": "Not affected — no action needed",
     "NOT_IN_INVENTORY": "Not installed here — no action needed", "NO_ACTION_REJECTED": "Cancelled CVE — no action needed",
-    "INVALID_OR_UNPUBLISHED": "No public details yet — nothing to do", "RETRIEVAL_FAILED": "Data could not be loaded — try again",
+    "INVALID_OR_UNPUBLISHED": "Not published yet — check again later", "RETRIEVAL_FAILED": "Data could not be loaded — try again",
 }
 BADGE = {"NEEDS_REVIEW": "Needs review", "NOT_APPLICABLE": "Not affected", "NOT_IN_INVENTORY": "Not installed",
-         "NO_ACTION_REJECTED": "Cancelled CVE", "INVALID_OR_UNPUBLISHED": "No details yet",
+         "NO_ACTION_REJECTED": "Cancelled CVE", "INVALID_OR_UNPUBLISHED": "Not published yet",
          "RETRIEVAL_FAILED": "Data missing"}
 AI_RATING = {
     "low": "Easy", "moderate": "Moderate", "high": "Hard", "insufficient_evidence": "Not enough evidence to say",
@@ -238,15 +250,17 @@ def render_dashboard(run: RunReport) -> str:
     env.filters["split_item"] = split_item
     env.filters["explain_vector"] = explain_vector
     env.filters["source_name"] = source_name
-    env.globals.update(plain_override=plain_override, AI_RATING=AI_RATING, APPLIES=APPLIES, plain_reason=plain_reason, display_name=display_name, BADGE=BADGE, factor_cards=factor_cards, compare_reason=compare_reason, compare_why=compare_why, PLAIN_LABEL=PLAIN_LABEL, PLAIN_FACTOR=PLAIN_FACTOR, SHORT_FACTOR=SHORT_FACTOR,
+    env.globals.update(plain_override=plain_override, AI_RATING=AI_RATING, APPLIES=APPLIES, plain_reason=plain_reason, display_name=display_name, BADGE=BADGE, factor_cards=factor_cards, compare_reason=compare_reason, compare_why=compare_why, PLAIN_LABEL=PLAIN_LABEL, group_of=group_of, PLAIN_FACTOR=PLAIN_FACTOR, SHORT_FACTOR=SHORT_FACTOR,
                        why_sentence=why_sentence)
-    counts = Counter(r.decision.label for r in run.reports)
-    tiles = [(k, label, counts.get(k, 0) if k != "OTHER" else
-              sum(v for lab, v in counts.items() if lab not in {"P1", "P2", "P3", "P4", "NEEDS_REVIEW"}))
-             for k, label in TILES]
+    groups = Counter(group_of(r.decision.label) for r in run.reports)
+    lookups = [(r.cve_id, s) for r in run.reports for s in r.bundle.sources if s.status != SourceStatus.SKIPPED]
+    src = {"total": len(lookups),
+           "bad": [(cid, SOURCE_LABEL.get(s.source.value, s.source.value), s.status.value.replace("_", " ")) for cid, s in lookups
+                   if s.status in (SourceStatus.FAILED, SourceStatus.RATE_LIMITED)]}
+    tiles = [(k, label, groups.get(k, 0)) for k, label in TILES]
     differs = [r for r in run.reports if r.decision.baseline_label != "N/A"
                and r.decision.label != r.decision.baseline_label]
-    return env.get_template("dashboard.html.j2").render(run=run, tiles=tiles, status=STATUS, differs=differs)
+    return env.get_template("dashboard.html.j2").render(run=run, tiles=tiles, status=STATUS, differs=differs, src=src)
 
 
 def write_dashboard(run: RunReport, path: Path) -> Path:

@@ -307,6 +307,11 @@ def _counterfactuals(x: RuleInputs, current: tuple[str, Priority | None], bundle
         if (label, p) != current:
             out.append(f"{desc} → {OUTCOME_WORDS.get(label, label)}" + (f" — {detail}" if detail else ""))
 
+    if x.record_state in (RecordState.RESERVED, RecordState.NOT_FOUND):
+        return ["The record is published with affected products and severity → it can then be assessed like any "
+                "other CVE, at any priority"]
+    if x.record_state == RecordState.UNKNOWN:
+        return ["The sources respond on a later run → a normal assessment, at any priority"]
     if x.record_state != RecordState.PUBLISHED:
         return out
     who = x.asset or "the affected system"

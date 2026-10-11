@@ -3,6 +3,18 @@
 Notable changes, newest first. The project is a portfolio prototype; version numbers mark
 milestones, not production releases.
 
+## Unreleased
+
+- Dashboard: reserved, not-found and unloadable CVEs are grouped as *Cannot assess yet* and list
+  what is unknown, instead of "no action needed / nothing to do". A summary line reports failed or
+  rate-limited source lookups. New colour-theme switch, visible keyboard focus, a short legend
+  separating priority, attack activity, severity and exposure, and AI-raised questions labelled
+  as such.
+- Configurable model timeout (`CVEPRIO_LLM_TIMEOUT_S`); evaluation reports why model calls failed.
+- Held-out set: first 4 of 20 cases labelled by the author; spreadsheet-tolerant `labels.csv` parsing.
+- The declared-protection rule (attacked flaw → P2, not lower) is explained in reports and docs.
+- README rebuilt around the demo, with real screenshots; setup and troubleshooting moved to `docs/USAGE.md`.
+
 ## 0.2.0 — 2026-10-11
 
 **More trustworthy AI output**

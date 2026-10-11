@@ -77,6 +77,9 @@ def test_degraded_run_is_visible_not_filled_in():
     assert any(s.status == SourceStatus.RATE_LIMITED for s in r.bundle.sources)
     assert any("Partial result" in u for u in r.uncertain)
     assert not any(e.source.value == "nvd" for e in r.bundle.evidence)  # nothing fabricated for NVD
+    from cveprio.dashboard import render_dashboard
+    html = render_dashboard(run(["CVE-2024-6387"], rt))
+    assert "source lookups failed or were rate-limited" in html and "NVD: rate limited" in html
 
 
 def test_cli_demo_writes_outputs_and_no_secrets(tmp_path, monkeypatch, capsys):
@@ -198,3 +201,30 @@ def test_dashboard_visible_text_has_no_rule_codes(demo_run):
                        r"not_in_inventory|evidence_incomplete|insufficient_evidence|public_exploit_claimed|"
                        r"NOT_APPLICABLE|NEEDS_REVIEW|NO_ACTION_REJECTED|INVALID_OR_UNPUBLISHED|offline_demo)\b", visible)
     assert not codes, sorted(set(codes))
+
+
+def test_missing_records_are_not_presented_as_safe(demo_run):
+    """Reserved / unloadable records: no priority, but never 'nothing uncertain' or 'no action needed'."""
+    from cveprio.dashboard import group_of, render_dashboard
+
+    class Down(FixtureFetcher):
+        demo = False
+
+        def get(self, url, **kw):
+            if "cveawg.mitre.org" in url or "nvd.nist.gov" in url:
+                raise FetchError("network", "down (simulated)")
+            return super().get(url, **kw)
+
+    rt = Runtime(fetcher=Down(DEFAULT_FIXTURES), provider=make_runtime(Settings(), offline=True).provider,
+                 settings=Settings(), offline=False)
+    failed = run(["CVE-2024-6387"], rt).reports[0]
+    reserved = next(r for r in demo_run.reports if r.bundle.record_state.value == "reserved")
+    rejected = next(r for r in demo_run.reports if r.bundle.record_state.value == "rejected")
+    for r, label in ((failed, "RETRIEVAL_FAILED"), (reserved, "INVALID_OR_UNPUBLISHED")):
+        assert r.decision.label == label and r.decision.priority is None
+        assert r.uncertain, f"{label}: missing data must be listed as uncertain"
+        assert r.decision.counterfactuals
+        assert group_of(label) == "UNKNOWN"
+    assert group_of(rejected.decision.label) == "OTHER"
+    html = render_dashboard(demo_run)
+    assert "Cannot assess yet" in html and "nothing to do" not in html.lower()
