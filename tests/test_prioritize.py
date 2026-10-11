@@ -147,3 +147,10 @@ def test_unscored_cvss_does_not_become_low():
     b = synthetic_bundle(record=cve5_record("CVE-1999-99001", cvss=None))
     d = prioritize(b, None, [], None)
     assert d.factors["severity"] == "unscored" and d.priority == "P3" and d.baseline_label == "UNSCORED"
+
+
+def test_protection_on_attacked_flaw_explains_why_p2_and_what_if_it_fails():
+    got, _, _, trace = decide(RuleInputs(P, "confirmed", "critical", "reduced"))
+    text = " ".join(trace)
+    assert got == "P2"
+    assert "still reach it" in text and "treat this as P1" in text

@@ -131,9 +131,15 @@ def decide(x: RuleInputs) -> tuple[str, Priority | None, bool, list[str]]:
                          "highest level.")
     elif x.exposure == "reduced":
         p = _step(base, +1, floor="P2" if x.exploitation == "confirmed" else "P4")
-        trace.append(f"Lowered to {p}: {x.exposure_why or 'a declared protection limits access'} — rule: a declared "
-                     "protection moves the priority down one step. The tool does not verify it, and known-attacked "
-                     "flaws never go below P2.")
+        why = x.exposure_why or "a declared protection limits access"
+        if x.exploitation == "confirmed":
+            trace.append(f"Lowered to {p}: {why} — rule: a protection that blocks the usual way in makes an emergency "
+                         "change less urgent, but attackers who get inside the network can still reach it, so a "
+                         "known-attacked flaw never goes below P2. The tool does not verify the protection; if it "
+                         f"does not hold, treat this as {base}.")
+        else:
+            trace.append(f"Lowered to {p}: {why} — rule: a declared protection moves the priority down one step. "
+                         "The tool does not verify it.")
     elif x.exposure == "standard":
         trace.append(f"Stays the same: {x.exposure_why or 'the affected systems are internal and not critical'} — "
                      "rule: internal systems of low or medium importance do not change the priority.")

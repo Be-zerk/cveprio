@@ -155,7 +155,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
 <main>
 <header>
   <h1>CVE prioritization · Northbeam Logistics (fictional)</h1>
-  <div class="meta">Generated 2026-10-11 17:46 UTC · <b>offline demo data</b> · 9 CVEs · cveprio 0.2.0</div>
+  <div class="meta">Generated 2026-10-11 22:13 UTC · <b>offline demo data</b> · 9 CVEs · cveprio 0.2.0</div>
   <div class="banner" role="note">⚠ OFFLINE DEMO DATA — recorded fixtures, not live results.
     <small>Source responses were recorded at the retrieval times shown in each evidence table and may be out of date. The inventory and business context are fictional.</small></div>
   <ul class="notices"><li>This product uses the NVD API but is not endorsed or certified by the NVD.</li><li>CVE records: CVE Program (cve.org). KEV: CISA Known Exploited Vulnerabilities catalogue (CC0). EPSS: FIRST.org Exploit Prediction Scoring System (https://www.first.org/epss).</li><li>When used: Ubuntu CVE tracker (ubuntu.com/security, Canonical) and Red Hat Security Data (access.redhat.com, CC BY 4.0, © Red Hat).</li></ul>
@@ -1754,7 +1754,7 @@ URL that curl has been told to operate with.</p>
     <section class="sec sec-why">
       <h3><span class="ico" aria-hidden="true">→</span>Why this priority</h3>
       <p class="hint">The rules that produced this decision, step by step.</p>
-      <ol class="items"><li><span class="bshort">Starts at P2: CISA says demo attack code exists</span><details class="bmore"><summary>details</summary><div class="bdetail">rule: a CISA proof-of-concept rating, a predicted chance of attacks of 10% or more, or a validated AI rating of &#39;easy to exploit&#39; each start at P2.</div></details></li><li><span class="bshort">Lowered to P3: print-srv-01 has a declared protection (Host firewall drops inbound traffic to port 631 except from the warehouse printer VLAN)</span><details class="bmore"><summary>details</summary><div class="bdetail">rule: a declared protection moves the priority down one step. The tool does not verify it, and known-attacked flaws never go below P2.</div></details></li></ol>
+      <ol class="items"><li><span class="bshort">Starts at P2: CISA says demo attack code exists</span><details class="bmore"><summary>details</summary><div class="bdetail">rule: a CISA proof-of-concept rating, a predicted chance of attacks of 10% or more, or a validated AI rating of &#39;easy to exploit&#39; each start at P2.</div></details></li><li><span class="bshort">Lowered to P3: print-srv-01 has a declared protection (Host firewall drops inbound traffic to port 631 except from the warehouse printer VLAN)</span><details class="bmore"><summary>details</summary><div class="bdetail">rule: a declared protection moves the priority down one step. The tool does not verify it.</div></details></li></ol>
     </section>
 
     <div class="cols">

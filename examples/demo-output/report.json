@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-10-11T17:46:45.470676Z",
+  "generated_at": "2026-10-11T22:13:20.044621Z",
   "tool_version": "0.2.0",
   "mode": "offline_demo",
   "organization": "Northbeam Logistics (fictional)",
@@ -8,7 +8,7 @@
   "reports": [
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T17:46:45.225910Z",
+      "generated_at": "2026-10-11T22:13:19.854867Z",
       "tool_version": "0.2.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2021-44228",
@@ -6407,7 +6407,7 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T17:46:45.394199Z",
+      "generated_at": "2026-10-11T22:13:19.982727Z",
       "tool_version": "0.2.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2023-44487",
@@ -12526,7 +12526,7 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T17:46:45.445651Z",
+      "generated_at": "2026-10-11T22:13:20.020335Z",
       "tool_version": "0.2.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2024-6387",
@@ -15653,7 +15653,7 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T17:46:45.451219Z",
+      "generated_at": "2026-10-11T22:13:20.028122Z",
       "tool_version": "0.2.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2023-38545",
@@ -16562,7 +16562,7 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T17:46:45.282165Z",
+      "generated_at": "2026-10-11T22:13:19.893319Z",
       "tool_version": "0.2.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2022-22965",
@@ -18703,7 +18703,7 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T17:46:45.457711Z",
+      "generated_at": "2026-10-11T22:13:20.033722Z",
       "tool_version": "0.2.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2024-47176",
@@ -19481,7 +19481,7 @@
         },
         "trace": [
           "Starts at P2: CISA says demo attack code exists \u2014 rule: a CISA proof-of-concept rating, a predicted chance of attacks of 10% or more, or a validated AI rating of 'easy to exploit' each start at P2.",
-          "Lowered to P3: print-srv-01 has a declared protection (Host firewall drops inbound traffic to port 631 except from the warehouse printer VLAN) \u2014 rule: a declared protection moves the priority down one step. The tool does not verify it, and known-attacked flaws never go below P2."
+          "Lowered to P3: print-srv-01 has a declared protection (Host firewall drops inbound traffic to port 631 except from the warehouse printer VLAN) \u2014 rule: a declared protection moves the priority down one step. The tool does not verify it."
         ],
         "baseline_label": "P3",
         "counterfactuals": [
@@ -19519,7 +19519,7 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T17:46:45.468467Z",
+      "generated_at": "2026-10-11T22:13:20.042945Z",
       "tool_version": "0.2.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2024-3094",
@@ -20489,7 +20489,7 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T17:46:45.469554Z",
+      "generated_at": "2026-10-11T22:13:20.043821Z",
       "tool_version": "0.2.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2026-11415",
@@ -20672,7 +20672,7 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T17:46:45.470592Z",
+      "generated_at": "2026-10-11T22:13:20.044559Z",
       "tool_version": "0.2.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2026-99001",
