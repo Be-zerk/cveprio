@@ -8,6 +8,7 @@ separate, labelled section and never mixed into "What is known".
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 from cveprio.cvss import cwe_name, cwe_short, source_name
@@ -15,6 +16,7 @@ from cveprio.models import (
     ApplicabilityResult,
     ApplicabilityStatus,
     CveReport,
+    Decision,
     EvidenceBundle,
     LlmAnalysis,
     LlmStatus,
@@ -168,6 +170,129 @@ def known_and_uncertain(bundle: EvidenceBundle, results: list[ApplicabilityResul
     return known, unc
 
 
+def _pct(p: float) -> str:
+    return ">99.9%" if p >= 0.9995 else "<0.1%" if p < 0.0005 else f"{p * 100:.1f}%"
+
+
+def _asset_context(r: ApplicabilityResult) -> str:
+    bits = []
+    if r.asset_internet_facing is True:
+        bits.append("internet-facing")
+    elif r.asset_internet_facing is False:
+        bits.append("internal")
+    if r.asset_criticality:
+        bits.append(f"{r.asset_criticality} importance")
+    if r.asset_internet_facing is None or r.asset_criticality is None:
+        missing = [w for w, v in (("internet exposure", r.asset_internet_facing), ("importance", r.asset_criticality))
+                   if v is None]
+        bits.append(" and ".join(missing) + " not recorded")
+    text = ", ".join(bits)
+    if r.asset_controls:
+        text += "; protected by: " + "; ".join(r.asset_controls) + " (not checked by this tool)"
+    return text
+
+
+def _list_assets(rs: list[ApplicabilityResult], limit: int = 3) -> str:
+    parts = [f"{r.asset_id} ({r.software.product} {r.software.version}) — {_asset_context(r)}" for r in rs[:limit]]
+    more = f"; and {len(rs) - limit} more" if len(rs) > limit else ""
+    return "; ".join(parts) + more
+
+
+def explain_decision(bundle: EvidenceBundle, results: list[ApplicabilityResult], decision: Decision,
+                     llm: LlmAnalysis | None = None) -> list[str]:
+    """1–3 plain sentences saying, for THIS CVE and YOUR systems, why the decision came out as it did."""
+    if bundle.record_state == RecordState.REJECTED:
+        return ["This CVE was cancelled (rejected) by the organisation that issued it, so there is nothing to fix."]
+    if bundle.record_state == RecordState.RESERVED:
+        return ["This CVE number has been reserved, but no details have been published yet."]
+    if bundle.record_state == RecordState.NOT_FOUND:
+        return ["No CVE record exists for this number. Check it for typos."]
+    if bundle.record_state != RecordState.PUBLISHED:
+        return ["The CVE record could not be loaded from any source, so no recommendation can be made."]
+
+    out: list[str] = []
+    e = decision.factors.get("exploitation")
+    kev = bundle.get("KEV")
+    epss = bundle.epss
+    claimed = bundle.findings.get("public_exploit_claimed")
+    n_refs = len([i for i in (claimed.evidence_ids if claimed else []) if ".ref" in i])
+    ssvc = bundle.ssvc
+    if e == "confirmed":
+        parts = []
+        if kev and kev.kind == "kev_entry":
+            parts.append(f"it is on CISA's list of actively attacked flaws (added {kev.fields.get('dateAdded')})")
+        if ssvc and ssvc.exploitation == "active":
+            parts.append("CISA rates exploitation as active")
+        out.append("Attackers are known to be using it: " + ", and ".join(parts) + ".")
+    elif e == "elevated":
+        parts = []
+        if ssvc and ssvc.exploitation in ("poc", "active"):
+            parts.append("CISA says demo attack code exists")
+        if n_refs:
+            parts.append(f"{n_refs} public source{'s' if n_refs != 1 else ''} point to attack code")
+        if epss and epss.probability >= 0.10:
+            parts.append(f"the predicted chance of attacks in the next 30 days is {_pct(epss.probability)}")
+        if not parts:
+            parts.append("the AI assessment rates it easy to exploit (cited and validated)")
+        out.append("Attacks are likely: " + "; ".join(parts) + ". No confirmed attacks are on record.")
+    elif e == "low_observed":
+        bits = ["it is not on CISA's attacked list", "no public attack code was found"]
+        if epss:
+            bits.append(f"the predicted chance of attacks in the next 30 days is {_pct(epss.probability)}")
+        out.append("No sign of attacks so far: " + "; ".join(bits) + ". This is not proof it is safe.")
+    elif e == "evidence_incomplete":
+        failed = [s.source.value for s in bundle.sources if s.status in (SourceStatus.FAILED, SourceStatus.RATE_LIMITED)]
+        out.append("Attack activity could not be checked because these sources failed: " + ", ".join(failed) + ".")
+
+    x = decision.factors.get("exposure")
+    affected = [r for r in results if r.status == ApplicabilityStatus.AFFECTED]
+    review = [r for r in results if r.status == ApplicabilityStatus.NEEDS_REVIEW]
+    not_aff = [r for r in results if r.status == ApplicabilityStatus.NOT_AFFECTED]
+    if affected:
+        out.append("It affects " + _list_assets(affected) + ".")
+    elif x == "needs_review" and review:
+        r = review[0]
+        others = f" {len(review) - 1} other system{'s' if len(review) > 2 else ''} also need a check." if len(review) > 1 else ""
+        out.append(f"It is unclear whether {r.asset_id}'s {r.software.product} {r.software.version} is affected: "
+                   f"{_review_reason(r)}{others}")
+    elif x == "not_affected" and not_aff:
+        names = ", ".join(f"{r.asset_id}'s {r.software.product} {r.software.version}" for r in not_aff[:3])
+        out.append(f"Your installed version is outside the affected versions: {names}.")
+    elif x == "not_in_inventory":
+        out.append("None of the software in your inventory matches this CVE's affected products.")
+    elif x == "not_assessed":
+        out.append("No software list was given, so it is unknown whether you run the affected product.")
+    if affected and review:
+        names = ", ".join(sorted({r.asset_id for r in review}))
+        out.append(f"Also check {names}: it may be affected too, but this could not be confirmed automatically.")
+    if x in ("not_affected", "not_in_inventory") and len(out) > 1:
+        attack = out.pop(0)
+        attack = (attack[0].lower() + attack[1:]).replace(": ", " — ", 1)
+        out.append("For reference (it does not change the decision): " + attack)
+    return out
+
+
+def _review_reason(r: ApplicabilityResult) -> str:
+    """Plain-language reason why a version check is needed."""
+    text = " ".join(r.reasons)
+    if "AND configuration" in text:
+        m = re.search(r"cpe:2\.3:\w:([^:]+):([^:]+)", text.split("combination with", 1)[-1])
+        words = f"{m.group(1)} {m.group(2)}".replace("_", " ").split() if m else []
+        other = " ".join(w.upper() if len(w) <= 3 else w.capitalize() for w in words) or "another product"
+        return (f"its version is in the affected range, but the flaw only applies together with {other}, "
+                "which your inventory does not record.")
+    if "backport" in text:
+        return ("it is a Linux distribution package; distributions often fix flaws without changing the version "
+                "number, so check the distribution's security advisory.")
+    if "similar" in text:
+        return "the name in your inventory only resembles the affected product, and the exact version is not known."
+    if "disagree" in text:
+        return "the data sources disagree about whether this version is affected."
+    if "malformed range" in text:
+        return "the source's list of affected versions contains an error, so it cannot be checked automatically."
+    return "the version information could not be compared automatically."
+
+
 # ------------------------------------------------------------------------- markdown
 
 
@@ -191,6 +316,7 @@ def render_cve_markdown(r: CveReport) -> str:
         f"**Factors:** exploitation = `{d.factors['exploitation']}`, severity = `{d.factors['severity']}`, "
         f"exposure = `{d.factors['exposure']}` · **Severity-only baseline:** `{d.baseline_label}`",
         "",
+        *([f"**In short:** {' '.join(r.summary)}", ""] if r.summary else []),
         "### What is known (sourced facts)", *[f"- {k}" for k in r.known], "",
         "### What remains uncertain", *([f"- {u}" for u in r.uncertain] or ["- Nothing flagged."]), "",
         "### Why this priority (rule trace)", *[f"{i}. {t}" for i, t in enumerate(d.trace, 1)], "",

@@ -139,3 +139,13 @@ def test_cvss_vector_explained_in_plain_words():
     assert got["Attack from"].startswith("the network") and got["Login / privileges needed"] == "none"
     assert dict(explain_vector("AV:N/AC:M/Au:N/C:P/I:P/A:P"))["Authentication needed"] == "none"  # CVSS v2
     assert explain_vector(None) == []
+
+
+def test_summary_is_specific_to_cve_and_systems(demo_run):
+    by_id = {r.cve_id: " ".join(r.summary) for r in demo_run.reports}
+    assert "2021-12-10" in by_id["CVE-2021-44228"] and "web-portal-01" in by_id["CVE-2021-44228"]
+    assert "internet-facing" in by_id["CVE-2021-44228"]
+    assert "Oracle JDK" in by_id["CVE-2022-22965"] and "cpe:2.3" not in by_id["CVE-2022-22965"]
+    assert by_id["CVE-2024-3094"].startswith("Your installed version is outside")  # not-affected leads
+    assert "not recorded" in by_id["CVE-2023-38545"]  # missing context named, not assumed
+    assert "cancelled" in by_id["CVE-2026-11415"]

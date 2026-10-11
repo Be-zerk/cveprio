@@ -6560,6 +6560,10 @@
         "Open question: What specific types of log messages or log message parameters are\u2026 \u2014 What specific types of log messages or log message parameters are known to be vulnerable and how can they be identified? (Source: raised by the AI assessment; not verified.)"
       ],
       "context_supplied": false,
+      "summary": [
+        "Attackers are known to be using it: it is on CISA's list of actively attacked flaws (added 2021-12-10), and CISA rates exploitation as active.",
+        "No software list was given, so it is unknown whether you run the affected product."
+      ],
       "discovered_by": []
     }
   ],

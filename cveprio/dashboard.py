@@ -83,6 +83,24 @@ def split_item(text: str) -> tuple[str, str, list[str]]:
     return short.strip(), detail.strip(), ids
 
 
+REASON_EXPLOIT = {"confirmed": "attackers are using it", "elevated": "attack code is public or attacks are likely",
+                  "low_observed": "there is no sign of attacks", "evidence_incomplete": "attack data is missing"}
+REASON_EXPOSURE = {"high": "it is on an exposed or critical system", "standard": "it is only on internal systems",
+                   "context_unknown": "details about the affected system are missing",
+                   "reduced": "a protection limits access to it", "needs_review": "it is unclear whether your version is affected",
+                   "not_affected": "your installed version is not affected",
+                   "not_in_inventory": "you don't run this software"}
+
+
+def compare_reason(factors: dict[str, str]) -> str:
+    """Plain 'because …' clause for the score-only comparison."""
+    x = factors.get("exposure", "")
+    if x in ("needs_review", "not_affected", "not_in_inventory"):
+        return REASON_EXPOSURE[x]
+    parts = [REASON_EXPLOIT.get(factors.get("exploitation", ""), ""), REASON_EXPOSURE.get(x, "")]
+    return " and ".join(p for p in parts if p)
+
+
 def why_sentence(factors: dict[str, str]) -> str:
     e, x = factors.get("exploitation", "n/a"), factors.get("exposure", "n/a")
     if e == "n/a":
@@ -102,7 +120,7 @@ def render_dashboard(run: RunReport) -> str:
     env.filters["split_item"] = split_item
     env.filters["explain_vector"] = explain_vector
     env.filters["source_name"] = source_name
-    env.globals.update(PLAIN_LABEL=PLAIN_LABEL, PLAIN_FACTOR=PLAIN_FACTOR, SHORT_FACTOR=SHORT_FACTOR,
+    env.globals.update(compare_reason=compare_reason, PLAIN_LABEL=PLAIN_LABEL, PLAIN_FACTOR=PLAIN_FACTOR, SHORT_FACTOR=SHORT_FACTOR,
                        why_sentence=why_sentence)
     counts = Counter(r.decision.label for r in run.reports)
     tiles = [(k, label, counts.get(k, 0) if k != "OTHER" else

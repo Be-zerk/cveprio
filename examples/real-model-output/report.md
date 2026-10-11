@@ -20,6 +20,8 @@ Generated 2026-10-10T22:16:50+00:00 · mode **offline_demo** · cveprio 0.1.0
 
 **Factors:** exploitation = `confirmed`, severity = `critical`, exposure = `not_assessed` · **Severity-only baseline:** `P1`
 
+**In short:** Attackers are known to be using it: it is on CISA's list of actively attacked flaws (added 2021-12-10), and CISA rates exploitation as active. No software list was given, so it is unknown whether you run the affected product.
+
 ### What is known (sourced facts)
 - CVE status: Published (active) — assigned by apache; published 2021-12-10; last updated 2025-10-21 [CVE.state]
 - Severity: 10.0 / 10 (Critical) — CVSS 3.1 score from CISA; 3 sources agree. Full breakdown in Severity score details. [CVE.cvss.1]

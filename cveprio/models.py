@@ -253,6 +253,10 @@ class ApplicabilityResult(BaseModel):
     reasons: list[str]
     evidence_ids: list[str] = Field(default_factory=list)
     fixed_version_hint: str | None = None
+    # Context of the asset, copied from the inventory so reports can explain exposure specifically.
+    asset_criticality: str | None = None
+    asset_internet_facing: bool | None = None
+    asset_controls: list[str] = Field(default_factory=list)
 
 
 # ---------------------------------------------------------------------- LLM output
@@ -351,6 +355,7 @@ class CveReport(BaseModel):
     known: list[str]
     uncertain: list[str]
     context_supplied: bool
+    summary: list[str] = Field(default_factory=list)  # 1–3 plain sentences specific to this CVE and your systems
     discovered_by: list[str] = Field(default_factory=list)  # empty = supplied by the user (watchlist/CLI)
 
 

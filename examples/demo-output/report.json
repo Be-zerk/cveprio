@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-10-11T02:06:40.446000Z",
+  "generated_at": "2026-10-11T02:19:50.792533Z",
   "tool_version": "0.1.0",
   "mode": "offline_demo",
   "organization": "Northbeam Logistics (fictional)",
@@ -8,7 +8,7 @@
   "reports": [
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T02:06:40.337932Z",
+      "generated_at": "2026-10-11T02:19:50.682224Z",
       "tool_version": "0.1.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2021-44228",
@@ -6234,7 +6234,10 @@
           "evidence_ids": [
             "NVD.cpe"
           ],
-          "fixed_version_hint": "2.15.0"
+          "fixed_version_hint": "2.15.0",
+          "asset_criticality": "high",
+          "asset_internet_facing": true,
+          "asset_controls": []
         },
         {
           "asset_id": "legacy-billing-03",
@@ -6256,7 +6259,10 @@
           "evidence_ids": [
             "CVE.affected.1"
           ],
-          "fixed_version_hint": null
+          "fixed_version_hint": null,
+          "asset_criticality": "critical",
+          "asset_internet_facing": false,
+          "asset_controls": []
         }
       ],
       "llm": {
@@ -6312,11 +6318,16 @@
         "legacy-billing-03: Log4j 2.x (bundled by appliance vendor) needs a manual version check \u2014 No exact product match; similar product names found (similarity does not establish that this deployment is affected):; CNA:apache: similar name: 'log4j' vs 'apache log4j2' [CVE.affected.1]"
       ],
       "context_supplied": true,
+      "summary": [
+        "Attackers are known to be using it: it is on CISA's list of actively attacked flaws (added 2021-12-10), and CISA rates exploitation as active.",
+        "It affects web-portal-01 (log4j-core 2.14.1) \u2014 internet-facing, high importance.",
+        "Also check legacy-billing-03: it may be affected too, but this could not be confirmed automatically."
+      ],
       "discovered_by": []
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T02:06:40.412257Z",
+      "generated_at": "2026-10-11T02:19:50.757516Z",
       "tool_version": "0.1.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2023-44487",
@@ -11374,7 +11385,10 @@
           "evidence_ids": [
             "NVD.cpe"
           ],
-          "fixed_version_hint": null
+          "fixed_version_hint": null,
+          "asset_criticality": "high",
+          "asset_internet_facing": true,
+          "asset_controls": []
         }
       ],
       "llm": {
@@ -11426,11 +11440,15 @@
       ],
       "uncertain": [],
       "context_supplied": true,
+      "summary": [
+        "Attackers are known to be using it: it is on CISA's list of actively attacked flaws (added 2023-10-10), and CISA rates exploitation as active.",
+        "It affects web-portal-01 (nginx 1.25.2) \u2014 internet-facing, high importance."
+      ],
       "discovered_by": []
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T02:06:40.433928Z",
+      "generated_at": "2026-10-11T02:19:50.780088Z",
       "tool_version": "0.1.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2024-6387",
@@ -14245,7 +14263,10 @@
             "CVE.affected.1",
             "NVD.cpe"
           ],
-          "fixed_version_hint": null
+          "fixed_version_hint": null,
+          "asset_criticality": "high",
+          "asset_internet_facing": true,
+          "asset_controls": []
         },
         {
           "asset_id": "ops-ubuntu-02",
@@ -14267,7 +14288,10 @@
           "evidence_ids": [
             "CVE.affected.1"
           ],
-          "fixed_version_hint": null
+          "fixed_version_hint": null,
+          "asset_criticality": "medium",
+          "asset_internet_facing": false,
+          "asset_controls": []
         }
       ],
       "llm": {
@@ -14418,11 +14442,16 @@
         "Little public research doesn't mean it's hard to exploit \u2014 Exploit-development difficulty judged from public evidence is inherently limited: the absence of public research does not mean exploitation is hard."
       ],
       "context_supplied": true,
+      "summary": [
+        "Attacks are likely: CISA says demo attack code exists; 9 public sources point to attack code; the predicted chance of attacks in the next 30 days is 99.5%. No confirmed attacks are on record.",
+        "It affects bastion-01 (OpenSSH 9.6p1) \u2014 internet-facing, high importance.",
+        "Also check ops-ubuntu-02: it may be affected too, but this could not be confirmed automatically."
+      ],
       "discovered_by": []
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T02:06:40.437324Z",
+      "generated_at": "2026-10-11T02:19:50.783563Z",
       "tool_version": "0.1.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2023-38545",
@@ -15152,7 +15181,10 @@
           "evidence_ids": [
             "NVD.cpe"
           ],
-          "fixed_version_hint": "8.4.0"
+          "fixed_version_hint": "8.4.0",
+          "asset_criticality": "medium",
+          "asset_internet_facing": false,
+          "asset_controls": []
         },
         {
           "asset_id": "dev-laptop-17",
@@ -15173,7 +15205,10 @@
           "evidence_ids": [
             "NVD.cpe"
           ],
-          "fixed_version_hint": "8.4.0"
+          "fixed_version_hint": "8.4.0",
+          "asset_criticality": null,
+          "asset_internet_facing": null,
+          "asset_controls": []
         }
       ],
       "llm": {
@@ -15233,11 +15268,15 @@
         "Little public research doesn't mean it's hard to exploit \u2014 Exploit-development difficulty judged from public evidence is inherently limited: the absence of public research does not mean exploitation is hard."
       ],
       "context_supplied": true,
+      "summary": [
+        "Attacks are likely: CISA says demo attack code exists; the predicted chance of attacks in the next 30 days is 78.5%. No confirmed attacks are on record.",
+        "It affects ops-ubuntu-02 (curl 8.3.0) \u2014 internal, medium importance; dev-laptop-17 (curl 8.3.0) \u2014 internet exposure and importance not recorded."
+      ],
       "discovered_by": []
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T02:06:40.359308Z",
+      "generated_at": "2026-10-11T02:19:50.703867Z",
       "tool_version": "0.1.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2022-22965",
@@ -17201,7 +17240,10 @@
             "CVE.affected.1",
             "NVD.cpe"
           ],
-          "fixed_version_hint": null
+          "fixed_version_hint": null,
+          "asset_criticality": "high",
+          "asset_internet_facing": true,
+          "asset_controls": []
         }
       ],
       "llm": {
@@ -17254,11 +17296,15 @@
         "web-portal-01: Spring Framework 5.3.17 needs a manual version check \u2014 CNA:vmware 'Spring Framework': name 'spring framework': version statement 'Spring Framework versions 5.3.X prior to 5.3.18+, 5.2.x prior to 5.2.20+ and all' is not machine-comparable; NVD vmware:spring_framework: in range \u22655.3.0 <5.3.18; NVD applies this only in combination with cpe:2.3:a:oracle:jdk:*:*:*:*:*:*:*:* (AND configuration) \u2014 confirm that platform condition for this deployment [CVE.affected.1, NVD.cpe]"
       ],
       "context_supplied": true,
+      "summary": [
+        "Attackers are known to be using it: it is on CISA's list of actively attacked flaws (added 2022-04-04), and CISA rates exploitation as active.",
+        "It is unclear whether web-portal-01's Spring Framework 5.3.17 is affected: its version is in the affected range, but the flaw only applies together with Oracle JDK, which your inventory does not record."
+      ],
       "discovered_by": []
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T02:06:40.440636Z",
+      "generated_at": "2026-10-11T02:19:50.786275Z",
       "tool_version": "0.1.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2024-47176",
@@ -17826,7 +17872,12 @@
           "evidence_ids": [
             "CVE.affected.1"
           ],
-          "fixed_version_hint": null
+          "fixed_version_hint": null,
+          "asset_criticality": "low",
+          "asset_internet_facing": false,
+          "asset_controls": [
+            "Host firewall drops inbound traffic to port 631 except from the warehouse printer VLAN"
+          ]
         }
       ],
       "llm": {
@@ -17962,11 +18013,15 @@
         "Little public research doesn't mean it's hard to exploit \u2014 Exploit-development difficulty judged from public evidence is inherently limited: the absence of public research does not mean exploitation is hard."
       ],
       "context_supplied": true,
+      "summary": [
+        "Attacks are likely: CISA says demo attack code exists; 2 public sources point to attack code; the predicted chance of attacks in the next 30 days is 50.6%. No confirmed attacks are on record.",
+        "It affects print-srv-01 (cups-browsed 2.0.1) \u2014 internal, low importance; protected by: Host firewall drops inbound traffic to port 631 except from the warehouse printer VLAN (not checked by this tool)."
+      ],
       "discovered_by": []
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T02:06:40.445094Z",
+      "generated_at": "2026-10-11T02:19:50.791459Z",
       "tool_version": "0.1.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2024-3094",
@@ -18793,7 +18848,10 @@
             "CVE.affected.1",
             "NVD.cpe"
           ],
-          "fixed_version_hint": null
+          "fixed_version_hint": null,
+          "asset_criticality": "medium",
+          "asset_internet_facing": false,
+          "asset_controls": []
         }
       ],
       "llm": {
@@ -18847,11 +18905,15 @@
         "Little public research doesn't mean it's hard to exploit \u2014 Exploit-development difficulty judged from public evidence is inherently limited: the absence of public research does not mean exploitation is hard."
       ],
       "context_supplied": true,
+      "summary": [
+        "Your installed version is outside the affected versions: ops-ubuntu-02's xz 5.4.6.",
+        "For reference (it does not change the decision): attacks are likely \u2014 the predicted chance of attacks in the next 30 days is 86.0%. No confirmed attacks are on record."
+      ],
       "discovered_by": []
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T02:06:40.445530Z",
+      "generated_at": "2026-10-11T02:19:50.792019Z",
       "tool_version": "0.1.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2026-11415",
@@ -19026,11 +19088,14 @@
       ],
       "uncertain": [],
       "context_supplied": true,
+      "summary": [
+        "This CVE was cancelled (rejected) by the organisation that issued it, so there is nothing to fix."
+      ],
       "discovered_by": []
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T02:06:40.445973Z",
+      "generated_at": "2026-10-11T02:19:50.792507Z",
       "tool_version": "0.1.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2026-99001",
@@ -19169,6 +19234,9 @@
       ],
       "uncertain": [],
       "context_supplied": true,
+      "summary": [
+        "This CVE number has been reserved, but no details have been published yet."
+      ],
       "discovered_by": []
     }
   ],

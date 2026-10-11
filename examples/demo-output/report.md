@@ -1,6 +1,6 @@
 # CVE prioritization report
 
-Generated 2026-10-11T02:06:40+00:00 · mode **offline_demo** · cveprio 0.1.0 · organisation: Northbeam Logistics (fictional)
+Generated 2026-10-11T02:19:50+00:00 · mode **offline_demo** · cveprio 0.1.0 · organisation: Northbeam Logistics (fictional)
 
 > OFFLINE DEMO MODE: data comes from recorded fixtures (see retrieval times), not live sources. Results may be out of date.
 > Inventory and business context are FICTIONAL example data.
@@ -28,6 +28,8 @@ Generated 2026-10-11T02:06:40+00:00 · mode **offline_demo** · cveprio 0.1.0 ·
 **Decision:** `P1` · priority P1
 
 **Factors:** exploitation = `confirmed`, severity = `critical`, exposure = `high` · **Severity-only baseline:** `P1`
+
+**In short:** Attackers are known to be using it: it is on CISA's list of actively attacked flaws (added 2021-12-10), and CISA rates exploitation as active. It affects web-portal-01 (log4j-core 2.14.1) — internet-facing, high importance. Also check legacy-billing-03: it may be affected too, but this could not be confirmed automatically.
 
 ### What is known (sourced facts)
 - CVE status: Published (active) — assigned by apache; published 2021-12-10; last updated 2025-10-21 [CVE.state]
@@ -127,6 +129,8 @@ What the 10.0 score says: Attack from: the network (remotely); Attack complexity
 
 **Factors:** exploitation = `confirmed`, severity = `high`, exposure = `high` · **Severity-only baseline:** `P2`
 
+**In short:** Attackers are known to be using it: it is on CISA's list of actively attacked flaws (added 2023-10-10), and CISA rates exploitation as active. It affects web-portal-01 (nginx 1.25.2) — internet-facing, high importance.
+
 ### What is known (sourced facts)
 - CVE status: Published (active) — assigned by mitre; published 2023-10-10; last updated 2026-07-14 [CVE.state]
 - Severity: 7.5 / 10 (High) — CVSS 3.1 score from CISA; 3 sources agree. Full breakdown in Severity score details. [CVE.cvss.1]
@@ -214,6 +218,8 @@ What the 7.5 score says: Attack from: the network (remotely); Attack complexity:
 **Decision:** `P1` · priority P1
 
 **Factors:** exploitation = `elevated`, severity = `high`, exposure = `high` · **Severity-only baseline:** `P2`
+
+**In short:** Attacks are likely: CISA says demo attack code exists; 9 public sources point to attack code; the predicted chance of attacks in the next 30 days is 99.5%. No confirmed attacks are on record. It affects bastion-01 (OpenSSH 9.6p1) — internet-facing, high importance. Also check ops-ubuntu-02: it may be affected too, but this could not be confirmed automatically.
 
 ### What is known (sourced facts)
 - CVE status: Published (active) — assigned by redhat; published 2024-07-01; last updated 2026-09-01 [CVE.state]
@@ -347,6 +353,8 @@ What the 8.1 score says: Attack from: the network (remotely); Attack complexity:
 
 **Factors:** exploitation = `elevated`, severity = `critical`, exposure = `context_unknown` · **Severity-only baseline:** `P1`
 
+**In short:** Attacks are likely: CISA says demo attack code exists; the predicted chance of attacks in the next 30 days is 78.5%. No confirmed attacks are on record. It affects ops-ubuntu-02 (curl 8.3.0) — internal, medium importance; dev-laptop-17 (curl 8.3.0) — internet exposure and importance not recorded.
+
 ### What is known (sourced facts)
 - CVE status: Published (active) — assigned by hackerone; published 2023-10-18; last updated 2026-07-14 [CVE.state]
 - Severity: 9.8 / 10 (Critical) — CVSS 3.1 score from NVD; the highest of 2 different scores from 3 sources (see What's uncertain). Full breakdown in Severity score details. [NVD.cvss.1]
@@ -431,6 +439,8 @@ What the 9.8 score says: Attack from: the network (remotely); Attack complexity:
 
 **Factors:** exploitation = `confirmed`, severity = `critical`, exposure = `needs_review` · **Severity-only baseline:** `P1`
 
+**In short:** Attackers are known to be using it: it is on CISA's list of actively attacked flaws (added 2022-04-04), and CISA rates exploitation as active. It is unclear whether web-portal-01's Spring Framework 5.3.17 is affected: its version is in the affected range, but the flaw only applies together with Oracle JDK, which your inventory does not record.
+
 ### What is known (sourced facts)
 - CVE status: Published (active) — assigned by vmware; published 2022-04-01; last updated 2025-10-21 [CVE.state]
 - Severity: 9.8 / 10 (Critical) — CVSS 3.1 score from CISA; 3 sources agree. Full breakdown in Severity score details. [CVE.cvss.1]
@@ -511,6 +521,8 @@ What the 9.8 score says: Attack from: the network (remotely); Attack complexity:
 **Decision:** `P3` · priority P3
 
 **Factors:** exploitation = `elevated`, severity = `medium`, exposure = `reduced` · **Severity-only baseline:** `P3`
+
+**In short:** Attacks are likely: CISA says demo attack code exists; 2 public sources point to attack code; the predicted chance of attacks in the next 30 days is 50.6%. No confirmed attacks are on record. It affects print-srv-01 (cups-browsed 2.0.1) — internal, low importance; protected by: Host firewall drops inbound traffic to port 631 except from the warehouse printer VLAN (not checked by this tool).
 
 ### What is known (sourced facts)
 - CVE status: Published (active) — assigned by GitHub_M; published 2024-09-26; last updated 2025-11-04 [CVE.state]
@@ -609,6 +621,8 @@ What the 5.3 score says: Attack from: the network (remotely); Attack complexity:
 
 **Factors:** exploitation = `elevated`, severity = `critical`, exposure = `not_affected` · **Severity-only baseline:** `P1`
 
+**In short:** Your installed version is outside the affected versions: ops-ubuntu-02's xz 5.4.6. For reference (it does not change the decision): attacks are likely — the predicted chance of attacks in the next 30 days is 86.0%. No confirmed attacks are on record.
+
 ### What is known (sourced facts)
 - CVE status: Published (active) — assigned by redhat; published 2024-03-29; last updated 2026-08-04 [CVE.state]
 - Severity: 10.0 / 10 (Critical) — CVSS 3.1 score from redhat, which published the CVE; 3 sources agree. Full breakdown in Severity score details. [CVE.cvss.1]
@@ -694,6 +708,8 @@ What the 10.0 score says: Attack from: the network (remotely); Attack complexity
 
 **Factors:** exploitation = `n/a`, severity = `n/a`, exposure = `n/a` · **Severity-only baseline:** `N/A`
 
+**In short:** This CVE was cancelled (rejected) by the organisation that issued it, so there is nothing to fix.
+
 ### What is known (sourced facts)
 - CVE status: Cancelled (rejected) — assigned by VulnCheck; last updated 2026-09-29 [CVE.state]
 - Reason given for rejection — (source text) This CVE ID has been rejected or withdrawn by its CVE Numbering Authority. [CVE.rejected]
@@ -731,6 +747,8 @@ Status: `skipped` — Not run: record is rejected.
 **Decision:** `INVALID_OR_UNPUBLISHED`
 
 **Factors:** exploitation = `n/a`, severity = `n/a`, exposure = `n/a` · **Severity-only baseline:** `N/A`
+
+**In short:** This CVE number has been reserved, but no details have been published yet.
 
 ### What is known (sourced facts)
 - CVE status: Reserved, no details published yet — CVE ID is RESERVED: assigned but no public record has been published. [CVE.state]

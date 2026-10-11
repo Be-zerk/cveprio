@@ -189,21 +189,27 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
 </div>
 {% endif %}
 
-<h2>Contextual rules vs severity-only baseline</h2>
+<h2>How this differs from sorting by severity score alone</h2>
 <div class="compare">
+  <p style="margin:0 0 8px">A common shortcut is to fix vulnerabilities in order of their severity score (CVSS). This tool also looks at whether attackers are using the flaw and whether your systems are actually affected and exposed.</p>
+  {% set published = run.reports|selectattr("decision.baseline_label", "ne", "N/A")|list %}
   {% if differs %}
-  <p style="margin:0 0 6px">{{ differs|length }} of {{ run.reports|selectattr("decision.baseline_label", "ne", "N/A")|list|length }} published CVEs get a different outcome than a CVSS-only ranking:</p>
-  <ul class="tight">
-  {% for r in differs %}<li><b>{{ r.cve_id }}</b>: CVSS-only <code>{{ r.decision.baseline_label }}</code> → contextual <code>{{ r.decision.label }}</code> <span class="meta">(exploitation {{ r.decision.factors.exploitation }}, exposure {{ r.decision.factors.exposure }})</span></li>{% endfor %}
+  <p style="margin:0 0 6px"><b>{{ differs|length }} of {{ published|length }}</b> vulnerabilities get a different answer:</p>
+  <ul class="items">
+  {% for r in differs %}
+    {% set base = r.decision.baseline_label %}
+    <li><span class="bshort"><a href="#{{ r.cve_id }}">{{ r.cve_id }}</a>{% if r.bundle.title %} <span class="meta">({{ r.bundle.title|truncate(40) }})</span>{% endif %}: score alone says <b>{{ PLAIN_LABEL.get(base, base) }}{% if base in ("P1","P2","P3","P4") %} ({{ base }}){% endif %}</b>, this tool says <b>{{ PLAIN_LABEL.get(r.decision.label, r.decision.label) }}{% if r.decision.label in ("P1","P2","P3","P4") %} ({{ r.decision.label }}){% endif %}</b></span>
+      <details class="bmore"><summary>why</summary><div class="bdetail">Because {{ compare_reason(r.decision.factors) }}.</div></details></li>
+  {% endfor %}
   </ul>
-  {% else %}<p style="margin:0">No differences from the severity-only baseline.</p>{% endif %}
-  <p class="meta" style="margin:8px 0 0">Differences are expected by design; they are not evidence that either ranking is "correct". See docs/EVALUATION.md.</p>
+  {% else %}<p style="margin:0">Every vulnerability gets the same answer as sorting by score alone.</p>{% endif %}
+  <p class="meta" style="margin:8px 0 0">A different answer is expected, not an error: it shows how much your situation changes the order. Neither list is automatically "right" (see docs/EVALUATION.md).</p>
 </div>
 
 <div class="controls">
-  <input id="q" type="search" placeholder="Filter by CVE, product, asset…" aria-label="Filter">
-  <button id="expand" type="button">Expand all</button>
-  <button id="reset" type="button">Show all</button>
+  <input id="q" type="search" placeholder="Search by CVE number, software or system name…" aria-label="Search">
+  <button id="expand" type="button">Open all cards</button>
+  <button id="reset" type="button">Clear filters</button>
 </div>
 
 {% macro chips(cve, ids) %}{% if ids %}<span class="chips">{% for i in ids[:3] %}<a class="chip" href="#{{ cve }}-{{ i }}" title="Show evidence {{ i }}">{{ i }}</a>{% endfor %}{% if ids|length > 3 %}<details class="more-chips"><summary class="chip more" title="{{ ids[3:]|join(', ') }}">+{{ ids|length - 3 }} more</summary>{% for i in ids[3:] %}<a class="chip" href="#{{ cve }}-{{ i }}" title="Show evidence {{ i }}">{{ i }}</a>{% endfor %}</details>{% endif %}</span>{% endif %}{% endmacro %}
@@ -231,8 +237,8 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
   <div class="body">
     <div class="summary-box s-{{ st[0] }}">
       <div class="sum-label"><span aria-hidden="true">{{ st[1] }}</span> {{ PLAIN_LABEL.get(d.label, d.label) }}{% if d.provisional %} <span class="prov">(provisional — depends on information not supplied)</span>{% endif %}</div>
-      {% set why = why_sentence(d.factors) %}
-      {% if why %}<p class="sum-why">{{ why }}</p>{% endif %}
+      {% if r.summary %}{% for line in r.summary %}<p class="sum-why">{{ line }}</p>{% endfor %}
+      {% else %}{% set why = why_sentence(d.factors) %}{% if why %}<p class="sum-why">{{ why }}</p>{% endif %}{% endif %}
       <h4>What to do</h4>
       <ul class="items">{% for a in d.actions %}{{ bullet(r.cve_id, a) }}{% endfor %}</ul>
     </div>
@@ -402,13 +408,14 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
   });
   q.addEventListener("input", apply);
   document.getElementById("reset").addEventListener("click", function () { active = null; q.value = ""; tiles.forEach(function (x) { x.setAttribute("aria-pressed", "false"); }); apply(); });
-  document.querySelectorAll("a.chip").forEach(function (c) {
+  document.querySelectorAll('a.chip, .compare a[href^="#"]').forEach(function (c) {
     c.addEventListener("click", function () {
       var t = document.getElementById(c.getAttribute("href").slice(1));
+      if (t && t.tagName === "DETAILS") t.open = true;
       for (var p = t && t.parentElement; p; p = p.parentElement) { if (p.tagName === "DETAILS") p.open = true; }
     });
   });
-  document.getElementById("expand").addEventListener("click", function () { var open = this.textContent === "Expand all"; items.forEach(function (el) { el.open = open; }); this.textContent = open ? "Collapse all" : "Expand all"; });
+  document.getElementById("expand").addEventListener("click", function () { var open = this.textContent === "Open all cards"; items.forEach(function (el) { el.open = open; }); this.textContent = open ? "Close all cards" : "Open all cards"; });
 })();
 </script>
 </body>

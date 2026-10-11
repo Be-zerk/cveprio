@@ -149,7 +149,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
 <main>
 <header>
   <h1>CVE prioritization · Northbeam Logistics (fictional)</h1>
-  <div class="meta">Generated 2026-10-11 02:06 UTC · mode <b>offline_demo</b> · cveprio 0.1.0 · 9 CVEs</div>
+  <div class="meta">Generated 2026-10-11 02:19 UTC · mode <b>offline_demo</b> · cveprio 0.1.0 · 9 CVEs</div>
   <div class="banner" role="note">⚠ OFFLINE DEMO DATA — recorded fixtures, not live results.
     <small>Source responses were recorded at the retrieval times shown in each evidence table and may be out of date. The inventory and business context are fictional.</small></div>
   <ul class="notices"><li>This product uses the NVD API but is not endorsed or certified by the NVD.</li><li>CVE records: CVE Program (cve.org). KEV: CISA Known Exploited Vulnerabilities catalogue (CC0). EPSS: FIRST.org Exploit Prediction Scoring System (https://www.first.org/epss).</li></ul>
@@ -185,18 +185,29 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
 </section>
 
 
-<h2>Contextual rules vs severity-only baseline</h2>
+<h2>How this differs from sorting by severity score alone</h2>
 <div class="compare">
-  <p style="margin:0 0 6px">5 of 7 published CVEs get a different outcome than a CVSS-only ranking:</p>
-  <ul class="tight">
-<li><b>CVE-2023-44487</b>: CVSS-only <code>P2</code> → contextual <code>P1</code> <span class="meta">(exploitation confirmed, exposure high)</span></li><li><b>CVE-2024-6387</b>: CVSS-only <code>P2</code> → contextual <code>P1</code> <span class="meta">(exploitation elevated, exposure high)</span></li><li><b>CVE-2023-38545</b>: CVSS-only <code>P1</code> → contextual <code>P2</code> <span class="meta">(exploitation elevated, exposure context_unknown)</span></li><li><b>CVE-2022-22965</b>: CVSS-only <code>P1</code> → contextual <code>NEEDS_REVIEW</code> <span class="meta">(exploitation confirmed, exposure needs_review)</span></li><li><b>CVE-2024-3094</b>: CVSS-only <code>P1</code> → contextual <code>NOT_APPLICABLE</code> <span class="meta">(exploitation elevated, exposure not_affected)</span></li>  </ul>
-  <p class="meta" style="margin:8px 0 0">Differences are expected by design; they are not evidence that either ranking is "correct". See docs/EVALUATION.md.</p>
+  <p style="margin:0 0 8px">A common shortcut is to fix vulnerabilities in order of their severity score (CVSS). This tool also looks at whether attackers are using the flaw and whether your systems are actually affected and exposed.</p>
+  <p style="margin:0 0 6px"><b>5 of 7</b> vulnerabilities get a different answer:</p>
+  <ul class="items">
+    <li><span class="bshort"><a href="#CVE-2023-44487">CVE-2023-44487</a>: score alone says <b>Fix in the next patch cycle (P2)</b>, this tool says <b>Fix now (P1)</b></span>
+      <details class="bmore"><summary>why</summary><div class="bdetail">Because attackers are using it and it is on an exposed or critical system.</div></details></li>
+    <li><span class="bshort"><a href="#CVE-2024-6387">CVE-2024-6387</a> <span class="meta">(Openssh: regresshion - race...)</span>: score alone says <b>Fix in the next patch cycle (P2)</b>, this tool says <b>Fix now (P1)</b></span>
+      <details class="bmore"><summary>why</summary><div class="bdetail">Because attack code is public or attacks are likely and it is on an exposed or critical system.</div></details></li>
+    <li><span class="bshort"><a href="#CVE-2023-38545">CVE-2023-38545</a>: score alone says <b>Fix now (P1)</b>, this tool says <b>Fix in the next patch cycle (P2)</b></span>
+      <details class="bmore"><summary>why</summary><div class="bdetail">Because attack code is public or attacks are likely and details about the affected system are missing.</div></details></li>
+    <li><span class="bshort"><a href="#CVE-2022-22965">CVE-2022-22965</a>: score alone says <b>Fix now (P1)</b>, this tool says <b>Check before deciding</b></span>
+      <details class="bmore"><summary>why</summary><div class="bdetail">Because it is unclear whether your version is affected.</div></details></li>
+    <li><span class="bshort"><a href="#CVE-2024-3094">CVE-2024-3094</a> <span class="meta">(Xz: malicious code in distributed source)</span>: score alone says <b>Fix now (P1)</b>, this tool says <b>Not affected — no action needed</b></span>
+      <details class="bmore"><summary>why</summary><div class="bdetail">Because your installed version is not affected.</div></details></li>
+  </ul>
+  <p class="meta" style="margin:8px 0 0">A different answer is expected, not an error: it shows how much your situation changes the order. Neither list is automatically "right" (see docs/EVALUATION.md).</p>
 </div>
 
 <div class="controls">
-  <input id="q" type="search" placeholder="Filter by CVE, product, asset…" aria-label="Filter">
-  <button id="expand" type="button">Expand all</button>
-  <button id="reset" type="button">Show all</button>
+  <input id="q" type="search" placeholder="Search by CVE number, software or system name…" aria-label="Search">
+  <button id="expand" type="button">Open all cards</button>
+  <button id="reset" type="button">Clear filters</button>
 </div>
 
 <section id="list" aria-label="CVE list">
@@ -215,7 +226,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
   <div class="body">
     <div class="summary-box s-critical">
       <div class="sum-label"><span aria-hidden="true">▲</span> Fix now</div>
-<p class="sum-why">Attackers are known to be using it. An affected system is internet-facing or business-critical.</p>      <h4>What to do</h4>
+<p class="sum-why">Attackers are known to be using it: it is on CISA&#39;s list of actively attacked flaws (added 2021-12-10), and CISA rates exploitation as active.</p><p class="sum-why">It affects web-portal-01 (log4j-core 2.14.1) — internet-facing, high importance.</p><p class="sum-why">Also check legacy-billing-03: it may be affected too, but this could not be confirmed automatically.</p>      <h4>What to do</h4>
       <ul class="items"><li><span class="bshort">Upgrade log4j-core on web-portal-01</span><details class="bmore"><summary>details</summary><div class="bdetail">currently 2.14.1; sources indicate the fix is in version 2.15.0 or later. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2021-44228-NVD.ref.9" title="Show evidence NVD.ref.9">NVD.ref.9</a><a class="chip" href="#CVE-2021-44228-NVD.ref.10" title="Show evidence NVD.ref.10">NVD.ref.10</a><a class="chip" href="#CVE-2021-44228-NVD.ref.12" title="Show evidence NVD.ref.12">NVD.ref.12</a></span></span></div></details></li><li><span class="bshort">Check the exact version of Log4j on legacy-billing-03</span><details class="bmore"><summary>details</summary><div class="bdetail">recorded as 2.x (bundled by appliance vendor); confirm the build and any platform condition, then re-run. See the applicability table for why it is unclear. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2021-44228-CVE.affected.1" title="Show evidence CVE.affected.1">CVE.affected.1</a></span></span></div></details></li><li><span class="bshort">Follow CISA&#39;s official instructions for this flaw</span><details class="bmore"><summary>details</summary><div class="bdetail">quoted source text: For all affected software assets for which updates exist, the only acceptable remediation actions are: 1) Apply updates; OR 2) remove affected assets from agency networks. Temporary mitigations using one of the measures provided at https://www.cisa.gov/uscert/ed-22-02-apache-log4j-recommended-mitigation-measures are only acceptable until updates are available. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2021-44228-KEV" title="Show evidence KEV">KEV</a></span></span></div></details></li></ul>
     </div>
 
@@ -541,7 +552,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
   <div class="body">
     <div class="summary-box s-critical">
       <div class="sum-label"><span aria-hidden="true">▲</span> Fix now</div>
-<p class="sum-why">Attackers are known to be using it. An affected system is internet-facing or business-critical.</p>      <h4>What to do</h4>
+<p class="sum-why">Attackers are known to be using it: it is on CISA&#39;s list of actively attacked flaws (added 2023-10-10), and CISA rates exploitation as active.</p><p class="sum-why">It affects web-portal-01 (nginx 1.25.2) — internet-facing, high importance.</p>      <h4>What to do</h4>
       <ul class="items"><li><span class="bshort">Upgrade nginx on web-portal-01</span><details class="bmore"><summary>details</summary><div class="bdetail">currently 1.25.2; follow the vendor advisory for the fixed version. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-44487-NVD.ref.1" title="Show evidence NVD.ref.1">NVD.ref.1</a><a class="chip" href="#CVE-2023-44487-NVD.ref.2" title="Show evidence NVD.ref.2">NVD.ref.2</a><a class="chip" href="#CVE-2023-44487-NVD.ref.3" title="Show evidence NVD.ref.3">NVD.ref.3</a></span></span></div></details></li><li><span class="bshort">Follow CISA&#39;s official instructions for this flaw</span><details class="bmore"><summary>details</summary><div class="bdetail">quoted source text: Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-44487-KEV" title="Show evidence KEV">KEV</a></span></span></div></details></li></ul>
     </div>
 
@@ -822,7 +833,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
   <div class="body">
     <div class="summary-box s-critical">
       <div class="sum-label"><span aria-hidden="true">▲</span> Fix now</div>
-<p class="sum-why">Attack code is publicly claimed, or attacks are likely soon. An affected system is internet-facing or business-critical.</p>      <h4>What to do</h4>
+<p class="sum-why">Attacks are likely: CISA says demo attack code exists; 9 public sources point to attack code; the predicted chance of attacks in the next 30 days is 99.5%. No confirmed attacks are on record.</p><p class="sum-why">It affects bastion-01 (OpenSSH 9.6p1) — internet-facing, high importance.</p><p class="sum-why">Also check ops-ubuntu-02: it may be affected too, but this could not be confirmed automatically.</p>      <h4>What to do</h4>
       <ul class="items"><li><span class="bshort">Upgrade OpenSSH on bastion-01</span><details class="bmore"><summary>details</summary><div class="bdetail">currently 9.6p1; follow the vendor advisory for the fixed version. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-NVD.ref.4" title="Show evidence NVD.ref.4">NVD.ref.4</a><a class="chip" href="#CVE-2024-6387-NVD.ref.9" title="Show evidence NVD.ref.9">NVD.ref.9</a><a class="chip" href="#CVE-2024-6387-NVD.ref.10" title="Show evidence NVD.ref.10">NVD.ref.10</a></span></span></div></details></li><li><span class="bshort">Check the exact version of OpenSSH on ops-ubuntu-02</span><details class="bmore"><summary>details</summary><div class="bdetail">recorded as 1:9.6p1-3ubuntu13.4; confirm the build and any platform condition, then re-run. See the applicability table for why it is unclear. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-CVE.affected.1" title="Show evidence CVE.affected.1">CVE.affected.1</a></span></span></div></details></li></ul>
     </div>
 
@@ -1238,7 +1249,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
   <div class="body">
     <div class="summary-box s-serious">
       <div class="sum-label"><span aria-hidden="true">◆</span> Fix in the next patch cycle <span class="prov">(provisional — depends on information not supplied)</span></div>
-<p class="sum-why">Attack code is publicly claimed, or attacks are likely soon. Affected, but how exposed/important the system is was not recorded.</p>      <h4>What to do</h4>
+<p class="sum-why">Attacks are likely: CISA says demo attack code exists; the predicted chance of attacks in the next 30 days is 78.5%. No confirmed attacks are on record.</p><p class="sum-why">It affects ops-ubuntu-02 (curl 8.3.0) — internal, medium importance; dev-laptop-17 (curl 8.3.0) — internet exposure and importance not recorded.</p>      <h4>What to do</h4>
       <ul class="items"><li><span class="bshort">Upgrade curl on ops-ubuntu-02</span><details class="bmore"><summary>details</summary><div class="bdetail">currently 8.3.0; sources indicate the fix is in version 8.4.0 or later. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-38545-NVD.ref.1" title="Show evidence NVD.ref.1">NVD.ref.1</a><a class="chip" href="#CVE-2023-38545-NVD.ref.2" title="Show evidence NVD.ref.2">NVD.ref.2</a></span></span></div></details></li><li><span class="bshort">Upgrade curl on dev-laptop-17</span><details class="bmore"><summary>details</summary><div class="bdetail">currently 8.3.0; sources indicate the fix is in version 8.4.0 or later. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-38545-NVD.ref.1" title="Show evidence NVD.ref.1">NVD.ref.1</a><a class="chip" href="#CVE-2023-38545-NVD.ref.2" title="Show evidence NVD.ref.2">NVD.ref.2</a></span></span></div></details></li></ul>
     </div>
 
@@ -1459,7 +1470,7 @@ URL that curl has been told to operate with.</p>
   <div class="body">
     <div class="summary-box s-warning">
       <div class="sum-label"><span aria-hidden="true">?</span> Check before deciding <span class="prov">(provisional — depends on information not supplied)</span></div>
-<p class="sum-why">Attackers are known to be using it. Unclear whether your version is affected.</p>      <h4>What to do</h4>
+<p class="sum-why">Attackers are known to be using it: it is on CISA&#39;s list of actively attacked flaws (added 2022-04-04), and CISA rates exploitation as active.</p><p class="sum-why">It is unclear whether web-portal-01&#39;s Spring Framework 5.3.17 is affected: its version is in the affected range, but the flaw only applies together with Oracle JDK, which your inventory does not record.</p>      <h4>What to do</h4>
       <ul class="items"><li><span class="bshort">Check the exact version of Spring Framework on web-portal-01</span><details class="bmore"><summary>details</summary><div class="bdetail">recorded as 5.3.17; confirm the build and any platform condition, then re-run. See the applicability table for why it is unclear. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2022-22965-CVE.affected.1" title="Show evidence CVE.affected.1">CVE.affected.1</a><a class="chip" href="#CVE-2022-22965-NVD.cpe" title="Show evidence NVD.cpe">NVD.cpe</a></span></span></div></details></li><li><span class="bshort">Follow CISA&#39;s official instructions for this flaw</span><details class="bmore"><summary>details</summary><div class="bdetail">quoted source text: Apply updates per vendor instructions. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2022-22965-KEV" title="Show evidence KEV">KEV</a></span></span></div></details></li></ul>
     </div>
 
@@ -1692,7 +1703,7 @@ URL that curl has been told to operate with.</p>
   <div class="body">
     <div class="summary-box s-neutral">
       <div class="sum-label"><span aria-hidden="true">●</span> Schedule a fix</div>
-<p class="sum-why">Attack code is publicly claimed, or attacks are likely soon. Affected, but a protection (e.g. firewall rule) limits access.</p>      <h4>What to do</h4>
+<p class="sum-why">Attacks are likely: CISA says demo attack code exists; 2 public sources point to attack code; the predicted chance of attacks in the next 30 days is 50.6%. No confirmed attacks are on record.</p><p class="sum-why">It affects print-srv-01 (cups-browsed 2.0.1) — internal, low importance; protected by: Host firewall drops inbound traffic to port 631 except from the warehouse printer VLAN (not checked by this tool).</p>      <h4>What to do</h4>
       <ul class="items"><li><span class="bshort">Upgrade cups-browsed on print-srv-01</span><details class="bmore"><summary>details</summary><div class="bdetail">currently 2.0.1; follow the vendor advisory for the fixed version. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-47176-NVD.ref.3" title="Show evidence NVD.ref.3">NVD.ref.3</a></span></span></div></details></li><li><span class="bshort">Confirm the protection on print-srv-01 is really in place until patched</span><details class="bmore"><summary>details</summary><div class="bdetail">Host firewall drops inbound traffic to port 631 except from the warehouse printer VLAN.</div></details></li></ul>
     </div>
 
@@ -1921,7 +1932,7 @@ URL that curl has been told to operate with.</p>
   <div class="body">
     <div class="summary-box s-good">
       <div class="sum-label"><span aria-hidden="true">✓</span> Not affected — no action needed</div>
-<p class="sum-why">Attack code is publicly claimed, or attacks are likely soon. Your installed version is not affected.</p>      <h4>What to do</h4>
+<p class="sum-why">Your installed version is outside the affected versions: ops-ubuntu-02&#39;s xz 5.4.6.</p><p class="sum-why">For reference (it does not change the decision): attacks are likely — the predicted chance of attacks in the next 30 days is 86.0%. No confirmed attacks are on record.</p>      <h4>What to do</h4>
       <ul class="items"><li><span class="bshort">No action needed for the listed systems</span><details class="bmore"><summary>details</summary><div class="bdetail">keep the inventory accurate and re-check if versions change.</div></details></li></ul>
     </div>
 
@@ -2196,7 +2207,7 @@ Through a series of complex obfuscations, the liblzma build process extracts a p
   <div class="body">
     <div class="summary-box s-muted">
       <div class="sum-label"><span aria-hidden="true">✕</span> Cancelled CVE — no action needed</div>
-      <h4>What to do</h4>
+<p class="sum-why">This CVE was cancelled (rejected) by the organisation that issued it, so there is nothing to fix.</p>      <h4>What to do</h4>
       <ul class="items"><li><span class="bshort">No fix needed: this CVE was rejected</span><details class="bmore"><summary>details</summary><div class="bdetail">remove it from tracking and check whether the issue was re-assigned under another CVE ID. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2026-11415-CVE.rejected" title="Show evidence CVE.rejected">CVE.rejected</a></span></span></div></details></li></ul>
     </div>
 
@@ -2293,7 +2304,7 @@ Through a series of complex obfuscations, the liblzma build process extracts a p
   <div class="body">
     <div class="summary-box s-muted">
       <div class="sum-label"><span aria-hidden="true">∅</span> No public details yet — nothing to do</div>
-      <h4>What to do</h4>
+<p class="sum-why">This CVE number has been reserved, but no details have been published yet.</p>      <h4>What to do</h4>
       <ul class="items"><li><span class="bshort">Check the CVE ID and look again later</span><details class="bmore"><summary>details</summary><div class="bdetail">a reserved ID has no public details yet. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2026-99001-CVE.state" title="Show evidence CVE.state">CVE.state</a></span></span></div></details></li></ul>
     </div>
 
@@ -2387,13 +2398,14 @@ Through a series of complex obfuscations, the liblzma build process extracts a p
   });
   q.addEventListener("input", apply);
   document.getElementById("reset").addEventListener("click", function () { active = null; q.value = ""; tiles.forEach(function (x) { x.setAttribute("aria-pressed", "false"); }); apply(); });
-  document.querySelectorAll("a.chip").forEach(function (c) {
+  document.querySelectorAll('a.chip, .compare a[href^="#"]').forEach(function (c) {
     c.addEventListener("click", function () {
       var t = document.getElementById(c.getAttribute("href").slice(1));
+      if (t && t.tagName === "DETAILS") t.open = true;
       for (var p = t && t.parentElement; p; p = p.parentElement) { if (p.tagName === "DETAILS") p.open = true; }
     });
   });
-  document.getElementById("expand").addEventListener("click", function () { var open = this.textContent === "Expand all"; items.forEach(function (el) { el.open = open; }); this.textContent = open ? "Collapse all" : "Expand all"; });
+  document.getElementById("expand").addEventListener("click", function () { var open = this.textContent === "Open all cards"; items.forEach(function (el) { el.open = open; }); this.textContent = open ? "Close all cards" : "Open all cards"; });
 })();
 </script>
 </body>
