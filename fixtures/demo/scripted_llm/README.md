@@ -9,7 +9,12 @@ without needing a model or API key. Reports label them "SCRIPTED EXAMPLE".
 1. a claim citing a non-existent evidence ID (`NVD.ref.99`) → removed;
 2. a claim with no citation → removed;
 3. usability rating `exploitation_reported` although no source reports in-the-wild
-   exploitation (not in KEV, SSVC says `poc`) → overridden to `public_exploit_claimed`.
+   exploitation (not in KEV, SSVC says `poc`) → overridden to `public_exploit_claimed`;
+4. a claim whose "quote" does not appear in the cited evidence (a made-up "under one minute"
+   statement) → removed by the quote check.
+
+Every claim carries a `quote`: exact words from the cited evidence that support it. The
+validator removes claims whose quote cannot be found in the evidence they cite.
 
 `CVE-2024-47176.json` is a well-formed example that uses `insufficient_evidence`
 for exploit-development difficulty.

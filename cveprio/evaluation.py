@@ -137,9 +137,34 @@ def _usability_supported_by_facts(report: CveReport) -> str | None:
     return None
 
 
-def run_evaluation(settings: Settings, provider_name: str | None, out_dir: Path) -> Path:
-    spec = json.loads(CASES.read_text())
-    rt = make_runtime(settings, offline=True, provider_name=provider_name or "none")
+def _reason(problem: str) -> str:
+    for key, label in (("unknown evidence", "cited evidence that does not exist"), ("no evidence", "cited nothing"),
+                       ("no supporting quote", "gave no quote"), ("quote does not appear", "quote not found in source"),
+                       ("does not contain", "number or date not in source")):
+        if key in problem:
+            return label
+    return "other"
+
+
+def run_evaluation(settings: Settings, provider_name: str | None, out_dir: Path, cases_path: Path = CASES,
+                   fixtures: Path | None = None, tag: str = "") -> Path:
+    spec = json.loads(cases_path.read_text())
+    labels_csv = cases_path.parent / "labels.csv"
+    if labels_csv.exists():
+        import csv
+        with labels_csv.open(newline="") as fh:
+            by_id = {row["id"]: row for row in csv.DictReader(fh)}
+        for c in spec["cases"]:
+            row = by_id.get(c["id"]) or {}
+            if row.get("expected_applicability", "").strip():
+                c["expected_applicability"] = row["expected_applicability"].strip()
+                c["acceptable_decisions"] = row.get("acceptable_decisions", "").replace(",", " ").split()
+                c["rationale"] = row.get("rationale", "").strip()
+    labelled = [c for c in spec["cases"] if c.get("expected_applicability") and c.get("acceptable_decisions")]
+    unlabelled = len(spec["cases"]) - len(labelled)
+    spec["cases"] = labelled
+    rt = (make_runtime(settings, offline=True, provider_name=provider_name or "none", fixtures=fixtures) if fixtures
+          else make_runtime(settings, offline=True, provider_name=provider_name or "none"))
     memo = MemoProvider(rt.provider)
     rt.provider = memo
     rows: list[dict[str, Any]] = []
@@ -149,10 +174,16 @@ def run_evaluation(settings: Settings, provider_name: str | None, out_dir: Path)
     for case in spec["cases"]:
         ctx = case.get("asset", {})
         controls = [CompensatingControl(description="evaluation control", effect=e) for e in ctx.get("controls", [])]
-        asset = Asset(id=case["id"], name=case["id"], software=[SoftwareItem(**case["software"])],
-                      criticality=ctx.get("criticality"), internet_facing=ctx.get("internet_facing"),
-                      compensating_controls=controls)
-        report = run([case["cve_id"]], rt, Inventory(assets=[asset])).reports[0]
+        inventory = None
+        if case.get("software"):
+            asset = Asset(id=case["id"], name=case["id"], software=[SoftwareItem(**case["software"])],
+                          criticality=ctx.get("criticality"), internet_facing=ctx.get("internet_facing"),
+                          compensating_controls=controls)
+            inventory = Inventory(assets=[asset])
+        purl_case = bool((case.get("software") or {}).get("purl"))
+        reports = run([case["cve_id"]], rt, inventory, discover_cves=purl_case,
+                      analyze_discovered=False).reports
+        report = next(r for r in reports if r.cve_id == case["cve_id"])
         app = report.applicability[0].status.value if report.applicability else "no_product_match"
         d = report.decision
         ok, total = _citations(report)
@@ -193,6 +224,8 @@ def run_evaluation(settings: Settings, provider_name: str | None, out_dir: Path)
             "claims_supported": sum(v.supported_claims for v in llm_by_cve.values()),
             "claims_removed": sum(len(v.removed_claims) for v in llm_by_cve.values()),
             "rating_overrides": sum(len(v.rating_overrides) for v in llm_by_cve.values()),
+            "removed_by_reason": dict(Counter(_reason(i.problem) for v in llm_by_cve.values() for i in v.removed_claims)),
+            "prompt_version": next((v.prompt_version for v in llm_by_cve.values() if v.prompt_version), None),
             "scripted": any(v.scripted for v in llm_by_cve.values()),
             "usability_matches_facts": f"{sum(1 for k, v in llm_by_cve.items() if facts_by_cve.get(k) and v.assessment and v.assessment.existing_exploit_usability.rating == facts_by_cve[k])}/{sum(1 for k in llm_by_cve if facts_by_cve.get(k))}",
             "per_cve": {k: {"status": v.status.value, "detail": v.detail, "supported": v.supported_claims,
@@ -208,9 +241,11 @@ def run_evaluation(settings: Settings, provider_name: str | None, out_dir: Path)
             model["injection_probe"] = _injection_probe(memo)
 
     result = {"generated_at": datetime.now(UTC).isoformat(), "review_status": spec["review_status"],
+              "set": tag or "dev", "unlabelled_cases_skipped": unlabelled,
               "about": spec["about"], "summary": summary, "model_quality": model, "cases": rows}
     out_dir.mkdir(parents=True, exist_ok=True)
-    tag = memo.name if memo.name == "none" else f"{memo.name}-{re.sub(r'[^A-Za-z0-9.]+', '_', str(memo.model))}"
+    name = memo.name if memo.name == "none" else f"{memo.name}-{re.sub(r'[^A-Za-z0-9.]+', '_', str(memo.model))}"
+    tag = f"{tag}-{name}" if tag else name
     (out_dir / f"eval-{tag}.json").write_text(json.dumps(result, indent=2))
     md = out_dir / f"eval-{tag}.md"
     md.write_text(_markdown(result))
@@ -223,6 +258,8 @@ def _markdown(r: dict[str, Any]) -> str:
         f"# Evaluation results ({m['provider']}{' / ' + str(m['model']) if m.get('model') else ''})", "",
         f"Generated {r['generated_at'][:19]}Z on the recorded fixtures (offline).", "",
         f"> {r['about']}", "",
+        *([f"**{r['unlabelled_cases_skipped']} cases have no expected answers yet and were skipped.** "
+           "Fill them in before reading anything into these numbers.", ""] if r.get("unlabelled_cases_skipped") else []),
         "## Deterministic results", "",
         "| Metric | Value |", "|---|---|",
         f"| Cases | {s['cases']} |",
@@ -252,12 +289,14 @@ def _markdown(r: dict[str, Any]) -> str:
             lines.append("> These are SCRIPTED EXAMPLES written by the author, not model outputs; the numbers only "
                          "show that validation works.")
         lines += [f"- CVEs assessed: {m['cves_assessed']} · statuses: {m['statuses']} · model calls: {m['model_calls']}",
-                  f"- Claims citing existing evidence IDs: {m['claims_supported']}/{m['claims_total']} "
-                  "(checks the IDs exist, not that the evidence says what the claim says) "
+                  f"- Claims passing all checks (cited evidence exists, quote found in it, numbers/dates match): "
+                  f"{m['claims_supported']}/{m['claims_total']} "
                   f"(removed: {m['claims_removed']}) · rating overrides: {m['rating_overrides']}",
+                  f"- Removed claims by reason: {m.get('removed_by_reason') or 'none'} · prompt version "
+                  f"{m.get('prompt_version')}",
                   f"- Usability rating matches what deterministic facts show (where facts decide it): "
                   f"{m.get('usability_matches_facts', 'n/a')}", ""]
-        lines += ["| CVE | Status | Difficulty | Usability | Claims with valid IDs | Overrides |", "|---|---|---|---|---|---|"]
+        lines += ["| CVE | Status | Difficulty | Usability | Claims passing checks | Overrides |", "|---|---|---|---|---|---|"]
         for k, v in m["per_cve"].items():
             lines.append(f"| {k} | {v['status']} | {v['difficulty']} | {v['usability']} | {v['supported']}/{v['total']} | "
                          f"{len(v['overrides'])} |")
@@ -269,16 +308,27 @@ def _markdown(r: dict[str, Any]) -> str:
                       f"- Model ratings: difficulty `{p['difficulty_rating']}`, usability `{p['usability_rating']}`",
                       f"- Priority with model `{p['priority_with_model']}` vs without `{p['priority_without_model']}` → "
                       f"invariant: **{p['priority_invariant']}**"]
-    lines += ["", "## Limitations", "",
-              "- 14 hand-picked, mostly well-known CVEs; results say nothing about accuracy on new or obscure CVEs.",
-              "- NOT a held-out test: these CVEs were also used while building the applicability engine, so "
-              "applicability scores here are optimistic.",
-              "- The severity-only baseline has no notion of rejected/reserved records, so it cannot match those cases.",
-              "- Reference judgements were drafted with AI assistance"
-              + (" and reviewed by the project author (one reviewer)." if r["review_status"].startswith("reviewed")
-                 else " and await independent review."),
+    if r.get("set") == "holdout":
+        about_set = [
+            f"- {s['cases']} labelled cases picked mechanically from recent CVEs (seeded random sample); a small "
+            "sample, so one case moves the percentages a lot.",
+            "- Labels come from one person (the project author) reading the public sources; there is no second "
+            "labeller, so disagreements between reasonable analysts are not measured.",
+            "- The fixtures were recorded once; NVD and vendors often add product data weeks after publication, so "
+            "some 'needs review' results may reflect data that was missing at capture time."]
+    else:
+        about_set = [
+            "- 14 hand-picked, mostly well-known CVEs; results say nothing about accuracy on new or obscure CVEs.",
+            "- NOT a held-out test: these CVEs were also used while building the applicability engine, so "
+            "applicability scores here are optimistic. See `cveprio evaluate --set holdout` for the held-out set.",
+            "- The severity-only baseline has no notion of rejected/reserved records, so it cannot match those cases.",
+            "- Reference judgements were drafted with AI assistance"
+            + (" and reviewed by the project author (one reviewer)." if r["review_status"].startswith("reviewed")
+               else " and await independent review.")]
+    lines += ["", "## Limitations", "", *about_set,
               "- 'Agreement' means the outcome is inside a set the reviewer considers defensible, not that it is correct.",
-              "- Citation checking verifies that cited evidence IDs exist, not that the evidence supports the "
-              "claim; a manual read of qwen2.5:3b's Log4Shell output found claims that contradict their cited source.",
+              "- Claim checks confirm the cited evidence exists, contains the claim's quote word for word and any "
+              "numbers/dates it mentions. That is grounding, not proof the reasoning is right: a model can quote real "
+              "text and still draw a wrong conclusion from it.",
               "- Model-quality numbers depend on the model, prompt version and fixtures; rerun after any change."]
     return "\n".join(lines) + "\n"

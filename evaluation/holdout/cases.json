@@ -1,0 +1,520 @@
+{
+  "about": "HELD-OUT evaluation set, selected mechanically by `cveprio holdout-select` (see cveprio/holdout.py) with seed 2026 from CVEs dated 2026-07-01 to 2026-09-30. None of these CVEs were used while building the tool. Expected answers must be filled in by a human labeller from the linked sources BEFORE running `cveprio evaluate --set holdout`; see LABELING.md.",
+  "review_status": "unlabelled",
+  "selection": {
+    "seed": 2026,
+    "window": [
+      "2026-07-01",
+      "2026-09-30"
+    ],
+    "created": "2026-10-11T17:39:21.928329+00:00"
+  },
+  "cases": [
+    {
+      "id": "h01",
+      "cve_id": "CVE-2026-15409",
+      "pool": "KEV",
+      "software": null,
+      "asset": {
+        "criticality": "high",
+        "internet_facing": true
+      },
+      "context_label": "internet-facing, high importance",
+      "selection_note": "Added to CISA KEV in the window. NVD has no version ranges, so this is a CVE-only case (no software).",
+      "links": {
+        "cve.org": "https://www.cve.org/CVERecord?id=CVE-2026-15409",
+        "nvd": "https://nvd.nist.gov/vuln/detail/CVE-2026-15409",
+        "kev": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-15409"
+      },
+      "expected_applicability": null,
+      "acceptable_decisions": [],
+      "rationale": ""
+    },
+    {
+      "id": "h02",
+      "cve_id": "CVE-2026-53266",
+      "pool": "KEV",
+      "software": {
+        "vendor": "linux",
+        "product": "linux_kernel",
+        "version": "5.5",
+        "cpe": "cpe:2.3:o:linux:linux_kernel:5.5:*:*:*:*:*:*:*"
+      },
+      "asset": {
+        "criticality": "medium",
+        "internet_facing": false
+      },
+      "context_label": "internal, medium importance",
+      "selection_note": "Added to CISA KEV in the window. Version chosen mechanically: first fixed version (NVD 'versionEndExcluding').",
+      "links": {
+        "cve.org": "https://www.cve.org/CVERecord?id=CVE-2026-53266",
+        "nvd": "https://nvd.nist.gov/vuln/detail/CVE-2026-53266",
+        "kev": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-53266"
+      },
+      "expected_applicability": null,
+      "acceptable_decisions": [],
+      "rationale": ""
+    },
+    {
+      "id": "h03",
+      "cve_id": "CVE-2026-71362",
+      "pool": "KEV",
+      "software": {
+        "vendor": "adobe",
+        "product": "commerce",
+        "version": "2.4.4",
+        "cpe": "cpe:2.3:a:adobe:commerce:2.4.4:-:*:*:*:*:*:*"
+      },
+      "asset": {
+        "criticality": "low",
+        "internet_facing": false,
+        "controls": [
+          "reduces_reachability"
+        ]
+      },
+      "context_label": "internal, low importance, firewall restricts access",
+      "selection_note": "Added to CISA KEV in the window. Version chosen mechanically: first affected version in NVD's range.",
+      "links": {
+        "cve.org": "https://www.cve.org/CVERecord?id=CVE-2026-71362",
+        "nvd": "https://nvd.nist.gov/vuln/detail/CVE-2026-71362",
+        "kev": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-71362"
+      },
+      "expected_applicability": null,
+      "acceptable_decisions": [],
+      "rationale": ""
+    },
+    {
+      "id": "h04",
+      "cve_id": "CVE-2026-72529",
+      "pool": "KEV",
+      "software": {
+        "vendor": "trueconf",
+        "product": "trueconf_server",
+        "version": "5.3.9.10013",
+        "cpe": "cpe:2.3:a:trueconf:trueconf_server:5.3.9.10013:*:*:*:*:windows:*:*"
+      },
+      "asset": {
+        "criticality": null,
+        "internet_facing": null
+      },
+      "context_label": "no context recorded",
+      "selection_note": "Added to CISA KEV in the window. Version chosen mechanically: first fixed version (NVD 'versionEndExcluding').",
+      "links": {
+        "cve.org": "https://www.cve.org/CVERecord?id=CVE-2026-72529",
+        "nvd": "https://nvd.nist.gov/vuln/detail/CVE-2026-72529",
+        "kev": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-72529"
+      },
+      "expected_applicability": null,
+      "acceptable_decisions": [],
+      "rationale": ""
+    },
+    {
+      "id": "h05",
+      "cve_id": "CVE-2026-84869",
+      "pool": "KEV",
+      "software": {
+        "vendor": "connectwise",
+        "product": "screenconnect",
+        "version": "26.6.5.9742",
+        "cpe": "cpe:2.3:a:connectwise:screenconnect:26.6.5.9742:*:*:*:*:*:*:*"
+      },
+      "asset": {
+        "criticality": "high",
+        "internet_facing": true
+      },
+      "context_label": "internet-facing, high importance",
+      "selection_note": "Added to CISA KEV in the window. Version chosen mechanically: first fixed version (NVD 'versionEndExcluding').",
+      "links": {
+        "cve.org": "https://www.cve.org/CVERecord?id=CVE-2026-84869",
+        "nvd": "https://nvd.nist.gov/vuln/detail/CVE-2026-84869",
+        "kev": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-84869"
+      },
+      "expected_applicability": null,
+      "acceptable_decisions": [],
+      "rationale": ""
+    },
+    {
+      "id": "h06",
+      "cve_id": "CVE-2025-68686",
+      "pool": "KEV",
+      "software": {
+        "vendor": "fortinet",
+        "product": "fortios",
+        "version": "7.4.7",
+        "cpe": "cpe:2.3:o:fortinet:fortios:7.4.7:*:*:*:*:*:*:*"
+      },
+      "asset": {
+        "criticality": "medium",
+        "internet_facing": false
+      },
+      "context_label": "internal, medium importance",
+      "selection_note": "Added to CISA KEV in the window. Version chosen mechanically: first fixed version (NVD 'versionEndExcluding').",
+      "links": {
+        "cve.org": "https://www.cve.org/CVERecord?id=CVE-2025-68686",
+        "nvd": "https://nvd.nist.gov/vuln/detail/CVE-2025-68686",
+        "kev": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2025-68686"
+      },
+      "expected_applicability": null,
+      "acceptable_decisions": [],
+      "rationale": ""
+    },
+    {
+      "id": "h07",
+      "cve_id": "CVE-2026-34486",
+      "pool": "KEV",
+      "software": {
+        "vendor": "apache",
+        "product": "tomcat",
+        "version": "9.0.116",
+        "cpe": "cpe:2.3:a:apache:tomcat:9.0.116:*:*:*:*:*:*:*"
+      },
+      "asset": {
+        "criticality": "low",
+        "internet_facing": false,
+        "controls": [
+          "reduces_reachability"
+        ]
+      },
+      "context_label": "internal, low importance, firewall restricts access",
+      "selection_note": "Added to CISA KEV in the window. Version chosen mechanically: first affected version in NVD's range.",
+      "links": {
+        "cve.org": "https://www.cve.org/CVERecord?id=CVE-2026-34486",
+        "nvd": "https://nvd.nist.gov/vuln/detail/CVE-2026-34486",
+        "kev": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-34486"
+      },
+      "expected_applicability": null,
+      "acceptable_decisions": [],
+      "rationale": ""
+    },
+    {
+      "id": "h08",
+      "cve_id": "CVE-2026-81963",
+      "pool": "KEV",
+      "software": {
+        "vendor": "microsoft",
+        "product": "windows_11_23h2",
+        "version": "10.0.22631.7582",
+        "cpe": "cpe:2.3:o:microsoft:windows_11_23h2:10.0.22631.7582:*:*:*:*:*:arm64:*"
+      },
+      "asset": {
+        "criticality": null,
+        "internet_facing": null
+      },
+      "context_label": "no context recorded",
+      "selection_note": "Added to CISA KEV in the window. Version chosen mechanically: first fixed version (NVD 'versionEndExcluding').",
+      "links": {
+        "cve.org": "https://www.cve.org/CVERecord?id=CVE-2026-81963",
+        "nvd": "https://nvd.nist.gov/vuln/detail/CVE-2026-81963",
+        "kev": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-81963"
+      },
+      "expected_applicability": null,
+      "acceptable_decisions": [],
+      "rationale": ""
+    },
+    {
+      "id": "h09",
+      "cve_id": "CVE-2026-63041",
+      "pool": "HIGH",
+      "software": {
+        "vendor": "apache",
+        "product": "apisix",
+        "version": "3.11.0",
+        "cpe": "cpe:2.3:a:apache:apisix:3.11.0:*:*:*:*:*:*:*"
+      },
+      "asset": {
+        "criticality": "high",
+        "internet_facing": true
+      },
+      "context_label": "internet-facing, high importance",
+      "selection_note": "HIGH severity, not in KEV. Version chosen mechanically: first affected version in NVD's range.",
+      "links": {
+        "cve.org": "https://www.cve.org/CVERecord?id=CVE-2026-63041",
+        "nvd": "https://nvd.nist.gov/vuln/detail/CVE-2026-63041",
+        "kev": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-63041"
+      },
+      "expected_applicability": null,
+      "acceptable_decisions": [],
+      "rationale": ""
+    },
+    {
+      "id": "h10",
+      "cve_id": "CVE-2026-47896",
+      "pool": "HIGH",
+      "software": {
+        "vendor": "apache",
+        "product": "lucene.net",
+        "version": "4.8.0",
+        "cpe": "cpe:2.3:a:apache:lucene.net:4.8.0:beta00005:*:*:*:*:*:*"
+      },
+      "asset": {
+        "criticality": "medium",
+        "internet_facing": false
+      },
+      "context_label": "internal, medium importance",
+      "selection_note": "HIGH severity, not in KEV. Version chosen mechanically: first affected version in NVD's range.",
+      "links": {
+        "cve.org": "https://www.cve.org/CVERecord?id=CVE-2026-47896",
+        "nvd": "https://nvd.nist.gov/vuln/detail/CVE-2026-47896",
+        "kev": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-47896"
+      },
+      "expected_applicability": null,
+      "acceptable_decisions": [],
+      "rationale": ""
+    },
+    {
+      "id": "h11",
+      "cve_id": "CVE-2026-58187",
+      "pool": "HIGH",
+      "software": {
+        "vendor": "apache",
+        "product": "traffic_server",
+        "version": "8.0.0",
+        "cpe": "cpe:2.3:a:apache:traffic_server:8.0.0:*:*:*:*:*:*:*"
+      },
+      "asset": {
+        "criticality": "low",
+        "internet_facing": false,
+        "controls": [
+          "reduces_reachability"
+        ]
+      },
+      "context_label": "internal, low importance, firewall restricts access",
+      "selection_note": "HIGH severity, not in KEV. Version chosen mechanically: first affected version in NVD's range.",
+      "links": {
+        "cve.org": "https://www.cve.org/CVERecord?id=CVE-2026-58187",
+        "nvd": "https://nvd.nist.gov/vuln/detail/CVE-2026-58187",
+        "kev": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-58187"
+      },
+      "expected_applicability": null,
+      "acceptable_decisions": [],
+      "rationale": ""
+    },
+    {
+      "id": "h12",
+      "cve_id": "CVE-2026-58036",
+      "pool": "HIGH",
+      "software": {
+        "vendor": "mediawiki",
+        "product": "mediawiki",
+        "version": "1.46.0",
+        "cpe": "cpe:2.3:a:mediawiki:mediawiki:1.46.0:rc0:*:*:*:*:*:*"
+      },
+      "asset": {
+        "criticality": null,
+        "internet_facing": null
+      },
+      "context_label": "no context recorded",
+      "selection_note": "HIGH severity, not in KEV. Version chosen mechanically: first affected version in NVD's range.",
+      "links": {
+        "cve.org": "https://www.cve.org/CVERecord?id=CVE-2026-58036",
+        "nvd": "https://nvd.nist.gov/vuln/detail/CVE-2026-58036",
+        "kev": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-58036"
+      },
+      "expected_applicability": null,
+      "acceptable_decisions": [],
+      "rationale": ""
+    },
+    {
+      "id": "h13",
+      "cve_id": "CVE-2026-15793",
+      "pool": "HIGH",
+      "software": {
+        "vendor": "mobyproject",
+        "product": "buildkit",
+        "version": "0.30.0",
+        "cpe": "cpe:2.3:a:mobyproject:buildkit:0.30.0:*:*:*:*:*:*:*"
+      },
+      "asset": {
+        "criticality": "high",
+        "internet_facing": true
+      },
+      "context_label": "internet-facing, high importance",
+      "selection_note": "HIGH severity, not in KEV. Version chosen mechanically: first affected version in NVD's range.",
+      "links": {
+        "cve.org": "https://www.cve.org/CVERecord?id=CVE-2026-15793",
+        "nvd": "https://nvd.nist.gov/vuln/detail/CVE-2026-15793",
+        "kev": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-15793"
+      },
+      "expected_applicability": null,
+      "acceptable_decisions": [],
+      "rationale": ""
+    },
+    {
+      "id": "h14",
+      "cve_id": "CVE-2026-100846",
+      "pool": "HIGH",
+      "software": {
+        "vendor": "project-monai",
+        "product": "monai",
+        "version": "1.5.2",
+        "cpe": "cpe:2.3:a:project-monai:monai:1.5.2:*:*:*:*:*:*:*"
+      },
+      "asset": {
+        "criticality": "medium",
+        "internet_facing": false
+      },
+      "context_label": "internal, medium importance",
+      "selection_note": "HIGH severity, not in KEV. Version chosen mechanically: first fixed version (NVD 'versionEndExcluding').",
+      "links": {
+        "cve.org": "https://www.cve.org/CVERecord?id=CVE-2026-100846",
+        "nvd": "https://nvd.nist.gov/vuln/detail/CVE-2026-100846",
+        "kev": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-100846"
+      },
+      "expected_applicability": null,
+      "acceptable_decisions": [],
+      "rationale": ""
+    },
+    {
+      "id": "h15",
+      "cve_id": "CVE-2026-71180",
+      "pool": "HIGH",
+      "software": {
+        "vendor": "dell",
+        "product": "update_package_framework",
+        "version": "26.07.03",
+        "cpe": "cpe:2.3:a:dell:update_package_framework:26.07.03:*:*:*:*:*:*:*"
+      },
+      "asset": {
+        "criticality": "low",
+        "internet_facing": false,
+        "controls": [
+          "reduces_reachability"
+        ]
+      },
+      "context_label": "internal, low importance, firewall restricts access",
+      "selection_note": "HIGH severity, not in KEV. Version chosen mechanically: first fixed version (NVD 'versionEndExcluding').",
+      "links": {
+        "cve.org": "https://www.cve.org/CVERecord?id=CVE-2026-71180",
+        "nvd": "https://nvd.nist.gov/vuln/detail/CVE-2026-71180",
+        "kev": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-71180"
+      },
+      "expected_applicability": null,
+      "acceptable_decisions": [],
+      "rationale": ""
+    },
+    {
+      "id": "h16",
+      "cve_id": "CVE-2026-58059",
+      "pool": "HIGH",
+      "software": {
+        "vendor": "bouncycastle",
+        "product": "bc-java",
+        "version": "1.85",
+        "cpe": "cpe:2.3:a:bouncycastle:bc-java:1.85:*:*:*:*:*:*:*"
+      },
+      "asset": {
+        "criticality": null,
+        "internet_facing": null
+      },
+      "context_label": "no context recorded",
+      "selection_note": "HIGH severity, not in KEV. Version chosen mechanically: first fixed version (NVD 'versionEndExcluding').",
+      "links": {
+        "cve.org": "https://www.cve.org/CVERecord?id=CVE-2026-58059",
+        "nvd": "https://nvd.nist.gov/vuln/detail/CVE-2026-58059",
+        "kev": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-58059"
+      },
+      "expected_applicability": null,
+      "acceptable_decisions": [],
+      "rationale": ""
+    },
+    {
+      "id": "h17",
+      "cve_id": "CVE-2026-85014",
+      "pool": "PKG (SBOM path)",
+      "software": {
+        "product": "undici",
+        "version": "7.0.0",
+        "purl": "pkg:npm/undici@7.0.0"
+      },
+      "asset": {
+        "criticality": "high",
+        "internet_facing": true
+      },
+      "context_label": "internet-facing, high importance",
+      "selection_note": "Open-source package CVE (GitHub advisory GHSA-rx4f-c7p8-82vq), matched by package URL through OSV like an SBOM component. Version chosen mechanically: first affected version in OSV.",
+      "links": {
+        "cve.org": "https://www.cve.org/CVERecord?id=CVE-2026-85014",
+        "nvd": "https://nvd.nist.gov/vuln/detail/CVE-2026-85014",
+        "kev": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-85014"
+      },
+      "expected_applicability": null,
+      "acceptable_decisions": [],
+      "rationale": ""
+    },
+    {
+      "id": "h18",
+      "cve_id": "CVE-2026-77274",
+      "pool": "PKG (SBOM path)",
+      "software": {
+        "product": "mcp-atlassian",
+        "version": "0.22.0",
+        "purl": "pkg:pypi/mcp-atlassian@0.22.0"
+      },
+      "asset": {
+        "criticality": "medium",
+        "internet_facing": false
+      },
+      "context_label": "internal, medium importance",
+      "selection_note": "Open-source package CVE (GitHub advisory GHSA-hgcf-4mq8-5266), matched by package URL through OSV like an SBOM component. Version chosen mechanically: first fixed version in OSV.",
+      "links": {
+        "cve.org": "https://www.cve.org/CVERecord?id=CVE-2026-77274",
+        "nvd": "https://nvd.nist.gov/vuln/detail/CVE-2026-77274",
+        "kev": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-77274"
+      },
+      "expected_applicability": null,
+      "acceptable_decisions": [],
+      "rationale": ""
+    },
+    {
+      "id": "h19",
+      "cve_id": "CVE-2026-69254",
+      "pool": "PKG (SBOM path)",
+      "software": {
+        "product": "flowise",
+        "version": "3.1.3",
+        "purl": "pkg:npm/flowise@3.1.3"
+      },
+      "asset": {
+        "criticality": "low",
+        "internet_facing": false,
+        "controls": [
+          "reduces_reachability"
+        ]
+      },
+      "context_label": "internal, low importance, firewall restricts access",
+      "selection_note": "Open-source package CVE (GitHub advisory GHSA-3769-jgqc-cxm7), matched by package URL through OSV like an SBOM component. Version chosen mechanically: first fixed version in OSV.",
+      "links": {
+        "cve.org": "https://www.cve.org/CVERecord?id=CVE-2026-69254",
+        "nvd": "https://nvd.nist.gov/vuln/detail/CVE-2026-69254",
+        "kev": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2026-69254"
+      },
+      "expected_applicability": null,
+      "acceptable_decisions": [],
+      "rationale": ""
+    },
+    {
+      "id": "h20",
+      "cve_id": "CVE-2025-71390",
+      "pool": "PKG (SBOM path)",
+      "software": {
+        "product": "SurrealDB",
+        "version": "2.1.8",
+        "purl": "pkg:cargo/SurrealDB@2.1.8"
+      },
+      "asset": {
+        "criticality": null,
+        "internet_facing": null
+      },
+      "context_label": "no context recorded",
+      "selection_note": "Open-source package CVE (GitHub advisory GHSA-m3c3-78fh-w3w7), matched by package URL through OSV like an SBOM component. Version chosen mechanically: first fixed version in OSV.",
+      "links": {
+        "cve.org": "https://www.cve.org/CVERecord?id=CVE-2025-71390",
+        "nvd": "https://nvd.nist.gov/vuln/detail/CVE-2025-71390",
+        "kev": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2025-71390"
+      },
+      "expected_applicability": null,
+      "acceptable_decisions": [],
+      "rationale": ""
+    }
+  ]
+}

@@ -554,7 +554,7 @@ def _derive(b: _Builder, cve_org: SourceData, nvd: SourceData, now: datetime) ->
         if n_refs:
             parts.append(f"{n_refs} reference{'s are' if n_refs != 1 else ' is'} tagged as exploit material")
         b.finding("public_exploit_claimed", Truth.TRUE,
-                  "; ".join(parts).capitalize() + ". Whether that code exists, works or is reliable is NOT "
+                  (lambda t: t[:1].upper() + t[1:])("; ".join(parts)) + ". Whether that code exists, works or is reliable is NOT "
                   "verified by this tool.", claim_ids)
     elif not nvd_ok and not ssvc:
         b.finding("public_exploit_claimed", Truth.RETRIEVAL_FAILED,
@@ -604,6 +604,25 @@ def _derive(b: _Builder, cve_org: SourceData, nvd: SourceData, now: datetime) ->
                                "It is treated strictly as data; review those sources manually.")
 
 
+def _ingest_distro(b: _Builder, data: SourceData) -> None:
+    out = data.outcome
+    if out.status != SourceStatus.OK or not data.payload:
+        return
+    retrieved = out.retrieved_at or datetime.now(UTC)
+    if out.source == SourceName.UBUNTU:
+        pkgs = data.payload.get("packages") or []
+        b.add("UBUNTU", singleton=True, source=SourceName.UBUNTU, kind="distro_status", url=out.url or "",
+              retrieved_at=retrieved, published=data.payload.get("published"), updated=data.payload.get("updated_at"),
+              summary=f"Ubuntu security tracker: status for {len(pkgs)} source package(s) across Ubuntu releases.",
+              fields=data.payload)
+    else:
+        b.add("REDHAT", singleton=True, source=SourceName.REDHAT, kind="distro_status", url=out.url or "",
+              retrieved_at=retrieved, published=data.payload.get("public_date"),
+              summary=f"Red Hat security data: {len(data.payload.get('affected_release') or [])} fixed package "
+                      f"release(s) and {len(data.payload.get('package_state') or [])} product status entries.",
+              fields=data.payload)
+
+
 def build_bundle(
     cve_id: str,
     cve_org: SourceData,
@@ -613,16 +632,20 @@ def build_bundle(
     *,
     demo: bool,
     now: datetime | None = None,
+    distros: list[SourceData] | None = None,
 ) -> EvidenceBundle:
     now = now or datetime.now(UTC)
     b = _Builder(cve_id, demo)
     outcomes: list[SourceOutcome] = [cve_org.outcome, nvd.outcome, kev.outcome]
     if cve_id in epss.outcomes:
         outcomes.append(epss.outcomes[cve_id])
+    outcomes.extend(d.outcome for d in distros or [])
     b.bundle.sources = outcomes
 
     _ingest_cve_org(b, cve_org)
     _ingest_nvd(b, nvd)
+    for d in distros or []:
+        _ingest_distro(b, d)
     if b.bundle.record_state in (RecordState.PUBLISHED, RecordState.UNKNOWN):
         _ingest_kev(b, kev)
         _ingest_epss(b, epss, now)

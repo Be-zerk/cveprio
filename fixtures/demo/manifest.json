@@ -174,6 +174,41 @@
    "retrieved_at": "2026-10-10T21:14:09.829040+00:00",
    "status": 200
   },
+  "https://ubuntu.com/security/cves/CVE-2021-44228.json": {
+   "file": "responses/ubuntu.com_security_cves_CVE-2021-44228.json.json",
+   "retrieved_at": "2026-10-11T17:36:33.741407+00:00",
+   "status": 200
+  },
+  "https://ubuntu.com/security/cves/CVE-2022-22965.json": {
+   "file": "responses/ubuntu.com_security_cves_CVE-2022-22965.json.json",
+   "retrieved_at": "2026-10-11T17:26:32.863910+00:00",
+   "status": 200
+  },
+  "https://ubuntu.com/security/cves/CVE-2023-38545.json": {
+   "file": "responses/ubuntu.com_security_cves_CVE-2023-38545.json.json",
+   "retrieved_at": "2026-10-11T17:27:41.204665+00:00",
+   "status": 200
+  },
+  "https://ubuntu.com/security/cves/CVE-2023-44487.json": {
+   "file": "responses/ubuntu.com_security_cves_CVE-2023-44487.json.json",
+   "retrieved_at": "2026-10-11T17:26:50.885281+00:00",
+   "status": 200
+  },
+  "https://ubuntu.com/security/cves/CVE-2024-3094.json": {
+   "file": "responses/ubuntu.com_security_cves_CVE-2024-3094.json.json",
+   "retrieved_at": "2026-10-11T17:30:20.245696+00:00",
+   "status": 200
+  },
+  "https://ubuntu.com/security/cves/CVE-2024-47176.json": {
+   "file": "responses/ubuntu.com_security_cves_CVE-2024-47176.json.json",
+   "retrieved_at": "2026-10-11T17:36:54.895618+00:00",
+   "status": 200
+  },
+  "https://ubuntu.com/security/cves/CVE-2024-6387.json": {
+   "file": "responses/ubuntu.com_security_cves_CVE-2024-6387.json.json",
+   "retrieved_at": "2026-10-11T17:27:15.564648+00:00",
+   "status": 200
+  },
   "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json": {
    "file": "responses/kev_subset.json",
    "retrieved_at": "2026-10-10T21:14:10.101741+00:00",

@@ -15,14 +15,24 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from cveprio.net import FetchError, SafeFetcher
-from cveprio.sources import CVE_ORG_ID, CVE_ORG_RECORD, EPSS_API, KEV_FEED, NVD_CVE, normalize_cve_id
+from cveprio.sources import (
+    CVE_ORG_ID,
+    CVE_ORG_RECORD,
+    EPSS_API,
+    KEV_FEED,
+    NVD_CVE,
+    REDHAT_CVE,
+    UBUNTU_CVE,
+    normalize_cve_id,
+)
 
 
 def _fname(url: str) -> str:
     return re.sub(r"[^A-Za-z0-9.-]+", "_", url.split("://", 1)[1])[:150] + ".json"
 
 
-def capture(cve_ids: list[str], out_dir: Path, fetcher: SafeFetcher, nvd_api_key: str | None = None) -> Path:
+def capture(cve_ids: list[str], out_dir: Path, fetcher: SafeFetcher, nvd_api_key: str | None = None,
+            distros: bool = True) -> Path:
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "responses").mkdir(exist_ok=True)
     manifest_path = out_dir / "manifest.json"
@@ -36,7 +46,17 @@ def capture(cve_ids: list[str], out_dir: Path, fetcher: SafeFetcher, nvd_api_key
             print(f"  ! {url}: {err}")
             return -1
         name = "responses/" + _fname(url)
-        (out_dir / name).write_bytes(res.body)
+        body = res.body
+        if "ubuntu.com/security" in url and res.status_code == 200:
+            # Ubuntu's licence for this data is not stated; keep only the fields the tool uses.
+            d = json.loads(body)
+            keep = {"id": d.get("id"), "updated_at": d.get("updated_at"), "published": d.get("published"),
+                    "packages": [{"name": p.get("name"), "statuses": [
+                        {k: st.get(k) for k in ("release_codename", "status", "description")}
+                        for st in p.get("statuses") or []]} for p in d.get("packages") or []],
+                    "x_cveprio_note": "Trimmed to package status fields. Source: ubuntu.com/security (Canonical)."}
+            body = json.dumps(keep, indent=1).encode()
+        (out_dir / name).write_bytes(body)
         manifest["responses"][url] = {"file": name, "status": res.status_code,
                                       "retrieved_at": res.retrieved_at.isoformat()}
         print(f"  {res.status_code} {url}")
@@ -47,6 +67,9 @@ def capture(cve_ids: list[str], out_dir: Path, fetcher: SafeFetcher, nvd_api_key
             record(CVE_ORG_ID.format(id=cid))
         record(NVD_CVE.format(id=cid), accept=(200,), headers={"apiKey": nvd_api_key} if nvd_api_key else None)
         record(EPSS_API.format(ids=cid), accept=(200,))
+        if distros:
+            for url in (UBUNTU_CVE.format(id=cid), REDHAT_CVE.format(id=cid)):
+                record(url)
 
     res = fetcher.get(KEV_FEED, max_bytes=16 * 1024 * 1024)
     full = json.loads(res.body)

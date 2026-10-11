@@ -1,6 +1,6 @@
 # Progress and handoff
 
-_Last updated: 2026-10-10 (end of first build session)._
+_Last updated: 2026-10-11._
 
 ## Starting state
 
@@ -19,14 +19,17 @@ used ("disregard the other repo"); nothing was copied from it.
 | 5. Evaluation, docs, demo | done | `evaluation/results/`, `docs/`, `README.md` |
 | 7. SBOM import (CycloneDX / SPDX 2.x JSON) | done | `--sbom`, `examples/inventory-sbom.json`; `tests/test_sbom.py`; real SBOM of this project scanned (0 known CVEs) |
 | 6. CVE discovery + disputed records (added after reviewing the demo) | done | `cveprio analyze --inventory examples/inventory.json --discover` → 83 CVEs; `tests/test_discovery.py` |
+| 8. Quote-grounded AI claims, Ubuntu/Red Hat advisories, held-out set (0.2.0) | done, except labelling | `tests/test_llm.py`, `tests/test_distro*.py`, `tests/test_holdout.py`; demo OpenSSH on Ubuntu 24.04 now `not_affected`; `evaluation/holdout/` (20 cases, unlabelled) |
 
-Acceptance criteria AC1–AC31 are in [docs/PLAN.md](docs/PLAN.md); the assessment against
+Acceptance criteria AC1–AC34 are in [docs/PLAN.md](docs/PLAN.md); the assessment against
 them is at the end of this file.
 
-## What was run (2026-10-10)
+## What was run (latest: 2026-10-11, version 0.2.0)
 
-- `pytest`: **185 passed, 3 skipped** (the 3 live tests are opt-in).
+- `pytest`: **233 passed, 3 skipped** (the 3 live tests are opt-in).
 - `CVEPRIO_LIVE_TESTS=1 pytest -m live`: **3 passed** against the real CVE.org, NVD, KEV, EPSS and OSV APIs (incl. discovery).
+- `cveprio holdout-select`: 20 cases selected and their source data recorded (Ubuntu's API often returned HTTP 504 and needed retries).
+- `cveprio evaluate --set holdout`: runs; all 20 cases skipped as unlabelled, as intended.
 - `ruff check cveprio tests`: clean. `mypy cveprio`: clean.
 - `cveprio demo`: completes offline, exit code 0.
 - Live end-to-end: `cveprio analyze CVE-2024-3400 CVE-2023-4966 --inventory examples/inventory.json` → exit 0, all sources `ok`.
@@ -46,28 +49,28 @@ them is at the end of this file.
   through its OpenAI endpoint, where truncation was discovered).
 - **Reference judgements** in `evaluation/cases.json` were drafted with AI assistance and
   reviewed by the author (no cases changed).
-- Git: the repository is initialised but **nothing has been committed** (no commit was requested).
 
 ## Known issues / limitations
 
-- **Highest-priority improvement:** check that cited evidence actually supports each AI claim
-  (faithfulness), not just that the ID exists. Then retest with a stronger model and a
-  revised prompt on the same evaluation.
+- **The held-out set is unlabelled.** Until a person fills in `evaluation/holdout/labels.csv`,
+  the tool has no measured accuracy on CVEs it was not built around.
+- AI claims are now quote-grounded, but a real quote can still support a wrong conclusion.
 
-See README "Limitations". The most important: the evaluation set is small and not held
-out; the rules under-rank a supply-chain backdoor without KEV listing; distro package
-versions always require review; prompt-injection detection is heuristic only.
+See README "Limitations". Also important: the rules under-rank a supply-chain backdoor without
+a KEV listing; distribution packages are only resolved for Ubuntu and RHEL; prompt-injection
+detection is heuristic only.
 
 ## Exact next step
 
 The author has reviewed the evaluation reference judgements (no cases changed) and has run
 the demo, configured an NVD API key and run a live inventory analysis on their own machine.
-Next: build the claim-faithfulness check (verify that cited evidence actually supports each
-AI claim), then re-run `cveprio evaluate --llm ollama` and compare against the recorded results.
+Version 0.2.0 added quote-grounded AI claims, Ubuntu/Red Hat advisories and the held-out set
+(see CHANGELOG.md).
 
-Suggested follow-ups after that: distro advisory sources (Ubuntu USN / Red Hat CSAF) to
-resolve `needs_review` for package versions; NVD CPE-based CVE discovery from an inventory
-(no watchlist); a held-out evaluation set of recent CVEs labelled before running the tool.
+**Next: the author labels the held-out set** by following `evaluation/holdout/LABELING.md`
+*before* looking at the tool's output for those CVEs. Then run `cveprio evaluate --set holdout`
+and record the results in docs/EVALUATION.md. After that: a second labeller; a stronger model
+compared on the same cases; Debian/SUSE/Alpine advisories.
 
 ## Acceptance criteria assessment
 
@@ -83,7 +86,7 @@ resolve `needs_review` for package versions; NVD CPE-based CVE discovery from an
 | AC8 exact identity + unambiguous version | yes | applicability tests (log4j, xz, OpenSSH upstream) |
 | AC9 ambiguity → review | yes | distro version, fuzzy name, AND config, malformed range, disagreement tests |
 | AC10 schema-invalid output → status | yes | `test_unparseable_output…`, `test_schema_violation_rejected` |
-| AC11 citations validated | partly — IDs verified to exist; claim faithfulness not verified | `test_unsupported_and_fabricated_citations_removed` |
+| AC11 citations validated | yes — IDs exist and a verbatim quote from the cited evidence is required (grounding, not entailment) | `test_unsupported_and_fabricated_citations_removed`, `test_claim_with_fabricated_quote_is_removed` |
 | AC12 injection handled structurally | yes | `test_injected_text_is_escaped…`, `test_priority_invariant_even_when_detector_misses`, eval probe |
 | AC13 inventory not sent to model | yes | `test_inventory_and_context_never_sent_to_model` |
 | AC14 no confidence-as-probability | yes | schema has no numeric fields; `test_assessment_schema_has_no_numeric_confidence` |
@@ -103,4 +106,7 @@ resolve `needs_review` for package versions; NVD CPE-based CVE discovery from an
 | AC29 SBOM formats | yes | `test_real_cyclonedx_from_official_tool`, `test_spdx_purl_cpe_supplier_and_missing_version`, `test_bad_sbom_files_rejected_clearly` |
 | AC30 skipped components reported | yes | `test_cyclonedx_skips_non_software_and_reports_it`, `test_oversized_sbom_refused` |
 | AC31 no invented context | yes | `test_inventory_from_sboms_uses_supplied_context_only` |
+| AC32 quote-grounded claims | yes | `test_claim_with_fabricated_quote_is_removed`, `test_claim_without_quote_is_removed`, `test_claim_mentioning_numbers_missing_from_source_is_removed` |
+| AC33 distro advisories | yes | `test_ubuntu_verdicts`, `test_redhat_verdicts`, `test_without_distro_data_it_stays_needs_review`, `test_compare_deb`, `test_compare_rpm` |
+| AC34 held-out set | yes (labels pending, by design) | `test_committed_holdout_is_unlabelled`, `test_unlabelled_cases_are_skipped_and_labels_csv_is_used` |
 | AC24 new-user walkthrough | mostly | the author ran the demo, set an NVD key and ran a live inventory analysis following the docs; configuring a model provider themselves is not yet done |

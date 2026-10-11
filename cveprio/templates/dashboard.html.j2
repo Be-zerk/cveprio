@@ -136,7 +136,13 @@ details.bmore[open] > summary::before { content: "▾ "; }
 .tech th, .tech td { border: 0; padding: 2px 0; }
 .tech th { color: var(--text-2); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
 .tech td { overflow-wrap: break-word; }
+@keyframes flash { from { box-shadow: 0 0 0 3px var(--link); } to { box-shadow: 0 0 0 3px transparent; } }
+.flash { animation: flash 2s ease-out; }
+details.cve { scroll-margin-top: 12px; }
+.vtitle { grid-column: 1 / -1; font-size: 13px; color: var(--text-2); font-style: italic; margin-top: -4px; }
 tr:target td { background: var(--demo-bg); }
+.intro { margin: 16px 0 0; color: var(--text-2); }
+.empty { padding: 20px; border: 1px dashed var(--border); border-radius: 10px; color: var(--text-2); }
 footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
 .hidden { display: none !important; }
 @media (max-width: 760px) {
@@ -149,7 +155,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
 <main>
 <header>
   <h1>CVE prioritization{% if run.organization %} · {{ run.organization }}{% endif %}</h1>
-  <div class="meta">Generated {{ run.generated_at.strftime("%Y-%m-%d %H:%M UTC") }} · mode <b>{{ run.mode }}</b> · cveprio {{ run.tool_version }} · {{ run.reports|length }} CVEs</div>
+  <div class="meta">Generated {{ run.generated_at.strftime("%Y-%m-%d %H:%M UTC") }} · <b>{{ "offline demo data" if run.mode == "offline_demo" else "live data" }}</b> · {{ run.reports|length }} CVEs · cveprio {{ run.tool_version }}</div>
   {% if run.mode == "offline_demo" %}
   <div class="banner" role="note">⚠ OFFLINE DEMO DATA — recorded fixtures, not live results.
     <small>Source responses were recorded at the retrieval times shown in each evidence table and may be out of date.{% if run.fictional_context %} The inventory and business context are fictional.{% endif %}</small></div>
@@ -159,12 +165,13 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
   <ul class="notices">{% for n in run.notices if not n.startswith(("OFFLINE DEMO", "Inventory and business context")) %}<li>{{ n }}</li>{% endfor %}</ul>
 </header>
 
+<p class="intro">Each card below is one vulnerability (CVE), most urgent first. Click a card to see why it got its priority and what to do; click “▸ details” on any line for the full explanation and its sources. Click a tile to show only that group.</p>
 <section aria-label="Summary">
   <div class="tiles">
   {% for key, label, n in tiles %}
     {% set st = status.get(key, ("muted", "–")) %}
     <button class="tile s-{{ st[0] }}" data-filter="{{ key }}" aria-pressed="false">
-      <span class="label"><span class="dot" aria-hidden="true"></span>{% if key != "OTHER" %}{{ key }} · {% endif %}{{ label }}</span>
+      <span class="label"><span class="dot" aria-hidden="true"></span>{% if key in ("P1", "P2", "P3", "P4") %}{{ key }} · {% endif %}{{ label }}</span>
       <span class="value">{{ n }}</span>
     </button>
   {% endfor %}
@@ -198,7 +205,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
   <ul class="items">
   {% for r in differs %}
     {% set base = r.decision.baseline_label %}
-    <li><span class="bshort"><a href="#{{ r.cve_id }}">{{ r.cve_id }}</a>{% if r.bundle.title %} <span class="meta">({{ r.bundle.title|truncate(40) }})</span>{% endif %}: score alone says <b>{{ PLAIN_LABEL.get(base, base) }}{% if base in ("P1","P2","P3","P4") %} ({{ base }}){% endif %}</b>, this tool says <b>{{ PLAIN_LABEL.get(r.decision.label, r.decision.label) }}{% if r.decision.label in ("P1","P2","P3","P4") %} ({{ r.decision.label }}){% endif %}</b></span>
+    <li><span class="bshort"><a href="#{{ r.cve_id }}">{{ r.cve_id }}</a>{% set nm = display_name(r) %}{% if nm %} <span class="meta">— “{{ nm[0]|truncate(45) }}”</span>{% endif %}: score alone says <b>{{ PLAIN_LABEL.get(base, base) }}{% if base in ("P1","P2","P3","P4") %} ({{ base }}){% endif %}</b>, this tool says <b>{{ PLAIN_LABEL.get(r.decision.label, r.decision.label) }}{% if r.decision.label in ("P1","P2","P3","P4") %} ({{ r.decision.label }}){% endif %}</b></span>
       <details class="bmore"><summary>why</summary><div class="bdetail">Because: {{ compare_why(r) }}.</div></details></li>
   {% endfor %}
   </ul>
@@ -215,6 +222,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
 {% macro chips(cve, ids) %}{% if ids %}<span class="chips">{% for i in ids[:3] %}<a class="chip" href="#{{ cve }}-{{ i }}" title="Show evidence {{ i }}">{{ i }}</a>{% endfor %}{% if ids|length > 3 %}<details class="more-chips"><summary class="chip more" title="{{ ids[3:]|join(', ') }}">+{{ ids|length - 3 }} more</summary>{% for i in ids[3:] %}<a class="chip" href="#{{ cve }}-{{ i }}" title="Show evidence {{ i }}">{{ i }}</a>{% endfor %}</details>{% endif %}</span>{% endif %}{% endmacro %}
 {% macro bullet(cve, text) %}{% set it = text|split_item %}<li><span class="bshort">{{ it[0] }}</span>{% if it[1] or it[2] %}<details class="bmore"><summary>details</summary><div class="bdetail">{{ it[1] }}{% if it[2] %} <span class="srcs">Sources: {{ chips(cve, it[2]) }}</span>{% endif %}</div></details>{% endif %}</li>{% endmacro %}
 <section id="list" aria-label="CVE list">
+{% if not run.reports %}<p class="empty">No vulnerabilities to show.{% if run.discovery %} Discovery searched {{ run.discovery.queries|selectattr("status", "eq", "ok")|list|length }} components and found no known CVEs. This is not proof there are none: see the discovery limits above.{% endif %}</p>{% endif %}
 {% for r in run.reports %}
 {% set d = r.decision %}
 {% set st = status.get(d.label, ("muted", "–")) %}
@@ -222,18 +230,19 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
 <details class="cve" id="{{ r.cve_id }}" data-group="{{ group }}" data-text="{{ (r.cve_id ~ ' ' ~ (r.bundle.title or '') ~ ' ' ~ (r.applicability|map(attribute='asset_id')|join(' ')) ~ ' ' ~ (r.applicability|map(attribute='software.product')|join(' ')))|lower }}">
   <summary>
     <span class="cveid">{{ r.cve_id }}</span>
-    <span><span class="badge s-{{ st[0] }}"><span aria-hidden="true">{{ st[1] }}</span>{{ d.label }}{% if d.provisional %} · provisional{% endif %}</span></span>
-    <span class="headline">{{ PLAIN_LABEL.get(d.label, d.headline) }}{% if r.bundle.title %} · <span class="meta">{{ r.bundle.title|truncate(70) }}</span>{% endif %}</span>
-    <span class="factors">
+    <span><span class="badge s-{{ st[0] }}"><span aria-hidden="true">{{ st[1] }}</span>{{ BADGE.get(d.label, d.label) }}{% if d.provisional %} · provisional{% endif %}</span></span>
+    <span class="headline">{{ PLAIN_LABEL.get(d.label, d.headline) }}</span>
+    {% set nm = display_name(r) %}{% if nm %}<span class="vtitle">{{ nm[1] }}: “{{ nm[0]|truncate(110) }}”</span>{% endif %}
+    {% if r.bundle.record_state == "published" %}<span class="factors">
       {% set fc = factor_cards(r) %}
       <span>attacks: <b>{{ fc[0][1] }}</b></span>
       <span>severity: <b>{{ fc[1][1] }}</b></span>
       <span>exposure: <b>{{ fc[2][1] }}</b></span>
-      <span>CVSS-only would say: <b>{{ d.baseline_label }}</b></span>
+      <span>severity score alone: <b>{{ d.baseline_label }}</b></span>
       {% if r.bundle.conflicts %}<span class="flag">⚠ {{ r.bundle.conflicts|length }} source conflict{{ "s" if r.bundle.conflicts|length > 1 }}</span>{% endif %}
       {% if "disputed" in r.bundle.findings %}<span class="flag">⚠ disputed</span>{% endif %}
       {% if r.bundle.sources|selectattr("status", "in", ["failed", "rate_limited"])|list %}<span class="flag">⚠ degraded sources</span>{% endif %}
-    </span>
+    </span>{% endif %}
   </summary>
   <div class="body">
     <div class="summary-box s-{{ st[0] }}">
@@ -320,29 +329,32 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
       {% if r.llm.scripted %}<div class="scripted">SCRIPTED EXAMPLE — hand-written by the project author for the offline demo. Not produced by a language model.</div>{% endif %}
       {% set a = r.llm.assessment %}
       {% if r.llm.status == "ok" and a %}
-      <p class="meta">Provider <b>{{ r.llm.provider }}</b>, model <b>{{ r.llm.model }}</b> · claims with valid citation IDs: <b>{{ r.llm.supported_claims }}/{{ r.llm.total_claims }}</b> (cited IDs exist, but whether the source actually says what the claim says is NOT checked) · qualitative ratings; no calibrated probability implied.</p>
+      <p class="meta">Provider <b>{{ r.llm.provider }}</b>, model <b>{{ r.llm.model }}</b>{% if r.llm.prompt_version %}, prompt version {{ r.llm.prompt_version }}{% endif %} · <b>{{ r.llm.supported_claims }} of {{ r.llm.total_claims }}</b> claims passed the checks (the cited evidence exists, the claim's quote appears in it word for word, and any version numbers or dates it mentions are in it). This shows the claim is grounded in its source, not that the reasoning is correct. Ratings are opinions, not probabilities.</p>
       <div class="cols">
         <div>
-          <h3>Exploit-development difficulty: <code>{{ a.exploit_development_difficulty.rating }}</code></h3>
+          <h3>How hard to build an attack: {{ AI_RATING.get(a.exploit_development_difficulty.rating, a.exploit_development_difficulty.rating) }}</h3>
           <ul class="tight">
           {% for title, claims in [("Prerequisite", a.exploit_development_difficulty.prerequisites), ("Complexity", a.exploit_development_difficulty.complexity_factors), ("Research", a.exploit_development_difficulty.research_availability)] %}
-            {% for c in claims %}<li><span class="bshort">{{ c.statement }}</span><details class="bmore"><summary>details</summary><div class="bdetail">{{ title }} · {{ "sourced fact" if c.type == "fact" else "AI inference" }} <span class="srcs">Sources: {{ chips(r.cve_id, c.evidence_ids) }}</span></div></details></li>{% endfor %}
+            {% for c in claims %}<li><span class="bshort">{{ c.statement }}</span><details class="bmore"><summary>details</summary><div class="bdetail">{% if c.quote %}Quoted from the source: “{{ c.quote }}”<br>{% endif %}{{ title }} · {{ "restates a source" if c.type == "fact" else "AI inference" }} <span class="srcs">Sources: {{ chips(r.cve_id, c.evidence_ids) }}</span></div></details></li>{% endfor %}
           {% endfor %}
           </ul>
         </div>
         <div>
-          <h3>Existing-exploit usability: <code>{{ a.existing_exploit_usability.rating }}</code></h3>
+          <h3>Existing attacks and attack code: {{ AI_RATING.get(a.existing_exploit_usability.rating, a.existing_exploit_usability.rating) }}</h3>
           <ul class="tight">
           {% for title, claims in [("Exploit evidence", a.existing_exploit_usability.exploit_evidence), ("Reliability limit", a.existing_exploit_usability.reliability_limitations), ("Required access", a.existing_exploit_usability.required_access)] %}
-            {% for c in claims %}<li><span class="bshort">{{ c.statement }}</span><details class="bmore"><summary>details</summary><div class="bdetail">{{ title }} · {{ "sourced fact" if c.type == "fact" else "AI inference" }} <span class="srcs">Sources: {{ chips(r.cve_id, c.evidence_ids) }}</span></div></details></li>{% endfor %}
+            {% for c in claims %}<li><span class="bshort">{{ c.statement }}</span><details class="bmore"><summary>details</summary><div class="bdetail">{% if c.quote %}Quoted from the source: “{{ c.quote }}”<br>{% endif %}{{ title }} · {{ "restates a source" if c.type == "fact" else "AI inference" }} <span class="srcs">Sources: {{ chips(r.cve_id, c.evidence_ids) }}</span></div></details></li>{% endfor %}
           {% endfor %}
           </ul>
         </div>
       </div>
       {% if a.summary %}<p class="meta"><i>{{ "Scripted summary" if r.llm.scripted else "Model summary" }} (uncited free text):</i> {{ a.summary }}</p>{% endif %}
       {% if r.llm.removed_claims or r.llm.rating_overrides %}
-      <h3>Removed or overridden by validation</h3>
-      <ul class="tight">{% for i in r.llm.removed_claims + r.llm.rating_overrides %}<li><code>{{ i.path }}</code>: {{ i.problem }}{% if i.statement %} — “{{ i.statement|truncate(160) }}”{% endif %}</li>{% endfor %}</ul>
+      <details class="desc-box">
+        <summary><b>What the checker removed or corrected</b> <span class="meta">({{ (r.llm.removed_claims + r.llm.rating_overrides)|length }} item{{ "s" if (r.llm.removed_claims + r.llm.rating_overrides)|length != 1 }})</span></summary>
+        <ul class="tight">{% for i in r.llm.removed_claims %}<li>Removed: “{{ i.statement|truncate(160) }}” — {{ "it cited nothing" if "no evidence" in i.problem else "it cited evidence that does not exist" }} <span class="meta">({{ i.path }})</span></li>{% endfor %}
+        {% for i in r.llm.rating_overrides %}<li>Corrected a rating: {{ plain_override(i.problem) }} <span class="meta">({{ i.path }})</span></li>{% endfor %}</ul>
+      </details>
       {% endif %}
       {% else %}
       <p class="meta">Status <b>{{ r.llm.status }}</b>{% if r.llm.detail %} — {{ r.llm.detail }}{% endif %}</p>
@@ -350,15 +362,18 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
     </div>
 
     {% if r.applicability %}
-    <h3>Applicability to inventory</h3>
-    <div class="table-wrap"><table>
-      <thead><tr><th>Asset</th><th>Software</th><th>Status</th><th>Reasons</th></tr></thead>
-      <tbody>
-      {% for x in r.applicability %}
-      <tr><td>{{ x.asset_id }}</td><td>{{ x.software.product }} {{ x.software.version }}</td><td class="st-{{ x.status }}">{{ x.status }}</td>
-          <td><ul class="tight">{% for reason in x.reasons %}<li>{{ reason }}</li>{% endfor %}</ul></td></tr>
-      {% endfor %}
-      </tbody></table></div>
+    <details class="desc-box">
+      <summary><b>Which of your systems are affected</b> <span class="meta">({{ r.applicability|length }} checked; how each version was matched)</span></summary>
+      <div class="table-wrap"><table>
+        <thead><tr><th>System</th><th>Software</th><th>Result</th><th>Why</th></tr></thead>
+        <tbody>
+        {% for x in r.applicability %}
+        <tr><td>{{ x.asset_id }}</td><td>{{ x.software.product }} {{ x.software.version }}</td><td class="st-{{ x.status }}">{{ APPLIES.get(x.status, x.status) }}</td>
+            <td><ul class="tight">{% for reason in x.reasons %}<li>{{ plain_reason(reason) }}</li>{% endfor %}</ul>
+            <details class="more-raw"><summary class="meta">raw matching data</summary><ul class="tight meta">{% for reason in x.reasons %}<li>{{ reason }}</li>{% endfor %}</ul></details></td></tr>
+        {% endfor %}
+        </tbody></table></div>
+    </details>
     {% endif %}
 
     <details>
@@ -384,7 +399,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
 </section>
 
 <footer>
-  <p>Priorities come from documented deterministic rules (docs/PRIORITIZATION.md). AI output is validated against cited evidence and can only raise exploitation from “low_observed” to “elevated”. Passing tests do not establish that every security judgement is correct; review before acting.</p>
+  <p>Priorities come from fixed, documented rules (docs/PRIORITIZATION.md), not from an AI. AI notes are checked against their cited evidence, and the only thing they can do is raise a flaw from "no sign of attacks" to "attacks likely". Automated tests do not prove every security judgement is right: review before acting.</p>
 </footer>
 </main>
 <script>
@@ -407,13 +422,26 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
   });
   q.addEventListener("input", apply);
   document.getElementById("reset").addEventListener("click", function () { active = null; q.value = ""; tiles.forEach(function (x) { x.setAttribute("aria-pressed", "false"); }); apply(); });
+  function goTo(id) {
+    var t = document.getElementById(id);
+    if (!t) return;
+    var card = t.closest("details.cve");
+    if (card && card.classList.contains("hidden")) {  // hidden by a tile filter or search: clear them
+      active = null; q.value = "";
+      tiles.forEach(function (x) { x.setAttribute("aria-pressed", "false"); });
+      apply();
+    }
+    if (t.tagName === "DETAILS") t.open = true;
+    for (var p = t.parentElement; p; p = p.parentElement) { if (p.tagName === "DETAILS") p.open = true; }
+    if (history.replaceState) history.replaceState(null, "", "#" + id);
+    requestAnimationFrame(function () { requestAnimationFrame(function () { t.scrollIntoView({ block: "start" }); }); });
+    var flash = card && t === card ? card : t;
+    flash.classList.remove("flash"); void flash.offsetWidth; flash.classList.add("flash");
+  }
   document.querySelectorAll('a.chip, .compare a[href^="#"]').forEach(function (c) {
-    c.addEventListener("click", function () {
-      var t = document.getElementById(c.getAttribute("href").slice(1));
-      if (t && t.tagName === "DETAILS") t.open = true;
-      for (var p = t && t.parentElement; p; p = p.parentElement) { if (p.tagName === "DETAILS") p.open = true; }
-    });
+    c.addEventListener("click", function (ev) { ev.preventDefault(); goTo(c.getAttribute("href").slice(1)); });
   });
+  if (location.hash) { goTo(decodeURIComponent(location.hash.slice(1))); }
   document.getElementById("expand").addEventListener("click", function () { var open = this.textContent === "Open all cards"; items.forEach(function (el) { el.open = open; }); this.textContent = open ? "Close all cards" : "Open all cards"; });
 })();
 </script>

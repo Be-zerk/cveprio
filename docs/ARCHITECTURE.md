@@ -4,16 +4,16 @@
 
 | Concern | Module | Responsibility | Does NOT |
 |---|---|---|---|
-| Retrieval | `net.py`, `sources/__init__.py` | Fetch CVE.org, NVD, KEV, EPSS; report an honest per-source outcome (`ok/not_found/failed/rate_limited/skipped`) | interpret security meaning |
+| Retrieval | `net.py`, `sources/__init__.py` | Fetch CVE.org, NVD, KEV, EPSS, OSV, Ubuntu and Red Hat advisories; report an honest per-source outcome (`ok/not_found/failed/rate_limited/skipped`) | interpret security meaning |
 | SBOM import | `sbom.py` | CycloneDX / SPDX 2.x JSON → inventory software items; limits, skipped-component reporting | fetch anything referenced in the SBOM |
 | CVE discovery | `discovery.py`, `sources/` | Inventory → candidate CVEs via NVD CPE match and OSV purl query; reports unsearchable items and caps | decide applicability (re-checked downstream) |
 | Offline fixtures | `net.FixtureFetcher`, `capture.py` | Replay recorded responses with their original retrieval times | ever touch the network |
 | Normalisation | `normalize.py` | Build `Evidence` items with stable IDs and provenance; derive five-valued `Finding`s; detect conflicts and stale signals | rank or recommend |
-| Applicability | `versions.py`, `applicability.py` | Decide if an inventory item is affected, conservatively | use fuzzy matches as positive evidence |
-| AI analysis | `llm/` | Ask a model to interpret evidence; validate schema and citations; override contradictions | see inventory or set priority |
+| Applicability | `versions.py`, `applicability.py` | Decide if an inventory item is affected, conservatively; distro packages are judged by the distro's advisory (deb/rpm version comparison) | use fuzzy matches as positive evidence |
+| AI analysis | `llm/` | Ask a model to interpret evidence; validate schema, citations and verbatim quotes; override contradictions | see inventory or set priority |
 | Rules | `prioritize.py` | Exploitation × severity × exposure → decision, trace, counterfactuals, actions, baseline | call a model |
 | Output | `report.py`, `dashboard.py`, `cli.py` | JSON, Markdown, static HTML; exit codes | hide degraded status |
-| Evaluation | `evaluation.py`, `evaluation/` | Compare against reference judgements and the severity-only baseline | claim predictive accuracy |
+| Evaluation | `evaluation.py`, `evaluation/` | Compare against reference judgements and the severity-only baseline; select the held-out set (`holdout.py`) | claim predictive accuracy |
 
 Data types live in `models.py`. The three kinds of statement never share a type:
 `Evidence` (sourced, with provenance), `Finding` (deterministic conclusion citing
@@ -89,10 +89,45 @@ by purl rather than vendor/product names, OSV's per-version answer is stored as 
 evidence item and accepted by the applicability engine as a match; it can still be
 contradicted by other sources, which yields `needs_review`.
 
+## AI claim grounding (0.2.0)
+
+Checking that a cited evidence ID *exists* proved too weak: a local model cited real IDs for
+false statements. Each claim must now carry a `quote` of at least 3 words copied from the
+evidence it cites. After normalising case, whitespace and typographic quotes/dashes, the quote
+must appear in the text of a cited item: its summary, excerpt or stored fields. Any dotted
+version, number or ISO date in the statement must also appear there. Claims that fail are
+removed, and the reason is recorded per claim. This is a grounding check, not entailment: a model
+can quote a true sentence and still draw a wrong conclusion. The check catches invented details
+and mis-attributed sources, which were the failures actually observed.
+
+## Distribution advisories (0.2.0)
+
+Distributions backport fixes, so `openssh 1:9.6p1-3ubuntu13.4` can be fixed even though
+upstream 9.6p1 is in the affected range. For items with `distro` (`ubuntu:<release>` or
+`rhel:<major>`) or a `pkg:deb`/`pkg:rpm` purl with a distro qualifier, the pipeline fetches
+the Ubuntu CVE tracker and/or the Red Hat Security Data API, but only for PUBLISHED records.
+The installed build is compared with the fixed build using dpkg (`compare_deb`) or rpmvercmp
+(`compare_rpm`) rules. A definite distro verdict (fixed, not affected, still needed) wins over
+upstream ranges. If the release or package is not listed, or a fetch fails, the result stays
+`needs_review`. A 404 from a distro means "no entry", not "not affected". Ubuntu's data
+licence is unstated, so fixtures keep only the package-status fields. Red Hat's data is
+CC BY 4.0 and credited in every report.
+
+## Held-out evaluation set (0.2.0)
+
+`cveprio holdout-select` samples recent CVEs with a fixed seed: KEV additions in the window,
+NVD CVEs with usable CPE ranges, and NVD CVEs with a GitHub advisory, queried as purls through
+OSV. Each case gets either the first affected or the first fixed version, and a rotating
+business context. Source responses are recorded as fixtures so the evaluation is reproducible
+offline. Cases are written **without** expected answers: labels go in `labels.csv`, filled in
+by a person from the sources before running the tool, and unlabelled cases are skipped and
+counted.
+
 ## Retrieval safety
 
 - HTTPS only; hosts restricted to `cveawg.mitre.org`, `services.nvd.nist.gov`,
-  `api.first.org`, `www.cisa.gov`, `api.osv.dev` (POST JSON queries only for OSV). No user-supplied or retrieved URL is ever fetched
+  `api.first.org`, `www.cisa.gov`, `api.osv.dev` (POST JSON queries only for OSV), `ubuntu.com`,
+  `access.redhat.com`. No user-supplied or retrieved URL is ever fetched
   (reference URLs are shown as links, never requested).
 - Every resolved IP must be global: loopback, RFC1918, link-local (incl. cloud metadata
   `169.254.169.254`), CGNAT, ULA and multicast are refused.
@@ -113,7 +148,8 @@ Retrieved text is untrusted. Defences, from strongest to weakest:
 1. **The model cannot set priority or statuses.** Even an obedient model only produces
    ratings that are re-checked (test: `test_priority_invariant_even_when_detector_misses`).
 2. **Schema validation** (`extra="forbid"`): no extra fields such as a smuggled `risk_score`.
-3. **Citation validation** and **rating overrides** against deterministic findings.
+3. **Citation and quote validation** (every claim must quote its cited evidence verbatim) and
+   **rating overrides** against deterministic findings.
 4. **Data-only prompt**: evidence is JSON-encoded with `<`/`>` escaped inside one
    delimited block, so text cannot close the block or fake tags.
 5. **Heuristic detector** flags instruction-like phrases for the reader. It is

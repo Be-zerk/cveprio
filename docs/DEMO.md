@@ -16,24 +16,25 @@ cveprio serve out/demo     # http://127.0.0.1:8765/dashboard.html
 Expected terminal summary (the `*` marks provisional decisions):
 
 ```
-CVE                DECISION                 BASELINE  EXPLOITATION         SEVERITY  EXPOSURE
-CVE-2021-44228     P1                       P1        confirmed            critical  high
-CVE-2023-44487     P1                       P2        confirmed            high      high
-CVE-2024-6387      P1                       P2        elevated             high      high
-CVE-2023-38545     P2*                      P1        elevated             critical  context_unknown
-CVE-2022-22965     NEEDS_REVIEW*            P1        confirmed            critical  needs_review
-CVE-2024-47176     P3                       P3        elevated             medium    reduced
-CVE-2024-3094      NOT_APPLICABLE           P1        elevated             critical  not_affected
-CVE-2026-11415     NO_ACTION_REJECTED       N/A       n/a                  n/a       n/a
-CVE-2026-99001     INVALID_OR_UNPUBLISHED   N/A       n/a                  n/a       n/a
+CVE                DECISION               SCORE ALONE  ATTACKS                                EXPOSURE
+CVE-2021-44228     P1 fix now             P1           attacked (CISA list since 2021-12-10)  web-portal-01 is internet-facing and high importance
+CVE-2023-44487     P1 fix now             P2           attacked (CISA list since 2023-10-10)  web-portal-01 is internet-facing and high importance
+CVE-2024-6387      P1 fix now             P2           demo attack code exists (CISA)         bastion-01 is internet-facing and high importance
+CVE-2023-38545     P2 next patch cycle*   P1           demo attack code exists (CISA)         dev-laptop-17: internet exposure and importance not recorded (+1 more s…
+CVE-2022-22965     needs review*          P1           attacked (CISA list since 2022-04-04)  Unclear whether web-portal-01 is affected
+CVE-2024-47176     P3 schedule a fix      P3           demo attack code exists (CISA)         print-srv-01 is protected by a declared control (not verified)
+CVE-2024-3094      not affected           P1           attacks likely (86.0% in 30 days)      your version is not affected
+CVE-2026-11415     cancelled CVE          -            -                                      -
+CVE-2026-99001     no details yet         -            -                                      -
+  * provisional: depends on information that was not supplied
 ```
 
 ## 2. Talking points, one CVE each
 
 | CVE | What to show | Point it makes |
 |---|---|---|
-| CVE-2023-44487 (HTTP/2 Rapid Reset) | CVSS-only says P2; rules say P1 | KEV listing + internet-facing nginx outranks a "high" CVSS |
-| CVE-2024-3094 (xz backdoor) | CVSS 10 → baseline P1; tool says NOT_APPLICABLE | The deployed xz 5.4.6 is outside the affected versions (two sources agree). Context removes noise |
+| CVE-2023-44487 (HTTP/2 Rapid Reset) | Score alone says P2; tool says P1 | KEV listing + internet-facing nginx outranks a "high" CVSS |
+| CVE-2024-3094 (xz backdoor) | CVSS 10 → score alone says P1; tool says "Not affected" | The deployed xz 5.4.6 is outside the affected versions (two sources agree). Context removes noise |
 | CVE-2023-38545 (curl SOCKS5) | NVD 9.8 vs CISA-ADP 8.8 conflict; P2 *provisional* | Conflicts are shown, not hidden; dev laptop has no context → provisional, not assumed low |
 | CVE-2022-22965 (Spring4Shell) | NEEDS_REVIEW "would be P1 if affected" | NVD's configuration requires a JDK condition the inventory doesn't record; the tool asks instead of guessing |
 | CVE-2024-6387 (regreSSHion) | Expand → applicability table | Upstream 9.6p1 on the bastion is affected; the Ubuntu package `1:9.6p1-3ubuntu13.4` is `needs_review` (backports) |

@@ -1,33 +1,32 @@
 # CVE prioritization report
 
-Generated 2026-10-11T02:51:00+00:00 · mode **offline_demo** · cveprio 0.1.0 · organisation: Northbeam Logistics (fictional)
+Generated 2026-10-11T17:46:45+00:00 · mode **offline_demo** · cveprio 0.2.0 · organisation: Northbeam Logistics (fictional)
 
 > OFFLINE DEMO MODE: data comes from recorded fixtures (see retrieval times), not live sources. Results may be out of date.
 > Inventory and business context are FICTIONAL example data.
 > This product uses the NVD API but is not endorsed or certified by the NVD.
 > CVE records: CVE Program (cve.org). KEV: CISA Known Exploited Vulnerabilities catalogue (CC0). EPSS: FIRST.org Exploit Prediction Scoring System (https://www.first.org/epss).
+> When used: Ubuntu CVE tracker (ubuntu.com/security, Canonical) and Red Hat Security Data (access.redhat.com, CC BY 4.0, © Red Hat).
 
-| CVE | Decision | Baseline (CVSS only) | Exploitation | Severity | Exposure |
+| CVE | Decision | Severity score alone | Attack activity | Severity | Your exposure |
 |---|---|---|---|---|---|
-| CVE-2021-44228 | P1 | P1 | confirmed | critical | high |
-| CVE-2023-44487 | P1 | P2 | confirmed | high | high |
-| CVE-2024-6387 | P1 | P2 | elevated | high | high |
-| CVE-2023-38545 | P2 (provisional) | P1 | elevated | critical | context_unknown |
-| CVE-2022-22965 | NEEDS_REVIEW (provisional) | P1 | confirmed | critical | needs_review |
-| CVE-2024-47176 | P3 | P3 | elevated | medium | reduced |
-| CVE-2024-3094 | NOT_APPLICABLE | P1 | elevated | critical | not_affected |
-| CVE-2026-11415 | NO_ACTION_REJECTED | N/A | n/a | n/a | n/a |
-| CVE-2026-99001 | INVALID_OR_UNPUBLISHED | N/A | n/a | n/a | n/a |
+| CVE-2021-44228 | P1 | P1 | Being attacked: on CISA's list since 2021-12-10 | 10.0 out of 10 (critical) | web-portal-01 is internet-facing and high importance |
+| CVE-2023-44487 | P1 | P2 | Being attacked: on CISA's list since 2023-10-10 | 7.5 out of 10 (high) | web-portal-01 is internet-facing and high importance |
+| CVE-2024-6387 | P1 | P2 | Demo attack code exists (CISA) | 8.1 out of 10 (high) | bastion-01 is internet-facing and high importance |
+| CVE-2023-38545 | P2 (provisional) | P1 | Demo attack code exists (CISA) | 9.8 out of 10 (critical) | dev-laptop-17: internet exposure and importance not recorded (+1 more system) |
+| CVE-2022-22965 | Needs review (provisional) | P1 | Being attacked: on CISA's list since 2022-04-04 | 9.8 out of 10 (critical) | Unclear whether web-portal-01 is affected |
+| CVE-2024-47176 | P3 | P3 | Demo attack code exists (CISA) | 5.3 out of 10 (medium) | print-srv-01 is protected by a declared control (not verified) |
+| CVE-2024-3094 | Not affected | P1 | Attacks likely: 86.0% predicted chance in 30 days | 10.0 out of 10 (critical) | Not affected: your installed version is outside the affected range |
+| CVE-2026-11415 | Cancelled CVE | – | – | – | – |
+| CVE-2026-99001 | No details yet | – | – | – | – |
 
 ## CVE-2021-44228 — P1: Act now: emergency change / out-of-band patching
 
 > **OFFLINE DEMO DATA** — recorded fixtures, not live results. See retrieval times below.
 
-*Source description (untrusted text, verbatim) [CVE.desc]:* Apache Log4j2 JNDI features do not protect against attacker controlled LDAP and other JNDI related endpoints — Apache Log4j2 2.0-beta9 through 2.15.0 (excluding security releases 2.12.2, 2.12.3, and 2.3.1) JNDI features used in configuration, log messages, and parameters do not protect against attacker controlled LDAP and other JNDI related endpoints. An attacker who can control log messages or log message parameters can execute arbitrary code loaded from LDAP servers when message lookup substitution is enabled. From log4j 2.15.0, this behavior has been disabled by default. From version 2.16.0 (along with 2.12.2, 2.12.3, and 2.3.1), this functionality has been completely removed. Note that t
+*Official description (copied word for word; untrusted text) [CVE.desc]:* Apache Log4j2 JNDI features do not protect against attacker controlled LDAP and other JNDI related endpoints — Apache Log4j2 2.0-beta9 through 2.15.0 (excluding security releases 2.12.2, 2.12.3, and 2.3.1) JNDI features used in configuration, log messages, and parameters do not protect against attacker controlled LDAP and other JNDI related endpoints. An attacker who can control log messages or log message parameters can execute arbitrary code loaded from LDAP servers when message lookup substitution is enabled. From log4j 2.15.0, this behavior has been disabled by default. From version 2.16.0 (along with 2.12.2, 2.12.3, and 2.3.1), this functionality has been completely removed. Note that t
 
-**Decision:** `P1` · priority P1
-
-**Factors:** exploitation = `confirmed`, severity = `critical`, exposure = `high` · **Severity-only baseline:** `P1`
+**Decision:** Fix now (P1) · **Severity score alone would say:** P1
 
 **In short:** Attackers are known to be using it: it is on CISA's list of actively attacked flaws (added 2021-12-10), and CISA rates exploitation as active. It affects web-portal-01 (log4j-core 2.14.1) — internet-facing, high importance. Also check legacy-billing-03: it may be affected too, but this could not be confirmed automatically.
 
@@ -37,13 +36,13 @@ Generated 2026-10-11T02:51:00+00:00 · mode **offline_demo** · cveprio 0.1.0 ·
 - Type of flaw: Improper Input Validation (+3 more) — CWE-20: Improper Input Validation; CWE-400: Uncontrolled Resource Consumption; CWE-502: Deserialization of Untrusted Data; CWE-917: Improper Neutralization of Special Elements used in an Expression Language Statement ('Expression Language Injection'). CWE = MITRE's Common Weakness Enumeration. [CVE.cwe, NVD.cwe]
 - On the US government's list of actively attacked flaws (KEV): Yes — Listed in the CISA Known Exploited Vulnerabilities catalogue. [KEV]
 - Known to be exploited by attackers: Yes — Attacks have been seen: it is listed in CISA's Known Exploited Vulnerabilities catalogue and CISA's SSVC assessment rates exploitation as active. [KEV, CVE.ssvc]
-- Attack code reported to be public: Yes — Cisa's ssvc assessment says proof-of-concept code exists; 11 references are tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool. [CVE.ssvc, NVD.ref.1, NVD.ref.2, NVD.ref.3, NVD.ref.4, NVD.ref.5, NVD.ref.6, NVD.ref.7, NVD.ref.8, NVD.ref.11, NVD.ref.14, NVD.ref.15]
+- Attack code reported to be public: Yes — CISA's SSVC assessment says proof-of-concept code exists; 11 references are tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool. [CVE.ssvc, NVD.ref.1, NVD.ref.2, NVD.ref.3, NVD.ref.4, NVD.ref.5, NVD.ref.6, NVD.ref.7, NVD.ref.8, NVD.ref.11, NVD.ref.14, NVD.ref.15]
 - CISA's rating: attacks have been seen — CISA SSVC decision points: Exploitation=active, Automatable=yes, Technical Impact=total; assessed 2025-02-04. [CVE.ssvc]
 - Predicted chance of attacks in the next 30 days: >99.9% — EPSS 1.0000, higher than 100.0% of all scored CVEs, scored 2026-10-10 (FIRST EPSS model). Estimates exploitation activity, not difficulty or impact. [EPSS]
 - web-portal-01: log4j-core 2.14.1 is affected — NVD: versions 2.13.0 up to (not including) 2.15.0 are affected. [NVD.cpe]
 
 ### What remains uncertain
-- legacy-billing-03: Log4j 2.x (bundled by appliance vendor) needs a manual version check — The product name in your inventory does not exactly match any affected product in this CVE; a similar name is not proof you are affected. apache's CVE record lists 'apache log4j2', which only resembles your 'log4j'. [CVE.affected.1]
+- legacy-billing-03: Log4j 2.x (bundled by appliance vendor) needs a manual version check — The product name in your inventory does not exactly match any affected product in this CVE; a similar name is not proof you are affected. Apache's CVE record lists 'apache log4j2', which only resembles your 'log4j'. [CVE.affected.1]
 
 ### Why this priority (rule trace)
 1. Starts at P1: it has been on CISA's list of actively attacked flaws since 2021-12-10 and CISA rates exploitation as active — rule: flaws that are known to be attacked always start at P1.
@@ -114,20 +113,19 @@ What the 10.0 score says: Attack from: the network (remotely); Attack complexity
 | NVD.ref.15 | nvd (demo) | NVD reference tagged 'Exploit' — indicates public exploit or PoC material may exist at this URL. Not verified, not downloaded; reliability unknown. | 2026-10-10T21:13:11+00:00 | - / - | https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228 → ref: https://www.nu11secur1ty.com/2021/12/cve-2021-44228.html |
 | NVD.ref.16 | nvd (demo) | NVD reference tagged Patch, Third Party Advisory. | 2026-10-10T21:13:11+00:00 | - / - | https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228 → ref: https://www.oracle.com/security-alerts/cpuapr2022.html |
 | NVD.ref.17 | nvd (demo) | NVD reference tagged Patch, Third Party Advisory. | 2026-10-10T21:13:11+00:00 | - / - | https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228 → ref: https://www.oracle.com/security-alerts/cpujan2022.html |
+| UBUNTU | ubuntu (demo) | Ubuntu security tracker: status for 1 source package(s) across Ubuntu releases. | 2026-10-11T17:36:33+00:00 | 2021-12-10T00:00:00 / 2025-08-25T23:42:52.988006+00:00 | https://ubuntu.com/security/cves/CVE-2021-44228.json |
 | KEV | cisa_kev (demo) | Listed in CISA KEV (added 2021-12-10; known ransomware use: Known; federal due date 2021-12-24). | 2026-10-10T21:14:10+00:00 | 2021-12-10 / - | https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json |
 | EPSS | first_epss (demo) | EPSS 1.0000 (percentile 1.0000) for 2026-10-10: estimated probability of exploitation activity being observed in the next 30 days. Not a difficulty or impact score. | 2026-10-10T21:13:11+00:00 | 2026-10-10 / - | https://api.first.org/data/v1/epss?cve=CVE-2021-44228 |
 
-**Source retrieval status:** cve_org=ok; nvd=ok; cisa_kev=ok; first_epss=ok
+**Source retrieval status:** cve_org=ok; nvd=ok; cisa_kev=ok; first_epss=ok; ubuntu=ok
 
 ## CVE-2023-44487 — P1: Act now: emergency change / out-of-band patching
 
 > **OFFLINE DEMO DATA** — recorded fixtures, not live results. See retrieval times below.
 
-*Source description (untrusted text, verbatim) [CVE.desc]:*  — The HTTP/2 protocol allows a denial of service (server resource consumption) because request cancellation can reset many streams quickly, as exploited in the wild in August through October 2023.
+*Official description (copied word for word; untrusted text) [CVE.desc]:* The HTTP/2 protocol allows a denial of service (server resource consumption) because request cancellation can reset many streams quickly, as exploited in the wild in August through October 2023.
 
-**Decision:** `P1` · priority P1
-
-**Factors:** exploitation = `confirmed`, severity = `high`, exposure = `high` · **Severity-only baseline:** `P2`
+**Decision:** Fix now (P1) · **Severity score alone would say:** P2
 
 **In short:** Attackers are known to be using it: it is on CISA's list of actively attacked flaws (added 2023-10-10), and CISA rates exploitation as active. It affects web-portal-01 (nginx 1.25.2) — internet-facing, high importance.
 
@@ -137,7 +135,7 @@ What the 10.0 score says: Attack from: the network (remotely); Attack complexity
 - Type of flaw: Uncontrolled Resource Consumption — CWE-400: Uncontrolled Resource Consumption. CWE = MITRE's Common Weakness Enumeration. [NVD.cwe]
 - On the US government's list of actively attacked flaws (KEV): Yes — Listed in the CISA Known Exploited Vulnerabilities catalogue. [KEV]
 - Known to be exploited by attackers: Yes — Attacks have been seen: it is listed in CISA's Known Exploited Vulnerabilities catalogue and CISA's SSVC assessment rates exploitation as active. [KEV, CVE.ssvc]
-- Attack code reported to be public: Yes — Cisa's ssvc assessment says proof-of-concept code exists; 2 references are tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool. [CVE.ssvc, NVD.ref.11, NVD.ref.12]
+- Attack code reported to be public: Yes — CISA's SSVC assessment says proof-of-concept code exists; 2 references are tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool. [CVE.ssvc, NVD.ref.11, NVD.ref.12]
 - CISA's rating: attacks have been seen — CISA SSVC decision points: Exploitation=active, Automatable=yes, Technical Impact=partial; assessed 2024-07-23. [CVE.ssvc]
 - Predicted chance of attacks in the next 30 days: >99.9% — EPSS 1.0000, higher than 100.0% of all scored CVEs, scored 2026-10-10 (FIRST EPSS model). Estimates exploitation activity, not difficulty or impact. [EPSS]
 - web-portal-01: nginx 1.25.2 is affected — NVD: versions 1.9.5 up to and including 1.25.2 are affected. [NVD.cpe]
@@ -204,36 +202,35 @@ What the 7.5 score says: Attack from: the network (remotely); Attack complexity:
 | NVD.ref.10 | nvd (demo) | NVD reference tagged Technical Description, Vendor Advisory. | 2026-10-10T21:13:30+00:00 | - / - | https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-44487 → ref: https://cloud.google.com/blog/products/identity-security/how-it-works-the-novel-http2-rapid-reset-ddos-attack |
 | NVD.ref.11 | nvd (demo) | NVD reference tagged 'Exploit' — indicates public exploit or PoC material may exist at this URL. Not verified, not downloaded; reliability unknown. | 2026-10-10T21:13:30+00:00 | - / - | https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-44487 → ref: https://github.com/micrictor/http2-rst-stream |
 | NVD.ref.12 | nvd (demo) | NVD reference tagged 'Exploit' — indicates public exploit or PoC material may exist at this URL. Not verified, not downloaded; reliability unknown. | 2026-10-10T21:13:30+00:00 | - / - | https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-44487 → ref: https://security.netapp.com/advisory/ntap-20240621-0006/ |
+| UBUNTU | ubuntu (demo) | Ubuntu security tracker: status for 14 source package(s) across Ubuntu releases. | 2026-10-11T17:26:50+00:00 | 2023-10-10T00:00:00 / 2025-11-26T18:22:23.456963+00:00 | https://ubuntu.com/security/cves/CVE-2023-44487.json |
 | KEV | cisa_kev (demo) | Listed in CISA KEV (added 2023-10-10; known ransomware use: Unknown; federal due date 2023-10-31). | 2026-10-10T21:14:10+00:00 | 2023-10-10 / - | https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json |
 | EPSS | first_epss (demo) | EPSS 1.0000 (percentile 1.0000) for 2026-10-10: estimated probability of exploitation activity being observed in the next 30 days. Not a difficulty or impact score. | 2026-10-10T21:13:30+00:00 | 2026-10-10 / - | https://api.first.org/data/v1/epss?cve=CVE-2023-44487 |
 
-**Source retrieval status:** cve_org=ok; nvd=ok; cisa_kev=ok; first_epss=ok
+**Source retrieval status:** cve_org=ok; nvd=ok; cisa_kev=ok; first_epss=ok; ubuntu=ok
 
 ## CVE-2024-6387 — P1: Act now: emergency change / out-of-band patching
 
 > **OFFLINE DEMO DATA** — recorded fixtures, not live results. See retrieval times below.
 
-*Source description (untrusted text, verbatim) [CVE.desc]:* Openssh: regresshion - race condition in ssh allows rce/dos — A security regression (CVE-2006-5051) was discovered in OpenSSH's server (sshd). There is a race condition which can lead sshd to handle some signals in an unsafe manner. An unauthenticated, remote attacker may be able to trigger it by failing to authenticate within a set time period.
+*Official description (copied word for word; untrusted text) [CVE.desc]:* Openssh: regresshion - race condition in ssh allows rce/dos — A security regression (CVE-2006-5051) was discovered in OpenSSH's server (sshd). There is a race condition which can lead sshd to handle some signals in an unsafe manner. An unauthenticated, remote attacker may be able to trigger it by failing to authenticate within a set time period.
 
-**Decision:** `P1` · priority P1
+**Decision:** Fix now (P1) · **Severity score alone would say:** P2
 
-**Factors:** exploitation = `elevated`, severity = `high`, exposure = `high` · **Severity-only baseline:** `P2`
-
-**In short:** Attacks are likely: CISA says demo attack code exists; 9 public sources point to attack code; the predicted chance of attacks in the next 30 days is 99.5%. No confirmed attacks are on record. It affects bastion-01 (OpenSSH 9.6p1) — internet-facing, high importance. Also check ops-ubuntu-02: it may be affected too, but this could not be confirmed automatically.
+**In short:** Attacks are likely: CISA says demo attack code exists; 9 public sources point to attack code; the predicted chance of attacks in the next 30 days is 99.5%. No confirmed attacks are on record. It affects bastion-01 (OpenSSH 9.6p1) — internet-facing, high importance.
 
 ### What is known (sourced facts)
 - CVE status: Published (active) — assigned by redhat; published 2024-07-01; last updated 2026-09-01 [CVE.state]
 - Severity: 8.1 / 10 (High) — CVSS 3.1 score from redhat, which published the CVE; 3 sources agree. Full breakdown in Severity score details. [CVE.cvss.1]
 - Type of flaw: Signal Handler Race Condition (+1 more) — CWE-364: Signal Handler Race Condition; CWE-362: Concurrent Execution using Shared Resource with Improper Synchronization ('Race Condition'). CWE = MITRE's Common Weakness Enumeration. [CVE.cwe, NVD.cwe]
 - On the US government's list of actively attacked flaws (KEV): No — Not in KEV catalogue 2026.10.08 (absence is not evidence of no exploitation). [KEV]
-- Attack code reported to be public: Yes — Cisa's ssvc assessment says proof-of-concept code exists; 9 references are tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool. [CVE.ssvc, NVD.ref.1, NVD.ref.2, NVD.ref.3, NVD.ref.5, NVD.ref.6, NVD.ref.7, NVD.ref.8, NVD.ref.12, NVD.ref.13]
+- Attack code reported to be public: Yes — CISA's SSVC assessment says proof-of-concept code exists; 9 references are tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool. [CVE.ssvc, NVD.ref.1, NVD.ref.2, NVD.ref.3, NVD.ref.5, NVD.ref.6, NVD.ref.7, NVD.ref.8, NVD.ref.12, NVD.ref.13]
 - CISA's rating: demo attack code exists — CISA SSVC decision points: Exploitation=poc, Automatable=no, Technical Impact=total; assessed 2024-07-02. [CVE.ssvc]
 - Predicted chance of attacks in the next 30 days: 99.5% — EPSS 0.9951, higher than 99.9% of all scored CVEs, scored 2026-10-10 (FIRST EPSS model). Estimates exploitation activity, not difficulty or impact. [EPSS]
-- bastion-01: OpenSSH 9.6p1 is affected — redhat's CVE record: versions 8.5p1 up to and including 9.7p1 are affected. NVD: versions 8.6 up to and including 9.8 are affected. [CVE.affected.1, NVD.cpe]
+- bastion-01: OpenSSH 9.6p1 is affected — Red Hat's CVE record: versions 8.5p1 up to and including 9.7p1 are affected. NVD: versions 8.6 up to and including 9.8 are affected. [CVE.affected.1, NVD.cpe]
+- ops-ubuntu-02: OpenSSH 1:9.6p1-3ubuntu13.4 is not affected — Ubuntu (noble): Ubuntu fixed openssh in 1:9.6p1-3ubuntu13.3; the installed 1:9.6p1-3ubuntu13.4 is that version or newer. Distribution builds are judged by the distribution's own advisory, not upstream version ranges. [UBUNTU]
 
 ### What remains uncertain
 - Known to be exploited by attackers: Unknown — No positive evidence of in-the-wild exploitation in the sources checked. This is not proof that exploitation has not occurred. [KEV, CVE.ssvc]
-- ops-ubuntu-02: OpenSSH 1:9.6p1-3ubuntu13.4 needs a manual version check — redhat's CVE record: version 1:9.6p1-3ubuntu13.4 could not be compared with the listed versions automatically. '1:9.6p1-3ubuntu13.4' looks like a distribution package version; vendors often backport fixes without changing the upstream version — check the distribution's advisory. [CVE.affected.1]
 - Some evidence may be out of date — SSVC Exploitation=poc was assessed 2024-07-02 (> 180 days ago) and may no longer reflect current activity. [CVE.ssvc]
 - Demo data: the attacked-flaws list (KEV) is a reduced copy — Offline demo uses a trimmed KEV fixture; absence was verified against the full catalogue at capture time only.
 - Open question: Which builds and architectures do the public PoCs target, and how… — Which builds and architectures do the public PoCs target, and how many attempts do they need? (Source: scripted demo example; not verified.)
@@ -243,11 +240,9 @@ What the 7.5 score says: Attack from: the network (remotely); Attack complexity:
 ### Why this priority (rule trace)
 1. Starts at P2: CISA says demo attack code exists — rule: a CISA proof-of-concept rating, a predicted chance of attacks of 10% or more, or a validated AI rating of 'easy to exploit' each start at P2.
 2. Raised to P1: bastion-01 is internet-facing and of high importance — rule: internet-facing systems, and systems of high or critical importance, move the priority up one step.
-3. Also check ops-ubuntu-02 — whether it is affected could not be confirmed automatically.
 
 ### Action supported by the evidence
 - Upgrade OpenSSH on bastion-01 — currently 9.6p1; follow the vendor advisory for the fixed version. [NVD.ref.4, NVD.ref.9, NVD.ref.10]
-- Check the exact version of OpenSSH on ops-ubuntu-02 — recorded as 1:9.6p1-3ubuntu13.4; confirm the build and any platform condition, then re-run. See the applicability table for why it is unclear [CVE.affected.1].
 
 ### What would change the recommendation
 - If a protection such as a firewall rule blocks access to bastion-01 → Schedule a fix (P3) — a declared protection lowers the priority by one step
@@ -258,22 +253,23 @@ What the 7.5 score says: Attack from: the network (remotely); Attack complexity:
 
 > **SCRIPTED EXAMPLE** — hand-written by the project author to demonstrate validation in the offline demo. It was NOT produced by a language model.
 
-Provider `scripted`, model `scripted-example`. Claims with valid citation IDs: 6/8 (cited IDs exist, but whether the source actually says what the claim says is NOT checked). Ratings are qualitative; no calibrated probability is implied.
+Provider `scripted`, model `scripted-example`, prompt version 2026-10-11.1. 6 of 9 claims passed the checks (cited evidence exists, the quote appears in it word for word, numbers and dates match). That shows grounding, not that the reasoning is right. Ratings are opinions, not probabilities.
 
 **Exploit-development difficulty:** `moderate`
-- *Prerequisites:* The attacker needs only network access to sshd and no credentials; the trigger is failing to authenticate within the login time limit. (fact) [CVE.desc, CVE.cvss.1]
-- *Complexity:* The flaw is a race condition in signal handling, and the CNA scores attack complexity as High, which suggests exploitation depends on winning a timing window. (inference) [CVE.desc, CVE.cvss.1]
-- *Research availability:* Several references tagged 'Exploit' by NVD, including a researcher advisory, indicate detailed public research exists. (fact) [NVD.ref.2, NVD.ref.12]
+- *Prerequisites:* The attacker needs only network access to sshd and no credentials; the trigger is failing to authenticate within the login time limit. (fact) [CVE.desc, CVE.cvss.1] — quote: “An unauthenticated, remote attacker may be able to trigger it by failing to authenticate within a set time period”
+- *Complexity:* The flaw is a race condition in signal handling, and the CNA scores attack complexity as High, which suggests exploitation depends on winning a timing window. (inference) [CVE.desc, CVE.cvss.1] — quote: “There is a race condition which can lead sshd to handle some signals in an unsafe manner”
+- *Research availability:* Several references tagged 'Exploit' by NVD, including a researcher advisory, indicate detailed public research exists. (fact) [NVD.ref.2, NVD.ref.12] — quote: “NVD reference tagged 'Exploit' — indicates public exploit or PoC material may exist”
 
 **Existing-exploit usability:** `public_exploit_claimed`
-- *Exploit evidence:* CISA's SSVC assessment records Exploitation=poc. (fact) [CVE.ssvc]
-- *Reliability limits:* A race-condition exploit is likely to need many connection attempts, which may be visible in authentication logs. (inference) [CVE.desc, CVE.cvss.1]
-- *Required access:* Network reachability to the SSH service; no privileges or user interaction. (fact) [CVE.cvss.1]
+- *Exploit evidence:* CISA's SSVC assessment records Exploitation=poc. (fact) [CVE.ssvc] — quote: “SSVC decision points: Exploitation=poc”
+- *Reliability limits:* A race-condition exploit is likely to need many connection attempts, which may be visible in authentication logs. (inference) [CVE.desc, CVE.cvss.1] — quote: “There is a race condition which can lead sshd to handle some signals”
+- *Required access:* Network reachability to the SSH service; no privileges or user interaction. (fact) [CVE.desc, CVE.cvss.1] — quote: “An unauthenticated, remote attacker may be able to trigger it”
 
 *Scripted summary (uncited free text):* Unauthenticated remote race condition in sshd with public research and PoC claims; timing complexity is the main barrier.
 
 **Validation removed/overrode:**
 - `difficulty.complexity_factors[1]`: cites unknown evidence ID(s): ['NVD.ref.99'] — “Exploitation is reliable on all Linux distributions.”
+- `difficulty.complexity_factors[2]`: its quote does not appear in the cited evidence — “Public exploits succeed in under a minute on default installations.”
 - `difficulty.research_availability[1]`: no evidence cited — “Public write-ups make weaponisation trivial.”
 - `usability.rating`: rating 'exploitation_reported' → 'public_exploit_claimed': no source in the bundle reports in-the-wild exploitation
 
@@ -282,7 +278,7 @@ Provider `scripted`, model `scripted-example`. Claims with valid citation IDs: 6
 | Asset | Software | Status | Reasons |
 |---|---|---|---|
 | bastion-01 | OpenSSH 9.6p1 | affected | [affected] CNA:redhat 'OpenSSH': name 'openssh': in range 8.5p1..≤9.7p1 → affected; [affected] NVD openbsd:openssh: in range ≥8.6 ≤9.8 |
-| ops-ubuntu-02 | OpenSSH 1:9.6p1-3ubuntu13.4 | needs_review | [ambiguous] CNA:redhat 'OpenSSH': name 'openssh': cannot compare '1:9.6p1-3ubuntu13.4' with range 8.5p1..9.7p1 (custom); '1:9.6p1-3ubuntu13.4' looks like a distribution package version; vendors often backport fixes without changing the upstream version — check the distribution's advisory. |
+| ops-ubuntu-02 | OpenSSH 1:9.6p1-3ubuntu13.4 | not_affected | [not_affected] Ubuntu (noble): Ubuntu fixed openssh in 1:9.6p1-3ubuntu13.3; the installed 1:9.6p1-3ubuntu13.4 is that version or newer; Distribution builds are judged by the distribution's own advisory, not upstream version ranges. |
 
 ### Severity score details
 
@@ -338,20 +334,19 @@ What the 8.1 score says: Attack from: the network (remotely); Attack complexity:
 | NVD.ref.11 | nvd (demo) | NVD reference tagged Issue Tracking, Patch. | 2026-10-10T21:13:17+00:00 | - / - | https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-6387 → ref: https://news.ycombinator.com/item?id=40843778 |
 | NVD.ref.12 | nvd (demo) | NVD reference tagged 'Exploit' — indicates public exploit or PoC material may exist at this URL. Not verified, not downloaded; reliability unknown. | 2026-10-10T21:13:17+00:00 | - / - | https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-6387 → ref: https://www.exploit-db.com/exploits/52269 |
 | NVD.ref.13 | nvd (demo) | NVD reference tagged 'Exploit' — indicates public exploit or PoC material may exist at this URL. Not verified, not downloaded; reliability unknown. | 2026-10-10T21:13:17+00:00 | - / - | https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-6387 → ref: https://www.vicarius.io/vsociety/posts/regresshion-an-openssh-regression-error-cve-2024-6387 |
+| UBUNTU | ubuntu (demo) | Ubuntu security tracker: status for 2 source package(s) across Ubuntu releases. | 2026-10-11T17:27:15+00:00 | 2024-07-01T00:00:00 / 2025-08-26T10:54:32.557876+00:00 | https://ubuntu.com/security/cves/CVE-2024-6387.json |
 | KEV | cisa_kev (demo) | Not listed in CISA KEV catalogue version 2026.10.08. Absence does NOT show the vulnerability is unexploited — only that CISA has not added it. | 2026-10-10T21:14:10+00:00 | 2026-10-08T20:09:18.9833Z / - | https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json |
 | EPSS | first_epss (demo) | EPSS 0.9951 (percentile 0.9994) for 2026-10-10: estimated probability of exploitation activity being observed in the next 30 days. Not a difficulty or impact score. | 2026-10-10T21:13:17+00:00 | 2026-10-10 / - | https://api.first.org/data/v1/epss?cve=CVE-2024-6387 |
 
-**Source retrieval status:** cve_org=ok; nvd=ok; cisa_kev=ok; first_epss=ok
+**Source retrieval status:** cve_org=ok; nvd=ok; cisa_kev=ok; first_epss=ok; ubuntu=ok
 
 ## CVE-2023-38545 — P2: Next patch cycle, ahead of routine work (provisional)
 
 > **OFFLINE DEMO DATA** — recorded fixtures, not live results. See retrieval times below.
 
-*Source description (untrusted text, verbatim) [CVE.desc]:*  — This flaw makes curl overflow a heap based buffer in the SOCKS5 proxy handshake.  When curl is asked to pass along the host name to the SOCKS5 proxy to allow that to resolve the address instead of it getting done by curl itself, the maximum length that host name can be is 255 bytes.  If the host name is detected to be longer, curl switches to local name resolving and instead passes on the resolved address only. Due to this bug, the local variable that means "let the host resolve the name" could get the wrong value during a slow SOCKS5 handshake, and contrary to the intention, copy the too long host name to the target buffer instead of copying just the resolved address there.  The target b
+*Official description (copied word for word; untrusted text) [CVE.desc]:* This flaw makes curl overflow a heap based buffer in the SOCKS5 proxy handshake.  When curl is asked to pass along the host name to the SOCKS5 proxy to allow that to resolve the address instead of it getting done by curl itself, the maximum length that host name can be is 255 bytes.  If the host name is detected to be longer, curl switches to local name resolving and instead passes on the resolved address only. Due to this bug, the local variable that means "let the host resolve the name" could get the wrong value during a slow SOCKS5 handshake, and contrary to the intention, copy the too long host name to the target buffer instead of copying just the resolved address there.  The target buff
 
-**Decision:** `P2` · priority P2 · provisional
-
-**Factors:** exploitation = `elevated`, severity = `critical`, exposure = `context_unknown` · **Severity-only baseline:** `P1`
+**Decision:** Fix in the next patch cycle (P2) — provisional, depends on information not supplied · **Severity score alone would say:** P1
 
 **In short:** Attacks are likely: CISA says demo attack code exists; the predicted chance of attacks in the next 30 days is 78.5%. No confirmed attacks are on record. It affects ops-ubuntu-02 (curl 8.3.0) — internal, medium importance; dev-laptop-17 (curl 8.3.0) — internet exposure and importance not recorded.
 
@@ -360,7 +355,7 @@ What the 8.1 score says: Attack from: the network (remotely); Attack complexity:
 - Severity: 9.8 / 10 (Critical) — CVSS 3.1 score from NVD; the highest of 2 different scores from 3 sources (see What's uncertain). Full breakdown in Severity score details. [NVD.cvss.1]
 - Type of flaw: Out-of-bounds Write — CWE-787: Out-of-bounds Write. CWE = MITRE's Common Weakness Enumeration. [NVD.cwe]
 - On the US government's list of actively attacked flaws (KEV): No — Not in KEV catalogue 2026.10.08 (absence is not evidence of no exploitation). [KEV]
-- Attack code reported to be public: Yes — Cisa's ssvc assessment says proof-of-concept code exists. Whether that code exists, works or is reliable is NOT verified by this tool. [CVE.ssvc]
+- Attack code reported to be public: Yes — CISA's SSVC assessment says proof-of-concept code exists. Whether that code exists, works or is reliable is NOT verified by this tool. [CVE.ssvc]
 - CISA's rating: demo attack code exists — CISA SSVC decision points: Exploitation=poc, Automatable=no, Technical Impact=total; assessed 2024-10-17. [CVE.ssvc]
 - Predicted chance of attacks in the next 30 days: 78.5% — EPSS 0.7848, higher than 99.6% of all scored CVEs, scored 2026-10-10 (FIRST EPSS model). Estimates exploitation activity, not difficulty or impact. [EPSS]
 - ops-ubuntu-02: curl 8.3.0 is affected — NVD: versions 7.69.0 up to (not including) 8.4.0 are affected. [NVD.cpe]
@@ -423,20 +418,19 @@ What the 9.8 score says: Attack from: the network (remotely); Attack complexity:
 | NVD.cpe | nvd (demo) | NVD lists 14 vulnerable CPE match criteria. | 2026-10-10T21:13:37+00:00 | - / 2026-06-17T06:10:41.627 | https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-38545 |
 | NVD.ref.1 | nvd (demo) | NVD reference tagged Patch, Third Party Advisory. | 2026-10-10T21:13:37+00:00 | - / - | https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-38545 → ref: https://curl.se/docs/CVE-2023-38545.html |
 | NVD.ref.2 | nvd (demo) | NVD reference tagged Patch, Third Party Advisory. | 2026-10-10T21:13:37+00:00 | - / - | https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-38545 → ref: https://www.secpod.com/blog/high-severity-heap-buffer-overflow-vulnerability/ |
+| UBUNTU | ubuntu (demo) | Ubuntu security tracker: status for 1 source package(s) across Ubuntu releases. | 2026-10-11T17:27:41+00:00 | 2023-10-11T06:00:00 / 2025-08-04T19:47:04.684486+00:00 | https://ubuntu.com/security/cves/CVE-2023-38545.json |
 | KEV | cisa_kev (demo) | Not listed in CISA KEV catalogue version 2026.10.08. Absence does NOT show the vulnerability is unexploited — only that CISA has not added it. | 2026-10-10T21:14:10+00:00 | 2026-10-08T20:09:18.9833Z / - | https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json |
 | EPSS | first_epss (demo) | EPSS 0.7848 (percentile 0.9958) for 2026-10-10: estimated probability of exploitation activity being observed in the next 30 days. Not a difficulty or impact score. | 2026-10-10T21:13:37+00:00 | 2026-10-10 / - | https://api.first.org/data/v1/epss?cve=CVE-2023-38545 |
 
-**Source retrieval status:** cve_org=ok; nvd=ok; cisa_kev=ok; first_epss=ok
+**Source retrieval status:** cve_org=ok; nvd=ok; cisa_kev=ok; first_epss=ok; ubuntu=ok
 
 ## CVE-2022-22965 — Needs version review (would be P1 if affected)
 
 > **OFFLINE DEMO DATA** — recorded fixtures, not live results. See retrieval times below.
 
-*Source description (untrusted text, verbatim) [CVE.desc]:*  — A Spring MVC or Spring WebFlux application running on JDK 9+ may be vulnerable to remote code execution (RCE) via data binding. The specific exploit requires the application to run on Tomcat as a WAR deployment. If the application is deployed as a Spring Boot executable jar, i.e. the default, it is not vulnerable to the exploit. However, the nature of the vulnerability is more general, and there may be other ways to exploit it.
+*Official description (copied word for word; untrusted text) [CVE.desc]:* A Spring MVC or Spring WebFlux application running on JDK 9+ may be vulnerable to remote code execution (RCE) via data binding. The specific exploit requires the application to run on Tomcat as a WAR deployment. If the application is deployed as a Spring Boot executable jar, i.e. the default, it is not vulnerable to the exploit. However, the nature of the vulnerability is more general, and there may be other ways to exploit it.
 
-**Decision:** `NEEDS_REVIEW` · priority P1 · provisional
-
-**Factors:** exploitation = `confirmed`, severity = `critical`, exposure = `needs_review` · **Severity-only baseline:** `P1`
+**Decision:** Needs review (would be P1 if affected) — provisional, depends on information not supplied · **Severity score alone would say:** P1
 
 **In short:** Attackers are known to be using it: it is on CISA's list of actively attacked flaws (added 2022-04-04), and CISA rates exploitation as active. It is unclear whether web-portal-01's Spring Framework 5.3.17 is affected: its version is in the affected range, but the flaw only applies together with Oracle JDK, which your inventory does not record.
 
@@ -446,12 +440,12 @@ What the 9.8 score says: Attack from: the network (remotely); Attack complexity:
 - Type of flaw: Code Injection — CWE-94: Improper Control of Generation of Code ('Code Injection'). CWE = MITRE's Common Weakness Enumeration. [CVE.cwe, NVD.cwe]
 - On the US government's list of actively attacked flaws (KEV): Yes — Listed in the CISA Known Exploited Vulnerabilities catalogue. [KEV]
 - Known to be exploited by attackers: Yes — Attacks have been seen: it is listed in CISA's Known Exploited Vulnerabilities catalogue and CISA's SSVC assessment rates exploitation as active. [KEV, CVE.ssvc]
-- Attack code reported to be public: Yes — Cisa's ssvc assessment says proof-of-concept code exists; 1 reference is tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool. [CVE.ssvc, NVD.ref.1]
+- Attack code reported to be public: Yes — CISA's SSVC assessment says proof-of-concept code exists; 1 reference is tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool. [CVE.ssvc, NVD.ref.1]
 - CISA's rating: attacks have been seen — CISA SSVC decision points: Exploitation=active, Automatable=yes, Technical Impact=total; assessed 2025-01-29. [CVE.ssvc]
 - Predicted chance of attacks in the next 30 days: 99.6% — EPSS 0.9964, higher than 99.9% of all scored CVEs, scored 2026-10-10 (FIRST EPSS model). Estimates exploitation activity, not difficulty or impact. [EPSS]
 
 ### What remains uncertain
-- web-portal-01: Spring Framework 5.3.17 needs a manual version check — vmware's CVE record: version statement 'Spring Framework versions 5.3.X prior to 5.3.18+, 5.2.x prior to 5.2.20+ and all' is not machine-comparable. NVD: versions 5.3.0 up to (not including) 5.3.18 are affected, but only together with Oracle JDK. [CVE.affected.1, NVD.cpe]
+- web-portal-01: Spring Framework 5.3.17 needs a manual version check — VMware's CVE record: version statement 'Spring Framework versions 5.3.X prior to 5.3.18+, 5.2.x prior to 5.2.20+ and all' is not machine-comparable. NVD: versions 5.3.0 up to (not including) 5.3.18 are affected, but only together with Oracle JDK. [CVE.affected.1, NVD.cpe]
 
 ### Why this priority (rule trace)
 1. Starts at P1: it has been on CISA's list of actively attacked flaws since 2022-04-04 and CISA rates exploitation as active — rule: flaws that are known to be attacked always start at P1.
@@ -506,20 +500,19 @@ What the 9.8 score says: Attack from: the network (remotely); Attack complexity:
 | NVD.ref.2 | nvd (demo) | NVD reference tagged Patch, Third Party Advisory. | 2026-10-10T21:13:50+00:00 | - / - | https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2022-22965 → ref: https://cert-portal.siemens.com/productcert/pdf/ssa-254054.pdf |
 | NVD.ref.3 | nvd (demo) | NVD reference tagged Mitigation, Vendor Advisory. | 2026-10-10T21:13:50+00:00 | - / - | https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2022-22965 → ref: https://tanzu.vmware.com/security/cve-2022-22965 |
 | NVD.ref.4 | nvd (demo) | NVD reference tagged Patch, Third Party Advisory. | 2026-10-10T21:13:50+00:00 | - / - | https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2022-22965 → ref: https://www.oracle.com/security-alerts/cpujul2022.html |
+| UBUNTU | ubuntu (demo) | Ubuntu security tracker: status for 1 source package(s) across Ubuntu releases. | 2026-10-11T17:26:32+00:00 | 2022-04-01T00:00:00 / 2025-06-24T14:57:18.899115+00:00 | https://ubuntu.com/security/cves/CVE-2022-22965.json |
 | KEV | cisa_kev (demo) | Listed in CISA KEV (added 2022-04-04; known ransomware use: Unknown; federal due date 2022-04-25). | 2026-10-10T21:14:10+00:00 | 2022-04-04 / - | https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json |
 | EPSS | first_epss (demo) | EPSS 0.9964 (percentile 0.9995) for 2026-10-10: estimated probability of exploitation activity being observed in the next 30 days. Not a difficulty or impact score. | 2026-10-10T21:13:50+00:00 | 2026-10-10 / - | https://api.first.org/data/v1/epss?cve=CVE-2022-22965 |
 
-**Source retrieval status:** cve_org=ok; nvd=ok; cisa_kev=ok; first_epss=ok
+**Source retrieval status:** cve_org=ok; nvd=ok; cisa_kev=ok; first_epss=ok; ubuntu=ok
 
 ## CVE-2024-47176 — P3: Scheduled remediation in normal maintenance
 
 > **OFFLINE DEMO DATA** — recorded fixtures, not live results. See retrieval times below.
 
-*Source description (untrusted text, verbatim) [CVE.desc]:* cups-browsed binds to `INADDR_ANY:631`, trusting any packet from any source — CUPS is a standards-based, open-source printing system, and `cups-browsed` contains network printing functionality including, but not limited to, auto-discovering print services and shared printers. `cups-browsed` binds to `INADDR_ANY:631`, causing it to trust any packet from any source, and can cause the `Get-Printer-Attributes` IPP request to an attacker controlled URL. When combined with other vulnerabilities, such as CVE-2024-47076, CVE-2024-47175, and CVE-2024-47177, an attacker can execute arbitrary commands remotely on the target machine without authentication when a malicious printer is printed to.
+*Official description (copied word for word; untrusted text) [CVE.desc]:* cups-browsed binds to `INADDR_ANY:631`, trusting any packet from any source — CUPS is a standards-based, open-source printing system, and `cups-browsed` contains network printing functionality including, but not limited to, auto-discovering print services and shared printers. `cups-browsed` binds to `INADDR_ANY:631`, causing it to trust any packet from any source, and can cause the `Get-Printer-Attributes` IPP request to an attacker controlled URL. When combined with other vulnerabilities, such as CVE-2024-47076, CVE-2024-47175, and CVE-2024-47177, an attacker can execute arbitrary commands remotely on the target machine without authentication when a malicious printer is printed to.
 
-**Decision:** `P3` · priority P3
-
-**Factors:** exploitation = `elevated`, severity = `medium`, exposure = `reduced` · **Severity-only baseline:** `P3`
+**Decision:** Schedule a fix (P3) · **Severity score alone would say:** P3
 
 **In short:** Attacks are likely: CISA says demo attack code exists; 2 public sources point to attack code; the predicted chance of attacks in the next 30 days is 50.6%. No confirmed attacks are on record. It affects print-srv-01 (cups-browsed 2.0.1) — internal, low importance; protected by: Host firewall drops inbound traffic to port 631 except from the warehouse printer VLAN (not checked by this tool).
 
@@ -528,10 +521,10 @@ What the 9.8 score says: Attack from: the network (remotely); Attack complexity:
 - Severity: 5.3 / 10 (Medium) — CVSS 3.1 score from GitHub_M, which published the CVE; 2 sources agree. Full breakdown in Severity score details. [CVE.cvss.1]
 - Type of flaw: Binding to an Unrestricted IP Address — CWE-1327: Binding to an Unrestricted IP Address. CWE = MITRE's Common Weakness Enumeration. [CVE.cwe, NVD.cwe]
 - On the US government's list of actively attacked flaws (KEV): No — Not in KEV catalogue 2026.10.08 (absence is not evidence of no exploitation). [KEV]
-- Attack code reported to be public: Yes — Cisa's ssvc assessment says proof-of-concept code exists; 2 references are tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool. [CVE.ssvc, NVD.ref.1, NVD.ref.2]
+- Attack code reported to be public: Yes — CISA's SSVC assessment says proof-of-concept code exists; 2 references are tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool. [CVE.ssvc, NVD.ref.1, NVD.ref.2]
 - CISA's rating: demo attack code exists — CISA SSVC decision points: Exploitation=poc, Automatable=no, Technical Impact=partial; assessed 2024-09-27. [CVE.ssvc]
 - Predicted chance of attacks in the next 30 days: 50.6% — EPSS 0.5060, higher than 98.9% of all scored CVEs, scored 2026-10-10 (FIRST EPSS model). Estimates exploitation activity, not difficulty or impact. [EPSS]
-- print-srv-01: cups-browsed 2.0.1 is affected — GitHub_M's CVE record: the record says '<= 2.0.1', which includes your version. [CVE.affected.1]
+- print-srv-01: cups-browsed 2.0.1 is affected — GitHub's CVE record: the record says '<= 2.0.1', which includes your version. [CVE.affected.1]
 
 ### What remains uncertain
 - Known to be exploited by attackers: Unknown — No positive evidence of in-the-wild exploitation in the sources checked. This is not proof that exploitation has not occurred. [KEV, CVE.ssvc]
@@ -556,18 +549,18 @@ What the 9.8 score says: Attack from: the network (remotely); Attack complexity:
 
 > **SCRIPTED EXAMPLE** — hand-written by the project author to demonstrate validation in the offline demo. It was NOT produced by a language model.
 
-Provider `scripted`, model `scripted-example`. Claims with valid citation IDs: 7/7 (cited IDs exist, but whether the source actually says what the claim says is NOT checked). Ratings are qualitative; no calibrated probability is implied.
+Provider `scripted`, model `scripted-example`, prompt version 2026-10-11.1. 7 of 7 claims passed the checks (cited evidence exists, the quote appears in it word for word, numbers and dates match). That shows grounding, not that the reasoning is right. Ratings are opinions, not probabilities.
 
 **Exploit-development difficulty:** `insufficient_evidence`
-- *Prerequisites:* cups-browsed listens on port 631 on all interfaces and trusts packets from any source. (fact) [CVE.desc]
-- *Prerequisites:* Code execution is described only when chained with other CVEs and when a user prints to the attacker's printer. (fact) [CVE.desc]
-- *Complexity:* On its own this CVE is scored as integrity-low with no confidentiality or availability impact; the severe outcome depends on the chain. (inference) [CVE.cvss.1, CVE.desc]
-- *Research availability:* NVD tags a researcher write-up and the vendor advisory as exploit references. (fact) [NVD.ref.1, NVD.ref.2]
+- *Prerequisites:* cups-browsed listens on port 631 on all interfaces and trusts packets from any source. (fact) [CVE.desc] — quote: “binds to `INADDR_ANY:631`, causing it to trust any packet from any source”
+- *Prerequisites:* Code execution is described only when chained with other CVEs and when a user prints to the attacker's printer. (fact) [CVE.desc] — quote: “When combined with other vulnerabilities”
+- *Complexity:* On its own this CVE is scored as integrity-low with no confidentiality or availability impact; the severe outcome depends on the chain. (inference) [CVE.cvss.1, CVE.desc] — quote: “CVSS 3.1 base score 5.3 (MEDIUM)”
+- *Research availability:* NVD tags a researcher write-up and the vendor advisory as exploit references. (fact) [NVD.ref.1, NVD.ref.2] — quote: “NVD reference tagged 'Exploit'”
 
 **Existing-exploit usability:** `public_exploit_claimed`
-- *Exploit evidence:* CISA SSVC records Exploitation=poc and Automatable=no. (fact) [CVE.ssvc]
-- *Reliability limits:* Full impact requires user interaction (printing to a malicious printer), which limits automated exploitation. (inference) [CVE.desc, CVE.ssvc]
-- *Required access:* Network access to port 631 on the target; no authentication. (fact) [CVE.desc, CVE.cvss.1]
+- *Exploit evidence:* CISA SSVC records Exploitation=poc and Automatable=no. (fact) [CVE.ssvc] — quote: “SSVC decision points: Exploitation=poc, Automatable=no”
+- *Reliability limits:* Full impact requires user interaction (printing to a malicious printer), which limits automated exploitation. (inference) [CVE.desc, CVE.ssvc] — quote: “when a malicious printer is printed to”
+- *Required access:* Network access to port 631 on the target; no authentication. (fact) [CVE.desc, CVE.cvss.1] — quote: “trust any packet from any source”
 
 *Scripted summary (uncited free text):* Network-reachable cups-browsed accepts attacker-supplied printer data; serious impact requires chaining and a user print action.
 
@@ -604,20 +597,19 @@ What the 5.3 score says: Attack from: the network (remotely); Attack complexity:
 | NVD.ref.1 | nvd (demo) | NVD reference tagged 'Exploit' — indicates public exploit or PoC material may exist at this URL. Not verified, not downloaded; reliability unknown. | 2026-10-10T21:13:43+00:00 | - / - | https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-47176 → ref: https://github.com/OpenPrinting/cups-browsed/security/advisories/GHSA-rj88-6mr5-rcw8 |
 | NVD.ref.2 | nvd (demo) | NVD reference tagged 'Exploit' — indicates public exploit or PoC material may exist at this URL. Not verified, not downloaded; reliability unknown. | 2026-10-10T21:13:43+00:00 | - / - | https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-47176 → ref: https://www.evilsocket.net/2024/09/26/Attacking-UNIX-systems-via-CUPS-Part-I |
 | NVD.ref.3 | nvd (demo) | NVD reference tagged Patch. | 2026-10-10T21:13:43+00:00 | - / - | https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-47176 → ref: https://github.com/OpenPrinting/cups-browsed/commit/1debe6b140c37e0aa928559add4abcc95ce54aa2 |
+| UBUNTU | ubuntu (demo) | Ubuntu security tracker: status for 2 source package(s) across Ubuntu releases. | 2026-10-11T17:36:54+00:00 | 2024-10-06T19:00:00 / 2025-08-26T10:50:31.260058+00:00 | https://ubuntu.com/security/cves/CVE-2024-47176.json |
 | KEV | cisa_kev (demo) | Not listed in CISA KEV catalogue version 2026.10.08. Absence does NOT show the vulnerability is unexploited — only that CISA has not added it. | 2026-10-10T21:14:10+00:00 | 2026-10-08T20:09:18.9833Z / - | https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json |
 | EPSS | first_epss (demo) | EPSS 0.5060 (percentile 0.9889) for 2026-10-10: estimated probability of exploitation activity being observed in the next 30 days. Not a difficulty or impact score. | 2026-10-10T21:13:43+00:00 | 2026-10-10 / - | https://api.first.org/data/v1/epss?cve=CVE-2024-47176 |
 
-**Source retrieval status:** cve_org=ok; nvd=ok; cisa_kev=ok; first_epss=ok
+**Source retrieval status:** cve_org=ok; nvd=ok; cisa_kev=ok; first_epss=ok; ubuntu=ok
 
 ## CVE-2024-3094 — Not applicable to the supplied inventory
 
 > **OFFLINE DEMO DATA** — recorded fixtures, not live results. See retrieval times below.
 
-*Source description (untrusted text, verbatim) [CVE.desc]:* Xz: malicious code in distributed source — Malicious code was discovered in the upstream tarballs of xz, starting with version 5.6.0.  Through a series of complex obfuscations, the liblzma build process extracts a prebuilt object file from a disguised test file existing in the source code, which is then used to modify specific functions in the liblzma code. This results in a modified liblzma library that can be used by any software linked against this library, intercepting and modifying the data interaction with this library.
+*Official description (copied word for word; untrusted text) [CVE.desc]:* Xz: malicious code in distributed source — Malicious code was discovered in the upstream tarballs of xz, starting with version 5.6.0.  Through a series of complex obfuscations, the liblzma build process extracts a prebuilt object file from a disguised test file existing in the source code, which is then used to modify specific functions in the liblzma code. This results in a modified liblzma library that can be used by any software linked against this library, intercepting and modifying the data interaction with this library.
 
-**Decision:** `NOT_APPLICABLE`
-
-**Factors:** exploitation = `elevated`, severity = `critical`, exposure = `not_affected` · **Severity-only baseline:** `P1`
+**Decision:** Not affected — no action needed · **Severity score alone would say:** P1
 
 **In short:** Your installed version is outside the affected versions: ops-ubuntu-02's xz 5.4.6. For reference (it does not change the decision): attacks are likely — the predicted chance of attacks in the next 30 days is 86.0%. No confirmed attacks are on record.
 
@@ -628,7 +620,7 @@ What the 5.3 score says: Attack from: the network (remotely); Attack complexity:
 - On the US government's list of actively attacked flaws (KEV): No — Not in KEV catalogue 2026.10.08 (absence is not evidence of no exploitation). [KEV]
 - CISA's rating: no attacks or attack code known — CISA SSVC decision points: Exploitation=none, Automatable=yes, Technical Impact=total; assessed 2024-04-02. [CVE.ssvc]
 - Predicted chance of attacks in the next 30 days: 86.0% — EPSS 0.8597, higher than 99.7% of all scored CVEs, scored 2026-10-10 (FIRST EPSS model). Estimates exploitation activity, not difficulty or impact. [EPSS]
-- ops-ubuntu-02: xz 5.4.6 is not affected — redhat's CVE record: your version is not listed, and the record marks unlisted versions as not affected. NVD: version 5.4.6 is outside all 2 affected ranges. [CVE.affected.1, NVD.cpe]
+- ops-ubuntu-02: xz 5.4.6 is not affected — Red Hat's CVE record: your version is not listed, and the record marks unlisted versions as not affected. NVD: version 5.4.6 is outside all 2 affected ranges. [CVE.affected.1, NVD.cpe]
 
 ### What remains uncertain
 - Known to be exploited by attackers: Unknown — No positive evidence of in-the-wild exploitation in the sources checked. This is not proof that exploitation has not occurred. [KEV, CVE.ssvc]
@@ -693,18 +685,17 @@ What the 10.0 score says: Attack from: the network (remotely); Attack complexity
 | NVD.ref.3 | nvd (demo) | NVD reference tagged Vendor Advisory. | 2026-10-10T21:13:24+00:00 | - / - | https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-3094 → ref: https://www.redhat.com/en/blog/urgent-security-alert-fedora-41-and-rawhide-users |
 | NVD.ref.4 | nvd (demo) | NVD reference tagged Mailing List, Vendor Advisory. | 2026-10-10T21:13:24+00:00 | - / - | https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-3094 → ref: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1068024 |
 | NVD.ref.5 | nvd (demo) | NVD reference tagged Issue Tracking, Vendor Advisory. | 2026-10-10T21:13:24+00:00 | - / - | https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-3094 → ref: https://tukaani.org/xz-backdoor/ |
+| UBUNTU | ubuntu (demo) | Ubuntu security tracker: status for 1 source package(s) across Ubuntu releases. | 2026-10-11T17:30:20+00:00 | 2024-03-29T17:15:00 / 2025-08-04T20:04:01.548605+00:00 | https://ubuntu.com/security/cves/CVE-2024-3094.json |
 | KEV | cisa_kev (demo) | Not listed in CISA KEV catalogue version 2026.10.08. Absence does NOT show the vulnerability is unexploited — only that CISA has not added it. | 2026-10-10T21:14:10+00:00 | 2026-10-08T20:09:18.9833Z / - | https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json |
 | EPSS | first_epss (demo) | EPSS 0.8597 (percentile 0.9973) for 2026-10-10: estimated probability of exploitation activity being observed in the next 30 days. Not a difficulty or impact score. | 2026-10-10T21:13:24+00:00 | 2026-10-10 / - | https://api.first.org/data/v1/epss?cve=CVE-2024-3094 |
 
-**Source retrieval status:** cve_org=ok; nvd=ok; cisa_kev=ok; first_epss=ok
+**Source retrieval status:** cve_org=ok; nvd=ok; cisa_kev=ok; first_epss=ok; ubuntu=ok
 
 ## CVE-2026-11415 — Rejected CVE — no remediation needed
 
 > **OFFLINE DEMO DATA** — recorded fixtures, not live results. See retrieval times below.
 
-**Decision:** `NO_ACTION_REJECTED`
-
-**Factors:** exploitation = `n/a`, severity = `n/a`, exposure = `n/a` · **Severity-only baseline:** `N/A`
+**Decision:** Cancelled CVE — no action needed · **Severity score alone would say:** N/A
 
 **In short:** This CVE was cancelled (rejected) by the organisation that issued it, so there is nothing to fix.
 
@@ -742,9 +733,7 @@ Status: `skipped` — Not run: record is rejected.
 
 > **OFFLINE DEMO DATA** — recorded fixtures, not live results. See retrieval times below.
 
-**Decision:** `INVALID_OR_UNPUBLISHED`
-
-**Factors:** exploitation = `n/a`, severity = `n/a`, exposure = `n/a` · **Severity-only baseline:** `N/A`
+**Decision:** No public details yet · **Severity score alone would say:** N/A
 
 **In short:** This CVE number has been reserved, but no details have been published yet.
 

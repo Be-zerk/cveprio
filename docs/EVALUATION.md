@@ -7,6 +7,7 @@ Three separate layers, never mixed:
 | Deterministic fixture tests | Behaviour of every component on real recorded data + synthetic edge cases | `pytest` | no |
 | Live integration checks | Endpoints, schemas and parsing still agree with the real APIs | `CVEPRIO_LIVE_TESTS=1 pytest -m live` | network |
 | Evaluation set | Decisions vs documented reference judgements; severity-only baseline; model output quality | `cveprio evaluate [--llm ollama]` | model optional |
+| Held-out set | The same, on 20 recent CVEs not used in development, labelled by a person before running | `cveprio evaluate --set holdout` | model optional |
 
 ## The evaluation set (`evaluation/cases.json`)
 
@@ -21,6 +22,22 @@ Code) from the cited source data, then reviewed by the project author, who kept 
 unchanged (`review_status: reviewed_by_author`). They are one reviewer's judgement, not
 expert ground truth.
 
+## The held-out set (`evaluation/holdout/`)
+
+The 14 development cases were used while building the tool, so they flatter it. The held-out
+set addresses that:
+
+- **Selection is mechanical** (`cveprio holdout-select --seed 2026 --start 2026-07-01 --end 2026-09-30`):
+  8 CVEs added to CISA KEV in the window, 8 NVD CVEs with usable version ranges, and 4
+  package cases (a GitHub advisory, queried as a purl through OSV, like an SBOM component).
+  Versions alternate between the first affected and the first fixed version, and business
+  contexts rotate. One KEV case has no product data and is a CVE-only case.
+- **Source data is recorded** in `evaluation/holdout/fixtures/`, so results are reproducible offline.
+- **Labels are deliberately empty.** A person fills in `labels.csv` (applicability, acceptable
+  decisions, rationale) from the linked sources **before** looking at the tool's output for
+  these CVEs. See `evaluation/holdout/LABELING.md`. Unlabelled cases are skipped and counted, so an
+  unlabelled run cannot be mistaken for a result.
+
 ## Metrics
 
 - **Decision agreement**: the outcome falls inside the reference set — reported for the
@@ -30,7 +47,8 @@ expert ground truth.
 - **Citation validity**: share of evidence IDs cited in known/uncertain/actions/AI claims
   that resolve to an evidence item in the bundle.
 - **Model quality** (with a provider): output status per CVE, claims kept vs removed by
-  citation validation, rating overrides, and a **prompt-injection probe** — a synthetic
+  validation (with the reason: no citation, unknown ID, missing or non-matching quote,
+  unsupported number), rating overrides, and a **prompt-injection probe** — a synthetic
   record whose description tells the model the issue is harmless — reporting whether the
   model flagged it and whether the priority stayed the same as without the model.
 
@@ -64,10 +82,10 @@ rated "high" for a famously easy exploit.
 
 ### What we learned
 
-1. **Citation checking ≠ faithfulness.** The validator proves a cited ID exists, not that
-   the evidence says what the claim says. "88/93" is therefore an upper bound on quality.
-   Checking entailment (e.g. a second model, or quoting the exact supporting text and
-   string-matching it) is the most important next improvement.
+1. **Citation checking ≠ faithfulness.** The validator proved a cited ID exists, not that
+   the evidence says what the claim says, so "88/93" was an upper bound on quality.
+   *Addressed in 0.2.0:* claims must now quote their evidence word for word (see
+   docs/ARCHITECTURE.md, "AI claim grounding"). The re-run is recorded below.
 2. **The small local model adds little value here.** It defaulted to "insufficient
    evidence", possibly encouraged by the prompt's instruction to prefer that over guessing
    (a hypothesis, not tested). A larger model and a revised prompt should be compared on
@@ -90,7 +108,8 @@ rated "high" for a famously easy exploit.
 
 ## Making it stronger (next steps)
 
-1. Have an independent reviewer label cases **before** running the tool on them.
-2. Add ≥ 30 recent CVEs (not famous, mixed outcomes), captured with `cveprio capture-fixtures`.
+1. Label the held-out set (done by the author only when they label it), then have a second,
+   independent person label it too, to measure disagreement.
+2. Grow the held-out set past 20 cases with a new seed or window (`cveprio holdout-select`).
 3. Track unsafe applicability errors and unsupported-claim rate across model/prompt changes.
 4. Compare several models (local vs hosted) on the same cases and report cost per CVE.

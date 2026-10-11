@@ -73,7 +73,9 @@
           "product": "OpenSSH",
           "package_name": "openssh-server",
           "version": "1:9.6p1-3ubuntu13.4",
-          "notes": "Ubuntu distribution package"
+          "notes": "Ubuntu 24.04 distribution package",
+          "distro": "ubuntu:24.04",
+          "source_package": "openssh"
         },
         {
           "vendor": "Tukaani",

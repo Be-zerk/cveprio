@@ -1,6 +1,8 @@
 """Command-line interface.
 
     cveprio analyze CVE-2021-44228 [CVE...] [--inventory FILE] [--offline] [--llm PROVIDER] [--out DIR]
+    cveprio analyze --inventory FILE --discover        # find CVEs for the inventory's software (live)
+    cveprio analyze --sbom app.cdx.json --criticality high --internet-facing yes --discover
     cveprio demo                      # offline, fictional inventory, scripted AI example, dashboard
     cveprio dashboard out/report.json # (re)build the HTML dashboard
     cveprio serve out/                # view it at http://127.0.0.1:8765 (local only)
@@ -16,6 +18,7 @@ from __future__ import annotations
 import argparse
 import functools
 import http.server
+import re
 import sys
 from pathlib import Path
 
@@ -62,22 +65,40 @@ def _summary(run: RunReport) -> None:
         disc = run.discovery
         print(f"\nDiscovery: {disc.total_found} candidate CVEs found, {len(disc.analyzed)} analysed"
               + (f", {len(disc.dropped)} over the cap (not analysed)" if disc.dropped else ""))
+        method = {"nvd_cpe": "NVD (CPE)", "osv_purl": "OSV (package)", "none": "-"}
         for q in disc.queries:
             extra = f" (+{len(q.non_cve_ids)} non-CVE advisories)" if q.non_cve_ids else ""
             what = q.detail if q.status != "ok" else f"{len(q.cve_ids)} CVEs{extra}"
-            print(f"  {q.asset_id:<18} {q.product[:22]:<22} {q.version[:24]:<24} {q.method:<9} {q.status:<15} {what}")
+            print(f"  {q.asset_id:<18} {q.product[:22]:<22} {q.version[:24]:<24} {method.get(q.method, q.method):<14} "
+                  f"{q.status.replace('_', ' '):<15} {what}")
     if not run.reports:
         searched = [q for q in (run.discovery.queries if run.discovery else []) if q.status == "ok"]
         print(f"\nNo known vulnerabilities found for the {len(searched)} components that could be searched. This "
               "is not proof there are none: see the discovery limits above and in the report.")
         return
-    print(f"\n{'CVE':<18} {'DECISION':<24} {'BASELINE':<9} {'EXPLOITATION':<20} {'SEVERITY':<9} EXPOSURE")
+    from cveprio.dashboard import factor_cards
+    words = {"P1": "P1 fix now", "P2": "P2 next patch cycle", "P3": "P3 schedule a fix", "P4": "P4 low priority",
+             "NEEDS_REVIEW": "needs review", "NOT_APPLICABLE": "not affected", "NOT_IN_INVENTORY": "not installed",
+             "NO_ACTION_REJECTED": "cancelled CVE", "INVALID_OR_UNPUBLISHED": "no details yet",
+             "RETRIEVAL_FAILED": "data missing"}
+    def cut(text: str, n: int) -> str:
+        return text if len(text) <= n else text[: n - 1] + "…"
+
+    print(f"\n{'CVE':<18} {'DECISION':<22} {'SCORE ALONE':<12} {'ATTACKS':<38} EXPOSURE")
     for r in run.reports:
         d = r.decision
-        label = d.label + ("*" if d.provisional else "")
-        print(f"{r.cve_id:<18} {label:<24} {d.baseline_label:<9} {d.factors.get('exploitation', ''):<20} "
-              f"{d.factors.get('severity', ''):<9} {d.factors.get('exposure', '')}")
-    print("  * provisional: depends on context not supplied or not verifiable")
+        label = words.get(d.label, d.label) + ("*" if d.provisional else "")
+        if r.bundle.record_state != "published":
+            print(f"{r.cve_id:<18} {label:<22} {'-':<12} {'-':<38} -")
+            continue
+        attacks, _, exposure = (v for _, v in factor_cards(r))
+        attacks = re.sub(r"Being attacked: on CISA's list since (\S+)", r"attacked (CISA list since \1)", attacks)
+        attacks = re.sub(r"Attacks likely: (\S+) predicted chance in 30 days", r"attacks likely (\1 in 30 days)", attacks)
+        exposure = exposure.replace("Not affected: your installed version is outside the affected range",
+                                    "your version is not affected")
+        attacks = attacks[:1].lower() + attacks[1:]
+        print(f"{r.cve_id:<18} {label:<22} {d.baseline_label:<12} {cut(attacks, 37):<38} {cut(exposure, 72)}")
+    print("  * provisional: depends on information that was not supplied")
     degraded = [(r.cve_id, s) for r in run.reports for s in r.bundle.sources
                 if s.status in (SourceStatus.FAILED, SourceStatus.RATE_LIMITED)]
     for cid, s in degraded:
@@ -155,10 +176,34 @@ def cmd_serve(args: argparse.Namespace, settings: Settings) -> int:
 
 
 def cmd_evaluate(args: argparse.Namespace, settings: Settings) -> int:
+    from cveprio.config import PROJECT_ROOT
     from cveprio.evaluation import run_evaluation
-
-    path = run_evaluation(settings, provider_name=args.llm, out_dir=Path(args.out))
+    if args.eval_set == "holdout":
+        base = PROJECT_ROOT / "evaluation" / "holdout"
+        path = run_evaluation(settings, provider_name=args.llm, out_dir=Path(args.out), cases_path=base / "cases.json",
+                              fixtures=base / "fixtures", tag="holdout")
+    else:
+        path = run_evaluation(settings, provider_name=args.llm, out_dir=Path(args.out))
     print(f"Wrote {path}")
+    return 0
+
+
+def cmd_holdout_select(args: argparse.Namespace, settings: Settings) -> int:
+    from cveprio.capture import capture
+    from cveprio.holdout import select, write_holdout
+    from cveprio.net import SafeFetcher
+
+    out = Path(args.out)
+    fetcher = SafeFetcher(min_interval_s={"services.nvd.nist.gov": 0.7 if settings.nvd_api_key else 6.5}, timeout_s=90)
+    print(f"Selecting held-out cases (seed {args.seed}, {args.start} to {args.end})...")
+    cases = select(fetcher, settings.nvd_api_key, seed=args.seed, start=args.start, end=args.end)
+    path = write_holdout(cases, out, seed=args.seed, start=args.start, end=args.end)
+    print(f"Wrote {len(cases)} unlabelled cases to {path}. Recording their source data for offline evaluation...")
+    capture([c["cve_id"] for c in cases], out / "fixtures", fetcher, settings.nvd_api_key, distros=False)
+    from cveprio.holdout import capture_osv, write_labeling
+    capture_osv(cases, out / "fixtures", fetcher)
+    write_labeling(cases, out)
+    print(f"Done. Next: fill in the expected answers ({out}/LABELING.md), then run: cveprio evaluate --set holdout")
     return 0
 
 
@@ -226,8 +271,17 @@ def build_parser() -> argparse.ArgumentParser:
 
     e = sub.add_parser("evaluate", help="run the evaluation set")
     e.add_argument("--llm", default="none", choices=["none", "ollama", "openai_compatible", "anthropic", "scripted"])
+    e.add_argument("--set", dest="eval_set", default="dev", choices=["dev", "holdout"],
+                   help="dev = the original 14 cases; holdout = the held-out set (needs human labels)")
     e.add_argument("--out", default="evaluation/results")
     e.set_defaults(func=cmd_evaluate)
+
+    h = sub.add_parser("holdout-select", help="pick a held-out evaluation set by a fixed rule (live)")
+    h.add_argument("--seed", type=int, default=2026)
+    h.add_argument("--start", default="2026-07-01")
+    h.add_argument("--end", default="2026-09-30")
+    h.add_argument("--out", default="evaluation/holdout")
+    h.set_defaults(func=cmd_holdout_select)
 
     c = sub.add_parser("check-config", help="show settings and provider status")
     c.set_defaults(func=cmd_check_config)

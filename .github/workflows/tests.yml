@@ -1,0 +1,33 @@
+# Runs the offline test suite and static checks on every push and pull request.
+# Live API tests are skipped here (they need network access and can hit rate limits).
+name: tests
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install
+        run: pip install -e ".[dev,anthropic]"
+      - name: Lint
+        run: ruff check cveprio tests
+      - name: Type check
+        run: mypy cveprio
+      - name: Tests (offline)
+        run: pytest -q
+      - name: Offline demo runs
+        run: cveprio demo --out /tmp/demo

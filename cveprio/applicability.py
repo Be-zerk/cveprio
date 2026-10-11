@@ -27,7 +27,7 @@ from cveprio.models import (
     SoftwareItem,
     VersionSpec,
 )
-from cveprio.versions import compare, looks_like_distro_version, parse_simple_constraint
+from cveprio.versions import compare, compare_deb, compare_rpm, looks_like_distro_version, parse_simple_constraint
 
 AFFECTED, NOT_AFFECTED, AMBIGUOUS = "affected", "not_affected", "ambiguous"
 FUZZY_THRESHOLD = 0.75
@@ -219,6 +219,117 @@ def _eval_cpe(item: SoftwareItem, m: CpeMatch) -> Verdict | None:
     return Verdict(AFFECTED, label, reason, m.evidence_id, m.version_end_excluding)
 
 
+# ----------------------------------------------------------------- distribution data
+
+UBUNTU_RELEASES = {"14.04": "trusty", "16.04": "xenial", "18.04": "bionic", "20.04": "focal", "22.04": "jammy",
+                   "23.10": "mantic", "24.04": "noble", "24.10": "oracular", "25.04": "plucky"}
+_BINARY_SUFFIXES = ("-server", "-client", "-sftp-server", "-bin", "-common", "-utils", "-tools", "-dev", "-data")
+UBUNTU_AFFECTED = {"needed", "deferred", "pending", "active", "ignored"}
+
+
+def _distro(item: SoftwareItem) -> tuple[str, str] | None:
+    """('ubuntu', 'noble') / ('rhel', '9') from item.distro or a purl ?distro= qualifier."""
+    raw = item.distro
+    if not raw and item.purl and "distro=" in item.purl:
+        raw = item.purl.split("distro=", 1)[1].split("&")[0].replace("-", ":", 1)
+    if not raw or ":" not in raw:
+        return None
+    family, _, release = raw.lower().partition(":")
+    if family == "ubuntu":
+        return "ubuntu", UBUNTU_RELEASES.get(release, release)
+    if family in ("rhel", "redhat", "red hat enterprise linux"):
+        return "rhel", release.split(".")[0]
+    return None
+
+
+def _source_names(item: SoftwareItem) -> list[str]:
+    names = [n.lower() for n in (item.source_package, item.package_name, item.product) if n]
+    for n in list(names):
+        for suf in _BINARY_SUFFIXES:
+            if n.endswith(suf):
+                names.append(n[: -len(suf)])
+    return list(dict.fromkeys(names))
+
+
+def _installed_pkg_version(item: SoftwareItem) -> str:
+    v = item.version
+    if item.purl and "@" in item.purl:
+        v = item.purl.split("@", 1)[1].split("?")[0]
+    return v
+
+
+def _distro_verdict(bundle: EvidenceBundle, item: SoftwareItem) -> Verdict | None:
+    d = _distro(item)
+    if not d:
+        return None
+    family, release = d
+    names = _source_names(item)
+    installed = _installed_pkg_version(item)
+    if family == "ubuntu":
+        ev = bundle.get("UBUNTU")
+        if not ev:
+            return None
+        for pkg in ev.fields.get("packages") or []:
+            if str(pkg.get("name", "")).lower() not in names:
+                continue
+            st = next((s for s in pkg.get("statuses") or [] if s.get("release") == release), None)
+            if not st:
+                return Verdict(AMBIGUOUS, f"Ubuntu ({release})", f"Ubuntu lists no status for release {release}",
+                               ev.id)
+            status, desc = st.get("status"), str(st.get("description") or "")
+            if status in ("not-affected", "DNE"):
+                why = "does not exist in this release" if status == "DNE" else "not affected"
+                return Verdict(NOT_AFFECTED, f"Ubuntu ({release})", f"Ubuntu marks {pkg['name']} as {why}"
+                               + (f" ({desc})" if desc else ""), ev.id)
+            if status == "released" and desc:
+                c = compare_deb(installed, desc)
+                if c is None:
+                    return Verdict(AMBIGUOUS, f"Ubuntu ({release})", f"could not compare '{installed}' with Ubuntu's "
+                                   f"fixed version {desc}", ev.id)
+                if c >= 0:
+                    return Verdict(NOT_AFFECTED, f"Ubuntu ({release})", f"Ubuntu fixed {pkg['name']} in {desc}; the "
+                                   f"installed {installed} is that version or newer", ev.id)
+                return Verdict(AFFECTED, f"Ubuntu ({release})", f"Ubuntu fixed {pkg['name']} in {desc}; the "
+                               f"installed {installed} is older", ev.id, desc)
+            if status in UBUNTU_AFFECTED:
+                return Verdict(AFFECTED, f"Ubuntu ({release})", f"Ubuntu status '{status}': no fix is available for "
+                               f"this release yet" if status != "ignored" else "Ubuntu will not fix this release",
+                               ev.id)
+            return Verdict(AMBIGUOUS, f"Ubuntu ({release})", f"Ubuntu status '{status}' (not yet triaged)", ev.id)
+        return None
+    ev = bundle.get("REDHAT")
+    if not ev:
+        return None
+    product = f"red hat enterprise linux {release}"
+    for a in ev.fields.get("affected_release") or []:
+        if str(a.get("product", "")).lower() != product:
+            continue
+        m = re.match(r"^(?P<name>.+)-(?P<evr>\d+:.+)$", str(a.get("package") or ""))
+        if not m or m.group("name").lower() not in names:
+            continue
+        fixed = m.group("evr")
+        c = compare_rpm(installed, fixed)
+        if c is None:
+            return Verdict(AMBIGUOUS, f"Red Hat (RHEL {release})", f"could not compare '{installed}' with Red Hat's "
+                           f"fixed version {fixed}", ev.id)
+        if c >= 0:
+            return Verdict(NOT_AFFECTED, f"Red Hat (RHEL {release})", f"Red Hat fixed {m.group('name')} in {fixed}; "
+                           f"the installed {installed} is that version or newer", ev.id)
+        return Verdict(AFFECTED, f"Red Hat (RHEL {release})", f"Red Hat fixed {m.group('name')} in {fixed}; the "
+                       f"installed {installed} is older", ev.id, fixed)
+    for p in ev.fields.get("package_state") or []:
+        if str(p.get("product", "")).lower() != product or str(p.get("package", "")).lower() not in names:
+            continue
+        state = str(p.get("fix_state", ""))
+        if state == "Not affected":
+            return Verdict(NOT_AFFECTED, f"Red Hat (RHEL {release})", f"Red Hat marks {p['package']} as not affected",
+                           ev.id)
+        if state in ("Affected", "Fix deferred", "Will not fix", "Out of support scope"):
+            return Verdict(AFFECTED, f"Red Hat (RHEL {release})", f"Red Hat status '{state}': no fix shipped", ev.id)
+        return Verdict(AMBIGUOUS, f"Red Hat (RHEL {release})", f"Red Hat status '{state}'", ev.id)
+    return None
+
+
 # --------------------------------------------------------------------------- main
 
 
@@ -231,6 +342,15 @@ def assess(bundle: EvidenceBundle, asset_id: str, item: SoftwareItem,
 
     if bundle.record_state != RecordState.PUBLISHED:
         return result(ApplicabilityStatus.NO_PRODUCT_MATCH, [f"record is {bundle.record_state}"], [])
+
+    # A distribution build is judged by that distribution's own advisory: vendors backport fixes without changing
+    # the upstream version, so upstream ranges cannot decide it. Fall back to upstream data only if there is none.
+    dv = _distro_verdict(bundle, item)
+    if dv and dv.verdict != AMBIGUOUS:
+        status = ApplicabilityStatus.AFFECTED if dv.verdict == AFFECTED else ApplicabilityStatus.NOT_AFFECTED
+        return result(status, [f"[{dv.verdict}] {dv.source}: {dv.reason}", "Distribution builds are judged by the "
+                               "distribution's own advisory, not upstream version ranges."],
+                      [dv.evidence_id], dv.source, dv.fixed_hint)
 
     acc = _Acc()
     for entry in bundle.affected:

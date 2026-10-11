@@ -29,13 +29,15 @@ from cveprio.net import Fetcher, FixtureFetcher, ResponseCache, SafeFetcher
 from cveprio.normalize import build_bundle
 from cveprio.prioritize import prioritize
 from cveprio.report import explain_decision, known_and_uncertain
-from cveprio.sources import fetch_cve_org, fetch_epss, fetch_kev, fetch_nvd, normalize_cve_id
+from cveprio.sources import fetch_cve_org, fetch_distro, fetch_epss, fetch_kev, fetch_nvd, normalize_cve_id
 
 NVD_NOTICE = "This product uses the NVD API but is not endorsed or certified by the NVD."
 SOURCE_NOTICES = [
     NVD_NOTICE,
     "CVE records: CVE Program (cve.org). KEV: CISA Known Exploited Vulnerabilities catalogue (CC0). "
     "EPSS: FIRST.org Exploit Prediction Scoring System (https://www.first.org/epss).",
+    "When used: Ubuntu CVE tracker (ubuntu.com/security, Canonical) and Red Hat Security Data "
+    "(access.redhat.com, CC BY 4.0, © Red Hat).",
 ]
 
 
@@ -69,27 +71,35 @@ def make_runtime(settings: Settings, *, offline: bool, provider_name: str | None
 
 
 def run(cve_ids: list[str], rt: Runtime, inventory: Inventory | None = None,
-        now: datetime | None = None, *, discover_cves: bool = False, max_cves: int = 150) -> RunReport:
+        now: datetime | None = None, *, discover_cves: bool = False, max_cves: int = 150,
+        analyze_discovered: bool = True) -> RunReport:
     ids = list(dict.fromkeys(normalize_cve_id(c) for c in cve_ids))  # validates before any network call
     kev = fetch_kev(rt.fetcher)
     discovery: DiscoverySummary | None = None
     found_by: dict[str, list[str]] = {}
     if discover_cves:
-        if rt.offline:
-            raise ValueError("CVE discovery needs live sources; it is not available in offline mode")
         if inventory is None:
             raise ValueError("CVE discovery needs an inventory")
         discovery, found_by = discover(inventory, rt.fetcher, nvd_api_key=rt.settings.nvd_api_key, kev=kev,
                                        max_cves=max_cves)
-        ids = list(dict.fromkeys(ids + discovery.analyzed))
+        if analyze_discovered:
+            ids = list(dict.fromkeys(ids + discovery.analyzed))
     epss = fetch_epss(rt.fetcher, ids)
     assets: dict[str, Asset] | None = {a.id: a for a in inventory.assets} if inventory else None
+    # Distribution advisories are only fetched when the inventory contains distribution packages.
+    families = {(i.distro or ("ubuntu:" if i.purl and "distro=ubuntu" in i.purl else "")).split(":")[0].lower()
+                for a in (inventory.assets if inventory else []) for i in a.software}
+    needed_distros = [d for d in ("ubuntu", "redhat") if d in families or (d == "redhat" and families & {"rhel"})]
     mode: Literal["live", "offline_demo"] = "offline_demo" if rt.offline else "live"
     reports: list[CveReport] = []
     for cid in ids:
-        bundle = build_bundle(cid, fetch_cve_org(rt.fetcher, cid),
+        cve_org = fetch_cve_org(rt.fetcher, cid)
+        published = bool(cve_org.payload and (cve_org.payload.get("record") or {}).get("cveMetadata", {})
+                         .get("state", "").upper() == "PUBLISHED")
+        distros = [fetch_distro(rt.fetcher, cid, which) for which in needed_distros] if published else []
+        bundle = build_bundle(cid, cve_org,
                               fetch_nvd(rt.fetcher, cid, rt.settings.nvd_api_key), kev, epss,
-                              demo=rt.offline, now=now)
+                              demo=rt.offline, now=now, distros=distros)
         results: list[ApplicabilityResult] = []
         osv_ids: dict[tuple[str, str], str] = {}
         if discovery and cid in discovery.osv_matches and bundle.record_state.value == "published":
@@ -122,7 +132,11 @@ def run(cve_ids: list[str], rt: Runtime, inventory: Inventory | None = None,
             discovered_by=found_by.get(cid, [])))
 
     order = {"P1": 0, "P2": 1, "NEEDS_REVIEW": 2, "P3": 3, "P4": 4, "NOT_APPLICABLE": 6, "NOT_IN_INVENTORY": 7}
-    reports.sort(key=lambda r: (order.get(r.decision.label, 9), r.cve_id))
+    strength = {"confirmed": 0, "elevated": 1, "evidence_incomplete": 2, "claimed_unverified": 3, "low_observed": 4}
+    reports.sort(key=lambda r: (order.get(r.decision.label, 9),
+                                strength.get(r.decision.factors.get("exploitation", ""), 9),
+                                -(r.bundle.primary_cvss.base_score or 0) if r.bundle.primary_cvss else 0,
+                                r.cve_id))
     notices = list(SOURCE_NOTICES)
     if inventory:
         notices.extend(inventory.input_notes)

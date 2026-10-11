@@ -161,3 +161,40 @@ def test_factor_boxes_name_real_systems_and_evidence(demo_run):
     assert "print-srv-01" in cards["CVE-2024-47176"]["Your exposure"]
     generic = "An affected system is internet-facing or business-critical"
     assert all(generic not in c["Your exposure"] for c in cards.values())
+
+
+def test_dashboard_visible_text_has_no_rule_codes(demo_run):
+    """Everything shown without opening a collapsed section must be plain language."""
+    import re
+    from html.parser import HTMLParser
+
+    from cveprio.dashboard import render_dashboard
+
+    class Visible(HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self.stack, self.text = [], []
+
+        def handle_starttag(self, tag, attrs):
+            classes = dict(attrs).get("class", "") or ""
+            # inner <details> (not the CVE cards) are collapsed; <script>/<style>/<code> are not prose
+            hide = (tag == "details" and "cve" not in classes) or tag in ("script", "style", "summary-raw")
+            self.stack.append((tag, hide))
+
+        def handle_endtag(self, tag):
+            while self.stack:
+                t, _ = self.stack.pop()
+                if t == tag:
+                    break
+
+        def handle_data(self, data):
+            if not any(h for _, h in self.stack):
+                self.text.append(data)
+
+    p = Visible()
+    p.feed(render_dashboard(demo_run))
+    visible = " ".join(p.text)
+    codes = re.findall(r"\b(low_observed|claimed_unverified|context_unknown|not_assessed|needs_review|not_affected|"
+                       r"not_in_inventory|evidence_incomplete|insufficient_evidence|public_exploit_claimed|"
+                       r"NOT_APPLICABLE|NEEDS_REVIEW|NO_ACTION_REJECTED|INVALID_OR_UNPUBLISHED|offline_demo)\b", visible)
+    assert not codes, sorted(set(codes))

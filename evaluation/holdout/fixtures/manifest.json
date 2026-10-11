@@ -1,0 +1,353 @@
+{
+ "captured_at": "2026-10-11T17:39:35.875887+00:00",
+ "kev_cves": [
+  "CVE-2025-68686",
+  "CVE-2025-71390",
+  "CVE-2026-100846",
+  "CVE-2026-15409",
+  "CVE-2026-15793",
+  "CVE-2026-34486",
+  "CVE-2026-47896",
+  "CVE-2026-53266",
+  "CVE-2026-58036",
+  "CVE-2026-58059",
+  "CVE-2026-58187",
+  "CVE-2026-63041",
+  "CVE-2026-69254",
+  "CVE-2026-71180",
+  "CVE-2026-71362",
+  "CVE-2026-72529",
+  "CVE-2026-77274",
+  "CVE-2026-81963",
+  "CVE-2026-84869",
+  "CVE-2026-85014"
+ ],
+ "notice": "OFFLINE DEMO FIXTURES: real API responses recorded at the times shown. They go stale; use live mode for current data. This product uses the NVD API but is not endorsed or certified by the NVD.",
+ "responses": {
+  "https://api.first.org/data/v1/epss?cve=CVE-2025-68686": {
+   "file": "responses/api.first.org_data_v1_epss_cve_CVE-2025-68686.json",
+   "retrieved_at": "2026-10-11T17:39:25.674437+00:00",
+   "status": 200
+  },
+  "https://api.first.org/data/v1/epss?cve=CVE-2025-71390": {
+   "file": "responses/api.first.org_data_v1_epss_cve_CVE-2025-71390.json",
+   "retrieved_at": "2026-10-11T17:39:35.667255+00:00",
+   "status": 200
+  },
+  "https://api.first.org/data/v1/epss?cve=CVE-2026-100846": {
+   "file": "responses/api.first.org_data_v1_epss_cve_CVE-2026-100846.json",
+   "retrieved_at": "2026-10-11T17:39:31.362692+00:00",
+   "status": 200
+  },
+  "https://api.first.org/data/v1/epss?cve=CVE-2026-15409": {
+   "file": "responses/api.first.org_data_v1_epss_cve_CVE-2026-15409.json",
+   "retrieved_at": "2026-10-11T17:39:22.254194+00:00",
+   "status": 200
+  },
+  "https://api.first.org/data/v1/epss?cve=CVE-2026-15793": {
+   "file": "responses/api.first.org_data_v1_epss_cve_CVE-2026-15793.json",
+   "retrieved_at": "2026-10-11T17:39:30.652679+00:00",
+   "status": 200
+  },
+  "https://api.first.org/data/v1/epss?cve=CVE-2026-34486": {
+   "file": "responses/api.first.org_data_v1_epss_cve_CVE-2026-34486.json",
+   "retrieved_at": "2026-10-11T17:39:26.338408+00:00",
+   "status": 200
+  },
+  "https://api.first.org/data/v1/epss?cve=CVE-2026-47896": {
+   "file": "responses/api.first.org_data_v1_epss_cve_CVE-2026-47896.json",
+   "retrieved_at": "2026-10-11T17:39:28.535366+00:00",
+   "status": 200
+  },
+  "https://api.first.org/data/v1/epss?cve=CVE-2026-53266": {
+   "file": "responses/api.first.org_data_v1_epss_cve_CVE-2026-53266.json",
+   "retrieved_at": "2026-10-11T17:39:22.878072+00:00",
+   "status": 200
+  },
+  "https://api.first.org/data/v1/epss?cve=CVE-2026-58036": {
+   "file": "responses/api.first.org_data_v1_epss_cve_CVE-2026-58036.json",
+   "retrieved_at": "2026-10-11T17:39:29.976431+00:00",
+   "status": 200
+  },
+  "https://api.first.org/data/v1/epss?cve=CVE-2026-58059": {
+   "file": "responses/api.first.org_data_v1_epss_cve_CVE-2026-58059.json",
+   "retrieved_at": "2026-10-11T17:39:32.766692+00:00",
+   "status": 200
+  },
+  "https://api.first.org/data/v1/epss?cve=CVE-2026-58187": {
+   "file": "responses/api.first.org_data_v1_epss_cve_CVE-2026-58187.json",
+   "retrieved_at": "2026-10-11T17:39:29.272619+00:00",
+   "status": 200
+  },
+  "https://api.first.org/data/v1/epss?cve=CVE-2026-63041": {
+   "file": "responses/api.first.org_data_v1_epss_cve_CVE-2026-63041.json",
+   "retrieved_at": "2026-10-11T17:39:27.836077+00:00",
+   "status": 200
+  },
+  "https://api.first.org/data/v1/epss?cve=CVE-2026-69254": {
+   "file": "responses/api.first.org_data_v1_epss_cve_CVE-2026-69254.json",
+   "retrieved_at": "2026-10-11T17:39:34.873384+00:00",
+   "status": 200
+  },
+  "https://api.first.org/data/v1/epss?cve=CVE-2026-71180": {
+   "file": "responses/api.first.org_data_v1_epss_cve_CVE-2026-71180.json",
+   "retrieved_at": "2026-10-11T17:39:32.113006+00:00",
+   "status": 200
+  },
+  "https://api.first.org/data/v1/epss?cve=CVE-2026-71362": {
+   "file": "responses/api.first.org_data_v1_epss_cve_CVE-2026-71362.json",
+   "retrieved_at": "2026-10-11T17:39:23.536743+00:00",
+   "status": 200
+  },
+  "https://api.first.org/data/v1/epss?cve=CVE-2026-72529": {
+   "file": "responses/api.first.org_data_v1_epss_cve_CVE-2026-72529.json",
+   "retrieved_at": "2026-10-11T17:39:24.214011+00:00",
+   "status": 200
+  },
+  "https://api.first.org/data/v1/epss?cve=CVE-2026-77274": {
+   "file": "responses/api.first.org_data_v1_epss_cve_CVE-2026-77274.json",
+   "retrieved_at": "2026-10-11T17:39:34.267954+00:00",
+   "status": 200
+  },
+  "https://api.first.org/data/v1/epss?cve=CVE-2026-81963": {
+   "file": "responses/api.first.org_data_v1_epss_cve_CVE-2026-81963.json",
+   "retrieved_at": "2026-10-11T17:39:27.032224+00:00",
+   "status": 200
+  },
+  "https://api.first.org/data/v1/epss?cve=CVE-2026-84869": {
+   "file": "responses/api.first.org_data_v1_epss_cve_CVE-2026-84869.json",
+   "retrieved_at": "2026-10-11T17:39:24.928589+00:00",
+   "status": 200
+  },
+  "https://api.first.org/data/v1/epss?cve=CVE-2026-85014": {
+   "file": "responses/api.first.org_data_v1_epss_cve_CVE-2026-85014.json",
+   "retrieved_at": "2026-10-11T17:39:33.483146+00:00",
+   "status": 200
+  },
+  "https://api.osv.dev/v1/query#{\"package\":{\"purl\":\"pkg:cargo/SurrealDB@2.1.8\"}}": {
+   "file": "responses/osv_h20.json",
+   "retrieved_at": "2026-10-11T17:42:55.438688+00:00",
+   "status": 200
+  },
+  "https://api.osv.dev/v1/query#{\"package\":{\"purl\":\"pkg:npm/flowise@3.1.3\"}}": {
+   "file": "responses/osv_h19.json",
+   "retrieved_at": "2026-10-11T17:42:55.250811+00:00",
+   "status": 200
+  },
+  "https://api.osv.dev/v1/query#{\"package\":{\"purl\":\"pkg:npm/undici@7.0.0\"}}": {
+   "file": "responses/osv_h17.json",
+   "retrieved_at": "2026-10-11T17:42:54.916644+00:00",
+   "status": 200
+  },
+  "https://api.osv.dev/v1/query#{\"package\":{\"purl\":\"pkg:pypi/mcp-atlassian@0.22.0\"}}": {
+   "file": "responses/osv_h18.json",
+   "retrieved_at": "2026-10-11T17:42:55.081792+00:00",
+   "status": 200
+  },
+  "https://cveawg.mitre.org/api/cve/CVE-2025-68686": {
+   "file": "responses/cveawg.mitre.org_api_cve_CVE-2025-68686.json",
+   "retrieved_at": "2026-10-11T17:39:24.955350+00:00",
+   "status": 200
+  },
+  "https://cveawg.mitre.org/api/cve/CVE-2025-71390": {
+   "file": "responses/cveawg.mitre.org_api_cve_CVE-2025-71390.json",
+   "retrieved_at": "2026-10-11T17:39:34.895992+00:00",
+   "status": 200
+  },
+  "https://cveawg.mitre.org/api/cve/CVE-2026-100846": {
+   "file": "responses/cveawg.mitre.org_api_cve_CVE-2026-100846.json",
+   "retrieved_at": "2026-10-11T17:39:30.674701+00:00",
+   "status": 200
+  },
+  "https://cveawg.mitre.org/api/cve/CVE-2026-15409": {
+   "file": "responses/cveawg.mitre.org_api_cve_CVE-2026-15409.json",
+   "retrieved_at": "2026-10-11T17:39:22.001107+00:00",
+   "status": 200
+  },
+  "https://cveawg.mitre.org/api/cve/CVE-2026-15793": {
+   "file": "responses/cveawg.mitre.org_api_cve_CVE-2026-15793.json",
+   "retrieved_at": "2026-10-11T17:39:29.999466+00:00",
+   "status": 200
+  },
+  "https://cveawg.mitre.org/api/cve/CVE-2026-34486": {
+   "file": "responses/cveawg.mitre.org_api_cve_CVE-2026-34486.json",
+   "retrieved_at": "2026-10-11T17:39:25.698553+00:00",
+   "status": 200
+  },
+  "https://cveawg.mitre.org/api/cve/CVE-2026-47896": {
+   "file": "responses/cveawg.mitre.org_api_cve_CVE-2026-47896.json",
+   "retrieved_at": "2026-10-11T17:39:27.862281+00:00",
+   "status": 200
+  },
+  "https://cveawg.mitre.org/api/cve/CVE-2026-53266": {
+   "file": "responses/cveawg.mitre.org_api_cve_CVE-2026-53266.json",
+   "retrieved_at": "2026-10-11T17:39:22.287918+00:00",
+   "status": 200
+  },
+  "https://cveawg.mitre.org/api/cve/CVE-2026-58036": {
+   "file": "responses/cveawg.mitre.org_api_cve_CVE-2026-58036.json",
+   "retrieved_at": "2026-10-11T17:39:29.295909+00:00",
+   "status": 200
+  },
+  "https://cveawg.mitre.org/api/cve/CVE-2026-58059": {
+   "file": "responses/cveawg.mitre.org_api_cve_CVE-2026-58059.json",
+   "retrieved_at": "2026-10-11T17:39:32.133680+00:00",
+   "status": 200
+  },
+  "https://cveawg.mitre.org/api/cve/CVE-2026-58187": {
+   "file": "responses/cveawg.mitre.org_api_cve_CVE-2026-58187.json",
+   "retrieved_at": "2026-10-11T17:39:28.564898+00:00",
+   "status": 200
+  },
+  "https://cveawg.mitre.org/api/cve/CVE-2026-63041": {
+   "file": "responses/cveawg.mitre.org_api_cve_CVE-2026-63041.json",
+   "retrieved_at": "2026-10-11T17:39:27.061331+00:00",
+   "status": 200
+  },
+  "https://cveawg.mitre.org/api/cve/CVE-2026-69254": {
+   "file": "responses/cveawg.mitre.org_api_cve_CVE-2026-69254.json",
+   "retrieved_at": "2026-10-11T17:39:34.288809+00:00",
+   "status": 200
+  },
+  "https://cveawg.mitre.org/api/cve/CVE-2026-71180": {
+   "file": "responses/cveawg.mitre.org_api_cve_CVE-2026-71180.json",
+   "retrieved_at": "2026-10-11T17:39:31.382433+00:00",
+   "status": 200
+  },
+  "https://cveawg.mitre.org/api/cve/CVE-2026-71362": {
+   "file": "responses/cveawg.mitre.org_api_cve_CVE-2026-71362.json",
+   "retrieved_at": "2026-10-11T17:39:22.902867+00:00",
+   "status": 200
+  },
+  "https://cveawg.mitre.org/api/cve/CVE-2026-72529": {
+   "file": "responses/cveawg.mitre.org_api_cve_CVE-2026-72529.json",
+   "retrieved_at": "2026-10-11T17:39:23.556435+00:00",
+   "status": 200
+  },
+  "https://cveawg.mitre.org/api/cve/CVE-2026-77274": {
+   "file": "responses/cveawg.mitre.org_api_cve_CVE-2026-77274.json",
+   "retrieved_at": "2026-10-11T17:39:33.506924+00:00",
+   "status": 200
+  },
+  "https://cveawg.mitre.org/api/cve/CVE-2026-81963": {
+   "file": "responses/cveawg.mitre.org_api_cve_CVE-2026-81963.json",
+   "retrieved_at": "2026-10-11T17:39:26.360137+00:00",
+   "status": 200
+  },
+  "https://cveawg.mitre.org/api/cve/CVE-2026-84869": {
+   "file": "responses/cveawg.mitre.org_api_cve_CVE-2026-84869.json",
+   "retrieved_at": "2026-10-11T17:39:24.237585+00:00",
+   "status": 200
+  },
+  "https://cveawg.mitre.org/api/cve/CVE-2026-85014": {
+   "file": "responses/cveawg.mitre.org_api_cve_CVE-2026-85014.json",
+   "retrieved_at": "2026-10-11T17:39:32.789023+00:00",
+   "status": 200
+  },
+  "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2025-68686": {
+   "file": "responses/services.nvd.nist.gov_rest_json_cves_2.0_cveId_CVE-2025-68686.json",
+   "retrieved_at": "2026-10-11T17:39:25.644955+00:00",
+   "status": 200
+  },
+  "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2025-71390": {
+   "file": "responses/services.nvd.nist.gov_rest_json_cves_2.0_cveId_CVE-2025-71390.json",
+   "retrieved_at": "2026-10-11T17:39:35.534996+00:00",
+   "status": 200
+  },
+  "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-100846": {
+   "file": "responses/services.nvd.nist.gov_rest_json_cves_2.0_cveId_CVE-2026-100846.json",
+   "retrieved_at": "2026-10-11T17:39:31.219822+00:00",
+   "status": 200
+  },
+  "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-15409": {
+   "file": "responses/services.nvd.nist.gov_rest_json_cves_2.0_cveId_CVE-2026-15409.json",
+   "retrieved_at": "2026-10-11T17:39:22.166057+00:00",
+   "status": 200
+  },
+  "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-15793": {
+   "file": "responses/services.nvd.nist.gov_rest_json_cves_2.0_cveId_CVE-2026-15793.json",
+   "retrieved_at": "2026-10-11T17:39:30.507565+00:00",
+   "status": 200
+  },
+  "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-34486": {
+   "file": "responses/services.nvd.nist.gov_rest_json_cves_2.0_cveId_CVE-2026-34486.json",
+   "retrieved_at": "2026-10-11T17:39:26.304492+00:00",
+   "status": 200
+  },
+  "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-47896": {
+   "file": "responses/services.nvd.nist.gov_rest_json_cves_2.0_cveId_CVE-2026-47896.json",
+   "retrieved_at": "2026-10-11T17:39:28.400769+00:00",
+   "status": 200
+  },
+  "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-53266": {
+   "file": "responses/services.nvd.nist.gov_rest_json_cves_2.0_cveId_CVE-2026-53266.json",
+   "retrieved_at": "2026-10-11T17:39:22.850984+00:00",
+   "status": 200
+  },
+  "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-58036": {
+   "file": "responses/services.nvd.nist.gov_rest_json_cves_2.0_cveId_CVE-2026-58036.json",
+   "retrieved_at": "2026-10-11T17:39:29.842753+00:00",
+   "status": 200
+  },
+  "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-58059": {
+   "file": "responses/services.nvd.nist.gov_rest_json_cves_2.0_cveId_CVE-2026-58059.json",
+   "retrieved_at": "2026-10-11T17:39:32.630386+00:00",
+   "status": 200
+  },
+  "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-58187": {
+   "file": "responses/services.nvd.nist.gov_rest_json_cves_2.0_cveId_CVE-2026-58187.json",
+   "retrieved_at": "2026-10-11T17:39:29.139566+00:00",
+   "status": 200
+  },
+  "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-63041": {
+   "file": "responses/services.nvd.nist.gov_rest_json_cves_2.0_cveId_CVE-2026-63041.json",
+   "retrieved_at": "2026-10-11T17:39:27.686640+00:00",
+   "status": 200
+  },
+  "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-69254": {
+   "file": "responses/services.nvd.nist.gov_rest_json_cves_2.0_cveId_CVE-2026-69254.json",
+   "retrieved_at": "2026-10-11T17:39:34.733390+00:00",
+   "status": 200
+  },
+  "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-71180": {
+   "file": "responses/services.nvd.nist.gov_rest_json_cves_2.0_cveId_CVE-2026-71180.json",
+   "retrieved_at": "2026-10-11T17:39:31.981936+00:00",
+   "status": 200
+  },
+  "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-71362": {
+   "file": "responses/services.nvd.nist.gov_rest_json_cves_2.0_cveId_CVE-2026-71362.json",
+   "retrieved_at": "2026-10-11T17:39:23.509654+00:00",
+   "status": 200
+  },
+  "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-72529": {
+   "file": "responses/services.nvd.nist.gov_rest_json_cves_2.0_cveId_CVE-2026-72529.json",
+   "retrieved_at": "2026-10-11T17:39:24.184499+00:00",
+   "status": 200
+  },
+  "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-77274": {
+   "file": "responses/services.nvd.nist.gov_rest_json_cves_2.0_cveId_CVE-2026-77274.json",
+   "retrieved_at": "2026-10-11T17:39:34.129356+00:00",
+   "status": 200
+  },
+  "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-81963": {
+   "file": "responses/services.nvd.nist.gov_rest_json_cves_2.0_cveId_CVE-2026-81963.json",
+   "retrieved_at": "2026-10-11T17:39:27.001602+00:00",
+   "status": 200
+  },
+  "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-84869": {
+   "file": "responses/services.nvd.nist.gov_rest_json_cves_2.0_cveId_CVE-2026-84869.json",
+   "retrieved_at": "2026-10-11T17:39:24.893465+00:00",
+   "status": 200
+  },
+  "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-85014": {
+   "file": "responses/services.nvd.nist.gov_rest_json_cves_2.0_cveId_CVE-2026-85014.json",
+   "retrieved_at": "2026-10-11T17:39:33.332031+00:00",
+   "status": 200
+  },
+  "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json": {
+   "file": "responses/kev_subset.json",
+   "retrieved_at": "2026-10-11T17:39:35.855520+00:00",
+   "status": 200
+  }
+ }
+}

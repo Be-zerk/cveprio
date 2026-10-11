@@ -21,6 +21,8 @@ class SourceName(StrEnum):
     KEV = "cisa_kev"
     EPSS = "first_epss"
     OSV = "osv"
+    UBUNTU = "ubuntu"
+    REDHAT = "redhat"
 
 
 class SourceStatus(StrEnum):
@@ -207,6 +209,10 @@ class SoftwareItem(BaseModel):
     package_name: str | None = None
     cpe: str | None = None
     purl: str | None = None  # package URL, e.g. pkg:maven/org.apache.logging.log4j/log4j-core@2.14.1
+    # Distribution packages: which distro release built it ("ubuntu:24.04", "ubuntu:noble", "rhel:9") and,
+    # if the package name differs from the source package the distro tracks, that source name ("openssh").
+    distro: str | None = None
+    source_package: str | None = None
     notes: str | None = None
 
 
@@ -269,6 +275,7 @@ class Claim(BaseModel):
     statement: str
     type: Literal["fact", "inference"]
     evidence_ids: list[str]
+    quote: str = ""  # exact words copied from a cited evidence item that support the statement
 
 
 class DifficultyAssessment(BaseModel):
@@ -320,12 +327,13 @@ class LlmAnalysis(BaseModel):
     provider: str
     model: str | None = None
     scripted: bool = False  # True for hand-written demo outputs (never presented as model output)
+    prompt_version: str | None = None  # which version of the instructions produced this output
     detail: str | None = None
     assessment: ModelAssessment | None = None
     removed_claims: list[ValidationIssue] = Field(default_factory=list)
     rating_overrides: list[ValidationIssue] = Field(default_factory=list)
     total_claims: int = 0
-    supported_claims: int = 0
+    supported_claims: int = 0  # claims that passed every check (citations, quote found, numbers found)
 
 
 # ------------------------------------------------------------------ prioritisation

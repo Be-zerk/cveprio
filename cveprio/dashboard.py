@@ -16,6 +16,7 @@ from jinja2 import Environment, PackageLoader, select_autoescape
 
 from cveprio.cvss import explain_vector, source_name
 from cveprio.models import ApplicabilityResult, CveReport, RunReport
+from cveprio.report import plain_reason
 
 STATUS = {
     "P1": ("critical", "▲"), "P2": ("serious", "◆"), "NEEDS_REVIEW": ("warning", "?"),
@@ -23,8 +24,8 @@ STATUS = {
     "NOT_IN_INVENTORY": ("good", "–"), "NO_ACTION_REJECTED": ("muted", "✕"),
     "INVALID_OR_UNPUBLISHED": ("muted", "∅"), "RETRIEVAL_FAILED": ("warning", "!"),
 }
-TILES = [("P1", "Act now"), ("P2", "Next patch cycle"), ("NEEDS_REVIEW", "Needs review"),
-         ("P3", "Scheduled"), ("P4", "Backlog"), ("OTHER", "No action / not applicable")]
+TILES = [("P1", "Fix now"), ("P2", "Fix in the next patch cycle"), ("NEEDS_REVIEW", "Needs review"),
+         ("P3", "Schedule a fix"), ("P4", "Low priority"), ("OTHER", "No action needed")]
 
 
 # Plain-English wording for readers who are not security specialists.
@@ -34,6 +35,16 @@ PLAIN_LABEL = {
     "NOT_IN_INVENTORY": "Not installed here — no action needed", "NO_ACTION_REJECTED": "Cancelled CVE — no action needed",
     "INVALID_OR_UNPUBLISHED": "No public details yet — nothing to do", "RETRIEVAL_FAILED": "Data could not be loaded — try again",
 }
+BADGE = {"NEEDS_REVIEW": "Needs review", "NOT_APPLICABLE": "Not affected", "NOT_IN_INVENTORY": "Not installed",
+         "NO_ACTION_REJECTED": "Cancelled CVE", "INVALID_OR_UNPUBLISHED": "No details yet",
+         "RETRIEVAL_FAILED": "Data missing"}
+AI_RATING = {
+    "low": "Easy", "moderate": "Moderate", "high": "Hard", "insufficient_evidence": "Not enough evidence to say",
+    "exploitation_reported": "Attacks reported", "public_exploit_claimed": "Public attack code claimed",
+    "no_public_exploit_evidence": "No public attack code found",
+}
+APPLIES = {"affected": "Affected", "not_affected": "Not affected", "needs_review": "Needs a version check",
+           "no_product_match": "No match"}
 PLAIN_FACTOR = {
     "exploitation": {
         "confirmed": "Attackers are known to be using it",
@@ -154,9 +165,10 @@ def factor_cards(r: CveReport) -> list[tuple[str, str]]:
         ctx = _ctx(top)
         exposure = f"{top.asset_id} is {ctx}" if ctx else f"{top.asset_id}: exposure and importance not recorded"
         if x == "context_unknown":
-            missing = next((a for a in affected if not _ctx(a) or a.asset_internet_facing is None
-                            or a.asset_criticality is None), top)
-            exposure = f"{missing.asset_id}: exposure or importance not recorded"
+            m = next((a for a in affected if a.asset_internet_facing is None or a.asset_criticality is None), top)
+            gaps = [w for w, v in (("internet exposure", m.asset_internet_facing), ("importance", m.asset_criticality))
+                    if v is None]
+            exposure = f"{m.asset_id}: {' and '.join(gaps) or 'details'} not recorded"
         if x == "reduced":
             prot = next((a for a in affected if a.asset_controls), top)
             exposure = f"{prot.asset_id} is protected by a declared control (not verified)"
@@ -173,6 +185,29 @@ def factor_cards(r: CveReport) -> list[tuple[str, str]]:
     else:
         exposure = "Not applicable"
     return [("Attack activity", attack), ("Severity on paper", severity), ("Your exposure", exposure)]
+
+
+def plain_override(problem: str) -> str:
+    """"rating 'a' → 'b': why" -> "rated “A”, corrected to “B”: why"."""
+    m = re.match(r"rating '([^']+)' → '([^']+)': (.*)", problem)
+    if not m:
+        return problem
+    a, b, why = m.groups()
+    return f"rated “{AI_RATING.get(a, a)}”, corrected to “{AI_RATING.get(b, b)}”: {why}"
+
+
+def display_name(r: CveReport) -> tuple[str, str] | None:
+    """A recognisable name for the CVE and where it came from: official title, CISA's name, or description."""
+    b = r.bundle
+    if b.title:
+        return b.title, "Official title"
+    kev = b.get("KEV")
+    if kev and kev.kind == "kev_entry" and kev.fields.get("vulnerabilityName"):
+        return str(kev.fields["vulnerabilityName"]).strip(), "CISA's name"
+    if b.description:
+        first = re.split(r"(?<=[.!?])\s", " ".join(b.description.split()), maxsplit=1)[0]
+        return (first if len(first) <= 110 else first[:110].rsplit(" ", 1)[0] + "…"), "From the description"
+    return None
 
 
 def compare_why(r: CveReport) -> str:
@@ -203,7 +238,7 @@ def render_dashboard(run: RunReport) -> str:
     env.filters["split_item"] = split_item
     env.filters["explain_vector"] = explain_vector
     env.filters["source_name"] = source_name
-    env.globals.update(factor_cards=factor_cards, compare_reason=compare_reason, compare_why=compare_why, PLAIN_LABEL=PLAIN_LABEL, PLAIN_FACTOR=PLAIN_FACTOR, SHORT_FACTOR=SHORT_FACTOR,
+    env.globals.update(plain_override=plain_override, AI_RATING=AI_RATING, APPLIES=APPLIES, plain_reason=plain_reason, display_name=display_name, BADGE=BADGE, factor_cards=factor_cards, compare_reason=compare_reason, compare_why=compare_why, PLAIN_LABEL=PLAIN_LABEL, PLAIN_FACTOR=PLAIN_FACTOR, SHORT_FACTOR=SHORT_FACTOR,
                        why_sentence=why_sentence)
     counts = Counter(r.decision.label for r in run.reports)
     tiles = [(k, label, counts.get(k, 0) if k != "OTHER" else

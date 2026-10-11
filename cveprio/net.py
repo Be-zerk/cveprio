@@ -41,6 +41,8 @@ ALLOWED_HOSTS = frozenset(
         "api.first.org",
         "www.cisa.gov",
         "api.osv.dev",
+        "ubuntu.com",
+        "access.redhat.com",
     }
 )
 USER_AGENT = "cveprio/0.1 (evidence-backed CVE prioritization; research prototype)"

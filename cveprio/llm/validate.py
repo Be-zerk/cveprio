@@ -53,17 +53,54 @@ def parse_assessment(raw: str) -> ModelAssessment:
         raise InvalidModelOutput(f"schema validation failed: {errs}") from exc
 
 
-def _filter(claims: list[Claim], path: str, valid_ids: set[str], removed: list[ValidationIssue]) -> list[Claim]:
+MIN_QUOTE_WORDS = 3
+_NUMBERS = re.compile(r"\b\d+(?:\.\d+)+[a-z0-9-]*\b|\b\d{4}-\d{2}-\d{2}\b")
+
+
+def _norm(text: str) -> str:
+    text = text.lower().replace("\u2019", "'").replace("\u2018", "'").replace("\u201c", '"').replace("\u201d", '"')
+    text = text.replace("\u2013", "-").replace("\u2014", "-")
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def evidence_texts(bundle: EvidenceBundle) -> dict[str, str]:
+    """Normalised text of each evidence item: what a quote or number can be checked against."""
+    out = {}
+    for e in bundle.evidence:
+        fields = " ".join(str(v) for v in e.fields.values() if v not in (None, "", [], {}))
+        out[e.id] = _norm(" ".join([e.summary, e.excerpt or "", fields, json.dumps(e.fields, default=str)]))
+    return out
+
+
+def _filter(claims: list[Claim], path: str, valid_ids: set[str], removed: list[ValidationIssue],
+            texts: dict[str, str]) -> list[Claim]:
     kept = []
     for i, c in enumerate(claims):
         c.statement = _CTRL.sub("", c.statement).strip()[:MAX_STATEMENT]
+        c.quote = _CTRL.sub("", c.quote or "").strip()[:MAX_STATEMENT]
+        where = f"{path}[{i}]"
+
+        def drop(problem: str, claim: Claim = c, at: str = where) -> None:
+            removed.append(ValidationIssue(path=at, problem=problem, statement=claim.statement))
+
         if not c.evidence_ids:
-            removed.append(ValidationIssue(path=f"{path}[{i}]", problem="no evidence cited", statement=c.statement))
+            drop("no evidence cited")
             continue
         bad = [x for x in c.evidence_ids if x not in valid_ids]
         if bad:
-            removed.append(ValidationIssue(path=f"{path}[{i}]", problem=f"cites unknown evidence ID(s): {bad}",
-                                           statement=c.statement))
+            drop(f"cites unknown evidence ID(s): {bad}")
+            continue
+        cited = " ".join(texts.get(x, "") for x in c.evidence_ids)
+        quote = _norm(c.quote).strip(" .,;:\"'")
+        if len(quote.split()) < MIN_QUOTE_WORDS:
+            drop("no supporting quote given")
+            continue
+        if quote not in cited:
+            drop("its quote does not appear in the cited evidence")
+            continue
+        missing = [n for n in _NUMBERS.findall(c.statement) if n.lower() not in cited]
+        if missing:
+            drop(f"mentions {', '.join(missing[:3])}, which the cited evidence does not contain")
             continue
         kept.append(c)
     return kept
@@ -79,13 +116,14 @@ def validate_against_evidence(
     total = sum(len(x) for x in (d.prerequisites, d.complexity_factors, d.research_availability,
                                  u.exploit_evidence, u.reliability_limitations, u.required_access))
 
-    d.prerequisites = _filter(d.prerequisites, "difficulty.prerequisites", valid, removed)
-    d.complexity_factors = _filter(d.complexity_factors, "difficulty.complexity_factors", valid, removed)
-    d.research_availability = _filter(d.research_availability, "difficulty.research_availability", valid, removed)
-    u.exploit_evidence = _filter(u.exploit_evidence, "usability.exploit_evidence", valid, removed)
+    texts = evidence_texts(bundle)
+    d.prerequisites = _filter(d.prerequisites, "difficulty.prerequisites", valid, removed, texts)
+    d.complexity_factors = _filter(d.complexity_factors, "difficulty.complexity_factors", valid, removed, texts)
+    d.research_availability = _filter(d.research_availability, "difficulty.research_availability", valid, removed, texts)
+    u.exploit_evidence = _filter(u.exploit_evidence, "usability.exploit_evidence", valid, removed, texts)
     u.reliability_limitations = _filter(u.reliability_limitations, "usability.reliability_limitations", valid,
-                                        removed)
-    u.required_access = _filter(u.required_access, "usability.required_access", valid, removed)
+                                        removed, texts)
+    u.required_access = _filter(u.required_access, "usability.required_access", valid, removed, texts)
     supported = total - len(removed)
 
     exploited = bundle.findings.get("exploited_in_wild")

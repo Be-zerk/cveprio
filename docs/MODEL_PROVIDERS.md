@@ -84,6 +84,15 @@ reference URLs and tags) and deterministic findings. Never inventory, asset name
 owners, organisation names, criticality, or controls (enforced by
 `tests/test_llm.py::test_inventory_and_context_never_sent_to_model`).
 
+## What the model must return
+
+Every claim must cite evidence IDs and include a `quote`: 5–30 words copied exactly from
+one cited item. The validator removes claims whose quote is not in the cited evidence, or
+that mention versions, numbers or dates the evidence does not contain. Small models fail
+this more often, which is visible as "removed" claims in the report. The prompt version
+(`PROMPT_VERSION` in `cveprio/llm/prompt.py`, currently `2026-10-11.1`) is recorded with
+every result, so results from different prompts are not mixed up.
+
 ## Secrets
 
 Keys are read only from environment variables or `.env` (git-ignored). `Settings` masks

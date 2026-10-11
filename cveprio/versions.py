@@ -77,3 +77,130 @@ def parse_simple_constraint(text: str) -> tuple[str, str] | None:
     if not m or _key(m.group(2)) is None:
         return None
     return m.group(1), m.group(2)
+
+
+# ------------------------------------------------------------------ distribution package versions
+# Debian/Ubuntu (dpkg) and RPM have their own, well-defined ordering rules. These are used ONLY when a
+# distribution's own advisory gives a fixed package version for the same distribution release.
+
+
+def _deb_order(c: str) -> int:
+    if c == "~":
+        return -1
+    if c.isdigit():
+        return 0
+    if c.isalpha():
+        return ord(c)
+    return ord(c) + 256
+
+
+def _deb_part(a: str, b: str) -> int:
+    """dpkg's verrevcmp for one part (upstream version or revision)."""
+    i = j = 0
+    while i < len(a) or j < len(b):
+        first_diff = 0
+        while (i < len(a) and not a[i].isdigit()) or (j < len(b) and not b[j].isdigit()):
+            ac = _deb_order(a[i]) if i < len(a) else 0
+            bc = _deb_order(b[j]) if j < len(b) else 0
+            if ac != bc:
+                return ac - bc
+            i, j = i + 1, j + 1
+        while i < len(a) and a[i] == "0":
+            i += 1
+        while j < len(b) and b[j] == "0":
+            j += 1
+        while i < len(a) and a[i].isdigit() and j < len(b) and b[j].isdigit():
+            if not first_diff:
+                first_diff = ord(a[i]) - ord(b[j])
+            i, j = i + 1, j + 1
+        if i < len(a) and a[i].isdigit():
+            return 1
+        if j < len(b) and b[j].isdigit():
+            return -1
+        if first_diff:
+            return first_diff
+    return 0
+
+
+def _deb_split(v: str) -> tuple[int, str, str]:
+    epoch, _, rest = v.rpartition(":") if ":" in v else ("0", "", v)
+    upstream, _, revision = rest.rpartition("-") if "-" in rest else (rest, "", "")
+    return int(epoch or 0), upstream, revision
+
+
+def compare_deb(a: str, b: str) -> int | None:
+    """Compare two Debian/Ubuntu package versions (epoch:upstream-revision). None if malformed."""
+    try:
+        ea, ua, ra = _deb_split(a.strip())
+        eb, ub, rb = _deb_split(b.strip())
+    except ValueError:
+        return None
+    if not ua or not ub:
+        return None
+    if ea != eb:
+        return (ea > eb) - (ea < eb)
+    c = _deb_part(ua, ub) or _deb_part(ra, rb)
+    return (c > 0) - (c < 0)
+
+
+def _rpm_segment_cmp(a: str, b: str) -> int:
+    """rpmvercmp: compare alternating numeric/alpha segments; '~' sorts before anything, '^' after."""
+    import re as _re
+    while a or b:
+        a = _re.sub(r"^[^A-Za-z0-9~^]+", "", a)
+        b = _re.sub(r"^[^A-Za-z0-9~^]+", "", b)
+        if a.startswith("~") or b.startswith("~"):
+            if not a.startswith("~"):
+                return 1
+            if not b.startswith("~"):
+                return -1
+            a, b = a[1:], b[1:]
+            continue
+        if a.startswith("^") or b.startswith("^"):
+            if not a:
+                return -1
+            if not b:
+                return 1
+            if not a.startswith("^"):
+                return 1
+            if not b.startswith("^"):
+                return -1
+            a, b = a[1:], b[1:]
+            continue
+        if not a or not b:
+            break
+        num = a[0].isdigit()
+        ma = _re.match(r"^\d+" if num else r"^[A-Za-z]+", a)
+        mb = _re.match(r"^\d+" if num else r"^[A-Za-z]+", b)
+        sa = ma.group(0) if ma else ""
+        sb = mb.group(0) if mb else ""
+        if not sb:
+            return 1 if num else -1
+        if num:
+            ia, ib = int(sa), int(sb)
+            if ia != ib:
+                return 1 if ia > ib else -1
+        elif sa != sb:
+            return 1 if sa > sb else -1
+        a, b = a[len(sa):], b[len(sb):]
+    if not a and not b:
+        return 0
+    return 1 if a else -1
+
+
+def compare_rpm(a: str, b: str) -> int | None:
+    """Compare RPM epoch:version-release strings (no package name). None if malformed."""
+    def split(v: str) -> tuple[int, str, str]:
+        epoch, _, rest = v.partition(":") if ":" in v else ("0", "", v)
+        version, _, release = rest.rpartition("-") if "-" in rest else (rest, "", "")
+        return int(epoch or 0), version, release
+    try:
+        ea, va, ra = split(a.strip())
+        eb, vb, rb = split(b.strip())
+    except ValueError:
+        return None
+    if not va or not vb:
+        return None
+    if ea != eb:
+        return 1 if ea > eb else -1
+    return _rpm_segment_cmp(va, vb) or _rpm_segment_cmp(ra, rb)

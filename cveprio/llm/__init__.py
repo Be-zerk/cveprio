@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from cveprio.llm.prompt import SYSTEM_PROMPT, build_user_prompt
+from cveprio.llm.prompt import PROMPT_VERSION, SYSTEM_PROMPT, build_user_prompt
 from cveprio.llm.providers import Provider, ProviderError
 from cveprio.llm.schema import ASSESSMENT_SCHEMA
 from cveprio.llm.validate import InvalidModelOutput, parse_assessment, validate_against_evidence
@@ -28,8 +28,8 @@ def analyze(bundle: EvidenceBundle, provider: Provider) -> LlmAnalysis:
         parsed = parse_assessment(resp.text)
     except InvalidModelOutput as err:
         return LlmAnalysis(status=LlmStatus.INVALID_OUTPUT, provider=provider.name, model=resp.model,
-                           scripted=resp.scripted, detail=str(err)[:500])
+                           scripted=resp.scripted, prompt_version=PROMPT_VERSION, detail=str(err)[:500])
     assessment, removed, overrides, total, supported = validate_against_evidence(parsed, bundle)
     return LlmAnalysis(status=LlmStatus.OK, provider=provider.name, model=resp.model, scripted=resp.scripted,
-                       assessment=assessment, removed_claims=removed, rating_overrides=overrides,
+                       prompt_version=PROMPT_VERSION, assessment=assessment, removed_claims=removed, rating_overrides=overrides,
                        total_claims=total, supported_claims=supported)

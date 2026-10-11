@@ -240,3 +240,45 @@ def discover_osv_by_purl(fetcher: Fetcher, purl: str, max_pages: int = 5) -> Dis
     except FetchError as err:
         return DiscoveryHit("rate_limited" if err.kind == "rate_limited" else "failed", sorted(cves), sorted(others),
                             str(err))
+
+
+
+# --------------------------------------------------------------- distribution advisories
+
+UBUNTU_CVE = "https://ubuntu.com/security/cves/{id}.json"
+REDHAT_CVE = "https://access.redhat.com/hydra/rest/securitydata/cve/{id}.json"
+
+
+def _trim_ubuntu(d: dict[str, Any]) -> dict[str, Any]:
+    return {"id": d.get("id"), "updated_at": d.get("updated_at"), "published": d.get("published"),
+            "packages": [{"name": p.get("name"),
+                          "statuses": [{"release": s.get("release_codename"), "status": s.get("status"),
+                                        "description": s.get("description")} for s in p.get("statuses") or []]}
+                         for p in d.get("packages") or []]}
+
+
+def _trim_redhat(d: dict[str, Any]) -> dict[str, Any]:
+    return {"name": d.get("name"), "public_date": d.get("public_date"),
+            "affected_release": [{"product": a.get("product_name"), "package": a.get("package"), "cpe": a.get("cpe"),
+                                  "advisory": a.get("advisory"), "release_date": a.get("release_date")}
+                                 for a in d.get("affected_release") or []],
+            "package_state": [{"product": p.get("product_name"), "fix_state": p.get("fix_state"),
+                               "package": p.get("package_name"), "cpe": p.get("cpe")}
+                              for p in d.get("package_state") or []]}
+
+
+def fetch_distro(fetcher: Fetcher, cve_id: str, which: str) -> SourceData:
+    """Ubuntu or Red Hat per-CVE package status. 404 means the distribution has no record of the CVE."""
+    source, url, trim = ((SourceName.UBUNTU, UBUNTU_CVE, _trim_ubuntu) if which == "ubuntu"
+                         else (SourceName.REDHAT, REDHAT_CVE, _trim_redhat))
+    url = url.format(id=cve_id)
+    try:
+        res = fetcher.get(url, accept_status=(200, 404), max_bytes=4 * 1024 * 1024)
+        if res.status_code == 404:
+            return SourceData(_outcome(source, SourceStatus.NOT_FOUND, url, res, demo=fetcher.demo))
+        data = _parse_json(res)
+        if not isinstance(data, dict):
+            raise FetchError("parse", "unexpected response shape", url=url)
+        return SourceData(_outcome(source, SourceStatus.OK, url, res, demo=fetcher.demo), trim(data))
+    except FetchError as err:
+        return SourceData(_outcome(source, _status_for_error(err), url, err=err, demo=fetcher.demo))

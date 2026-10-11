@@ -66,11 +66,16 @@ def item(short: str, detail: str = "", ids: list[str] | None = None) -> str:
     return short + (SEP + detail.strip() if detail.strip() else "") + _cite(ids or [])
 
 
+CNA_NAMES = {"redhat": "Red Hat", "vmware": "VMware", "mitre": "MITRE", "GitHub_M": "GitHub", "apache": "Apache",
+             "palo_alto": "Palo Alto Networks", "hackerone": "HackerOne", "snyk": "Snyk", "f5": "F5", "curl": "curl",
+             "microsoft": "Microsoft", "cisco": "Cisco", "fortinet": "Fortinet", "oracle": "Oracle"}
+
+
 def _plain_source(src: str) -> str:
     src = src.strip()
     if src.startswith("CNA:"):
         org = src[4:].split(" '")[0]
-        return f"{org}'s CVE record"
+        return f"{CNA_NAMES.get(org, org)}'s CVE record"
     if src.startswith("ADP:"):
         return "CISA's additions to the CVE record" if "CISA" in src else f"{src[4:].split(' ')[0]}'s additions"
     if src.startswith("NVD"):
@@ -106,10 +111,10 @@ def plain_reason(line: str) -> str:
                     "a similar name is not proof you are affected")
         sim = re.match(r"^(CNA|ADP):(\S+): similar name: '([^']+)' vs '([^']+)'", line)
         if sim:
-            return f"{sim.group(2)}'s CVE record lists '{sim.group(4)}', which only resembles your '{sim.group(3)}'"
+            return f"{CNA_NAMES.get(sim.group(2), sim.group(2))}'s CVE record lists '{sim.group(4)}', which only resembles your '{sim.group(3)}'"
         ven = re.match(r"^(CNA|ADP):(\S+): name '([^']+)' matches but vendor differs \((.+)\)", line)
         if ven:
-            return f"{ven.group(2)}'s CVE record lists the same name '{ven.group(3)}' but a different vendor ({ven.group(4)})"
+            return f"{CNA_NAMES.get(ven.group(2), ven.group(2))}'s CVE record lists the same name '{ven.group(3)}' but a different vendor ({ven.group(4)})"
         cpe = re.match(r"^NVD CPE (\S+) resembles (\S+)", line)
         if cpe:
             return f"NVD lists {cpe.group(1)}, which resembles your {cpe.group(2)}"
@@ -393,13 +398,19 @@ def render_cve_markdown(r: CveReport) -> str:
     if r.mode == "offline_demo":
         lines += ["> **OFFLINE DEMO DATA** — recorded fixtures, not live results. See retrieval times below.", ""]
     if b.title or b.description:
-        lines += [f"*Source description (untrusted text, verbatim) [CVE.desc]:* {_md_escape((b.title or '') + ' — ' + (b.description or ''))[:700]}", ""]
+        title = f"{b.title} — " if b.title else ""
+        lines += [f"*Official description (copied word for word; untrusted text) [CVE.desc]:* "
+                  f"{_md_escape(title + (b.description or ''))[:700]}", ""]
+    plain = {"P1": "Fix now", "P2": "Fix in the next patch cycle", "P3": "Schedule a fix", "P4": "Low priority",
+             "NEEDS_REVIEW": "Needs review", "NOT_APPLICABLE": "Not affected — no action needed",
+             "NOT_IN_INVENTORY": "Not installed — no action needed", "NO_ACTION_REJECTED": "Cancelled CVE — no action needed",
+             "INVALID_OR_UNPUBLISHED": "No public details yet", "RETRIEVAL_FAILED": "Data could not be loaded"}
+    decision = plain.get(d.label, d.label) + (f" ({d.priority})" if d.priority and d.label == d.priority else "")
+    if d.label == "NEEDS_REVIEW" and d.priority:
+        decision += f" (would be {d.priority} if affected)"
     lines += [
-        f"**Decision:** `{d.label}`" + (f" · priority {d.priority}" if d.priority else "")
-        + (" · provisional" if d.provisional else ""),
-        "",
-        f"**Factors:** exploitation = `{d.factors['exploitation']}`, severity = `{d.factors['severity']}`, "
-        f"exposure = `{d.factors['exposure']}` · **Severity-only baseline:** `{d.baseline_label}`",
+        f"**Decision:** {decision}" + (" — provisional, depends on information not supplied" if d.provisional else "")
+        + f" · **Severity score alone would say:** {d.baseline_label}",
         "",
         *([f"**In short:** {' '.join(r.summary)}", ""] if r.summary else []),
         "### What is known (sourced facts)", *[f"- {k}" for k in r.known], "",
@@ -450,18 +461,22 @@ def _render_llm(llm: LlmAnalysis) -> list[str]:
     if llm.status != LlmStatus.OK or not llm.assessment:
         return [*out, f"Status: `{llm.status.value}` — {llm.detail or ''}", ""]
     a = llm.assessment
-    out += [f"Provider `{llm.provider}`, model `{llm.model}`. Claims with valid citation IDs: "
-            f"{llm.supported_claims}/{llm.total_claims} (cited IDs exist, but whether the source actually says what the claim says is NOT checked). Ratings are qualitative; no calibrated probability "
-            "is implied.", ""]
+    out += [f"Provider `{llm.provider}`, model `{llm.model}`"
+            + (f", prompt version {llm.prompt_version}" if llm.prompt_version else "")
+            + f". {llm.supported_claims} of {llm.total_claims} claims passed the checks (cited evidence exists, "
+            "the quote appears in it word for word, numbers and dates match). That shows grounding, not that the "
+            "reasoning is right. Ratings are opinions, not probabilities.", ""]
     d, u = a.exploit_development_difficulty, a.existing_exploit_usability
     out.append(f"**Exploit-development difficulty:** `{d.rating}`")
     for title, claims in (("Prerequisites", d.prerequisites), ("Complexity", d.complexity_factors),
                           ("Research availability", d.research_availability)):
-        out += [f"- *{title}:* {c.statement} ({c.type}){_cite(c.evidence_ids)}" for c in claims]
+        out += [f"- *{title}:* {c.statement} ({c.type}){_cite(c.evidence_ids)}"
+                + (f" — quote: “{_md_escape(c.quote)}”" if c.quote else "") for c in claims]
     out.append(f"\n**Existing-exploit usability:** `{u.rating}`")
     for title, claims in (("Exploit evidence", u.exploit_evidence), ("Reliability limits", u.reliability_limitations),
                           ("Required access", u.required_access)):
-        out += [f"- *{title}:* {c.statement} ({c.type}){_cite(c.evidence_ids)}" for c in claims]
+        out += [f"- *{title}:* {c.statement} ({c.type}){_cite(c.evidence_ids)}"
+                + (f" — quote: “{_md_escape(c.quote)}”" if c.quote else "") for c in claims]
     if a.summary:
         who = "Scripted summary" if llm.scripted else "Model summary"
         out += ["", f"*{who} (uncited free text):* {_md_escape(a.summary)}"]
@@ -480,11 +495,17 @@ def render_markdown(run: RunReport) -> str:
             f"Generated {run.generated_at.isoformat(timespec='seconds')} · mode **{run.mode}** · cveprio "
             f"{run.tool_version}{org}", ""]
     head += [f"> {n}" for n in run.notices] + [""]
-    head += ["| CVE | Decision | Baseline (CVSS only) | Exploitation | Severity | Exposure |", "|---|---|---|---|---|---|"]
+    from cveprio.dashboard import BADGE, factor_cards
+    head += ["| CVE | Decision | Severity score alone | Attack activity | Severity | Your exposure |",
+             "|---|---|---|---|---|---|"]
     for r in run.reports:
-        f = r.decision.factors
-        head.append(f"| {r.cve_id} | {r.decision.label}{' (provisional)' if r.decision.provisional else ''} | "
-                    f"{r.decision.baseline_label} | {f.get('exploitation')} | {f.get('severity')} | {f.get('exposure')} |")
+        d = r.decision
+        label = BADGE.get(d.label, d.label) + (" (provisional)" if d.provisional else "")
+        if r.bundle.record_state != RecordState.PUBLISHED:
+            head.append(f"| {r.cve_id} | {label} | – | – | – | – |")
+            continue
+        attack, sev, exposure = (_md_escape(v) for _, v in factor_cards(r))
+        head.append(f"| {r.cve_id} | {label} | {d.baseline_label} | {attack} | {sev} | {exposure} |")
     head.append("")
     if run.discovery:
         head += _render_discovery(run)

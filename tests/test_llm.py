@@ -16,9 +16,14 @@ from cveprio.llm.validate import InvalidModelOutput, parse_assessment
 from cveprio.models import LlmStatus
 from tests.conftest import cve5_record, synthetic_bundle
 
+QUOTES = {"CVE.desc": "A synthetic test vulnerability.", "CVE.cvss.1": "CVSS 3.1 base score 7.5",
+          "NVD.ref.1": "indicates public exploit or PoC material"}
 
-def claim(stmt, ids, t="fact"):
-    return {"statement": stmt, "type": t, "evidence_ids": ids}
+
+def claim(stmt, ids, t="fact", quote=None):
+    if quote is None:
+        quote = next((QUOTES[i] for i in ids if i in QUOTES), "no matching quote here")
+    return {"statement": stmt, "type": t, "evidence_ids": ids, "quote": quote}
 
 
 def output(**over):
@@ -303,3 +308,43 @@ def test_prompt_omits_irrelevant_evidence_but_says_so(real_bundle):
     b = real_bundle("CVE-2024-6387")
     p = build_user_prompt(b)
     assert "omitted for length" in p and "CVE.affected.17" not in p.split("<<<EVIDENCE_JSON_BEGIN>>>")[1]
+
+
+
+# ------------------------------------------------------------ quote grounding
+
+
+def test_claim_with_fabricated_quote_is_removed():
+    out = output(exploit_development_difficulty__complexity_factors=[
+        claim("Exploitation is trivial on every platform.", ["CVE.desc"], quote="trivially exploitable on all platforms"),
+        claim("The description calls it a test vulnerability.", ["CVE.desc"]),
+    ])
+    res = analyze(synthetic_bundle(), StubProvider(json.dumps(out)))
+    kept = res.assessment.exploit_development_difficulty.complexity_factors
+    assert [c.statement for c in kept] == ["The description calls it a test vulnerability."]
+    assert any("quote does not appear" in r.problem for r in res.removed_claims)
+
+
+def test_claim_without_quote_is_removed():
+    out = output(exploit_development_difficulty__prerequisites=[claim("Needs network access.", ["CVE.cvss.1"], quote="")])
+    res = analyze(synthetic_bundle(), StubProvider(json.dumps(out)))
+    assert any("no supporting quote" in r.problem for r in res.removed_claims)
+
+
+def test_claim_mentioning_numbers_missing_from_source_is_removed():
+    out = output(exploit_development_difficulty__prerequisites=[
+        claim("Fixed in version 2.16.0, scored 7.5.", ["CVE.cvss.1"]),   # 2.16.0 is not in the cited evidence
+        claim("Scored 7.5 by the CNA.", ["CVE.cvss.1"]),
+    ])
+    res = analyze(synthetic_bundle(), StubProvider(json.dumps(out)))
+    kept = res.assessment.exploit_development_difficulty.prerequisites
+    assert [c.statement for c in kept] == ["Scored 7.5 by the CNA."]
+    assert any("2.16.0" in r.problem for r in res.removed_claims)
+
+
+def test_quote_matching_ignores_case_spacing_and_typographic_quotes():
+    out = output(exploit_development_difficulty__prerequisites=[
+        claim("It is a test vulnerability.", ["CVE.desc"], quote="  a SYNTHETIC   test vulnerability "),
+    ])
+    res = analyze(synthetic_bundle(), StubProvider(json.dumps(out)))
+    assert len(res.assessment.exploit_development_difficulty.prerequisites) == 1

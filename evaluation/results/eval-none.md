@@ -1,6 +1,6 @@
 # Evaluation results (none)
 
-Generated 2026-10-11T02:51:15Z on the recorded fixtures (offline).
+Generated 2026-10-11T17:46:05Z on the recorded fixtures (offline).
 
 > Small evaluation set over the recorded fixtures in fixtures/demo. Each case pairs one CVE with one software item and (optionally) asset context, plus a reference judgement: the applicability status a careful analyst should reach from the cited source fields, and the set of priority outcomes the reference reviewer considers defensible. Reference judgements were DRAFTED WITH AI ASSISTANCE (Claude Code) from the cited source data and then REVIEWED BY THE PROJECT AUTHOR, who kept them unchanged; they are one reviewer's judgement, not expert ground truth. 14 cases cannot support claims about real-world predictive accuracy.
 
@@ -44,9 +44,9 @@ No model provider was used for this run (deterministic only).
 ## Limitations
 
 - 14 hand-picked, mostly well-known CVEs; results say nothing about accuracy on new or obscure CVEs.
-- NOT a held-out test: these CVEs were also used while building the applicability engine, so applicability scores here are optimistic.
+- NOT a held-out test: these CVEs were also used while building the applicability engine, so applicability scores here are optimistic. See `cveprio evaluate --set holdout` for the held-out set.
 - The severity-only baseline has no notion of rejected/reserved records, so it cannot match those cases.
 - Reference judgements were drafted with AI assistance and reviewed by the project author (one reviewer).
 - 'Agreement' means the outcome is inside a set the reviewer considers defensible, not that it is correct.
-- Citation checking verifies that cited evidence IDs exist, not that the evidence supports the claim; a manual read of qwen2.5:3b's Log4Shell output found claims that contradict their cited source.
+- Claim checks confirm the cited evidence exists, contains the claim's quote word for word and any numbers/dates it mentions. That is grounding, not proof the reasoning is right: a model can quote real text and still draw a wrong conclusion from it.
 - Model-quality numbers depend on the model, prompt version and fixtures; rerun after any change.

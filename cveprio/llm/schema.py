@@ -17,8 +17,9 @@ CLAIM: dict[str, Any] = {
         "statement": {"type": "string"},
         "type": {"type": "string", "enum": ["fact", "inference"]},
         "evidence_ids": {"type": "array", "items": {"type": "string"}},
+        "quote": {"type": "string"},
     },
-    "required": ["statement", "type", "evidence_ids"],
+    "required": ["statement", "type", "evidence_ids", "quote"],
     "additionalProperties": False,
 }
 
