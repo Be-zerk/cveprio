@@ -43,7 +43,7 @@ them is at the end of this file.
 - **No hosted OpenAI-compatible endpoint tested** (only mocked transports, plus local Ollama
   through its OpenAI endpoint, where truncation was discovered).
 - **Reference judgements** in `evaluation/cases.json` were drafted with AI assistance and
-  need the author's independent review.
+  reviewed by the author (no cases changed).
 - Git: the repository is initialised but **nothing has been committed** (no commit was requested).
 
 ## Known issues / limitations
@@ -58,12 +58,10 @@ versions always require review; prompt-injection detection is heuristic only.
 
 ## Exact next step
 
-1. Review `evaluation/cases.json` reference judgements yourself; change any you disagree
-   with, set `review_status` accordingly, and re-run `cveprio evaluate`.
-2. Then commit:
-   ```bash
-   git add -A && git commit -m "CVE prioritization assistant: stages 1-5"
-   ```
+The author has reviewed the evaluation reference judgements (no cases changed) and has run
+the demo, configured an NVD API key and run a live inventory analysis on their own machine.
+Next: build the claim-faithfulness check (verify that cited evidence actually supports each
+AI claim), then re-run `cveprio evaluate --llm ollama` and compare against the recorded results.
 
 Suggested follow-ups after that: distro advisory sources (Ubuntu USN / Red Hat CSAF) to
 resolve `needs_review` for package versions; NVD CPE-based CVE discovery from an inventory
@@ -96,4 +94,4 @@ resolve `needs_review` for package versions; NVD CPE-based CVE discovery from an
 | AC21 demo labelled | yes | `test_demo_clearly_labelled_everywhere` |
 | AC22 no secrets | yes | `test_cli_demo_writes_outputs_and_no_secrets`, repo scan test, masked `Settings` |
 | AC23 evaluation report | yes | `evaluation/results/eval-*.md` |
-| AC24 new-user walkthrough | partly | README/DEMO steps were executed by the AI assistant in this session, not yet by a fresh human user |
+| AC24 new-user walkthrough | mostly | the author ran the demo, set an NVD key and ran a live inventory analysis following the docs; configuring a model provider themselves is not yet done |

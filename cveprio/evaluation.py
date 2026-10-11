@@ -274,7 +274,9 @@ def _markdown(r: dict[str, Any]) -> str:
               "- NOT a held-out test: these CVEs were also used while building the applicability engine, so "
               "applicability scores here are optimistic.",
               "- The severity-only baseline has no notion of rejected/reserved records, so it cannot match those cases.",
-              "- Reference judgements were drafted with AI assistance and await independent review.",
+              "- Reference judgements were drafted with AI assistance"
+              + (" and reviewed by the project author (one reviewer)." if r["review_status"].startswith("reviewed")
+                 else " and await independent review."),
               "- 'Agreement' means the outcome is inside a set the reviewer considers defensible, not that it is correct.",
               "- Citation checking verifies that cited evidence IDs exist, not that the evidence supports the "
               "claim; a manual read of qwen2.5:3b's Log4Shell output found claims that contradict their cited source.",

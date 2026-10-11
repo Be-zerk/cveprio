@@ -119,7 +119,7 @@ cveprio capture-fixtures CVE-...    # record new offline fixtures
 ## Limitations
 
 - **Prototype.** Not hardened, not load-tested, single-user, no authentication on `serve` (bound to 127.0.0.1).
-- **Small, non-held-out evaluation** (14 cases over CVEs also used during development; reference labels drafted with AI assistance, pending review). No claim of real-world predictive accuracy.
+- **Small, non-held-out evaluation** (14 cases over CVEs also used during development; reference labels drafted with AI assistance and reviewed by the author). No claim of real-world predictive accuracy.
 - **Applicability is conservative and partial**: distro package versions (deb/rpm), free-text version ranges and platform-conditional NVD configurations go to `needs_review`. Vendor/product naming differs across sources; supplying CPEs helps.
 - **Exploit evidence is shallow by design**: exploit-tagged references and CISA SSVC are treated as *claims*; the tool never downloads or runs exploit code and does not search exploit databases.
 - **Rules have blind spots** — e.g. a supply-chain backdoor (CVE-2024-3094) with no KEV listing gets P2 on an internal asset, where a human would say P1 (documented in the evaluation).
@@ -147,6 +147,6 @@ The project author defined the problem, scope, requirements and evaluation
 expectations and directed the work. The code, tests, fixtures and documentation in
 this repository were written by **Claude Code (an AI coding assistant) during a
 directed session on 2026-10-10**, with the author approving decisions along the way.
-The evaluation's reference judgements were drafted with AI assistance and still need
-the author's independent review. Update this section as you review, modify and extend
+The evaluation's reference judgements were drafted with AI assistance and then
+reviewed by the author. Update this section as you review, modify and extend
 the work.

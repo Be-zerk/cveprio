@@ -1,6 +1,6 @@
 {
-  "about": "Small evaluation set over the recorded fixtures in fixtures/demo. Each case pairs one CVE with one software item and (optionally) asset context, plus a reference judgement: the applicability status a careful analyst should reach from the cited source fields, and the set of priority outcomes the reference reviewer considers defensible. Reference judgements were DRAFTED WITH AI ASSISTANCE (Claude Code) from the cited source data and are pending independent review by the project author; they are not expert ground truth. 14 cases cannot support claims about real-world predictive accuracy.",
-  "review_status": "reviewed_by_author_2026-10-12",
+  "about": "Small evaluation set over the recorded fixtures in fixtures/demo. Each case pairs one CVE with one software item and (optionally) asset context, plus a reference judgement: the applicability status a careful analyst should reach from the cited source fields, and the set of priority outcomes the reference reviewer considers defensible. Reference judgements were DRAFTED WITH AI ASSISTANCE (Claude Code) from the cited source data and then REVIEWED BY THE PROJECT AUTHOR, who kept them unchanged; they are one reviewer's judgement, not expert ground truth. 14 cases cannot support claims about real-world predictive accuracy.",
+  "review_status": "reviewed_by_author",
   "cases": [
     {
       "id": "log4j-exposed",

@@ -17,8 +17,9 @@ unknown bundled version, a platform-conditional match, distro packages, a non-af
 version, a supply-chain backdoor, a compensating control, and rejected/reserved IDs.
 
 **Who wrote the reference judgements:** they were drafted with AI assistance (Claude
-Code) from the cited source data and are pending the author's independent review
-(`review_status` in the file). They are not expert ground truth.
+Code) from the cited source data, then reviewed by the project author, who kept them
+unchanged (`review_status: reviewed_by_author`). They are one reviewer's judgement, not
+expert ground truth.
 
 ## Metrics
 
