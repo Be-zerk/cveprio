@@ -22,6 +22,15 @@ version*, and *how exposed and important is that system*.
 <sub>Offline demo with a fictional company (Northbeam Logistics) and recorded source data. One opened
 assessment: [docs/images/dashboard-assessment.png](docs/images/dashboard-assessment.png).</sub>
 
+**In the dashboard, the blue links and markers are clickable.** Each opens more detail:
+- **▸ details** shows the full explanation behind a line and the evidence it came from.
+- **why** explains how a decision differs from ranking by severity score alone.
+- **CVE numbers** jump to that CVE's card.
+- **Evidence IDs**, the small grey tags such as `KEV` or `NVD.cvss.1` inside "details", are clickable too. They jump to the source entry, with its URL and retrieval time.
+
+Grey section headings such as *Technical details* and *Evidence* expand the specialist information.
+GitHub shows `dashboard.html` as source code, so run the demo to click through it.
+
 ## Try the offline demo
 
 ```bash
