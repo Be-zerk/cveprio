@@ -13,7 +13,7 @@ milestones, not production releases.
 - Configurable model timeout (`CVEPRIO_LLM_TIMEOUT_S`); evaluation reports why model calls failed.
 - Held-out set: first 4 of 20 cases labelled by the author; spreadsheet-tolerant `labels.csv` parsing.
 - The declared-protection rule (attacked flaw → P2, not lower) is explained in reports and docs.
-- README rebuilt around the demo, with real screenshots; setup and troubleshooting moved to `docs/USAGE.md`.
+- README rebuilt around the demo, with real screenshots and a per-outcome gallery (`docs/SCREENSHOTS.md`); setup and troubleshooting moved to `docs/USAGE.md`. AI status shown in plain words.
 
 ## 0.2.0 — 2026-10-11
 

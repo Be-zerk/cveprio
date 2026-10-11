@@ -79,7 +79,7 @@ instead of guessing from upstream version numbers, which distributions backport 
 ## Using an SBOM instead of a hand-written list
 
 An SBOM (software bill of materials) lists every library in an application with its exact
-version. cveprio reads **CycloneDX JSON** and **SPDX 2.x JSON**:
+version. The tool reads **CycloneDX JSON** and **SPDX 2.x JSON**:
 
 ```bash
 # one application from an SBOM file, with business context on the command line

@@ -1,6 +1,6 @@
 # CVE prioritization report
 
-Generated 2026-10-11T22:55:35+00:00 · mode **offline_demo** · cveprio 0.2.0 · organisation: Northbeam Logistics (fictional)
+Generated 2026-10-11T23:47:24+00:00 · mode **offline_demo** · cveprio 0.2.0 · organisation: Northbeam Logistics (fictional)
 
 > OFFLINE DEMO MODE: data comes from recorded fixtures (see retrieval times), not live sources. Results may be out of date.
 > Inventory and business context are FICTIONAL example data.

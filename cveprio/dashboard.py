@@ -30,6 +30,19 @@ TILES = [("P1", "Fix now"), ("P2", "Fix in the next patch cycle"), ("NEEDS_REVIE
          ("UNKNOWN", "Cannot assess yet")]
 SOURCE_LABEL = {"cve_org": "CVE.org", "nvd": "NVD", "cisa_kev": "CISA KEV", "first_epss": "EPSS", "osv": "OSV.dev",
                 "ubuntu": "Ubuntu", "redhat": "Red Hat"}
+AI_STATUS = {"ok": "AI assessment checked", "not_configured": "No AI assessment",
+             "skipped": "AI assessment not run", "failed": "AI assessment failed",
+             "invalid_output": "AI output unusable (nothing from it is used)",
+             "refused": "AI model declined"}
+
+
+def ai_detail(detail: str) -> str:
+    """Drop a leading internal status code ('not_configured: …', 'network: …') from a provider message."""
+    head, sep, rest = detail.partition(": ")
+    internal = head.replace("_", "").isalpha() and head.islower()
+    return rest[:1].upper() + rest[1:] if sep and (internal or head == "Not run") else detail
+
+
 UNASSESSED = {"INVALID_OR_UNPUBLISHED", "RETRIEVAL_FAILED"}
 
 
@@ -250,7 +263,7 @@ def render_dashboard(run: RunReport) -> str:
     env.filters["split_item"] = split_item
     env.filters["explain_vector"] = explain_vector
     env.filters["source_name"] = source_name
-    env.globals.update(plain_override=plain_override, AI_RATING=AI_RATING, APPLIES=APPLIES, plain_reason=plain_reason, display_name=display_name, BADGE=BADGE, factor_cards=factor_cards, compare_reason=compare_reason, compare_why=compare_why, PLAIN_LABEL=PLAIN_LABEL, group_of=group_of, PLAIN_FACTOR=PLAIN_FACTOR, SHORT_FACTOR=SHORT_FACTOR,
+    env.globals.update(plain_override=plain_override, AI_RATING=AI_RATING, APPLIES=APPLIES, plain_reason=plain_reason, display_name=display_name, BADGE=BADGE, factor_cards=factor_cards, compare_reason=compare_reason, compare_why=compare_why, PLAIN_LABEL=PLAIN_LABEL, group_of=group_of, AI_STATUS=AI_STATUS, ai_detail=ai_detail, PLAIN_FACTOR=PLAIN_FACTOR, SHORT_FACTOR=SHORT_FACTOR,
                        why_sentence=why_sentence)
     groups = Counter(group_of(r.decision.label) for r in run.reports)
     lookups = [(r.cve_id, s) for r in run.reports for s in r.bundle.sources if s.status != SourceStatus.SKIPPED]
