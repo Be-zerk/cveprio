@@ -71,6 +71,19 @@ With several affected assets, the most exposed one counts (high > context_unknow
   but quiet" (P3) from "medium and quiet" (P4).
 - **Exposure moves one step**, so context can never turn a known-exploited issue into
   backlog, and a quiet issue on an internet-facing box rises only one level.
+- **A declared protection lowers an attacked flaw from P1 to P2, never further.** P1 means an
+  emergency change outside the normal schedule. That has its own risk (rushed, less tested
+  changes) and a team can only run a few at once, so P1 is kept for flaws that are both
+  attacked *and* reachable the usual way. A firewall or access restriction blocks the most
+  common route (straight from the internet), which is a real reason to wait for the next
+  patch cycle. It does not make the flaw safe: attackers often get a foothold inside first
+  (a phished laptop, another compromised server) and then move to internal systems, which
+  is why the floor is P2 (weeks), not P3 or P4. The protection is declared by the operator
+  and not verified, so the report says "if it does not hold, treat this as P1".
+  *Reasonable people disagree:* on the held-out case h03 (attacked, critical 9.1, internal,
+  low importance, behind a firewall) the author would choose P1. A team with that policy
+  can remove the `reduced` step for `confirmed` exploitation; it is one line in
+  `cveprio/prioritize.py`. The rule was kept after that case, not changed to fit it.
 - **Uncertainty never lowers priority silently**: failures → P2 base; unscored → not low;
   missing context → provisional.
 

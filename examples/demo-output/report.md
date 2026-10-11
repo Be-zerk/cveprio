@@ -1,6 +1,6 @@
 # CVE prioritization report
 
-Generated 2026-10-11T17:46:45+00:00 · mode **offline_demo** · cveprio 0.2.0 · organisation: Northbeam Logistics (fictional)
+Generated 2026-10-11T22:13:20+00:00 · mode **offline_demo** · cveprio 0.2.0 · organisation: Northbeam Logistics (fictional)
 
 > OFFLINE DEMO MODE: data comes from recorded fixtures (see retrieval times), not live sources. Results may be out of date.
 > Inventory and business context are FICTIONAL example data.
@@ -535,7 +535,7 @@ What the 9.8 score says: Attack from: the network (remotely); Attack complexity:
 
 ### Why this priority (rule trace)
 1. Starts at P2: CISA says demo attack code exists — rule: a CISA proof-of-concept rating, a predicted chance of attacks of 10% or more, or a validated AI rating of 'easy to exploit' each start at P2.
-2. Lowered to P3: print-srv-01 has a declared protection (Host firewall drops inbound traffic to port 631 except from the warehouse printer VLAN) — rule: a declared protection moves the priority down one step. The tool does not verify it, and known-attacked flaws never go below P2.
+2. Lowered to P3: print-srv-01 has a declared protection (Host firewall drops inbound traffic to port 631 except from the warehouse printer VLAN) — rule: a declared protection moves the priority down one step. The tool does not verify it.
 
 ### Action supported by the evidence
 - Upgrade cups-browsed on print-srv-01 — currently 2.0.1; follow the vendor advisory for the fixed version. [NVD.ref.3]
