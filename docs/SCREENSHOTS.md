@@ -6,17 +6,17 @@ after clicking it. The other cards are hidden only to keep each image to one CVE
 "▸ details" links and the grey sections (*Severity score details*, *Technical details*,
 *Evidence*…) open further information when clicked in the running dashboard.
 
-| Outcome | CVE | What it shows |
-|---|---|---|
-| [Overview](#overview) | all 9 | Priority tiles, source status, the comparison with severity-only ranking |
-| [Fix now: attacked, exposed](#fix-now-attacked-and-internet-facing) | CVE-2023-44487 | A 7.5 score becomes P1 because it is being attacked and the system faces the internet |
-| [Fix now: AI section shown](#fix-now-with-the-ai-section) | CVE-2024-6387 | The scripted AI example and what the checker removed |
-| [Provisional](#provisional-context-missing) | CVE-2023-38545 | Missing business context makes the decision provisional, never "low" |
-| [Needs review](#needs-review) | CVE-2022-22965 | The tool cannot tell if the system is affected, says why and what to check |
-| [Declared protection](#lowered-by-a-declared-protection) | CVE-2024-47176 | A firewall the operator declared lowers the priority one step, marked "not verified" |
-| [Not affected](#not-affected) | CVE-2024-3094 | A 10.0 score, but the installed version is outside the affected range |
-| [Cancelled CVE](#cancelled-cve) | CVE-2026-11415 | A rejected CVE: nothing to fix |
-| [Cannot assess yet](#cannot-assess-yet) | CVE-2026-99001 | A reserved CVE with no published details: unknown, not safe |
+| Outcome | What it shows |
+|---|---|
+| [Overview](#overview)<br><sub>all 9</sub> | Priority tiles, source status, the comparison with severity-only ranking |
+| [Fix now: attacked, exposed](#fix-now-attacked-and-internet-facing)<br><sub>CVE-2023-44487</sub> | A 7.5 score becomes P1 because it is being attacked and the system faces the internet |
+| [Fix now: AI section shown](#fix-now-with-the-ai-section)<br><sub>CVE-2024-6387</sub> | The scripted AI example and what the checker removed |
+| [Provisional](#provisional-context-missing)<br><sub>CVE-2023-38545</sub> | Missing business context makes the decision provisional, never "low" |
+| [Needs review](#needs-review)<br><sub>CVE-2022-22965</sub> | The tool cannot tell if the system is affected, says why and what to check |
+| [Declared protection](#lowered-by-a-declared-protection)<br><sub>CVE-2024-47176</sub> | A firewall the operator declared lowers the priority one step, marked "not verified" |
+| [Not affected](#not-affected)<br><sub>CVE-2024-3094</sub> | A 10.0 score, but the installed version is outside the affected range |
+| [Cancelled CVE](#cancelled-cve)<br><sub>CVE-2026-11415</sub> | A rejected CVE: nothing to fix |
+| [Cannot assess yet](#cannot-assess-yet)<br><sub>CVE-2026-99001</sub> | A reserved CVE with no published details: unknown, not safe |
 
 ## Overview
 
