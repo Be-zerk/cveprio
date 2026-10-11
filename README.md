@@ -21,8 +21,11 @@ version*, and *how exposed and important is that system*.
 
 ![cveprio dashboard: priority summary, comparison with severity-only ranking, and CVE cards (offline demo, fictional company)](docs/images/dashboard-overview.png)
 
-<sub>Offline demo with a fictional company (Northbeam Logistics) and recorded source data. One opened
-assessment: [docs/images/dashboard-assessment.png](docs/images/dashboard-assessment.png).</sub>
+<sub>Offline demo with a fictional company (Northbeam Logistics) and recorded source data.</sub>
+
+**See what each CVE looks like when opened:** [screenshot gallery](docs/SCREENSHOTS.md). It covers
+fix now, provisional, needs review, lowered by a declared protection, not affected, cancelled, and
+cannot assess yet.
 
 **In the dashboard, the blue links and markers are clickable.** Each opens more detail:
 - **▸ details** shows the full explanation behind a line and the evidence it came from.
@@ -71,7 +74,7 @@ examples written for the demo**, labelled as such, not model output. Walkthrough
 ## How it works
 
 ```mermaid
-flowchart LR
+flowchart TD
   A[CVE IDs, inventory or SBOM] --> B[Sources<br/>CVE.org · NVD · KEV · EPSS<br/>OSV · Ubuntu · Red Hat]
   B --> C[Evidence bundle<br/>IDs, provenance,<br/>conflicts, failures]
   C --> D[Applicability<br/>affected / not affected /<br/>needs review]

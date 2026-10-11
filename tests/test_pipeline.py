@@ -228,3 +228,10 @@ def test_missing_records_are_not_presented_as_safe(demo_run):
     assert group_of(rejected.decision.label) == "OTHER"
     html = render_dashboard(demo_run)
     assert "Cannot assess yet" in html and "nothing to do" not in html.lower()
+
+
+def test_ai_status_shown_in_plain_words(demo_run):
+    from cveprio.dashboard import render_dashboard
+    html = render_dashboard(demo_run)
+    assert "No AI assessment</b>: No scripted example" in html and "AI assessment not run</b>: Record is reserved" in html
+    assert "<b>not_configured</b>" not in html and "<b>skipped</b>" not in html

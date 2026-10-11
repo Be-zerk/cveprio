@@ -375,7 +375,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
       </details>
       {% endif %}
       {% else %}
-      <p class="meta">Status <b>{{ r.llm.status }}</b>{% if r.llm.detail %} — {{ r.llm.detail }}{% endif %}</p>
+      <p class="meta"><b>{{ AI_STATUS.get(r.llm.status, r.llm.status) }}</b>{% if r.llm.detail %}: {{ ai_detail(r.llm.detail) }}{% endif %}</p>
       {% endif %}
     </div>
 
