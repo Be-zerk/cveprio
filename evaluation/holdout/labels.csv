@@ -1,9 +1,9 @@
-id,cve_id,software,version,context,expected_applicability,acceptable_decisions,rationale
+﻿id,cve_id,software,version,context,expected_applicability,acceptable_decisions,rationale
 h01,CVE-2026-15409,(none: CVE only),,"internet-facing, high importance",,,
-h02,CVE-2026-53266,linux_kernel,5.5,"internal, medium importance",,,
-h03,CVE-2026-71362,commerce,2.4.4,"internal, low importance, firewall restricts access",,,
-h04,CVE-2026-72529,trueconf_server,5.3.9.10013,no context recorded,,,
-h05,CVE-2026-84869,screenconnect,26.6.5.9742,"internet-facing, high importance",,,
+h02,CVE-2026-53266,linux_kernel,5.5,"internal, medium importance",not_affected,NOT_APPLICABLE,NVD range excludes version 5.5
+h03,CVE-2026-71362,commerce,2.4.4,"internal, low importance, firewall restricts access",affected,P1,affected and 9.1 score
+h04,CVE-2026-72529,trueconf_server,5.3.9.10013,no context recorded,needs review,NEEDS_REVIEW P1 P2,"Windows fixed in 5.3.9.10013, Linux not until 10015; platform unknown"
+h05,CVE-2026-84869,screenconnect,26.6.5.9742,"internet-facing, high importance",not_affected,NOT_APPLICABLE,"NVD: fixed in 26.6.5.9742 (up to excluding), which is the installed version"
 h06,CVE-2025-68686,fortios,7.4.7,"internal, medium importance",,,
 h07,CVE-2026-34486,tomcat,9.0.116,"internal, low importance, firewall restricts access",,,
 h08,CVE-2026-81963,windows_11_23h2,10.0.22631.7582,no context recorded,,,

@@ -1,6 +1,6 @@
 {
   "about": "HELD-OUT evaluation set, selected mechanically by `cveprio holdout-select` (see cveprio/holdout.py) with seed 2026 from CVEs dated 2026-07-01 to 2026-09-30. None of these CVEs were used while building the tool. Expected answers must be filled in by a human labeller from the linked sources BEFORE running `cveprio evaluate --set holdout`; see LABELING.md.",
-  "review_status": "unlabelled",
+  "review_status": "partially_labelled_by_author (h02-h05, 2026-10-11)",
   "selection": {
     "seed": 2026,
     "window": [

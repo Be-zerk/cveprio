@@ -169,7 +169,7 @@ cveprio capture-fixtures CVE-...    # record new offline fixtures
 ## Limitations
 
 - **Prototype.** Not hardened, not load-tested, single-user, no authentication on `serve` (bound to 127.0.0.1).
-- **Small evaluation.** The 14 development cases were also used while building the tool (labels drafted with AI assistance, reviewed by the author). A 20-case held-out set of recent CVEs exists but **ships unlabelled**: it measures nothing until a person labels it ([evaluation/holdout/LABELING.md](evaluation/holdout/LABELING.md)). No claim of real-world predictive accuracy.
+- **Small evaluation.** The 14 development cases were also used while building the tool (labels drafted with AI assistance, reviewed by the author). A 20-case held-out set of recent CVEs is only **4/20 labelled** so far (3/4 applicability matches, no unsafe answers), far too few to measure accuracy (see [docs/EVALUATION.md](docs/EVALUATION.md)). No claim of real-world predictive accuracy.
 - **SBOM support** covers CycloneDX JSON and SPDX 2.x JSON only; SBOM quality limits results (missing versions or purls mean components cannot be searched).
 - **Discovery is only as complete as the identifiers**: items without a CPE/purl are not searched (reported), a product listed under several CPE names (curl vs libcurl) may be missed, and vendor/distribution advisories are not searched.
 - **Disputed CVEs** are flagged (structured tags, or dispute wording in the description — heuristic) but their priority is not lowered automatically.

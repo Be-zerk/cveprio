@@ -1,0 +1,84 @@
+{
+  "generated_at": "2026-10-11T22:00:31.194460+00:00",
+  "review_status": "partially_labelled_by_author (h02-h05, 2026-10-11)",
+  "set": "holdout",
+  "unlabelled_cases_skipped": 16,
+  "about": "HELD-OUT evaluation set, selected mechanically by `cveprio holdout-select` (see cveprio/holdout.py) with seed 2026 from CVEs dated 2026-07-01 to 2026-09-30. None of these CVEs were used while building the tool. Expected answers must be filled in by a human labeller from the linked sources BEFORE running `cveprio evaluate --set holdout`; see LABELING.md.",
+  "summary": {
+    "cases": 4,
+    "contextual_agreement": 2,
+    "baseline_agreement": 2,
+    "applicability_match": 3,
+    "applicability_conservative_review": 1,
+    "applicability_wrong_definite": 0,
+    "deterministic_citations_valid": "54/54"
+  },
+  "model_quality": {
+    "provider": "none",
+    "model": null
+  },
+  "cases": [
+    {
+      "id": "h02",
+      "cve": "CVE-2026-53266",
+      "expected_applicability": "not_affected",
+      "applicability": "not_affected",
+      "applicability_result": "match",
+      "acceptable": [
+        "NOT_APPLICABLE"
+      ],
+      "contextual": "NOT_APPLICABLE",
+      "contextual_agrees": true,
+      "baseline": "P2",
+      "baseline_agrees": false,
+      "rationale": "NVD range excludes version 5.5"
+    },
+    {
+      "id": "h03",
+      "cve": "CVE-2026-71362",
+      "expected_applicability": "affected",
+      "applicability": "affected",
+      "applicability_result": "match",
+      "acceptable": [
+        "P1"
+      ],
+      "contextual": "P2",
+      "contextual_agrees": false,
+      "baseline": "P1",
+      "baseline_agrees": true,
+      "rationale": "affected and 9.1 score"
+    },
+    {
+      "id": "h04",
+      "cve": "CVE-2026-72529",
+      "expected_applicability": "needs_review",
+      "applicability": "needs_review",
+      "applicability_result": "match",
+      "acceptable": [
+        "NEEDS_REVIEW",
+        "P1",
+        "P2"
+      ],
+      "contextual": "NEEDS_REVIEW",
+      "contextual_agrees": true,
+      "baseline": "P1",
+      "baseline_agrees": true,
+      "rationale": "Windows fixed in 5.3.9.10013, Linux not until 10015; platform unknown"
+    },
+    {
+      "id": "h05",
+      "cve": "CVE-2026-84869",
+      "expected_applicability": "not_affected",
+      "applicability": "needs_review",
+      "applicability_result": "conservative_review",
+      "acceptable": [
+        "NOT_APPLICABLE"
+      ],
+      "contextual": "NEEDS_REVIEW",
+      "contextual_agrees": false,
+      "baseline": "P1",
+      "baseline_agrees": false,
+      "rationale": "NVD: fixed in 26.6.5.9742 (up to excluding), which is the installed version"
+    }
+  ]
+}

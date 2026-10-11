@@ -37,7 +37,7 @@ def test_committed_holdout_is_unlabelled():
     """Labels must come from a human; the tool never fills them in itself."""
     spec = json.loads((HOLDOUT / "cases.json").read_text())
     assert len(spec["cases"]) == 20
-    assert all(not c["expected_applicability"] and not c["acceptable_decisions"] for c in spec["cases"])
+    assert all(not c["expected_applicability"] and not c["acceptable_decisions"] for c in spec["cases"])  # labels live in labels.csv
     assert any(c["pool"].startswith("PKG") for c in spec["cases"])
 
 
@@ -56,6 +56,7 @@ def test_unlabelled_cases_are_skipped_and_labels_csv_is_used(tmp_path):
     copy = tmp_path / "holdout"
     shutil.copytree(HOLDOUT, copy)
     sheet = copy / "labels.csv"
+    write_labeling(json.loads((copy / "cases.json").read_text())["cases"], copy)  # blank sheet, not the author's
     rows = list(csv.DictReader(sheet.open()))
     rows[0].update(expected_applicability="no_product_match", acceptable_decisions="P1, P2", rationale="test")
     with sheet.open("w", newline="") as fh:
@@ -68,3 +69,20 @@ def test_unlabelled_cases_are_skipped_and_labels_csv_is_used(tmp_path):
     assert result["unlabelled_cases_skipped"] == 19
     assert [c["id"] for c in result["cases"]] == ["h01"]
     assert "Labels come from one person" in Path(md).read_text()
+
+
+def test_spreadsheet_quirks_are_accepted_and_typos_rejected(tmp_path):
+    import pytest
+
+    from cveprio.evaluation import _merge_labels
+    sheet = tmp_path / "labels.csv"
+    sheet.write_bytes("\ufeffid,expected_applicability,acceptable_decisions,rationale\r\n"
+                      "a,Needs review,\"needs review, p2\",x\r\nb,affected,P1,y\r\n".encode())
+    cases = [{"id": "a"}, {"id": "b"}, {"id": "c"}]
+    _merge_labels(cases, sheet)
+    assert cases[0]["expected_applicability"] == "needs_review"
+    assert cases[0]["acceptable_decisions"] == ["NEEDS_REVIEW", "P2"]
+    assert cases[1]["acceptable_decisions"] == ["P1"] and "expected_applicability" not in cases[2]
+    sheet.write_text("id,expected_applicability,acceptable_decisions,rationale\na,afected,P1,x\n")
+    with pytest.raises(ValueError, match="afected"):
+        _merge_labels([{"id": "a"}], sheet)

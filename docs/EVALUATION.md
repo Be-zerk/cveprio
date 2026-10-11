@@ -95,6 +95,26 @@ rated "high" for a famously easy exploit.
 4. An earlier run was discarded after discovering Ollama silently truncated prompts on its
    OpenAI-compatible endpoint (see docs/MODEL_PROVIDERS.md).
 
+## Held-out results (2026-10-11, partial: 4 of 20 cases labelled)
+
+The author labelled h02–h05 from the NVD pages **before** seeing the tool's output for them
+(`evaluation/holdout/labels.csv`; results in `evaluation/results/eval-holdout-none.md`).
+Four cases are far too few to measure accuracy; they are reported because each one is informative.
+
+| Case | Author | Tool | What happened |
+|---|---|---|---|
+| h02 Linux kernel 5.5 | not affected | not affected | Agree. NVD's ranges skip 5.5. |
+| h03 Adobe Commerce 2.4.4 (KEV, 9.1, internal, low importance, firewall) | P1 | P2 | **Rule disagreement.** The rules move confirmed exploitation down one step for reduced exposure; the author would not discount an attacked, critical flaw for a firewall. Both are defensible; the rule is documented in PRIORITIZATION.md. |
+| h04 TrueConf 5.3.9.10013 (platform unknown) | needs review; P1 or P2 | needs review | Agree. The Windows fix is exactly this build, the Linux fix two builds later. *Label corrected after the first run:* the author had marked applicability "needs review" but left `NEEDS_REVIEW` out of the decision set by mistake; it was added (a consistency fix, disclosed here because it happened after seeing the result). |
+| h05 ScreenConnect 26.6.5.9742 | not affected | needs review | **Too cautious.** NVD's range ends at exactly this version, but the vendor's CVE record says "All versions prior to 26.6.5" in free text, which the tool does not parse, so it asked for review. Safe, but unhelpful. |
+
+No unsafe answers (definite and wrong). The tool was deliberately **not** changed after seeing
+these cases; changing it now would turn the held-out set back into a development set. A fix for
+free-text ranges like h05 should be built and tested on *other* CVEs, then re-checked here.
+
+The severity-only baseline matched 2 of 4. It got h03 and h04 "right" only because it ignores
+context and applicability, and it said P1 or P2 for both not-affected systems.
+
 ## What these results can and cannot show
 
 - They show the implementation behaves as designed on these cases, and how a contextual

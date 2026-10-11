@@ -52,8 +52,9 @@ them is at the end of this file.
 
 ## Known issues / limitations
 
-- **The held-out set is unlabelled.** Until a person fills in `evaluation/holdout/labels.csv`,
-  the tool has no measured accuracy on CVEs it was not built around.
+- **The held-out set is only 4/20 labelled** (h02–h05, by the author, 2026-10-11): 3/4
+  applicability matches, 0 unsafe answers, 2/4 decisions inside the author's set (after one disclosed label fix). See docs/EVALUATION.md.
+  Remaining rows h01 and h06–h20 still need labels.
 - AI claims are now quote-grounded, but a real quote can still support a wrong conclusion.
 
 See README "Limitations". Also important: the rules under-rank a supply-chain backdoor without
@@ -67,7 +68,7 @@ the demo, configured an NVD API key and run a live inventory analysis on their o
 Version 0.2.0 added quote-grounded AI claims, Ubuntu/Red Hat advisories and the held-out set
 (see CHANGELOG.md).
 
-**Next: the author labels the held-out set** by following `evaluation/holdout/LABELING.md`
+**Next: the author finishes labelling the held-out set** (h01, h06–h20) by following `evaluation/holdout/LABELING.md`
 *before* looking at the tool's output for those CVEs. Then run `cveprio evaluate --set holdout`
 and record the results in docs/EVALUATION.md. After that: a second labeller; a stronger model
 compared on the same cases; Debian/SUSE/Alpine advisories.

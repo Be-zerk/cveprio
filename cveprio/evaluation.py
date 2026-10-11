@@ -146,20 +146,43 @@ def _reason(problem: str) -> str:
     return "other"
 
 
+APPLICABILITY_LABELS = {"affected", "not_affected", "needs_review", "no_product_match"}
+DECISION_LABELS = {"P1", "P2", "P3", "P4", "NEEDS_REVIEW", "NOT_APPLICABLE", "NOT_IN_INVENTORY"}
+
+
+def _merge_labels(cases: list[dict[str, Any]], labels_csv: Path) -> None:
+    """Copy a person's answers from labels.csv into the cases. Tolerates what spreadsheet apps add
+    (byte-order mark, CRLF, 'needs review' with a space, lower-case p1) and rejects anything else."""
+    import csv
+    with labels_csv.open(newline="", encoding="utf-8-sig") as fh:
+        by_id = {(row.get("id") or "").strip(): row for row in csv.DictReader(fh)}
+    problems = []
+    for c in cases:
+        row = by_id.get(c["id"]) or {}
+        app = re.sub(r"[\s-]+", "_", (row.get("expected_applicability") or "").strip().lower())
+        if not app:
+            continue
+        raw = (row.get("acceptable_decisions") or "").upper()
+        raw = re.sub(r"NEEDS[\s-]+REVIEW|NOT[\s-]+APPLICABLE|NOT[\s-]+IN[\s-]+INVENTORY",
+                     lambda m: re.sub(r"[\s-]+", "_", m.group(0)), raw)
+        decisions = [d for d in re.split(r"[,;\s]+", raw) if d]
+        bad = ([app] if app not in APPLICABILITY_LABELS else []) + [d for d in decisions if d not in DECISION_LABELS]
+        if bad or not decisions:
+            problems.append(f"{c['id']}: " + (f"unrecognised {bad}" if bad else "acceptable_decisions is empty"))
+            continue
+        c["expected_applicability"] = app
+        c["acceptable_decisions"] = decisions
+        c["rationale"] = (row.get("rationale") or "").strip()
+    if problems:
+        raise ValueError("labels.csv has entries the evaluation cannot use:\n  " + "\n  ".join(problems))
+
+
 def run_evaluation(settings: Settings, provider_name: str | None, out_dir: Path, cases_path: Path = CASES,
                    fixtures: Path | None = None, tag: str = "") -> Path:
     spec = json.loads(cases_path.read_text())
     labels_csv = cases_path.parent / "labels.csv"
     if labels_csv.exists():
-        import csv
-        with labels_csv.open(newline="") as fh:
-            by_id = {row["id"]: row for row in csv.DictReader(fh)}
-        for c in spec["cases"]:
-            row = by_id.get(c["id"]) or {}
-            if row.get("expected_applicability", "").strip():
-                c["expected_applicability"] = row["expected_applicability"].strip()
-                c["acceptable_decisions"] = row.get("acceptable_decisions", "").replace(",", " ").split()
-                c["rationale"] = row.get("rationale", "").strip()
+        _merge_labels(spec["cases"], labels_csv)
     labelled = [c for c in spec["cases"] if c.get("expected_applicability") and c.get("acceptable_decisions")]
     unlabelled = len(spec["cases"]) - len(labelled)
     spec["cases"] = labelled
