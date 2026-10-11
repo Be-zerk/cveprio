@@ -31,10 +31,28 @@ EXAMPLE_INVENTORY = PROJECT_ROOT / "examples" / "inventory.json"
 
 
 def _load_inventory(path: Path) -> Inventory:
+    from cveprio.sbom import SbomError, attach_sboms
     try:
-        return Inventory.model_validate_json(path.read_text())
-    except (OSError, ValidationError) as exc:
+        return attach_sboms(Inventory.model_validate_json(path.read_text()), path.parent)
+    except (OSError, ValidationError, SbomError) as exc:
         raise SystemExit(f"error: cannot load inventory {path}: {exc}") from exc
+
+
+def _inventory_from_args(args: argparse.Namespace) -> Inventory | None:
+    from cveprio.sbom import SbomError, inventory_from_sboms
+    sboms = getattr(args, "sbom", None) or []
+    if args.inventory and sboms:
+        raise SystemExit("error: use either --inventory or --sbom (an inventory can reference SBOMs itself)")
+    if args.inventory:
+        return _load_inventory(Path(args.inventory))
+    if sboms:
+        facing = {"yes": True, "no": False}.get(getattr(args, "internet_facing", None) or "")
+        try:
+            return inventory_from_sboms([Path(s) for s in sboms], criticality=getattr(args, "criticality", None),
+                                        internet_facing=facing)
+        except SbomError as exc:
+            raise SystemExit(f"error: {exc}") from exc
+    return None
 
 
 def _summary(run: RunReport) -> None:
@@ -48,6 +66,11 @@ def _summary(run: RunReport) -> None:
             extra = f" (+{len(q.non_cve_ids)} non-CVE advisories)" if q.non_cve_ids else ""
             what = q.detail if q.status != "ok" else f"{len(q.cve_ids)} CVEs{extra}"
             print(f"  {q.asset_id:<18} {q.product[:22]:<22} {q.version[:24]:<24} {q.method:<9} {q.status:<15} {what}")
+    if not run.reports:
+        searched = [q for q in (run.discovery.queries if run.discovery else []) if q.status == "ok"]
+        print(f"\nNo known vulnerabilities found for the {len(searched)} components that could be searched. This "
+              "is not proof there are none: see the discovery limits above and in the report.")
+        return
     print(f"\n{'CVE':<18} {'DECISION':<24} {'BASELINE':<9} {'EXPLOITATION':<20} {'SEVERITY':<9} EXPOSURE")
     for r in run.reports:
         d = r.decision
@@ -72,15 +95,15 @@ def cmd_analyze(args: argparse.Namespace, settings: Settings) -> int:
     from cveprio.pipeline import make_runtime, run
     from cveprio.report import write_outputs
 
-    inventory = _load_inventory(Path(args.inventory)) if args.inventory else None
+    inventory = _inventory_from_args(args)
     discover_cves = bool(getattr(args, "discover", False))
     ids = list(args.cve_ids) + (inventory.watchlist if inventory and not args.cve_ids and not discover_cves else [])
     if discover_cves and (inventory is None or args.offline):
-        print("error: --discover needs --inventory and live sources (not --offline)", file=sys.stderr)
+        print("error: --discover needs --inventory or --sbom, and live sources (not --offline)", file=sys.stderr)
         return 2
     if not ids and not discover_cves:
-        print("error: give at least one CVE ID, an inventory with a watchlist, or --inventory FILE --discover",
-              file=sys.stderr)
+        hint = " (with an SBOM, add --discover to find CVEs for its components)" if getattr(args, "sbom", None) else ""
+        print("error: give at least one CVE ID, an inventory with a watchlist, or --discover" + hint, file=sys.stderr)
         return 2
     try:
         rt = make_runtime(settings, offline=args.offline, provider_name=args.llm,
@@ -106,7 +129,7 @@ def cmd_analyze(args: argparse.Namespace, settings: Settings) -> int:
 
 def cmd_demo(args: argparse.Namespace, settings: Settings) -> int:
     ns = argparse.Namespace(cve_ids=[], inventory=str(EXAMPLE_INVENTORY), offline=True,
-                            llm=args.llm, out=args.out, fixtures=None)
+                            llm=args.llm, out=args.out, fixtures=None, sbom=None)
     print("Running the OFFLINE DEMO: recorded fixtures + fictional inventory (no network, no API keys).")
     return cmd_analyze(ns, settings)
 
@@ -174,6 +197,12 @@ def build_parser() -> argparse.ArgumentParser:
     a.add_argument("--fixtures", help="fixture directory for --offline (default: fixtures/demo)")
     a.add_argument("--llm", choices=["none", "ollama", "openai_compatible", "anthropic", "scripted"],
                    help="override CVEPRIO_LLM_PROVIDER")
+    a.add_argument("--sbom", action="append", metavar="FILE",
+                   help="CycloneDX or SPDX 2.x JSON SBOM to use as the software list (repeatable; one asset per file)")
+    a.add_argument("--criticality", choices=["low", "medium", "high", "critical"],
+                   help="with --sbom: importance of the system(s) described by the SBOM(s)")
+    a.add_argument("--internet-facing", choices=["yes", "no"], dest="internet_facing",
+                   help="with --sbom: whether the system(s) are reachable from the internet")
     a.add_argument("--discover", action="store_true",
                    help="find CVEs from the inventory's cpe/purl identifiers (live only) instead of its watchlist")
     a.add_argument("--max-cves", type=int, default=150, help="cap on discovered CVEs to analyse (default 150)")

@@ -1,0 +1,86 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "urn:uuid:00000000-0000-0000-0000-000000bc614e",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-10-10T00:00:00Z",
+    "component": {
+      "type": "application",
+      "name": "shipment-tracker",
+      "version": "4.2.0",
+      "description": "FICTIONAL example application (Northbeam Logistics customer portal). Hand-written for the cveprio demo; the listed libraries and versions are real releases."
+    }
+  },
+  "components": [
+    {
+      "type": "library",
+      "bom-ref": "pkg:maven/org.apache.logging.log4j/log4j-core@2.14.1",
+      "group": "org.apache.logging.log4j",
+      "name": "log4j-core",
+      "version": "2.14.1",
+      "purl": "pkg:maven/org.apache.logging.log4j/log4j-core@2.14.1"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:maven/org.apache.logging.log4j/log4j-api@2.14.1",
+      "group": "org.apache.logging.log4j",
+      "name": "log4j-api",
+      "version": "2.14.1",
+      "purl": "pkg:maven/org.apache.logging.log4j/log4j-api@2.14.1"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:maven/org.springframework/spring-beans@5.3.17",
+      "group": "org.springframework",
+      "name": "spring-beans",
+      "version": "5.3.17",
+      "purl": "pkg:maven/org.springframework/spring-beans@5.3.17"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:maven/org.springframework/spring-webmvc@5.3.17",
+      "group": "org.springframework",
+      "name": "spring-webmvc",
+      "version": "5.3.17",
+      "purl": "pkg:maven/org.springframework/spring-webmvc@5.3.17"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:maven/org.apache.commons/commons-text@1.9",
+      "group": "org.apache.commons",
+      "name": "commons-text",
+      "version": "1.9",
+      "purl": "pkg:maven/org.apache.commons/commons-text@1.9"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:maven/org.yaml/snakeyaml@1.30",
+      "group": "org.yaml",
+      "name": "snakeyaml",
+      "version": "1.30",
+      "purl": "pkg:maven/org.yaml/snakeyaml@1.30"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.13.0",
+      "group": "com.fasterxml.jackson.core",
+      "name": "jackson-databind",
+      "version": "2.13.0",
+      "purl": "pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.13.0"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:maven/com.google.guava/guava@31.1-jre",
+      "group": "com.google.guava",
+      "name": "guava",
+      "version": "31.1-jre",
+      "purl": "pkg:maven/com.google.guava/guava@31.1-jre"
+    },
+    {
+      "type": "file",
+      "name": "application.yml",
+      "version": "1"
+    }
+  ]
+}

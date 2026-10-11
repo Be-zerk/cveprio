@@ -27,7 +27,13 @@ P = RecordState.PUBLISHED
 @pytest.mark.parametrize("exploitation,severity,exposure,label", [
     ("confirmed", "low", "standard", "P1"),           # KEV beats severity
     ("confirmed", "critical", "reduced", "P2"),       # a control never drops confirmed below P2
-    ("elevated", "medium", "high", "P1"),
+    ("elevated", "medium", "high", "P2"),           # P1 needs confirmed attacks or high/critical severity
+    ("elevated", "high", "high", "P1"),
+    ("claimed_unverified", "medium", "standard", "P3"),  # one exploit-tagged link alone is a weak signal
+    ("claimed_unverified", "medium", "high", "P2"),
+    ("claimed_unverified", "low", "high", "P3"),     # low severity capped at P3 unless attacks confirmed
+    ("elevated", "low", "high", "P3"),
+    ("confirmed", "low", "high", "P1"),             # the cap never applies to confirmed attacks
     ("elevated", "critical", "standard", "P2"),
     ("low_observed", "critical", "standard", "P3"),
     ("low_observed", "critical", "high", "P2"),

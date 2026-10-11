@@ -10,7 +10,8 @@ No weights or scores. Three categorical factors, a two-step table, and gates.
 | Value | Condition |
 |---|---|
 | `confirmed` | Listed in CISA KEV, or CISA SSVC `Exploitation=active` |
-| `elevated` | Public exploit/PoC *claimed* (NVD "Exploit"-tagged reference, CNA "exploit" tag, or SSVC `poc`), or EPSS ≥ 0.10, or — the only AI path — validated AI rating "difficulty low" with ≥ 2 cited claims while nothing else signals exploitation |
+| `elevated` | CISA SSVC `poc`, or EPSS ≥ 0.10, or — the only AI path — validated AI rating "difficulty low" with ≥ 2 cited claims while nothing stronger signals exploitation |
+| `claimed_unverified` | Only an "Exploit"-tagged reference (NVD) or CNA "exploit" tag. Weak: these tags often point at advisories or bug reports |
 | `evidence_incomplete` | KEV/NVD/EPSS retrieval failed so exploitation cannot be judged |
 | `low_observed` | Sources retrieved, no signal found. **Not** "safe" |
 
@@ -40,8 +41,9 @@ With several affected assets, the most exposed one counts (high > context_unknow
 ## Decision
 
 1. **Record gate**: rejected → `NO_ACTION_REJECTED`; reserved/not found → `INVALID_OR_UNPUBLISHED`; record unretrievable → `RETRIEVAL_FAILED`.
-2. **Base**: confirmed → P1 · elevated → P2 · evidence_incomplete → P2 · low_observed → P3 if severity is critical/high/unscored, else P4.
-3. **Exposure adjustment**: high → one step up (max P1) · reduced → one step down (never below P2 when confirmed) · standard/context_unknown/not_assessed → unchanged (the last two are marked *provisional*).
+2. **Base**: confirmed → P1 · elevated → P2 · evidence_incomplete → P2 · claimed_unverified → P3 · low_observed → P3 if severity is critical/high/unscored, else P4.
+3. **Exposure adjustment**: high → one step up, but **P1 only if attacks are confirmed or severity is critical/high** · reduced → one step down (never below P2 when confirmed) · standard/context_unknown/not_assessed → unchanged (the last two are marked *provisional*).
+3b. **Low-severity cap**: CVSS below 4, no confirmed attacks, and attack data available → no higher than P3.
 4. **Applicability gate**: needs_review → `NEEDS_REVIEW` (shows "would be Px if affected") · not_affected → `NOT_APPLICABLE` · not_in_inventory → `NOT_IN_INVENTORY`.
 
 | Meaning (suggested; set your own SLAs) | |
@@ -50,6 +52,15 @@ With several affected assets, the most exposed one counts (high > context_unknow
 | P2 | next patch cycle, ahead of routine work |
 | P3 | scheduled maintenance |
 | P4 | backlog / monitor |
+
+## Change log
+
+- **2026-10-10 (after the SBOM run):** a single "Exploit"-tagged reference used to count as
+  `elevated`. On a larger, real-world component list this put a CVSS 3.3 local flaw (Guava
+  CVE-2020-8908, EPSS 0.9%) at P1 because the tagged link was an advisory page. Added
+  `claimed_unverified`, limited exposure-driven P1 to confirmed or high/critical issues, and
+  capped low-severity issues at P3. P1s in the SBOM example fell from 21 to 8; the demo and
+  the 14-case evaluation results were unchanged.
 
 ## Why this shape
 

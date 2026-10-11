@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-10-11T02:19:50.792533Z",
+  "generated_at": "2026-10-11T02:42:06.871450Z",
   "tool_version": "0.1.0",
   "mode": "offline_demo",
   "organization": "Northbeam Logistics (fictional)",
@@ -8,7 +8,7 @@
   "reports": [
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T02:19:50.682224Z",
+      "generated_at": "2026-10-11T02:42:06.763950Z",
       "tool_version": "0.1.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2021-44228",
@@ -6289,7 +6289,6 @@
         },
         "trace": [
           "Starts at P1: attackers are known to be using it \u2014 exploitation confirmed by the CISA KEV list and/or CISA SSVC Exploitation=active.",
-          "Raised to P1: the system is exposed or critical \u2014 an affected asset is internet-facing or high-criticality (one step up).",
           "Other assets need a version check \u2014 legacy-billing-03"
         ],
         "baseline_label": "P1",
@@ -6327,7 +6326,7 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T02:19:50.757516Z",
+      "generated_at": "2026-10-11T02:42:06.837688Z",
       "tool_version": "0.1.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2023-44487",
@@ -11414,8 +11413,7 @@
           "exposure": "high"
         },
         "trace": [
-          "Starts at P1: attackers are known to be using it \u2014 exploitation confirmed by the CISA KEV list and/or CISA SSVC Exploitation=active.",
-          "Raised to P1: the system is exposed or critical \u2014 an affected asset is internet-facing or high-criticality (one step up)."
+          "Starts at P1: attackers are known to be using it \u2014 exploitation confirmed by the CISA KEV list and/or CISA SSVC Exploitation=active."
         ],
         "baseline_label": "P2",
         "counterfactuals": [
@@ -11448,7 +11446,7 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T02:19:50.780088Z",
+      "generated_at": "2026-10-11T02:42:06.859252Z",
       "tool_version": "0.1.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2024-6387",
@@ -14407,7 +14405,7 @@
           "exposure": "high"
         },
         "trace": [
-          "Starts at P2: attack code is claimed or attacks are likely \u2014 exploitation 'elevated': public exploit claimed, EPSS \u2265 0.10, or validated AI difficulty=low.",
+          "Starts at P2: attack code exists or attacks are likely \u2014 exploitation 'elevated': CISA SSVC says proof-of-concept, EPSS \u2265 0.10, or validated AI difficulty=low.",
           "Raised to P1: the system is exposed or critical \u2014 an affected asset is internet-facing or high-criticality (one step up).",
           "Other assets need a version check \u2014 ops-ubuntu-02"
         ],
@@ -14451,7 +14449,7 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T02:19:50.783563Z",
+      "generated_at": "2026-10-11T02:42:06.863275Z",
       "tool_version": "0.1.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2023-38545",
@@ -15234,7 +15232,7 @@
           "exposure": "context_unknown"
         },
         "trace": [
-          "Starts at P2: attack code is claimed or attacks are likely \u2014 exploitation 'elevated': public exploit claimed, EPSS \u2265 0.10, or validated AI difficulty=low.",
+          "Starts at P2: attack code exists or attacks are likely \u2014 exploitation 'elevated': CISA SSVC says proof-of-concept, EPSS \u2265 0.10, or validated AI difficulty=low.",
           "Stays the same for now: some system details are missing \u2014 internet exposure and/or criticality were not supplied, so the result is provisional rather than assumed.",
           "dev-laptop-17: importance or internet exposure not recorded \u2014 internet_facing, criticality not supplied; not assumed."
         ],
@@ -15276,7 +15274,7 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T02:19:50.703867Z",
+      "generated_at": "2026-10-11T02:42:06.784311Z",
       "tool_version": "0.1.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2022-22965",
@@ -17304,7 +17302,7 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T02:19:50.786275Z",
+      "generated_at": "2026-10-11T02:42:06.865656Z",
       "tool_version": "0.1.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2024-47176",
@@ -17981,7 +17979,7 @@
           "exposure": "reduced"
         },
         "trace": [
-          "Starts at P2: attack code is claimed or attacks are likely \u2014 exploitation 'elevated': public exploit claimed, EPSS \u2265 0.10, or validated AI difficulty=low.",
+          "Starts at P2: attack code exists or attacks are likely \u2014 exploitation 'elevated': CISA SSVC says proof-of-concept, EPSS \u2265 0.10, or validated AI difficulty=low.",
           "Lowered to P3: a protection limits access \u2014 an operator-declared compensating control applies (one step down; confirmed exploitation never goes below P2).",
           "print-srv-01: has a protection in place (not checked by this tool) \u2014 Host firewall drops inbound traffic to port 631 except from the warehouse printer VLAN (reduces_reachability); operator-supplied, not verified by this tool."
         ],
@@ -18021,7 +18019,7 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T02:19:50.791459Z",
+      "generated_at": "2026-10-11T02:42:06.870263Z",
       "tool_version": "0.1.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2024-3094",
@@ -18877,7 +18875,7 @@
           "exposure": "not_affected"
         },
         "trace": [
-          "Starts at P2: attack code is claimed or attacks are likely \u2014 exploitation 'elevated': public exploit claimed, EPSS \u2265 0.10, or validated AI difficulty=low.",
+          "Starts at P2: attack code exists or attacks are likely \u2014 exploitation 'elevated': CISA SSVC says proof-of-concept, EPSS \u2265 0.10, or validated AI difficulty=low.",
           "No priority: your installed versions are not affected \u2014 all matching inventory items are outside the affected versions."
         ],
         "baseline_label": "P1",
@@ -18913,7 +18911,7 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T02:19:50.792019Z",
+      "generated_at": "2026-10-11T02:42:06.870927Z",
       "tool_version": "0.1.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2026-11415",
@@ -19095,7 +19093,7 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T02:19:50.792507Z",
+      "generated_at": "2026-10-11T02:42:06.871417Z",
       "tool_version": "0.1.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2026-99001",

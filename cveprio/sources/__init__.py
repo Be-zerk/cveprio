@@ -180,6 +180,8 @@ class DiscoveryHit:
     cve_ids: list[str]
     non_cve_ids: list[str]
     detail: str | None = None
+    advisories: dict[str, list[str]] | None = None  # CVE -> OSV advisory IDs that name it
+    retrieved_at: datetime | None = None
 
 
 def discover_nvd_by_cpe(fetcher: Fetcher, cpe: str, api_key: str | None = None, max_results: int = 400) -> DiscoveryHit:
@@ -210,24 +212,31 @@ def discover_osv_by_purl(fetcher: Fetcher, purl: str, max_pages: int = 5) -> Dis
     """OSV advisories for this package URL (with version). CVE IDs come from the id or its aliases."""
     cves: set[str] = set()
     others: set[str] = set()
+    advisories: dict[str, list[str]] = {}
+    retrieved: datetime | None = None
     token: str | None = None
     try:
         for _ in range(max_pages):
             body: dict[str, object] = {"package": {"purl": purl}}
             if token:
                 body["page_token"] = token
-            data = _parse_json(fetcher.post_json(OSV_QUERY, body))
+            res = fetcher.post_json(OSV_QUERY, body)
+            retrieved = retrieved or res.retrieved_at
+            data = _parse_json(res)
             for v in data.get("vulns", []) or []:
                 names = [str(v.get("id", ""))] + [str(a) for a in v.get("aliases", []) or []]
                 found = [n for n in names if CVE_IN_TEXT.match(n)]
                 if found:
                     cves.update(found)
+                    for cve in found:
+                        advisories.setdefault(cve, []).append(str(v.get("id")))
                 else:
                     others.add(str(v.get("id")))
             token = data.get("next_page_token")
             if not token:
-                return DiscoveryHit("ok", sorted(cves), sorted(others))
-        return DiscoveryHit("truncated", sorted(cves), sorted(others), f"stopped after {max_pages} pages")
+                return DiscoveryHit("ok", sorted(cves), sorted(others), advisories=advisories, retrieved_at=retrieved)
+        return DiscoveryHit("truncated", sorted(cves), sorted(others), f"stopped after {max_pages} pages",
+                            advisories=advisories, retrieved_at=retrieved)
     except FetchError as err:
         return DiscoveryHit("rate_limited" if err.kind == "rate_limited" else "failed", sorted(cves), sorted(others),
                             str(err))

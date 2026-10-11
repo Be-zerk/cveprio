@@ -42,6 +42,7 @@ into structured, citation-checked observations; it never sets the priority.
 4. Static dashboard exposing evidence, uncertainty and recommendations.
 5. Evaluation (fixture tests, model-quality eval, baseline comparison), docs, demo walkthrough.
 6. *(added 2026-10-10 after review of the demo)* CVE discovery from the inventory (NVD CPE match + OSV), and disputed-record handling.
+7. *(added 2026-10-10)* SBOM import (CycloneDX / SPDX 2.x JSON) as the software list, with OSV per-version evidence.
 
 ## Acceptance criteria
 
@@ -84,6 +85,11 @@ Each criterion maps to at least one automated test (see `tests/`) unless marked 
 - AC26 Items that cannot be searched, failed/truncated lookups, non-CVE advisories and the analysis cap are reported, never silently skipped.
 - AC27 Discovered CVEs are re-checked by the applicability engine before they can receive a priority.
 - AC28 Disputed records (structured tags or dispute wording) are flagged and explained; priority is not lowered automatically.
+
+**SBOM import (stage 7)**
+- AC29 CycloneDX and SPDX 2.x JSON SBOMs load into inventory software items; unsupported formats fail with a clear message.
+- AC30 Components that cannot be used (no version, non-software, over limits) are reported, not dropped silently; nothing in the SBOM is fetched.
+- AC31 Business context is never invented for SBOM-only input (supplied on the command line or via an inventory).
 
 **Evaluation and delivery**
 - AC23 Evaluation reports priority agreement with documented reference judgements for both the contextual rules and the severity-only baseline, plus applicability errors, citation validity and unsupported-claim counts; it states the set is too small to claim predictive accuracy.

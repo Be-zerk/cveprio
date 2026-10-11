@@ -18,10 +18,12 @@ from cveprio.models import (
     Asset,
     CveReport,
     DiscoverySummary,
+    Evidence,
     Inventory,
     LlmAnalysis,
     LlmStatus,
     RunReport,
+    SourceName,
 )
 from cveprio.net import Fetcher, FixtureFetcher, ResponseCache, SafeFetcher
 from cveprio.normalize import build_bundle
@@ -89,8 +91,18 @@ def run(cve_ids: list[str], rt: Runtime, inventory: Inventory | None = None,
                               fetch_nvd(rt.fetcher, cid, rt.settings.nvd_api_key), kev, epss,
                               demo=rt.offline, now=now)
         results: list[ApplicabilityResult] = []
+        osv_ids: dict[tuple[str, str], str] = {}
+        if discovery and cid in discovery.osv_matches and bundle.record_state.value == "published":
+            for n, m in enumerate(discovery.osv_matches[cid], 1):
+                ev = Evidence(id=f"OSV.{n}", source=SourceName.OSV, kind="osv_affected", url=m.url,
+                              retrieved_at=m.retrieved_at, demo=rt.offline,
+                              summary=f"OSV lists {m.purl} as affected (advisory {', '.join(m.advisory_ids) or '?'}).",
+                              fields={"purl": m.purl, "advisories": m.advisory_ids, "asset": m.asset_id})
+                bundle.evidence.append(ev)
+                osv_ids[(m.asset_id, m.purl)] = ev.id
         if assets:
-            results = [assess(bundle, a.id, item) for a in assets.values() for item in a.software]
+            results = [assess(bundle, a.id, item, osv_ids.get((a.id, item.purl or ""))) for a in assets.values()
+                       for item in a.software]
             for res in results:
                 a = assets[res.asset_id]
                 res.asset_criticality, res.asset_internet_facing = a.criticality, a.internet_facing
@@ -112,6 +124,8 @@ def run(cve_ids: list[str], rt: Runtime, inventory: Inventory | None = None,
     order = {"P1": 0, "P2": 1, "NEEDS_REVIEW": 2, "P3": 3, "P4": 4, "NOT_APPLICABLE": 6, "NOT_IN_INVENTORY": 7}
     reports.sort(key=lambda r: (order.get(r.decision.label, 9), r.cve_id))
     notices = list(SOURCE_NOTICES)
+    if inventory:
+        notices.extend(inventory.input_notes)
     if rt.offline:
         notices.insert(0, "OFFLINE DEMO MODE: data comes from recorded fixtures (see retrieval times), not live "
                           "sources. Results may be out of date.")

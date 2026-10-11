@@ -222,7 +222,8 @@ def _eval_cpe(item: SoftwareItem, m: CpeMatch) -> Verdict | None:
 # --------------------------------------------------------------------------- main
 
 
-def assess(bundle: EvidenceBundle, asset_id: str, item: SoftwareItem) -> ApplicabilityResult:
+def assess(bundle: EvidenceBundle, asset_id: str, item: SoftwareItem,
+           osv_evidence_id: str | None = None) -> ApplicabilityResult:
     def result(status: ApplicabilityStatus, reasons: list[str], ids: list[str], by: str | None = None,
                fixed: str | None = None) -> ApplicabilityResult:
         return ApplicabilityResult(asset_id=asset_id, software=item, status=status, matched_by=by,
@@ -242,6 +243,9 @@ def assess(bundle: EvidenceBundle, asset_id: str, item: SoftwareItem) -> Applica
             acc.fuzzy.append(f"{entry.provider}: {how}")
             acc.fuzzy_ids.append(entry.evidence_id)
 
+    if osv_evidence_id:
+        # OSV was asked about this exact package URL + version and listed this CVE for it.
+        acc.verdicts.append(Verdict(AFFECTED, "OSV", f"OSV lists {item.purl} as affected", osv_evidence_id))
     ident = _cpe_identity(item)
     if ident:
         cpe_hits = [m for m in bundle.cpe_matches if (m.vendor, m.product) == ident]

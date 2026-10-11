@@ -1,0 +1,49 @@
+{
+  "spdxVersion": "SPDX-2.3",
+  "dataLicense": "CC0-1.0",
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "name": "warehouse-gateway (fictional example)",
+  "documentNamespace": "https://example.invalid/spdx/warehouse-gateway",
+  "creationInfo": {
+    "created": "2026-10-10T00:00:00Z",
+    "creators": [
+      "Tool: hand-written for cveprio demo"
+    ]
+  },
+  "packages": [
+    {
+      "SPDXID": "SPDXRef-curl",
+      "name": "curl",
+      "versionInfo": "8.3.0",
+      "supplier": "Organization: curl project",
+      "downloadLocation": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "SECURITY",
+          "referenceType": "cpe23Type",
+          "referenceLocator": "cpe:2.3:a:haxx:libcurl:8.3.0:*:*:*:*:*:*:*"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-requests",
+      "name": "requests",
+      "versionInfo": "2.25.1",
+      "supplier": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/requests@2.25.1"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-noversion",
+      "name": "internal-tool",
+      "versionInfo": "NOASSERTION",
+      "downloadLocation": "NOASSERTION"
+    }
+  ]
+}

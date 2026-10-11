@@ -1,6 +1,6 @@
 # CVE prioritization report
 
-Generated 2026-10-11T02:19:50+00:00 · mode **offline_demo** · cveprio 0.1.0 · organisation: Northbeam Logistics (fictional)
+Generated 2026-10-11T02:42:06+00:00 · mode **offline_demo** · cveprio 0.1.0 · organisation: Northbeam Logistics (fictional)
 
 > OFFLINE DEMO MODE: data comes from recorded fixtures (see retrieval times), not live sources. Results may be out of date.
 > Inventory and business context are FICTIONAL example data.
@@ -47,8 +47,7 @@ Generated 2026-10-11T02:19:50+00:00 · mode **offline_demo** · cveprio 0.1.0 ·
 
 ### Why this priority (rule trace)
 1. Starts at P1: attackers are known to be using it — exploitation confirmed by the CISA KEV list and/or CISA SSVC Exploitation=active.
-2. Raised to P1: the system is exposed or critical — an affected asset is internet-facing or high-criticality (one step up).
-3. Other assets need a version check — legacy-billing-03
+2. Other assets need a version check — legacy-billing-03
 
 ### Action supported by the evidence
 - Upgrade log4j-core on web-portal-01 — currently 2.14.1; sources indicate the fix is in version 2.15.0 or later. [NVD.ref.9, NVD.ref.10, NVD.ref.12]
@@ -147,7 +146,6 @@ What the 10.0 score says: Attack from: the network (remotely); Attack complexity
 
 ### Why this priority (rule trace)
 1. Starts at P1: attackers are known to be using it — exploitation confirmed by the CISA KEV list and/or CISA SSVC Exploitation=active.
-2. Raised to P1: the system is exposed or critical — an affected asset is internet-facing or high-criticality (one step up).
 
 ### Action supported by the evidence
 - Upgrade nginx on web-portal-01 — currently 1.25.2; follow the vendor advisory for the fixed version. [NVD.ref.1, NVD.ref.2, NVD.ref.3]
@@ -241,7 +239,7 @@ What the 7.5 score says: Attack from: the network (remotely); Attack complexity:
 - Little public research doesn't mean it's hard to exploit — Exploit-development difficulty judged from public evidence is inherently limited: the absence of public research does not mean exploitation is hard.
 
 ### Why this priority (rule trace)
-1. Starts at P2: attack code is claimed or attacks are likely — exploitation 'elevated': public exploit claimed, EPSS ≥ 0.10, or validated AI difficulty=low.
+1. Starts at P2: attack code exists or attacks are likely — exploitation 'elevated': CISA SSVC says proof-of-concept, EPSS ≥ 0.10, or validated AI difficulty=low.
 2. Raised to P1: the system is exposed or critical — an affected asset is internet-facing or high-criticality (one step up).
 3. Other assets need a version check — ops-ubuntu-02
 
@@ -374,7 +372,7 @@ What the 8.1 score says: Attack from: the network (remotely); Attack complexity:
 - Little public research doesn't mean it's hard to exploit — Exploit-development difficulty judged from public evidence is inherently limited: the absence of public research does not mean exploitation is hard.
 
 ### Why this priority (rule trace)
-1. Starts at P2: attack code is claimed or attacks are likely — exploitation 'elevated': public exploit claimed, EPSS ≥ 0.10, or validated AI difficulty=low.
+1. Starts at P2: attack code exists or attacks are likely — exploitation 'elevated': CISA SSVC says proof-of-concept, EPSS ≥ 0.10, or validated AI difficulty=low.
 2. Stays the same for now: some system details are missing — internet exposure and/or criticality were not supplied, so the result is provisional rather than assumed.
 3. dev-laptop-17: importance or internet exposure not recorded — internet_facing, criticality not supplied; not assumed.
 
@@ -542,7 +540,7 @@ What the 9.8 score says: Attack from: the network (remotely); Attack complexity:
 - Little public research doesn't mean it's hard to exploit — Exploit-development difficulty judged from public evidence is inherently limited: the absence of public research does not mean exploitation is hard.
 
 ### Why this priority (rule trace)
-1. Starts at P2: attack code is claimed or attacks are likely — exploitation 'elevated': public exploit claimed, EPSS ≥ 0.10, or validated AI difficulty=low.
+1. Starts at P2: attack code exists or attacks are likely — exploitation 'elevated': CISA SSVC says proof-of-concept, EPSS ≥ 0.10, or validated AI difficulty=low.
 2. Lowered to P3: a protection limits access — an operator-declared compensating control applies (one step down; confirmed exploitation never goes below P2).
 3. print-srv-01: has a protection in place (not checked by this tool) — Host firewall drops inbound traffic to port 631 except from the warehouse printer VLAN (reduces_reachability); operator-supplied, not verified by this tool.
 
@@ -640,7 +638,7 @@ What the 5.3 score says: Attack from: the network (remotely); Attack complexity:
 - Little public research doesn't mean it's hard to exploit — Exploit-development difficulty judged from public evidence is inherently limited: the absence of public research does not mean exploitation is hard.
 
 ### Why this priority (rule trace)
-1. Starts at P2: attack code is claimed or attacks are likely — exploitation 'elevated': public exploit claimed, EPSS ≥ 0.10, or validated AI difficulty=low.
+1. Starts at P2: attack code exists or attacks are likely — exploitation 'elevated': CISA SSVC says proof-of-concept, EPSS ≥ 0.10, or validated AI difficulty=low.
 2. No priority: your installed versions are not affected — all matching inventory items are outside the affected versions.
 
 ### Action supported by the evidence

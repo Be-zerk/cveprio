@@ -225,9 +225,10 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
     <span><span class="badge s-{{ st[0] }}"><span aria-hidden="true">{{ st[1] }}</span>{{ d.label }}{% if d.provisional %} · provisional{% endif %}</span></span>
     <span class="headline">{{ PLAIN_LABEL.get(d.label, d.headline) }}{% if r.bundle.title %} · <span class="meta">{{ r.bundle.title|truncate(70) }}</span>{% endif %}</span>
     <span class="factors">
-      <span>attacks: <b>{{ SHORT_FACTOR.exploitation.get(d.factors.exploitation, d.factors.exploitation) }}</b></span>
-      <span>severity: <b>{{ d.factors.severity }}</b></span>
-      <span>exposure: <b>{{ SHORT_FACTOR.exposure.get(d.factors.exposure, d.factors.exposure) }}</b></span>
+      {% set fc = factor_cards(r) %}
+      <span>attacks: <b>{{ fc[0][1] }}</b></span>
+      <span>severity: <b>{{ fc[1][1] }}</b></span>
+      <span>exposure: <b>{{ fc[2][1] }}</b></span>
       <span>CVSS-only would say: <b>{{ d.baseline_label }}</b></span>
       {% if r.bundle.conflicts %}<span class="flag">⚠ {{ r.bundle.conflicts|length }} source conflict{{ "s" if r.bundle.conflicts|length > 1 }}</span>{% endif %}
       {% if "disputed" in r.bundle.findings %}<span class="flag">⚠ disputed</span>{% endif %}
@@ -245,9 +246,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
 
     {% if d.factors.exploitation != "n/a" %}
     <div class="fgrid">
-      <div class="fcard"><div class="fname">Attack activity</div><div class="fval">{{ PLAIN_FACTOR.exploitation.get(d.factors.exploitation, d.factors.exploitation) }}</div></div>
-      <div class="fcard"><div class="fname">Severity on paper</div><div class="fval">{{ PLAIN_FACTOR.severity.get(d.factors.severity, d.factors.severity) }}</div></div>
-      <div class="fcard"><div class="fname">Your exposure</div><div class="fval">{{ PLAIN_FACTOR.exposure.get(d.factors.exposure, d.factors.exposure) }}</div></div>
+      {% for name, value in factor_cards(r) %}<div class="fcard"><div class="fname">{{ name }}</div><div class="fval">{{ value }}</div></div>{% endfor %}
     </div>
     {% endif %}
 

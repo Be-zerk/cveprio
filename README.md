@@ -16,7 +16,7 @@ score. The model can raise one factor in one narrowly defined case and is otherw
 advisory ([docs/PRIORITIZATION.md](docs/PRIORITIZATION.md)).
 
 > **Status: working prototype, not production software.** The offline test suite
-> (162 tests) and the 3 opt-in live API checks pass as of 2026-10-10, but tests do not
+> (185 tests) and the 3 opt-in live API checks pass as of 2026-10-10, but tests do not
 > establish that every security judgement is correct. See [Limitations](#limitations).
 
 The idea of using LLMs to judge how practical exploit development is for incoming CVEs
@@ -94,6 +94,28 @@ optional context: `criticality` (`low`…`critical`), `internet_facing`,
 against NVD much more reliable, and it is what `--discover` searches with. Add a
 `purl` (`pkg:maven/group/artifact@version`, `pkg:pypi/name@version`, …) to also search OSV.dev.
 
+### Using an SBOM instead of a hand-written list
+
+An SBOM (software bill of materials) is the "ingredients list" of an application: every
+library with its exact version. Build tools produce them automatically. cveprio reads
+**CycloneDX JSON** and **SPDX 2.x JSON**:
+
+```bash
+# one application from an SBOM file, with business context on the command line
+cveprio analyze --sbom my-app.cdx.json --criticality high --internet-facing yes --discover
+
+# or keep business context in an inventory and point each asset at its SBOM
+cveprio analyze --inventory examples/inventory-sbom.json --discover
+```
+
+To make an SBOM of a Python environment: `pip install cyclonedx-bom` then
+`cyclonedx-py environment --of JSON -o sbom.cdx.json`. (`examples/sbom/cveprio-python-env.cdx.json`
+is this project's own SBOM made that way; scanning it found no known vulnerabilities on 2026-10-10.)
+Components without a version, non-software entries and anything over the limits are listed
+as skipped. SBOM components are matched mainly by package URL (purl) through OSV.dev, whose
+"this exact version is affected" answer is recorded as evidence. CycloneDX XML and SPDX 3 are
+not supported yet.
+
 ### Finding CVEs automatically (`--discover`)
 
 `--discover` starts from the inventory instead of a watchlist: each item with a versioned
@@ -135,6 +157,7 @@ cveprio capture-fixtures CVE-...    # record new offline fixtures
 
 - **Prototype.** Not hardened, not load-tested, single-user, no authentication on `serve` (bound to 127.0.0.1).
 - **Small, non-held-out evaluation** (14 cases over CVEs also used during development; reference labels drafted with AI assistance and reviewed by the author). No claim of real-world predictive accuracy.
+- **SBOM support** covers CycloneDX JSON and SPDX 2.x JSON only; SBOM quality limits results (missing versions or purls mean components cannot be searched).
 - **Discovery is only as complete as the identifiers**: items without a CPE/purl are not searched (reported), a product listed under several CPE names (curl vs libcurl) may be missed, and vendor/distribution advisories are not searched.
 - **Disputed CVEs** are flagged (structured tags, or dispute wording in the description — heuristic) but their priority is not lowered automatically.
 - **Applicability is conservative and partial**: distro package versions (deb/rpm), free-text version ranges and platform-conditional NVD configurations go to `needs_review`. Vendor/product naming differs across sources; supplying CPEs helps.

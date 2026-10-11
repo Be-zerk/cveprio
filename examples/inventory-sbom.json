@@ -1,0 +1,21 @@
+{
+  "organization": "Northbeam Logistics (fictional)",
+  "fictional": true,
+  "description": "FICTIONAL example showing SBOM-based inventory: business context lives here, software lists come from the SBOM files.",
+  "assets": [
+    {
+      "id": "web-portal-01",
+      "name": "Customer shipment-tracking portal",
+      "criticality": "high",
+      "internet_facing": true,
+      "sbom": "sbom/shipment-tracker.cdx.json"
+    },
+    {
+      "id": "gateway-02",
+      "name": "Warehouse integration gateway",
+      "criticality": "medium",
+      "internet_facing": false,
+      "sbom": "sbom/warehouse-gateway.spdx.json"
+    }
+  ]
+}

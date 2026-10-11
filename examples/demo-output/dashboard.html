@@ -149,7 +149,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
 <main>
 <header>
   <h1>CVE prioritization · Northbeam Logistics (fictional)</h1>
-  <div class="meta">Generated 2026-10-11 02:19 UTC · mode <b>offline_demo</b> · cveprio 0.1.0 · 9 CVEs</div>
+  <div class="meta">Generated 2026-10-11 02:42 UTC · mode <b>offline_demo</b> · cveprio 0.1.0 · 9 CVEs</div>
   <div class="banner" role="note">⚠ OFFLINE DEMO DATA — recorded fixtures, not live results.
     <small>Source responses were recorded at the retrieval times shown in each evidence table and may be out of date. The inventory and business context are fictional.</small></div>
   <ul class="notices"><li>This product uses the NVD API but is not endorsed or certified by the NVD.</li><li>CVE records: CVE Program (cve.org). KEV: CISA Known Exploited Vulnerabilities catalogue (CC0). EPSS: FIRST.org Exploit Prediction Scoring System (https://www.first.org/epss).</li></ul>
@@ -193,9 +193,9 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
     <li><span class="bshort"><a href="#CVE-2023-44487">CVE-2023-44487</a>: score alone says <b>Fix in the next patch cycle (P2)</b>, this tool says <b>Fix now (P1)</b></span>
       <details class="bmore"><summary>why</summary><div class="bdetail">Because attackers are using it and it is on an exposed or critical system.</div></details></li>
     <li><span class="bshort"><a href="#CVE-2024-6387">CVE-2024-6387</a> <span class="meta">(Openssh: regresshion - race...)</span>: score alone says <b>Fix in the next patch cycle (P2)</b>, this tool says <b>Fix now (P1)</b></span>
-      <details class="bmore"><summary>why</summary><div class="bdetail">Because attack code is public or attacks are likely and it is on an exposed or critical system.</div></details></li>
+      <details class="bmore"><summary>why</summary><div class="bdetail">Because attack code exists or attacks are likely and it is on an exposed or critical system.</div></details></li>
     <li><span class="bshort"><a href="#CVE-2023-38545">CVE-2023-38545</a>: score alone says <b>Fix now (P1)</b>, this tool says <b>Fix in the next patch cycle (P2)</b></span>
-      <details class="bmore"><summary>why</summary><div class="bdetail">Because attack code is public or attacks are likely and details about the affected system are missing.</div></details></li>
+      <details class="bmore"><summary>why</summary><div class="bdetail">Because attack code exists or attacks are likely and details about the affected system are missing.</div></details></li>
     <li><span class="bshort"><a href="#CVE-2022-22965">CVE-2022-22965</a>: score alone says <b>Fix now (P1)</b>, this tool says <b>Check before deciding</b></span>
       <details class="bmore"><summary>why</summary><div class="bdetail">Because it is unclear whether your version is affected.</div></details></li>
     <li><span class="bshort"><a href="#CVE-2024-3094">CVE-2024-3094</a> <span class="meta">(Xz: malicious code in distributed source)</span>: score alone says <b>Fix now (P1)</b>, this tool says <b>Not affected — no action needed</b></span>
@@ -217,9 +217,9 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
     <span><span class="badge s-critical"><span aria-hidden="true">▲</span>P1</span></span>
     <span class="headline">Fix now · <span class="meta">Apache Log4j2 JNDI features do not protect against attacker...</span></span>
     <span class="factors">
-      <span>attacks: <b>actively attacked</b></span>
-      <span>severity: <b>critical</b></span>
-      <span>exposure: <b>exposed or critical system</b></span>
+      <span>attacks: <b>Being attacked: on CISA&#39;s list since 2021-12-10</b></span>
+      <span>severity: <b>10.0 out of 10 (critical)</b></span>
+      <span>exposure: <b>web-portal-01 is internet-facing and high importance</b></span>
       <span>CVSS-only would say: <b>P1</b></span>
     </span>
   </summary>
@@ -231,15 +231,12 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
     </div>
 
     <div class="fgrid">
-      <div class="fcard"><div class="fname">Attack activity</div><div class="fval">Attackers are known to be using it</div></div>
-      <div class="fcard"><div class="fname">Severity on paper</div><div class="fval">Critical (CVSS 9–10)</div></div>
-      <div class="fcard"><div class="fname">Your exposure</div><div class="fval">An affected system is internet-facing or business-critical</div></div>
-    </div>
+<div class="fcard"><div class="fname">Attack activity</div><div class="fval">Being attacked: on CISA&#39;s list since 2021-12-10</div></div><div class="fcard"><div class="fname">Severity on paper</div><div class="fval">10.0 out of 10 (critical)</div></div><div class="fcard"><div class="fname">Your exposure</div><div class="fval">web-portal-01 is internet-facing and high importance</div></div>    </div>
 
     <section class="sec sec-why">
       <h3><span class="ico" aria-hidden="true">→</span>Why this priority</h3>
       <p class="hint">The rules that produced this decision, step by step.</p>
-      <ol class="items"><li><span class="bshort">Starts at P1: attackers are known to be using it</span><details class="bmore"><summary>details</summary><div class="bdetail">exploitation confirmed by the CISA KEV list and/or CISA SSVC Exploitation=active.</div></details></li><li><span class="bshort">Raised to P1: the system is exposed or critical</span><details class="bmore"><summary>details</summary><div class="bdetail">an affected asset is internet-facing or high-criticality (one step up).</div></details></li><li><span class="bshort">Other assets need a version check</span><details class="bmore"><summary>details</summary><div class="bdetail">legacy-billing-03</div></details></li></ol>
+      <ol class="items"><li><span class="bshort">Starts at P1: attackers are known to be using it</span><details class="bmore"><summary>details</summary><div class="bdetail">exploitation confirmed by the CISA KEV list and/or CISA SSVC Exploitation=active.</div></details></li><li><span class="bshort">Other assets need a version check</span><details class="bmore"><summary>details</summary><div class="bdetail">legacy-billing-03</div></details></li></ol>
     </section>
 
     <div class="cols">
@@ -543,9 +540,9 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
     <span><span class="badge s-critical"><span aria-hidden="true">▲</span>P1</span></span>
     <span class="headline">Fix now</span>
     <span class="factors">
-      <span>attacks: <b>actively attacked</b></span>
-      <span>severity: <b>high</b></span>
-      <span>exposure: <b>exposed or critical system</b></span>
+      <span>attacks: <b>Being attacked: on CISA&#39;s list since 2023-10-10</b></span>
+      <span>severity: <b>7.5 out of 10 (high)</b></span>
+      <span>exposure: <b>web-portal-01 is internet-facing and high importance</b></span>
       <span>CVSS-only would say: <b>P2</b></span>
     </span>
   </summary>
@@ -557,15 +554,12 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
     </div>
 
     <div class="fgrid">
-      <div class="fcard"><div class="fname">Attack activity</div><div class="fval">Attackers are known to be using it</div></div>
-      <div class="fcard"><div class="fname">Severity on paper</div><div class="fval">High (CVSS 7–8.9)</div></div>
-      <div class="fcard"><div class="fname">Your exposure</div><div class="fval">An affected system is internet-facing or business-critical</div></div>
-    </div>
+<div class="fcard"><div class="fname">Attack activity</div><div class="fval">Being attacked: on CISA&#39;s list since 2023-10-10</div></div><div class="fcard"><div class="fname">Severity on paper</div><div class="fval">7.5 out of 10 (high)</div></div><div class="fcard"><div class="fname">Your exposure</div><div class="fval">web-portal-01 is internet-facing and high importance</div></div>    </div>
 
     <section class="sec sec-why">
       <h3><span class="ico" aria-hidden="true">→</span>Why this priority</h3>
       <p class="hint">The rules that produced this decision, step by step.</p>
-      <ol class="items"><li><span class="bshort">Starts at P1: attackers are known to be using it</span><details class="bmore"><summary>details</summary><div class="bdetail">exploitation confirmed by the CISA KEV list and/or CISA SSVC Exploitation=active.</div></details></li><li><span class="bshort">Raised to P1: the system is exposed or critical</span><details class="bmore"><summary>details</summary><div class="bdetail">an affected asset is internet-facing or high-criticality (one step up).</div></details></li></ol>
+      <ol class="items"><li><span class="bshort">Starts at P1: attackers are known to be using it</span><details class="bmore"><summary>details</summary><div class="bdetail">exploitation confirmed by the CISA KEV list and/or CISA SSVC Exploitation=active.</div></details></li></ol>
     </section>
 
     <div class="cols">
@@ -824,9 +818,9 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
     <span><span class="badge s-critical"><span aria-hidden="true">▲</span>P1</span></span>
     <span class="headline">Fix now · <span class="meta">Openssh: regresshion - race condition in ssh allows rce/dos</span></span>
     <span class="factors">
-      <span>attacks: <b>exploit claimed / likely</b></span>
-      <span>severity: <b>high</b></span>
-      <span>exposure: <b>exposed or critical system</b></span>
+      <span>attacks: <b>Demo attack code exists (CISA)</b></span>
+      <span>severity: <b>8.1 out of 10 (high)</b></span>
+      <span>exposure: <b>bastion-01 is internet-facing and high importance</b></span>
       <span>CVSS-only would say: <b>P2</b></span>
 <span class="flag">⚠ 1 source conflict</span>    </span>
   </summary>
@@ -838,15 +832,12 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
     </div>
 
     <div class="fgrid">
-      <div class="fcard"><div class="fname">Attack activity</div><div class="fval">Attack code is publicly claimed, or attacks are likely soon</div></div>
-      <div class="fcard"><div class="fname">Severity on paper</div><div class="fval">High (CVSS 7–8.9)</div></div>
-      <div class="fcard"><div class="fname">Your exposure</div><div class="fval">An affected system is internet-facing or business-critical</div></div>
-    </div>
+<div class="fcard"><div class="fname">Attack activity</div><div class="fval">Demo attack code exists (CISA)</div></div><div class="fcard"><div class="fname">Severity on paper</div><div class="fval">8.1 out of 10 (high)</div></div><div class="fcard"><div class="fname">Your exposure</div><div class="fval">bastion-01 is internet-facing and high importance</div></div>    </div>
 
     <section class="sec sec-why">
       <h3><span class="ico" aria-hidden="true">→</span>Why this priority</h3>
       <p class="hint">The rules that produced this decision, step by step.</p>
-      <ol class="items"><li><span class="bshort">Starts at P2: attack code is claimed or attacks are likely</span><details class="bmore"><summary>details</summary><div class="bdetail">exploitation &#39;elevated&#39;: public exploit claimed, EPSS ≥ 0.10, or validated AI difficulty=low.</div></details></li><li><span class="bshort">Raised to P1: the system is exposed or critical</span><details class="bmore"><summary>details</summary><div class="bdetail">an affected asset is internet-facing or high-criticality (one step up).</div></details></li><li><span class="bshort">Other assets need a version check</span><details class="bmore"><summary>details</summary><div class="bdetail">ops-ubuntu-02</div></details></li></ol>
+      <ol class="items"><li><span class="bshort">Starts at P2: attack code exists or attacks are likely</span><details class="bmore"><summary>details</summary><div class="bdetail">exploitation &#39;elevated&#39;: CISA SSVC says proof-of-concept, EPSS ≥ 0.10, or validated AI difficulty=low.</div></details></li><li><span class="bshort">Raised to P1: the system is exposed or critical</span><details class="bmore"><summary>details</summary><div class="bdetail">an affected asset is internet-facing or high-criticality (one step up).</div></details></li><li><span class="bshort">Other assets need a version check</span><details class="bmore"><summary>details</summary><div class="bdetail">ops-ubuntu-02</div></details></li></ol>
     </section>
 
     <div class="cols">
@@ -1240,9 +1231,9 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
     <span><span class="badge s-serious"><span aria-hidden="true">◆</span>P2 · provisional</span></span>
     <span class="headline">Fix in the next patch cycle</span>
     <span class="factors">
-      <span>attacks: <b>exploit claimed / likely</b></span>
-      <span>severity: <b>critical</b></span>
-      <span>exposure: <b>context missing</b></span>
+      <span>attacks: <b>Demo attack code exists (CISA)</b></span>
+      <span>severity: <b>9.8 out of 10 (critical)</b></span>
+      <span>exposure: <b>dev-laptop-17: exposure or importance not recorded (+1 more system)</b></span>
       <span>CVSS-only would say: <b>P1</b></span>
 <span class="flag">⚠ 2 source conflicts</span>    </span>
   </summary>
@@ -1254,15 +1245,12 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
     </div>
 
     <div class="fgrid">
-      <div class="fcard"><div class="fname">Attack activity</div><div class="fval">Attack code is publicly claimed, or attacks are likely soon</div></div>
-      <div class="fcard"><div class="fname">Severity on paper</div><div class="fval">Critical (CVSS 9–10)</div></div>
-      <div class="fcard"><div class="fname">Your exposure</div><div class="fval">Affected, but how exposed/important the system is was not recorded</div></div>
-    </div>
+<div class="fcard"><div class="fname">Attack activity</div><div class="fval">Demo attack code exists (CISA)</div></div><div class="fcard"><div class="fname">Severity on paper</div><div class="fval">9.8 out of 10 (critical)</div></div><div class="fcard"><div class="fname">Your exposure</div><div class="fval">dev-laptop-17: exposure or importance not recorded (+1 more system)</div></div>    </div>
 
     <section class="sec sec-why">
       <h3><span class="ico" aria-hidden="true">→</span>Why this priority</h3>
       <p class="hint">The rules that produced this decision, step by step.</p>
-      <ol class="items"><li><span class="bshort">Starts at P2: attack code is claimed or attacks are likely</span><details class="bmore"><summary>details</summary><div class="bdetail">exploitation &#39;elevated&#39;: public exploit claimed, EPSS ≥ 0.10, or validated AI difficulty=low.</div></details></li><li><span class="bshort">Stays the same for now: some system details are missing</span><details class="bmore"><summary>details</summary><div class="bdetail">internet exposure and/or criticality were not supplied, so the result is provisional rather than assumed.</div></details></li><li><span class="bshort">dev-laptop-17: importance or internet exposure not recorded</span><details class="bmore"><summary>details</summary><div class="bdetail">internet_facing, criticality not supplied; not assumed.</div></details></li></ol>
+      <ol class="items"><li><span class="bshort">Starts at P2: attack code exists or attacks are likely</span><details class="bmore"><summary>details</summary><div class="bdetail">exploitation &#39;elevated&#39;: CISA SSVC says proof-of-concept, EPSS ≥ 0.10, or validated AI difficulty=low.</div></details></li><li><span class="bshort">Stays the same for now: some system details are missing</span><details class="bmore"><summary>details</summary><div class="bdetail">internet exposure and/or criticality were not supplied, so the result is provisional rather than assumed.</div></details></li><li><span class="bshort">dev-laptop-17: importance or internet exposure not recorded</span><details class="bmore"><summary>details</summary><div class="bdetail">internet_facing, criticality not supplied; not assumed.</div></details></li></ol>
     </section>
 
     <div class="cols">
@@ -1461,9 +1449,9 @@ URL that curl has been told to operate with.</p>
     <span><span class="badge s-warning"><span aria-hidden="true">?</span>NEEDS_REVIEW · provisional</span></span>
     <span class="headline">Check before deciding</span>
     <span class="factors">
-      <span>attacks: <b>actively attacked</b></span>
-      <span>severity: <b>critical</b></span>
-      <span>exposure: <b>version unclear</b></span>
+      <span>attacks: <b>Being attacked: on CISA&#39;s list since 2022-04-04</b></span>
+      <span>severity: <b>9.8 out of 10 (critical)</b></span>
+      <span>exposure: <b>Unclear whether web-portal-01 is affected</b></span>
       <span>CVSS-only would say: <b>P1</b></span>
     </span>
   </summary>
@@ -1475,10 +1463,7 @@ URL that curl has been told to operate with.</p>
     </div>
 
     <div class="fgrid">
-      <div class="fcard"><div class="fname">Attack activity</div><div class="fval">Attackers are known to be using it</div></div>
-      <div class="fcard"><div class="fname">Severity on paper</div><div class="fval">Critical (CVSS 9–10)</div></div>
-      <div class="fcard"><div class="fname">Your exposure</div><div class="fval">Unclear whether your version is affected</div></div>
-    </div>
+<div class="fcard"><div class="fname">Attack activity</div><div class="fval">Being attacked: on CISA&#39;s list since 2022-04-04</div></div><div class="fcard"><div class="fname">Severity on paper</div><div class="fval">9.8 out of 10 (critical)</div></div><div class="fcard"><div class="fname">Your exposure</div><div class="fval">Unclear whether web-portal-01 is affected</div></div>    </div>
 
     <section class="sec sec-why">
       <h3><span class="ico" aria-hidden="true">→</span>Why this priority</h3>
@@ -1694,9 +1679,9 @@ URL that curl has been told to operate with.</p>
     <span><span class="badge s-neutral"><span aria-hidden="true">●</span>P3</span></span>
     <span class="headline">Schedule a fix · <span class="meta">cups-browsed binds to `INADDR_ANY:631`, trusting any packet from any source</span></span>
     <span class="factors">
-      <span>attacks: <b>exploit claimed / likely</b></span>
-      <span>severity: <b>medium</b></span>
-      <span>exposure: <b>protected by a control</b></span>
+      <span>attacks: <b>Demo attack code exists (CISA)</b></span>
+      <span>severity: <b>5.3 out of 10 (medium)</b></span>
+      <span>exposure: <b>print-srv-01 is protected by a declared control (not verified)</b></span>
       <span>CVSS-only would say: <b>P3</b></span>
 <span class="flag">⚠ 1 source conflict</span>    </span>
   </summary>
@@ -1708,15 +1693,12 @@ URL that curl has been told to operate with.</p>
     </div>
 
     <div class="fgrid">
-      <div class="fcard"><div class="fname">Attack activity</div><div class="fval">Attack code is publicly claimed, or attacks are likely soon</div></div>
-      <div class="fcard"><div class="fname">Severity on paper</div><div class="fval">Medium (CVSS 4–6.9)</div></div>
-      <div class="fcard"><div class="fname">Your exposure</div><div class="fval">Affected, but a protection (e.g. firewall rule) limits access</div></div>
-    </div>
+<div class="fcard"><div class="fname">Attack activity</div><div class="fval">Demo attack code exists (CISA)</div></div><div class="fcard"><div class="fname">Severity on paper</div><div class="fval">5.3 out of 10 (medium)</div></div><div class="fcard"><div class="fname">Your exposure</div><div class="fval">print-srv-01 is protected by a declared control (not verified)</div></div>    </div>
 
     <section class="sec sec-why">
       <h3><span class="ico" aria-hidden="true">→</span>Why this priority</h3>
       <p class="hint">The rules that produced this decision, step by step.</p>
-      <ol class="items"><li><span class="bshort">Starts at P2: attack code is claimed or attacks are likely</span><details class="bmore"><summary>details</summary><div class="bdetail">exploitation &#39;elevated&#39;: public exploit claimed, EPSS ≥ 0.10, or validated AI difficulty=low.</div></details></li><li><span class="bshort">Lowered to P3: a protection limits access</span><details class="bmore"><summary>details</summary><div class="bdetail">an operator-declared compensating control applies (one step down; confirmed exploitation never goes below P2).</div></details></li><li><span class="bshort">print-srv-01: has a protection in place (not checked by this tool)</span><details class="bmore"><summary>details</summary><div class="bdetail">Host firewall drops inbound traffic to port 631 except from the warehouse printer VLAN (reduces_reachability); operator-supplied, not verified by this tool.</div></details></li></ol>
+      <ol class="items"><li><span class="bshort">Starts at P2: attack code exists or attacks are likely</span><details class="bmore"><summary>details</summary><div class="bdetail">exploitation &#39;elevated&#39;: CISA SSVC says proof-of-concept, EPSS ≥ 0.10, or validated AI difficulty=low.</div></details></li><li><span class="bshort">Lowered to P3: a protection limits access</span><details class="bmore"><summary>details</summary><div class="bdetail">an operator-declared compensating control applies (one step down; confirmed exploitation never goes below P2).</div></details></li><li><span class="bshort">print-srv-01: has a protection in place (not checked by this tool)</span><details class="bmore"><summary>details</summary><div class="bdetail">Host firewall drops inbound traffic to port 631 except from the warehouse printer VLAN (reduces_reachability); operator-supplied, not verified by this tool.</div></details></li></ol>
     </section>
 
     <div class="cols">
@@ -1923,9 +1905,9 @@ URL that curl has been told to operate with.</p>
     <span><span class="badge s-good"><span aria-hidden="true">✓</span>NOT_APPLICABLE</span></span>
     <span class="headline">Not affected — no action needed · <span class="meta">Xz: malicious code in distributed source</span></span>
     <span class="factors">
-      <span>attacks: <b>exploit claimed / likely</b></span>
-      <span>severity: <b>critical</b></span>
-      <span>exposure: <b>not affected</b></span>
+      <span>attacks: <b>Attacks likely: 86.0% predicted chance in 30 days</b></span>
+      <span>severity: <b>10.0 out of 10 (critical)</b></span>
+      <span>exposure: <b>Not affected: your installed version is outside the affected range</b></span>
       <span>CVSS-only would say: <b>P1</b></span>
 <span class="flag">⚠ 1 source conflict</span>    </span>
   </summary>
@@ -1937,15 +1919,12 @@ URL that curl has been told to operate with.</p>
     </div>
 
     <div class="fgrid">
-      <div class="fcard"><div class="fname">Attack activity</div><div class="fval">Attack code is publicly claimed, or attacks are likely soon</div></div>
-      <div class="fcard"><div class="fname">Severity on paper</div><div class="fval">Critical (CVSS 9–10)</div></div>
-      <div class="fcard"><div class="fname">Your exposure</div><div class="fval">Your installed version is not affected</div></div>
-    </div>
+<div class="fcard"><div class="fname">Attack activity</div><div class="fval">Attacks likely: 86.0% predicted chance in 30 days</div></div><div class="fcard"><div class="fname">Severity on paper</div><div class="fval">10.0 out of 10 (critical)</div></div><div class="fcard"><div class="fname">Your exposure</div><div class="fval">Not affected: your installed version is outside the affected range</div></div>    </div>
 
     <section class="sec sec-why">
       <h3><span class="ico" aria-hidden="true">→</span>Why this priority</h3>
       <p class="hint">The rules that produced this decision, step by step.</p>
-      <ol class="items"><li><span class="bshort">Starts at P2: attack code is claimed or attacks are likely</span><details class="bmore"><summary>details</summary><div class="bdetail">exploitation &#39;elevated&#39;: public exploit claimed, EPSS ≥ 0.10, or validated AI difficulty=low.</div></details></li><li><span class="bshort">No priority: your installed versions are not affected</span><details class="bmore"><summary>details</summary><div class="bdetail">all matching inventory items are outside the affected versions.</div></details></li></ol>
+      <ol class="items"><li><span class="bshort">Starts at P2: attack code exists or attacks are likely</span><details class="bmore"><summary>details</summary><div class="bdetail">exploitation &#39;elevated&#39;: CISA SSVC says proof-of-concept, EPSS ≥ 0.10, or validated AI difficulty=low.</div></details></li><li><span class="bshort">No priority: your installed versions are not affected</span><details class="bmore"><summary>details</summary><div class="bdetail">all matching inventory items are outside the affected versions.</div></details></li></ol>
     </section>
 
     <div class="cols">
@@ -2198,9 +2177,9 @@ Through a series of complex obfuscations, the liblzma build process extracts a p
     <span><span class="badge s-muted"><span aria-hidden="true">✕</span>NO_ACTION_REJECTED</span></span>
     <span class="headline">Cancelled CVE — no action needed</span>
     <span class="factors">
-      <span>attacks: <b>n/a</b></span>
-      <span>severity: <b>n/a</b></span>
-      <span>exposure: <b>n/a</b></span>
+      <span>attacks: <b>Not applicable</b></span>
+      <span>severity: <b>Not applicable</b></span>
+      <span>exposure: <b>Not applicable</b></span>
       <span>CVSS-only would say: <b>N/A</b></span>
     </span>
   </summary>
@@ -2295,9 +2274,9 @@ Through a series of complex obfuscations, the liblzma build process extracts a p
     <span><span class="badge s-muted"><span aria-hidden="true">∅</span>INVALID_OR_UNPUBLISHED</span></span>
     <span class="headline">No public details yet — nothing to do</span>
     <span class="factors">
-      <span>attacks: <b>n/a</b></span>
-      <span>severity: <b>n/a</b></span>
-      <span>exposure: <b>n/a</b></span>
+      <span>attacks: <b>Not applicable</b></span>
+      <span>severity: <b>Not applicable</b></span>
+      <span>exposure: <b>Not applicable</b></span>
       <span>CVSS-only would say: <b>N/A</b></span>
     </span>
   </summary>

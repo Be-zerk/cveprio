@@ -20,6 +20,7 @@ class SourceName(StrEnum):
     NVD = "nvd"
     KEV = "cisa_kev"
     EPSS = "first_epss"
+    OSV = "osv"
 
 
 class SourceStatus(StrEnum):
@@ -218,7 +219,8 @@ class CompensatingControl(BaseModel):
 class Asset(BaseModel):
     id: str
     name: str
-    software: list[SoftwareItem]
+    software: list[SoftwareItem] = Field(default_factory=list)
+    sbom: str | None = None  # path to a CycloneDX/SPDX JSON SBOM (relative to the inventory file)
     # None means "not supplied" and is treated as unknown, never as False/low.
     criticality: Criticality | None = None
     internet_facing: bool | None = None
@@ -233,6 +235,7 @@ class Inventory(BaseModel):
     description: str | None = None
     assets: list[Asset]
     watchlist: list[str] = Field(default_factory=list)
+    input_notes: list[str] = Field(default_factory=list)  # e.g. which SBOMs were read (filled in by the loader)
 
 
 # ------------------------------------------------------------------ applicability
@@ -373,12 +376,23 @@ class DiscoveryQuery(BaseModel):
     detail: str | None = None
 
 
+class OsvMatch(BaseModel):
+    """OSV says this exact package version is affected by the CVE (recorded as evidence)."""
+
+    asset_id: str
+    purl: str
+    advisory_ids: list[str]
+    url: str
+    retrieved_at: datetime
+
+
 class DiscoverySummary(BaseModel):
     queries: list[DiscoveryQuery]
     total_found: int
     analyzed: list[str]
     dropped: list[str] = Field(default_factory=list)  # over the --max-cves cap
     caveats: list[str] = Field(default_factory=list)
+    osv_matches: dict[str, list[OsvMatch]] = Field(default_factory=dict)  # CVE -> OSV affirmations
 
 
 class RunReport(BaseModel):

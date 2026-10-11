@@ -5,6 +5,7 @@
 | Concern | Module | Responsibility | Does NOT |
 |---|---|---|---|
 | Retrieval | `net.py`, `sources/__init__.py` | Fetch CVE.org, NVD, KEV, EPSS; report an honest per-source outcome (`ok/not_found/failed/rate_limited/skipped`) | interpret security meaning |
+| SBOM import | `sbom.py` | CycloneDX / SPDX 2.x JSON → inventory software items; limits, skipped-component reporting | fetch anything referenced in the SBOM |
 | CVE discovery | `discovery.py`, `sources/` | Inventory → candidate CVEs via NVD CPE match and OSV purl query; reports unsearchable items and caps | decide applicability (re-checked downstream) |
 | Offline fixtures | `net.FixtureFetcher`, `capture.py` | Replay recorded responses with their original retrieval times | ever touch the network |
 | Normalisation | `normalize.py` | Build `Evidence` items with stable IDs and provenance; derive five-valued `Finding`s; detect conflicts and stale signals | rank or recommend |
@@ -77,6 +78,16 @@ unioned with a "found by" note per CVE. Discovery is deliberately *recall-orient
 return CVEs where the item is only a platform (e.g. a product that runs on Spring), and the
 applicability engine filters those (`NOT_IN_INVENTORY`). Nothing is silently skipped: items
 without identifiers, failed lookups, truncated result sets and the cap all appear in the report.
+
+## SBOM import (stage 7)
+
+`sbom.py` turns CycloneDX (`components[]`, nested) or SPDX 2.x (`packages[]`, `externalRefs`
+purl / cpe23Type) into software items. Field names were checked against a real cyclonedx-py 7.5
+output and the official SPDX 2.3 JSON schema. The SBOM is untrusted input (25 MB, 5,000
+components, trimmed strings, nothing fetched). Because SBOM components are usually identified
+by purl rather than vendor/product names, OSV's per-version answer is stored as an `OSV.n`
+evidence item and accepted by the applicability engine as a match; it can still be
+contradicted by other sources, which yields `needs_review`.
 
 ## Retrieval safety
 

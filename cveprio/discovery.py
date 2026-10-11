@@ -18,12 +18,14 @@ very large result sets are capped.
 
 from __future__ import annotations
 
+from datetime import UTC, datetime
 from typing import Any
 
-from cveprio.models import DiscoveryQuery, DiscoverySummary, Inventory
+from cveprio.models import DiscoveryQuery, DiscoverySummary, Inventory, OsvMatch
 from cveprio.net import Fetcher
 from cveprio.sources import (
     CPE23_WITH_VERSION,
+    OSV_QUERY,
     PURL_WITH_VERSION,
     KevCatalog,
     discover_nvd_by_cpe,
@@ -45,6 +47,7 @@ def discover(inventory: Inventory, fetcher: Fetcher, *, nvd_api_key: str | None,
              max_cves: int = 150) -> tuple[DiscoverySummary, dict[str, list[str]]]:
     queries: list[DiscoveryQuery] = []
     found_by: dict[str, list[str]] = {}
+    osv_matches: dict[str, list[OsvMatch]] = {}
 
     def note(cve: str, how: str) -> None:
         found_by.setdefault(cve, [])
@@ -69,6 +72,9 @@ def discover(inventory: Inventory, fetcher: Fetcher, *, nvd_api_key: str | None,
                                               cve_ids=hit.cve_ids, non_cve_ids=hit.non_cve_ids, detail=hit.detail))
                 for c in hit.cve_ids:
                     note(c, f"OSV {item.purl.split('@')[0]} ({asset.id})")
+                    osv_matches.setdefault(c, []).append(OsvMatch(
+                        asset_id=asset.id, purl=item.purl, advisory_ids=(hit.advisories or {}).get(c, []),
+                        url=OSV_QUERY, retrieved_at=hit.retrieved_at or datetime.now(UTC)))
             if not searched:
                 queries.append(DiscoveryQuery(**base, method="none", status="not_searchable",
                                               detail=searchable_reason(item.cpe, item.purl)))
@@ -87,7 +93,7 @@ def discover(inventory: Inventory, fetcher: Fetcher, *, nvd_api_key: str | None,
     if failed:
         caveats.insert(0, f"{len(failed)} discovery lookups failed; CVEs for those items may be missing.")
     summary = DiscoverySummary(queries=queries, total_found=len(all_ids), analyzed=sorted(kept), dropped=dropped,
-                               caveats=caveats)
+                               caveats=caveats, osv_matches={c: osv_matches[c] for c in kept if c in osv_matches})
     return summary, {c: found_by[c] for c in kept}
 
 

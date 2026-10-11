@@ -2,22 +2,29 @@
 
 The decision uses three factors, each derived from evidence or supplied context:
 
-  exploitation  confirmed | elevated | low_observed | evidence_incomplete
+  exploitation  confirmed | elevated | claimed_unverified | low_observed | evidence_incomplete
   severity      critical | high | medium | low | unscored        (most severe CVSS, newest version)
   exposure      high | standard | context_unknown | reduced | not_assessed
                 | needs_review | not_affected | not_in_inventory
 
-Step 1 (base):    confirmed → P1; elevated → P2; evidence_incomplete → P2;
+Step 1 (base):    confirmed → P1; elevated → P2; evidence_incomplete → P2; claimed_unverified → P3;
                   low_observed → P3 if severity ∈ {critical, high, unscored} else P4.
-Step 2 (exposure): high → one step up; reduced → one step down (confirmed never below P2);
+Step 2 (exposure): high → one step up, but P1 only if exploitation is confirmed or severity is
+                  critical/high; reduced → one step down (confirmed never below P2);
                   standard / context_unknown / not_assessed → unchanged (latter two are provisional).
-Step 3 (gates):   needs_review → label NEEDS_REVIEW (priority shown "if affected");
+Step 3 (caps):    severity low (CVSS < 4), no confirmed attacks and attack data available
+                  → no higher than P3 (missing data never lowers a priority).
+Step 4 (gates):   needs_review → label NEEDS_REVIEW (priority shown "if affected");
                   not_affected / not_in_inventory → no priority.
 
-The LLM can influence exactly one thing: when there is *no* exploitation signal
-(low_observed) and the validated AI assessment rates exploit development as
-"low" with ≥ 2 cited supporting claims, exploitation becomes "elevated". It can
-never lower anything, and the bump is shown in the trace as an AI judgement.
+"elevated" needs a strong signal (CISA SSVC poc, EPSS ≥ 0.10, or the AI path below). An
+"Exploit"-tagged reference on its own is only "claimed_unverified": in practice those tags
+often point at advisories or bug reports (finding from the SBOM run, 2026-10-10).
+
+The LLM can influence exactly one thing: when there is no strong exploitation signal
+(low_observed or claimed_unverified) and the validated AI assessment rates exploit development
+as "low" with ≥ 2 cited supporting claims, exploitation becomes "elevated". It can never lower
+anything, and the bump is shown in the trace as an AI judgement.
 """
 
 from __future__ import annotations
@@ -85,8 +92,13 @@ def decide(x: RuleInputs) -> tuple[str, Priority | None, bool, list[str]]:
         trace.append("Starts at P1: attackers are known to be using it — exploitation confirmed by the CISA KEV list and/or CISA SSVC Exploitation=active.")
     elif x.exploitation == "elevated":
         base = "P2"
-        trace.append("Starts at P2: attack code is claimed or attacks are likely — exploitation 'elevated': public "
-                     f"exploit claimed, EPSS ≥ {EPSS_ELEVATED:.2f}, or validated AI difficulty=low.")
+        trace.append("Starts at P2: attack code exists or attacks are likely — exploitation 'elevated': CISA SSVC "
+                     f"says proof-of-concept, EPSS ≥ {EPSS_ELEVATED:.2f}, or validated AI difficulty=low.")
+    elif x.exploitation == "claimed_unverified":
+        base = "P3"
+        trace.append("Starts at P3: attack code may be public, unverified — a reference is tagged 'Exploit', but "
+                     "there is no CISA proof-of-concept rating, no high EPSS and no known attacks. Such tags often "
+                     "point at advisories or bug reports.")
     elif x.exploitation == "evidence_incomplete":
         base = "P2"
         trace.append("Starts at P2 to be safe: attack data could not be checked — exploitation sources failed, so the rules do not assume it is quiet.")
@@ -98,7 +110,13 @@ def decide(x: RuleInputs) -> tuple[str, Priority | None, bool, list[str]]:
     p = base
     if x.exposure == "high":
         p = _step(base, -1)
-        trace.append(f"Raised to {p}: the system is exposed or critical — an affected asset is internet-facing or high-criticality (one step up).")
+        if p == "P1" and not (x.exploitation == "confirmed" or x.severity in ("critical", "high")):
+            p = "P2"
+            trace.append("Raised to P2 (not P1): the system is exposed or critical — P1 is reserved for confirmed "
+                         "attacks or high/critical severity.")
+        elif p != base:
+            trace.append(f"Raised to {p}: the system is exposed or critical — an affected asset is internet-facing or "
+                         "high-criticality (one step up).")
     elif x.exposure == "reduced":
         p = _step(base, +1, floor="P2" if x.exploitation == "confirmed" else "P4")
         trace.append(f"Lowered to {p}: a protection limits access — an operator-declared compensating control applies (one step down; confirmed exploitation never goes below P2).")
@@ -110,6 +128,11 @@ def decide(x: RuleInputs) -> tuple[str, Priority | None, bool, list[str]]:
                      "criticality were not supplied, so the result is provisional rather than assumed.")
     elif x.exposure == "not_assessed":
         trace.append("Provisional: only applies if you run this software — No inventory supplied; the priority applies only if the product is deployed.")
+
+    if x.severity == "low" and x.exploitation in ("elevated", "claimed_unverified", "low_observed") \
+            and p in ("P1", "P2"):
+        p = "P3"
+        trace.append("Capped at P3: low severity — CVSS below 4 and no confirmed attacks, so it stays at P3 or lower.")
 
     if x.exposure == "needs_review":
         trace.append(f"Needs review: your version may or may not be affected — applicability is ambiguous; would be {p} if confirmed affected.")
@@ -144,21 +167,23 @@ def exploitation_level(bundle: EvidenceBundle, llm: LlmAnalysis | None) -> tuple
     if exploited and exploited.value == Truth.TRUE:
         return "confirmed", notes
     epss_high = bool(bundle.epss and bundle.epss.probability >= EPSS_ELEVATED)
-    if (claimed and claimed.value == Truth.TRUE) or epss_high:
+    ssvc_poc = bool(bundle.ssvc and bundle.ssvc.exploitation in ("poc", "active"))
+    if ssvc_poc or epss_high:
         return "elevated", notes
     epss_failed = bundle.source_status(SourceName.EPSS) in (SourceStatus.FAILED, SourceStatus.RATE_LIMITED)
     if (exploited and exploited.value == Truth.RETRIEVAL_FAILED) or (
             claimed and claimed.value == Truth.RETRIEVAL_FAILED) or epss_failed:
         return "evidence_incomplete", notes
+    level = "claimed_unverified" if (claimed and claimed.value == Truth.TRUE) else "low_observed"
     if llm and llm.status == LlmStatus.OK and llm.assessment:
         d = llm.assessment.exploit_development_difficulty
         n = len(d.prerequisites) + len(d.complexity_factors) + len(d.research_availability)
         if d.rating == "low" and n >= 2:
             notes.append("AI judgement raised attack likelihood — validated, cited AI judgement rates exploit "
-                         "development as LOW, so exploitation was raised from low_observed to elevated. This is the "
+                         f"development as LOW, so exploitation was raised from {level} to elevated. This is the "
                          "only way the model affects priority.")
             return "elevated", notes
-    return "low_observed", notes
+    return level, notes
 
 
 def _asset_exposure(asset: Asset, cve_id: str) -> tuple[str, list[str]]:
@@ -262,8 +287,8 @@ def _counterfactuals(x: RuleInputs, current: tuple[str, Priority | None], bundle
     if x.exploitation != "confirmed":
         what_if("If attackers are reported using it", "e.g. it is added to CISA's KEV list or CISA SSVC says "
                 "exploitation is active", exploitation="confirmed")
-    if x.exploitation == "low_observed":
-        what_if("If attack code is published or attacks become likely", f"a public exploit/PoC reference appears, "
+    if x.exploitation in ("low_observed", "claimed_unverified"):
+        what_if("If attack code is confirmed or attacks become likely", f"CISA rates a proof-of-concept as existing, "
                 f"or the EPSS score rises to {EPSS_ELEVATED:.2f} or more", exploitation="elevated")
     if x.exploitation == "evidence_incomplete":
         what_if("If the missing sources show no sign of attacks", "the sources that failed are retried and "

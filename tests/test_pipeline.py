@@ -149,3 +149,15 @@ def test_summary_is_specific_to_cve_and_systems(demo_run):
     assert by_id["CVE-2024-3094"].startswith("Your installed version is outside")  # not-affected leads
     assert "not recorded" in by_id["CVE-2023-38545"]  # missing context named, not assumed
     assert "cancelled" in by_id["CVE-2026-11415"]
+
+
+def test_factor_boxes_name_real_systems_and_evidence(demo_run):
+    from cveprio.dashboard import factor_cards
+    cards = {r.cve_id: dict(factor_cards(r)) for r in demo_run.reports}
+    log4j = cards["CVE-2021-44228"]
+    assert "2021-12-10" in log4j["Attack activity"] and "10.0 out of 10" in log4j["Severity on paper"]
+    assert log4j["Your exposure"] == "web-portal-01 is internet-facing and high importance"
+    assert "dev-laptop-17" in cards["CVE-2023-38545"]["Your exposure"]
+    assert "print-srv-01" in cards["CVE-2024-47176"]["Your exposure"]
+    generic = "An affected system is internet-facing or business-critical"
+    assert all(generic not in c["Your exposure"] for c in cards.values())

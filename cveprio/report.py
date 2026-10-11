@@ -235,6 +235,12 @@ def explain_decision(bundle: EvidenceBundle, results: list[ApplicabilityResult],
         if not parts:
             parts.append("the AI assessment rates it easy to exploit (cited and validated)")
         out.append("Attacks are likely: " + "; ".join(parts) + ". No confirmed attacks are on record.")
+    elif e == "claimed_unverified":
+        bits = [f"{n_refs} source{'s' if n_refs != 1 else ''} tagged as attack code by NVD or the CVE record"]
+        if epss:
+            bits.append(f"the predicted chance of attacks in the next 30 days is only {_pct(epss.probability)}")
+        out.append("Attack code may be public, but this is unconfirmed: " + "; ".join(bits)
+                   + ". There is no CISA rating of demo attack code and no known attacks.")
     elif e == "low_observed":
         bits = ["it is not on CISA's attacked list", "no public attack code was found"]
         if epss:
