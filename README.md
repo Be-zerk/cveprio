@@ -1,16 +1,18 @@
-# cveprio: evidence-backed CVE prioritization
+# cveprio
+
+### Evidence-backed CVE prioritization: which vulnerabilities to fix first, and why
 
 [![tests](https://github.com/Be-zerk/cveprio/actions/workflows/tests.yml/badge.svg)](https://github.com/Be-zerk/cveprio/actions/workflows/tests.yml)
 ![Python 3.11 | 3.12 | 3.13](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13-blue)
 
-**cveprio decides which vulnerabilities to fix first, and shows its working.** Give it CVE IDs
-and a list of your systems (or an SBOM). It collects evidence from CVE.org, NVD, CISA KEV, FIRST EPSS,
-OSV.dev and Ubuntu/Red Hat advisories. It checks whether *your* installed versions are affected
+A command-line tool and dashboard that decides which vulnerabilities to fix first, and shows its
+working. Give it CVE IDs and a list of your systems (or an SBOM). It collects evidence from CVE.org,
+NVD, CISA KEV, FIRST EPSS, OSV.dev and Ubuntu/Red Hat advisories. It checks whether *your* installed versions are affected
 and assigns a priority (P1–P4) using a small, documented rule table. Every decision lists its
 sources, what is uncertain, and what would change it.
 
 **The problem:** teams often patch in order of CVSS score. A 10.0 that doesn't affect your version
-outranks a 7.5 that is being attacked on your internet-facing server. cveprio separates the four
+outranks a 7.5 that is being attacked on your internet-facing server. This tool separates the four
 things that matter: *is it being attacked*, *how severe is it on paper*, *does it affect my installed
 version*, and *how exposed and important is that system*.
 
@@ -148,7 +150,7 @@ the author directed on 2026-10-10 and 2026-10-11.
 
 The idea of using language models to judge how practical exploit development is for new CVEs
 came from a suggestion by Matthew Devost. This project extends it with evidence provenance,
-applicability matching and transparent rules; it is not endorsed by him.
+applicability matching and transparent rules. The project is not endorsed by Matthew Devost.
 
 *This product uses the NVD API but is not endorsed or certified by the NVD.* Source attributions
 appear in every report.
