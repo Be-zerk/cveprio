@@ -40,6 +40,14 @@ def _load_inventory(path: Path) -> Inventory:
 def _summary(run: RunReport) -> None:
     for n in run.notices[:2]:
         print(f"! {n}")
+    if run.discovery:
+        disc = run.discovery
+        print(f"\nDiscovery: {disc.total_found} candidate CVEs found, {len(disc.analyzed)} analysed"
+              + (f", {len(disc.dropped)} over the cap (not analysed)" if disc.dropped else ""))
+        for q in disc.queries:
+            extra = f" (+{len(q.non_cve_ids)} non-CVE advisories)" if q.non_cve_ids else ""
+            what = q.detail if q.status != "ok" else f"{len(q.cve_ids)} CVEs{extra}"
+            print(f"  {q.asset_id:<18} {q.product[:22]:<22} {q.version[:24]:<24} {q.method:<9} {q.status:<15} {what}")
     print(f"\n{'CVE':<18} {'DECISION':<24} {'BASELINE':<9} {'EXPLOITATION':<20} {'SEVERITY':<9} EXPOSURE")
     for r in run.reports:
         d = r.decision
@@ -65,20 +73,27 @@ def cmd_analyze(args: argparse.Namespace, settings: Settings) -> int:
     from cveprio.report import write_outputs
 
     inventory = _load_inventory(Path(args.inventory)) if args.inventory else None
-    ids = list(args.cve_ids) + (inventory.watchlist if inventory and not args.cve_ids else [])
-    if not ids:
-        print("error: give at least one CVE ID, or an inventory with a watchlist", file=sys.stderr)
+    discover_cves = bool(getattr(args, "discover", False))
+    ids = list(args.cve_ids) + (inventory.watchlist if inventory and not args.cve_ids and not discover_cves else [])
+    if discover_cves and (inventory is None or args.offline):
+        print("error: --discover needs --inventory and live sources (not --offline)", file=sys.stderr)
+        return 2
+    if not ids and not discover_cves:
+        print("error: give at least one CVE ID, an inventory with a watchlist, or --inventory FILE --discover",
+              file=sys.stderr)
         return 2
     try:
         rt = make_runtime(settings, offline=args.offline, provider_name=args.llm,
                           fixtures=Path(args.fixtures) if args.fixtures else DEFAULT_FIXTURES)
         if rt.provider_error:
             print(f"! AI provider not available — {rt.provider_error}. Continuing without AI assessment.")
-        result = run(ids, rt, inventory)
+        if discover_cves:
+            print("Discovering CVEs from the inventory (NVD CPE match + OSV)...")
+        result = run(ids, rt, inventory, discover_cves=discover_cves, max_cves=getattr(args, "max_cves", 150))
     except InvalidCveId as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
-    except ProviderError as exc:
+    except (ProviderError, ValueError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
     out = Path(args.out)
@@ -159,6 +174,9 @@ def build_parser() -> argparse.ArgumentParser:
     a.add_argument("--fixtures", help="fixture directory for --offline (default: fixtures/demo)")
     a.add_argument("--llm", choices=["none", "ollama", "openai_compatible", "anthropic", "scripted"],
                    help="override CVEPRIO_LLM_PROVIDER")
+    a.add_argument("--discover", action="store_true",
+                   help="find CVEs from the inventory's cpe/purl identifiers (live only) instead of its watchlist")
+    a.add_argument("--max-cves", type=int, default=150, help="cap on discovered CVEs to analyse (default 150)")
     a.add_argument("--out", default="out/latest")
     a.set_defaults(func=cmd_analyze)
 

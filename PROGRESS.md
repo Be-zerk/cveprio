@@ -17,14 +17,15 @@ used ("disregard the other repo"); nothing was copied from it.
 | 3. Business context in prioritization | done | `tests/test_prioritize.py::test_business_context_changes_priority` |
 | 4. Dashboard | done | `out/demo/dashboard.html`; inspected in a browser at desktop and 375 px, light and dark |
 | 5. Evaluation, docs, demo | done | `evaluation/results/`, `docs/`, `README.md` |
+| 6. CVE discovery + disputed records (added after reviewing the demo) | done | `cveprio analyze --inventory examples/inventory.json --discover` → 83 CVEs; `tests/test_discovery.py` |
 
-Acceptance criteria AC1–AC24 are in [docs/PLAN.md](docs/PLAN.md); the assessment against
+Acceptance criteria AC1–AC28 are in [docs/PLAN.md](docs/PLAN.md); the assessment against
 them is at the end of this file.
 
 ## What was run (2026-10-10)
 
-- `pytest`: **147 passed, 2 skipped** (the 2 live tests are opt-in).
-- `CVEPRIO_LIVE_TESTS=1 pytest -m live`: **2 passed** against the real CVE.org, NVD, KEV and EPSS APIs.
+- `pytest`: **162 passed, 3 skipped** (the 3 live tests are opt-in).
+- `CVEPRIO_LIVE_TESTS=1 pytest -m live`: **3 passed** against the real CVE.org, NVD, KEV, EPSS and OSV APIs (incl. discovery).
 - `ruff check cveprio tests`: clean. `mypy cveprio`: clean.
 - `cveprio demo`: completes offline, exit code 0.
 - Live end-to-end: `cveprio analyze CVE-2024-3400 CVE-2023-4966 --inventory examples/inventory.json` → exit 0, all sources `ok`.
@@ -94,4 +95,8 @@ resolve `needs_review` for package versions; NVD CPE-based CVE discovery from an
 | AC21 demo labelled | yes | `test_demo_clearly_labelled_everywhere` |
 | AC22 no secrets | yes | `test_cli_demo_writes_outputs_and_no_secrets`, repo scan test, masked `Settings` |
 | AC23 evaluation report | yes | `evaluation/results/eval-*.md` |
+| AC25 discovery from inventory | yes | `test_discover_merges_sources…`, live `test_live_discovery_finds_known_log4j_cves` |
+| AC26 nothing silently skipped | yes | `not_searchable` rows, cap/failed caveats; `test_discover_merges_sources…` |
+| AC27 discovered CVEs re-checked | yes | live run: CVE-2023-44794 (Spring-based product) → `NOT_IN_INVENTORY` |
+| AC28 disputed records | yes | `test_disputed_tag_flagged_but_priority_not_lowered`, `test_dispute_wording_in_description_detected` |
 | AC24 new-user walkthrough | mostly | the author ran the demo, set an NVD key and ran a live inventory analysis following the docs; configuring a model provider themselves is not yet done |

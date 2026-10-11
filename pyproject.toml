@@ -26,7 +26,7 @@ cveprio = "cveprio.cli:main"
 include = ["cveprio*"]
 
 [tool.setuptools.package-data]
-cveprio = ["templates/*.j2"]
+cveprio = ["templates/*.j2", "data/*.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

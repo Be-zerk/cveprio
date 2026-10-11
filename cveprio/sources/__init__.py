@@ -10,7 +10,7 @@ import json
 import re
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
-from typing import Any
+from typing import Any, Literal
 
 from cveprio.models import SourceName, SourceOutcome, SourceStatus
 from cveprio.net import Fetcher, FetchError, FetchResult
@@ -160,3 +160,74 @@ def fetch_epss(fetcher: Fetcher, cve_ids: list[str]) -> EpssBatch:
             for cid in batch:
                 outcomes[cid] = _outcome(SourceName.EPSS, _status_for_error(err), url, err=err, demo=fetcher.demo)
     return EpssBatch(outcomes, scores)
+
+
+# ------------------------------------------------------------------ CVE discovery
+
+NVD_BY_CPE = "https://services.nvd.nist.gov/rest/json/cves/2.0?virtualMatchString={cpe}&noRejected&resultsPerPage={n}&startIndex={start}"
+OSV_QUERY = "https://api.osv.dev/v1/query"
+CPE23_WITH_VERSION = re.compile(r"^cpe:2\.3:[aho]:[^:*]+:[^:*]+:(?![*\-]:)[^:]+(:[^:]*){7}$")
+PURL_WITH_VERSION = re.compile(r"^pkg:[a-z0-9.+-]+/.+@[^@\s]+$")
+CVE_IN_TEXT = re.compile(r"^CVE-\d{4}-\d{4,}$")
+
+
+HitStatus = Literal["ok", "failed", "rate_limited", "truncated"]
+
+
+@dataclass
+class DiscoveryHit:
+    status: HitStatus
+    cve_ids: list[str]
+    non_cve_ids: list[str]
+    detail: str | None = None
+
+
+def discover_nvd_by_cpe(fetcher: Fetcher, cpe: str, api_key: str | None = None, max_results: int = 400) -> DiscoveryHit:
+    """CVEs whose NVD configurations match this exact CPE (product + version)."""
+    from urllib.parse import quote
+    page = 200
+    ids: list[str] = []
+    start = 0
+    headers = {"apiKey": api_key} if api_key else None
+    try:
+        while True:
+            url = NVD_BY_CPE.format(cpe=quote(cpe, safe=":*"), n=page, start=start)
+            data = _parse_json(fetcher.get(url, headers=headers, max_bytes=16 * 1024 * 1024))
+            batch = [v["cve"]["id"] for v in data.get("vulnerabilities", []) if v.get("cve", {}).get("id")]
+            ids.extend(batch)
+            total = int(data.get("totalResults", 0))
+            start += len(batch)
+            if not batch or start >= total:
+                return DiscoveryHit("ok", sorted(set(ids)), [])
+            if start >= max_results:
+                return DiscoveryHit("truncated", sorted(set(ids)), [],
+                                    f"NVD reports {total} matches; only the first {start} were collected")
+    except FetchError as err:
+        return DiscoveryHit("rate_limited" if err.kind == "rate_limited" else "failed", sorted(set(ids)), [], str(err))
+
+
+def discover_osv_by_purl(fetcher: Fetcher, purl: str, max_pages: int = 5) -> DiscoveryHit:
+    """OSV advisories for this package URL (with version). CVE IDs come from the id or its aliases."""
+    cves: set[str] = set()
+    others: set[str] = set()
+    token: str | None = None
+    try:
+        for _ in range(max_pages):
+            body: dict[str, object] = {"package": {"purl": purl}}
+            if token:
+                body["page_token"] = token
+            data = _parse_json(fetcher.post_json(OSV_QUERY, body))
+            for v in data.get("vulns", []) or []:
+                names = [str(v.get("id", ""))] + [str(a) for a in v.get("aliases", []) or []]
+                found = [n for n in names if CVE_IN_TEXT.match(n)]
+                if found:
+                    cves.update(found)
+                else:
+                    others.add(str(v.get("id")))
+            token = data.get("next_page_token")
+            if not token:
+                return DiscoveryHit("ok", sorted(cves), sorted(others))
+        return DiscoveryHit("truncated", sorted(cves), sorted(others), f"stopped after {max_pages} pages")
+    except FetchError as err:
+        return DiscoveryHit("rate_limited" if err.kind == "rate_limited" else "failed", sorted(cves), sorted(others),
+                            str(err))

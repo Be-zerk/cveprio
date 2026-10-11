@@ -1,6 +1,8 @@
 # Demonstration walkthrough (≈ 10 minutes)
 
-Everything here runs offline from recorded fixtures. Outputs are labelled
+Everything here runs offline from recorded fixtures. The 9 CVEs are a **hand-picked**
+watchlist chosen to show every outcome — not the full set of CVEs affecting the fictional
+company's software (e.g. its Log4j version has several more). Say this when presenting. Outputs are labelled
 `OFFLINE DEMO`; the company (Northbeam Logistics) and its assets are fictional.
 
 ## 1. Run it
@@ -63,7 +65,19 @@ This produces genuine model output (labelled with the model name). Compare how m
 claims survive validation with the scripted example. Saved results from a run during
 development are in `evaluation/results/`.
 
-## 5. Optional: live data
+## 5. Live discovery: from software list to CVEs
+
+```bash
+cveprio analyze --inventory examples/inventory.json --discover --out out/discover
+```
+
+Instead of the hand-picked list, this searches NVD and OSV for every inventory item that
+has a CPE or purl. On 2026-10-10 it found 83 candidate CVEs (about a minute with an NVD key).
+Point out: the discovery table lists items that could **not** be searched (no identifier),
+a Spring-based product found by discovery is filtered as `NOT_IN_INVENTORY`, and
+CVE-2016-1000027 is flagged as disputed without being deprioritised.
+
+## 6. Optional: live data
 
 ```bash
 cveprio analyze CVE-2024-3400 --inventory examples/inventory.json --out out/live

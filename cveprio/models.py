@@ -83,6 +83,7 @@ class CvssScore(BaseModel):
     vector: str | None
     provider: str
     provider_type: str | None = None  # NVD "Primary"/"Secondary", or "cna"/"adp"
+    provider_id: str | None = None  # the source's own identifier when it differs from the display name (e.g. an org UUID)
     attack_vector: str | None = None
     attack_complexity: str | None = None
     attack_requirements: str | None = None
@@ -204,6 +205,7 @@ class SoftwareItem(BaseModel):
     version: str
     package_name: str | None = None
     cpe: str | None = None
+    purl: str | None = None  # package URL, e.g. pkg:maven/org.apache.logging.log4j/log4j-core@2.14.1
     notes: str | None = None
 
 
@@ -349,6 +351,29 @@ class CveReport(BaseModel):
     known: list[str]
     uncertain: list[str]
     context_supplied: bool
+    discovered_by: list[str] = Field(default_factory=list)  # empty = supplied by the user (watchlist/CLI)
+
+
+class DiscoveryQuery(BaseModel):
+    """One lookup of 'which CVEs affect this software item?'."""
+
+    asset_id: str
+    product: str
+    version: str
+    method: Literal["nvd_cpe", "osv_purl", "none"]
+    query: str | None = None
+    status: Literal["ok", "failed", "rate_limited", "not_searchable", "truncated"]
+    cve_ids: list[str] = Field(default_factory=list)
+    non_cve_ids: list[str] = Field(default_factory=list)  # e.g. GHSA advisories with no CVE alias
+    detail: str | None = None
+
+
+class DiscoverySummary(BaseModel):
+    queries: list[DiscoveryQuery]
+    total_found: int
+    analyzed: list[str]
+    dropped: list[str] = Field(default_factory=list)  # over the --max-cves cap
+    caveats: list[str] = Field(default_factory=list)
 
 
 class RunReport(BaseModel):
@@ -360,3 +385,4 @@ class RunReport(BaseModel):
     fictional_context: bool = False
     reports: list[CveReport]
     notices: list[str]
+    discovery: DiscoverySummary | None = None

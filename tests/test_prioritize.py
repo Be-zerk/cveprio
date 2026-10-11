@@ -102,7 +102,7 @@ def test_kev_counterfactual_and_listing():
     assert any("KEV" in c and "P1" in c for c in d.counterfactuals)
     b2 = synthetic_bundle(kev=(200, kev_feed(["CVE-1999-99001"])))
     d2 = prioritize(b2, None, _affected(), {"a1": _asset(criticality="low", internet_facing=False)})
-    assert d2.label == "P1" and any("required action" in a.lower() for a in d2.actions)
+    assert d2.label == "P1" and any("CISA" in a and "Apply updates per vendor instructions" in a for a in d2.actions)
 
 
 def _llm(rating: str, n_claims: int) -> LlmAnalysis:

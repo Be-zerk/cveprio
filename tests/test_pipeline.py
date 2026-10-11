@@ -131,3 +131,11 @@ def test_dashboard_escapes_untrusted_text_and_blocks_network():
     assert "&lt;script&gt;alert(1)" in html
     assert 'href="javascript:' not in html
     assert "default-src 'none'" in html
+
+
+def test_cvss_vector_explained_in_plain_words():
+    from cveprio.cvss import explain_vector
+    got = dict(explain_vector("CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H"))
+    assert got["Attack from"].startswith("the network") and got["Login / privileges needed"] == "none"
+    assert dict(explain_vector("AV:N/AC:M/Au:N/C:P/I:P/A:P"))["Authentication needed"] == "none"  # CVSS v2
+    assert explain_vector(None) == []

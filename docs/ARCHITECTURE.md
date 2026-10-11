@@ -5,6 +5,7 @@
 | Concern | Module | Responsibility | Does NOT |
 |---|---|---|---|
 | Retrieval | `net.py`, `sources/__init__.py` | Fetch CVE.org, NVD, KEV, EPSS; report an honest per-source outcome (`ok/not_found/failed/rate_limited/skipped`) | interpret security meaning |
+| CVE discovery | `discovery.py`, `sources/` | Inventory → candidate CVEs via NVD CPE match and OSV purl query; reports unsearchable items and caps | decide applicability (re-checked downstream) |
 | Offline fixtures | `net.FixtureFetcher`, `capture.py` | Replay recorded responses with their original retrieval times | ever touch the network |
 | Normalisation | `normalize.py` | Build `Evidence` items with stable IDs and provenance; derive five-valued `Finding`s; detect conflicts and stale signals | rank or recommend |
 | Applicability | `versions.py`, `applicability.py` | Decide if an inventory item is affected, conservatively | use fuzzy matches as positive evidence |
@@ -66,10 +67,21 @@ labelled "SCRIPTED EXAMPLE — not produced by a language model".
 `jinja2` (autoescaped HTML). SQLite (stdlib) for the cache. The optional `anthropic` SDK
 for Claude. No database server, queue or web framework.
 
+## CVE discovery (stage 6)
+
+A hand-picked watchlist silently misses CVEs (the demo inventory's Log4j 2.14.1 is affected
+by at least 10 CVEs per NVD; the watchlist had 1). `--discover` derives candidates from the
+inventory: versioned CPE 2.3 → NVD `virtualMatchString`; versioned purl → OSV `/v1/query`
+(CVE IDs from `id` or `aliases`; non-CVE advisories counted, not analysed). Results are
+unioned with a "found by" note per CVE. Discovery is deliberately *recall-oriented*: it may
+return CVEs where the item is only a platform (e.g. a product that runs on Spring), and the
+applicability engine filters those (`NOT_IN_INVENTORY`). Nothing is silently skipped: items
+without identifiers, failed lookups, truncated result sets and the cap all appear in the report.
+
 ## Retrieval safety
 
 - HTTPS only; hosts restricted to `cveawg.mitre.org`, `services.nvd.nist.gov`,
-  `api.first.org`, `www.cisa.gov`. No user-supplied or retrieved URL is ever fetched
+  `api.first.org`, `www.cisa.gov`, `api.osv.dev` (POST JSON queries only for OSV). No user-supplied or retrieved URL is ever fetched
   (reference URLs are shown as links, never requested).
 - Every resolved IP must be global: loopback, RFC1918, link-local (incl. cloud metadata
   `169.254.169.254`), CGNAT, ULA and multicast are refused.

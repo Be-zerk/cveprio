@@ -16,7 +16,7 @@ score. The model can raise one factor in one narrowly defined case and is otherw
 advisory ([docs/PRIORITIZATION.md](docs/PRIORITIZATION.md)).
 
 > **Status: working prototype, not production software.** The offline test suite
-> (142 tests) and the 2 opt-in live API checks pass as of 2026-10-10, but tests do not
+> (162 tests) and the 3 opt-in live API checks pass as of 2026-10-10, but tests do not
 > establish that every security judgement is correct. See [Limitations](#limitations).
 
 The idea of using LLMs to judge how practical exploit development is for incoming CVEs
@@ -33,6 +33,8 @@ cveprio demo
 cveprio serve out/demo        # open http://127.0.0.1:8765/dashboard.html
 ```
 
+The demo's CVE watchlist is **hand-picked** to show every kind of outcome; it is not a
+complete list of the CVEs affecting that inventory (live `--discover` finds those).
 The demo uses **recorded real API responses** (`fixtures/demo/`, captured 2026-10-10)
 and a **fictional** company inventory (`examples/inventory.json`). Every output is
 labelled `OFFLINE DEMO`. The AI section in the demo shows **scripted examples written
@@ -47,7 +49,8 @@ Requires Python ≥ 3.11 (developed on 3.13).
 cp .env.example .env                        # optional; edit values
 cveprio check-config                        # shows effective settings, secrets masked
 cveprio analyze CVE-2024-6387               # one CVE, live sources, no model
-cveprio analyze --inventory examples/inventory.json            # inventory + its watchlist
+cveprio analyze --inventory examples/inventory.json            # inventory + its (hand-picked) watchlist
+cveprio analyze --inventory examples/inventory.json --discover # find CVEs from the software list itself
 cveprio analyze CVE-2024-6387 --llm ollama                     # with a local Ollama model
 ```
 
@@ -63,6 +66,7 @@ Exit codes: `0` ok · `2` invalid input · `3` finished but a source failed (res
 | NVD CVE API 2.0 | NVD CVSS, CPE configurations, reference tags | 5 req/30 s without key; a free [API key](https://nvd.nist.gov/developers/request-an-api-key) gives 50. *This product uses the NVD API but is not endorsed or certified by the NVD.* |
 | CISA KEV | known exploitation | CC0 JSON feed |
 | FIRST EPSS | 30-day exploitation-activity probability | free; attribution requested |
+| OSV.dev | CVE discovery for packages identified by purl (`--discover`) | free, no key |
 
 ### Model providers (optional) — separate from Claude Code
 
@@ -87,7 +91,18 @@ See [`examples/inventory.json`](examples/inventory.json). Per asset: `id`, `name
 optional context: `criticality` (`low`…`critical`), `internet_facing`,
 `compensating_controls[]`. **Missing context is treated as unknown, never as "low" or
 "not exposed".** Providing a CPE (`cpe:2.3:a:vendor:product:version:...`) makes matching
-against NVD much more reliable.
+against NVD much more reliable, and it is what `--discover` searches with. Add a
+`purl` (`pkg:maven/group/artifact@version`, `pkg:pypi/name@version`, …) to also search OSV.dev.
+
+### Finding CVEs automatically (`--discover`)
+
+`--discover` starts from the inventory instead of a watchlist: each item with a versioned
+CPE is searched in NVD, each item with a versioned purl in OSV.dev, and every CVE found
+goes through the normal pipeline (where the deployed version is re-checked, so discovery
+false positives end up "not applicable"). The report lists every lookup, including items
+that **could not be searched** because they lack a CPE/purl, and the limits of discovery.
+Run against the example inventory on 2026-10-10 it found **83** candidate CVEs, versus 9 in
+the hand-picked watchlist. Live only; capped by `--max-cves` (default 150, KEV-listed kept first).
 
 ## How it works
 
@@ -120,6 +135,8 @@ cveprio capture-fixtures CVE-...    # record new offline fixtures
 
 - **Prototype.** Not hardened, not load-tested, single-user, no authentication on `serve` (bound to 127.0.0.1).
 - **Small, non-held-out evaluation** (14 cases over CVEs also used during development; reference labels drafted with AI assistance and reviewed by the author). No claim of real-world predictive accuracy.
+- **Discovery is only as complete as the identifiers**: items without a CPE/purl are not searched (reported), a product listed under several CPE names (curl vs libcurl) may be missed, and vendor/distribution advisories are not searched.
+- **Disputed CVEs** are flagged (structured tags, or dispute wording in the description — heuristic) but their priority is not lowered automatically.
 - **Applicability is conservative and partial**: distro package versions (deb/rpm), free-text version ranges and platform-conditional NVD configurations go to `needs_review`. Vendor/product naming differs across sources; supplying CPEs helps.
 - **Exploit evidence is shallow by design**: exploit-tagged references and CISA SSVC are treated as *claims*; the tool never downloads or runs exploit code and does not search exploit databases.
 - **Rules have blind spots** — e.g. a supply-chain backdoor (CVE-2024-3094) with no KEV listing gets P2 on an internal asset, where a human would say P1 (documented in the evaluation).

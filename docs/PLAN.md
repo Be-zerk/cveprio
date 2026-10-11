@@ -41,6 +41,7 @@ into structured, citation-checked observations; it never sets the priority.
 3. Business context (criticality, internet exposure, compensating controls) changes priority via documented rules.
 4. Static dashboard exposing evidence, uncertainty and recommendations.
 5. Evaluation (fixture tests, model-quality eval, baseline comparison), docs, demo walkthrough.
+6. *(added 2026-10-10 after review of the demo)* CVE discovery from the inventory (NVD CPE match + OSV), and disputed-record handling.
 
 ## Acceptance criteria
 
@@ -77,6 +78,12 @@ Each criterion maps to at least one automated test (see `tests/`) unless marked 
 - AC20 Source failures and rate limits degrade visibly (partial results flagged), never silently replaced with fixture data.
 - AC21 Offline demo mode is visibly labelled in CLI output, JSON, Markdown and dashboard.
 - AC22 No secrets in code, fixtures, logs or reports; `.env.example` contains placeholders only.
+
+**Discovery (stage 6)**
+- AC25 With `--discover`, CVEs are found from inventory identifiers (versioned CPE → NVD, versioned purl → OSV), unioned, and each records how it was found.
+- AC26 Items that cannot be searched, failed/truncated lookups, non-CVE advisories and the analysis cap are reported, never silently skipped.
+- AC27 Discovered CVEs are re-checked by the applicability engine before they can receive a priority.
+- AC28 Disputed records (structured tags or dispute wording) are flagged and explained; priority is not lowered automatically.
 
 **Evaluation and delivery**
 - AC23 Evaluation reports priority agreement with documented reference judgements for both the contextual rules and the severity-only baseline, plus applicability errors, citation validity and unsupported-claim counts; it states the set is too small to claim predictive accuracy.

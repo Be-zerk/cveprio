@@ -39,3 +39,17 @@ def test_live_sources_ok_and_schema_parsed(live_reports):
 def test_live_rejected_and_missing(live_reports):
     assert live_reports["CVE-2026-11415"].decision.label == "NO_ACTION_REJECTED"
     assert live_reports["CVE-2099-99999999"].decision.label == "INVALID_OR_UNPUBLISHED"
+
+
+def test_live_discovery_finds_known_log4j_cves(tmp_path):
+    from cveprio.models import Asset, Inventory, SoftwareItem
+    settings = Settings.from_env()
+    settings.cache_path = tmp_path / "c.sqlite"
+    rt = make_runtime(settings, offline=False, provider_name="none")
+    inv = Inventory(assets=[Asset(id="a", name="a", criticality="high", internet_facing=True, software=[
+        SoftwareItem(vendor="Apache", product="log4j-core", version="2.14.1",
+                     cpe="cpe:2.3:a:apache:log4j:2.14.1:*:*:*:*:*:*:*",
+                     purl="pkg:maven/org.apache.logging.log4j/log4j-core@2.14.1")])])
+    report = run([], rt, inv, discover_cves=True, max_cves=20)
+    assert report.discovery and {"CVE-2021-44228", "CVE-2021-45046"} <= set(report.discovery.analyzed)
+    assert all(q.status == "ok" for q in report.discovery.queries)

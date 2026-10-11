@@ -149,3 +149,11 @@ __all__ = ["CVE_ORG_ID", "NOW", "FakeFetcher", "bundle_from", "cve5_record", "ke
 
 def project_root() -> Path:
     return Path(__file__).resolve().parent.parent
+
+
+def _fake_post_json(self, url, body, **kw):
+    from cveprio.net import post_cache_key
+    return self.get(post_cache_key(url, body))
+
+
+FakeFetcher.post_json = _fake_post_json  # type: ignore[attr-defined]

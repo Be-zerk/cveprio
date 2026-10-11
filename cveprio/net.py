@@ -40,6 +40,7 @@ ALLOWED_HOSTS = frozenset(
         "services.nvd.nist.gov",
         "api.first.org",
         "www.cisa.gov",
+        "api.osv.dev",
     }
 )
 USER_AGENT = "cveprio/0.1 (evidence-backed CVE prioritization; research prototype)"
@@ -79,6 +80,15 @@ class Fetcher(Protocol):
         self, url: str, *, headers: dict[str, str] | None = None, max_bytes: int = DEFAULT_MAX_BYTES,
         ttl: timedelta = timedelta(hours=24), accept_status: tuple[int, ...] = (200,),
     ) -> FetchResult: ...
+
+    def post_json(
+        self, url: str, body: dict[str, object], *, max_bytes: int = DEFAULT_MAX_BYTES,
+        ttl: timedelta = timedelta(hours=24),
+    ) -> FetchResult: ...
+
+
+def post_cache_key(url: str, body: dict[str, object]) -> str:
+    return url + "#" + json.dumps(body, sort_keys=True, separators=(",", ":"))
 
 
 Resolver = Callable[[str], list[str]]
@@ -186,13 +196,31 @@ class SafeFetcher:
             self.cache.put(result)
         return result
 
+    def post_json(
+        self, url: str, body: dict[str, object], *, max_bytes: int = DEFAULT_MAX_BYTES,
+        ttl: timedelta = timedelta(hours=24),
+    ) -> FetchResult:
+        """POST a JSON query (used for OSV). Same validation, limits, retries; cached by URL + body."""
+        key = post_cache_key(url, body)
+        if self.cache:
+            cached = self.cache.get(key, ttl)
+            if cached and cached.status_code == 200:
+                return cached
+        result = self._get_with_retries(url, {"Content-Type": "application/json"}, max_bytes, (200,),
+                                        method="POST", content=json.dumps(body).encode())
+        if self.cache:
+            self.cache.put(FetchResult(url=key, status_code=result.status_code, body=result.body,
+                                       retrieved_at=result.retrieved_at))
+        return result
+
     def _get_with_retries(
-        self, url: str, headers: dict[str, str], max_bytes: int, accept_status: tuple[int, ...]
+        self, url: str, headers: dict[str, str], max_bytes: int, accept_status: tuple[int, ...],
+        method: str = "GET", content: bytes | None = None,
     ) -> FetchResult:
         last_error: FetchError | None = None
         for attempt in range(1, MAX_ATTEMPTS + 1):
             try:
-                return self._get_once(url, headers, max_bytes, accept_status)
+                return self._get_once(url, headers, max_bytes, accept_status, method, content)
             except FetchError as err:
                 last_error = err
                 retryable = err.kind in ("timeout", "network", "rate_limited") or (
@@ -206,14 +234,15 @@ class SafeFetcher:
         raise last_error  # pragma: no cover
 
     def _get_once(
-        self, url: str, headers: dict[str, str], max_bytes: int, accept_status: tuple[int, ...]
+        self, url: str, headers: dict[str, str], max_bytes: int, accept_status: tuple[int, ...],
+        method: str = "GET", content: bytes | None = None,
     ) -> FetchResult:
         current = url
         for _hop in range(MAX_REDIRECTS + 1):
             validate_url(current, resolver=self.resolver)
             self._throttle(urlsplit(current).hostname or "")
             try:
-                with self.client.stream("GET", current, headers=headers) as resp:
+                with self.client.stream(method, current, headers=headers, content=content) as resp:
                     if resp.is_redirect:
                         location = resp.headers.get("location", "")
                         current = str(httpx.URL(current).join(location))
@@ -282,3 +311,9 @@ class FixtureFetcher:
         if status not in accept_status:
             raise FetchError("http", f"HTTP {status} (recorded)", url=url, http_status=status)
         return result
+
+    def post_json(
+        self, url: str, body: dict[str, object], *, max_bytes: int = DEFAULT_MAX_BYTES,
+        ttl: timedelta = timedelta(hours=24),
+    ) -> FetchResult:
+        return self.get(post_cache_key(url, body))

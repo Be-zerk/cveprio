@@ -90,6 +90,53 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
 .st-affected { color: var(--critical-ink); font-weight: 600; }
 .st-needs_review { color: var(--warning-ink); font-weight: 600; }
 .st-not_affected { color: var(--good-ink); font-weight: 600; }
+table.wide { min-width: 680px; }
+table.wide td { overflow-wrap: break-word; }
+.summary-box { border: 1px solid var(--border); border-left: 6px solid var(--c); background: var(--surface-2); border-radius: 10px; padding: 14px 18px; margin: 14px 0 6px; }
+.sum-label { font-size: 20px; font-weight: 700; color: var(--ci); }
+.sum-label .prov { font-size: 13px; font-weight: 500; color: var(--text-2); }
+.sum-why { font-size: 16px; margin: 6px 0 10px; }
+.summary-box h4 { margin: 10px 0 4px; font-size: 13px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-2); }
+.fgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 12px 0; }
+.fcard { border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; background: var(--surface); }
+.fname { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-2); }
+.fval { font-size: 15px; font-weight: 600; margin-top: 2px; }
+.sec { border-top: 1px solid var(--border); padding-top: 6px; margin-top: 18px; }
+.sec h3 { font-size: 17px; margin: 8px 0 2px; display: flex; align-items: center; gap: 8px; }
+.ico { display: inline-flex; width: 24px; height: 24px; border-radius: 50%; align-items: center; justify-content: center; font-size: 14px; background: var(--badge-neutral); }
+.sec-known .ico { color: var(--good-ink); } .sec-unc .ico { color: var(--warning-ink); } .sec-why .ico, .sec-change .ico { color: var(--link); }
+.hint { margin: 0 0 6px; color: var(--text-2); font-size: 13px; }
+ul.items, ol.items { margin: 4px 0; padding-left: 22px; line-height: 1.6; }
+ul.items li, ol.items li { margin: 8px 0; }
+.chips { display: inline-flex; flex-wrap: wrap; gap: 4px; vertical-align: 1px; }
+.chip { font-size: 11px; line-height: 1.6; padding: 0 7px; border-radius: 999px; background: var(--badge-neutral); color: var(--text-2); text-decoration: none; white-space: nowrap; font-variant-numeric: tabular-nums; }
+a.chip:hover { color: var(--link); }
+.desc-box { margin-top: 18px; border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; background: var(--surface-2); }
+.desc-box summary { cursor: pointer; }
+.desc-box p { color: var(--text-2); margin: 8px 0 4px; }
+.primary-row td { font-weight: 600; }
+.fcode { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.fcode code, code.vec { font-size: 11.5px; }
+code.vec { overflow-wrap: anywhere; color: var(--text-2); }
+details.more-chips { display: inline; }
+details.more-chips > summary { display: inline; list-style: none; cursor: pointer; }
+details.more-chips > summary::-webkit-details-marker { display: none; }
+details.more-chips[open] > summary { display: none; }
+details.more-chips a.chip { margin-right: 4px; }
+.bshort { font-weight: 500; }
+details.bmore { display: inline; margin-left: 6px; }
+details.bmore > summary { display: inline; list-style: none; cursor: pointer; font-size: 12px; color: var(--link); white-space: nowrap; }
+details.bmore > summary::-webkit-details-marker { display: none; }
+details.bmore > summary::before { content: "▸ "; }
+details.bmore[open] > summary::before { content: "▾ "; }
+.bdetail { display: block; margin: 4px 0 2px; padding: 6px 10px; border-left: 3px solid var(--border); background: var(--surface-2); border-radius: 0 6px 6px 0; font-size: 13.5px; color: var(--text-2); line-height: 1.5; }
+.srcs { display: block; margin-top: 4px; font-size: 12px; color: var(--muted); }
+.tech table, .tech tbody, .tech tr, .tech th, .tech td { display: block; width: auto; }
+.tech tr { padding: 6px 0; border-bottom: 1px solid var(--border); }
+.tech th, .tech td { border: 0; padding: 2px 0; }
+.tech th { color: var(--text-2); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+.tech td { overflow-wrap: break-word; }
+tr:target td { background: var(--demo-bg); }
 footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
 .hidden { display: none !important; }
 @media (max-width: 760px) {
@@ -102,7 +149,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
 <main>
 <header>
   <h1>CVE prioritization · Northbeam Logistics (fictional)</h1>
-  <div class="meta">Generated 2026-10-10 22:17 UTC · mode <b>offline_demo</b> · cveprio 0.1.0 · 9 CVEs</div>
+  <div class="meta">Generated 2026-10-11 02:06 UTC · mode <b>offline_demo</b> · cveprio 0.1.0 · 9 CVEs</div>
   <div class="banner" role="note">⚠ OFFLINE DEMO DATA — recorded fixtures, not live results.
     <small>Source responses were recorded at the retrieval times shown in each evidence table and may be out of date. The inventory and business context are fictional.</small></div>
   <ul class="notices"><li>This product uses the NVD API but is not endorsed or certified by the NVD.</li><li>CVE records: CVE Program (cve.org). KEV: CISA Known Exploited Vulnerabilities catalogue (CC0). EPSS: FIRST.org Exploit Prediction Scoring System (https://www.first.org/epss).</li></ul>
@@ -137,6 +184,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
   </div>
 </section>
 
+
 <h2>Contextual rules vs severity-only baseline</h2>
 <div class="compare">
   <p style="margin:0 0 6px">5 of 7 published CVEs get a different outcome than a CVSS-only ranking:</p>
@@ -156,32 +204,85 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
   <summary>
     <span class="cveid">CVE-2021-44228</span>
     <span><span class="badge s-critical"><span aria-hidden="true">▲</span>P1</span></span>
-    <span class="headline">P1: Act now: emergency change / out-of-band patching</span>
+    <span class="headline">Fix now · <span class="meta">Apache Log4j2 JNDI features do not protect against attacker...</span></span>
     <span class="factors">
-      <span>exploitation <b>confirmed</b></span>
-      <span>severity <b>critical</b></span>
-      <span>exposure <b>high</b></span>
-      <span>CVSS-only baseline <b>P1</b></span>
+      <span>attacks: <b>actively attacked</b></span>
+      <span>severity: <b>critical</b></span>
+      <span>exposure: <b>exposed or critical system</b></span>
+      <span>CVSS-only would say: <b>P1</b></span>
     </span>
   </summary>
   <div class="body">
-    <p class="desc"><b>Source description</b> (verbatim, untrusted) <span class="cite">[CVE.desc]</span><br>Apache Log4j2 JNDI features do not protect against attacker controlled LDAP and other JNDI related endpoints — Apache Log4j2 2.0-beta9 through 2.15.0 (excluding security releases 2.12.2, 2.12.3, and 2.3.1) JNDI features used in configuration, log messages, and parameters do not protect against attacker controlled LDAP and other JNDI related endpoints. An attacker who can control log messages or log message parameters can execute arbitrary code loaded from LDAP servers when message lookup substitution is enabled. From log4j 2.15.0, this behavior has been disabled by default. From version 2.16.0 (along with 2.12.2, 2.12.3, and 2.3.1), this functionality has been completely removed. Note that this vulnerability is specific to log4j-core and does not affect log4net, log4cxx, or other Apache Logging Services projects.</p>
-    <div class="cols">
-      <div>
-        <h3>What is known (sourced facts)</h3>
-        <ul class="tight"><li>CVE record state PUBLISHED (assigner apache, data version 5.1). [CVE.state]</li><li>Most severe CVSS 3.1: 10.0 CRITICAL (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H) from ADP:CISA-ADP [CVE.cvss.1]</li><li>Weakness: CWE-20, CWE-400, CWE-502, CWE-917 [CVE.cwe, NVD.cwe]</li><li>Kev listed: true — Listed in the CISA Known Exploited Vulnerabilities catalogue. [KEV]</li><li>Exploited in wild: true — Positive evidence of exploitation in the wild (KEV listing and/or CISA SSVC Exploitation=active). [KEV, CVE.ssvc]</li><li>Public exploit claimed: true — 12 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. [CVE.ssvc, NVD.ref.1, NVD.ref.2, NVD.ref.3, NVD.ref.4, NVD.ref.5, NVD.ref.6, NVD.ref.7, NVD.ref.8, NVD.ref.11, NVD.ref.14, NVD.ref.15]</li><li>CISA-ADP SSVC decision points: Exploitation=active, Automatable=yes, Technical Impact=total (assessed 2025-02-04T14:25:34.416117Z). [CVE.ssvc]</li><li>EPSS 1.0000 (percentile 1.0000) for 2026-10-10: estimated probability of exploitation activity being observed in the next 30 days. Not a difficulty or impact score. [EPSS]</li><li>web-portal-01: log4j-core 2.14.1 → affected [NVD.cpe] (matched by NVD apache:log4j)</li></ul>
-        <h3>Why this priority</h3>
-        <ol class="tight"><li>Base P1: exploitation confirmed (KEV and/or SSVC active).</li><li>Exposure high (internet-facing or high-criticality asset) → P1.</li><li>Other assets need version review: legacy-billing-03</li></ol>
-        <h3>Action supported by the evidence</h3>
-        <ul class="tight"><li>Upgrade log4j-core 2.14.1 on web-portal-01 to a fixed release (sources indicate fixed at/after 2.15.0) [NVD.ref.9, NVD.ref.10, NVD.ref.12].</li><li>Confirm the exact build/version (and any platform condition) of Log4j 2.x (bundled by appliance vendor) on legacy-billing-03, then re-run; see reasons [CVE.affected.1].</li><li>CISA KEV required action (quoted source text) [KEV]: For all affected software assets for which updates exist, the only acceptable remediation actions are: 1) Apply updates; OR 2) remove affected assets from agency networks. Temporary mitigations using one of the measures provided at https://www.cisa.gov/uscert/ed-22-02-apache-log4j-recommended-mitigation-measures are only acceptable until updates are available.</li></ul>
-      </div>
-      <div>
-        <h3>What remains uncertain</h3>
-        <ul class="tight"><li>legacy-billing-03: Log4j 2.x (bundled by appliance vendor) → needs_review [CVE.affected.1] — No exact product match; similar product names found (similarity does not establish that this deployment is affected):; CNA:apache: similar name: &#39;log4j&#39; vs &#39;apache log4j2&#39;</li></ul>
-        <h3>What would change the recommendation</h3>
-        <ul class="tight"><li>If a verified compensating control removes reachability → P2</li><li>Once the fix is applied and verified → NOT_APPLICABLE</li></ul>
-      </div>
+    <div class="summary-box s-critical">
+      <div class="sum-label"><span aria-hidden="true">▲</span> Fix now</div>
+<p class="sum-why">Attackers are known to be using it. An affected system is internet-facing or business-critical.</p>      <h4>What to do</h4>
+      <ul class="items"><li><span class="bshort">Upgrade log4j-core on web-portal-01</span><details class="bmore"><summary>details</summary><div class="bdetail">currently 2.14.1; sources indicate the fix is in version 2.15.0 or later. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2021-44228-NVD.ref.9" title="Show evidence NVD.ref.9">NVD.ref.9</a><a class="chip" href="#CVE-2021-44228-NVD.ref.10" title="Show evidence NVD.ref.10">NVD.ref.10</a><a class="chip" href="#CVE-2021-44228-NVD.ref.12" title="Show evidence NVD.ref.12">NVD.ref.12</a></span></span></div></details></li><li><span class="bshort">Check the exact version of Log4j on legacy-billing-03</span><details class="bmore"><summary>details</summary><div class="bdetail">recorded as 2.x (bundled by appliance vendor); confirm the build and any platform condition, then re-run. See the applicability table for why it is unclear. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2021-44228-CVE.affected.1" title="Show evidence CVE.affected.1">CVE.affected.1</a></span></span></div></details></li><li><span class="bshort">Follow CISA&#39;s official instructions for this flaw</span><details class="bmore"><summary>details</summary><div class="bdetail">quoted source text: For all affected software assets for which updates exist, the only acceptable remediation actions are: 1) Apply updates; OR 2) remove affected assets from agency networks. Temporary mitigations using one of the measures provided at https://www.cisa.gov/uscert/ed-22-02-apache-log4j-recommended-mitigation-measures are only acceptable until updates are available. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2021-44228-KEV" title="Show evidence KEV">KEV</a></span></span></div></details></li></ul>
     </div>
+
+    <div class="fgrid">
+      <div class="fcard"><div class="fname">Attack activity</div><div class="fval">Attackers are known to be using it</div></div>
+      <div class="fcard"><div class="fname">Severity on paper</div><div class="fval">Critical (CVSS 9–10)</div></div>
+      <div class="fcard"><div class="fname">Your exposure</div><div class="fval">An affected system is internet-facing or business-critical</div></div>
+    </div>
+
+    <section class="sec sec-why">
+      <h3><span class="ico" aria-hidden="true">→</span>Why this priority</h3>
+      <p class="hint">The rules that produced this decision, step by step.</p>
+      <ol class="items"><li><span class="bshort">Starts at P1: attackers are known to be using it</span><details class="bmore"><summary>details</summary><div class="bdetail">exploitation confirmed by the CISA KEV list and/or CISA SSVC Exploitation=active.</div></details></li><li><span class="bshort">Raised to P1: the system is exposed or critical</span><details class="bmore"><summary>details</summary><div class="bdetail">an affected asset is internet-facing or high-criticality (one step up).</div></details></li><li><span class="bshort">Other assets need a version check</span><details class="bmore"><summary>details</summary><div class="bdetail">legacy-billing-03</div></details></li></ol>
+    </section>
+
+    <div class="cols">
+      <section class="sec sec-known">
+        <h3><span class="ico" aria-hidden="true">✓</span>What we know</h3>
+        <p class="hint">Facts taken directly from the sources. Open “details” for the full explanation and where it came from.</p>
+        <ul class="items"><li><span class="bshort">CVE status: Published (active)</span><details class="bmore"><summary>details</summary><div class="bdetail">assigned by apache; published 2021-12-10; last updated 2025-10-21 <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2021-44228-CVE.state" title="Show evidence CVE.state">CVE.state</a></span></span></div></details></li><li><span class="bshort">Severity: 10.0 / 10 (Critical)</span><details class="bmore"><summary>details</summary><div class="bdetail">CVSS 3.1 score from CISA; 3 sources agree. Full breakdown in Severity score details. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2021-44228-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a></span></span></div></details></li><li><span class="bshort">Type of flaw: Improper Input Validation (+3 more)</span><details class="bmore"><summary>details</summary><div class="bdetail">CWE-20: Improper Input Validation; CWE-400: Uncontrolled Resource Consumption; CWE-502: Deserialization of Untrusted Data; CWE-917: Improper Neutralization of Special Elements used in an Expression Language Statement (&#39;Expression Language Injection&#39;). CWE = MITRE&#39;s Common Weakness Enumeration. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2021-44228-CVE.cwe" title="Show evidence CVE.cwe">CVE.cwe</a><a class="chip" href="#CVE-2021-44228-NVD.cwe" title="Show evidence NVD.cwe">NVD.cwe</a></span></span></div></details></li><li><span class="bshort">On the US government&#39;s list of actively attacked flaws (KEV): Yes</span><details class="bmore"><summary>details</summary><div class="bdetail">Listed in the CISA Known Exploited Vulnerabilities catalogue. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2021-44228-KEV" title="Show evidence KEV">KEV</a></span></span></div></details></li><li><span class="bshort">Known to be exploited by attackers: Yes</span><details class="bmore"><summary>details</summary><div class="bdetail">Positive evidence of exploitation in the wild (KEV listing and/or CISA SSVC Exploitation=active). <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2021-44228-KEV" title="Show evidence KEV">KEV</a><a class="chip" href="#CVE-2021-44228-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">Attack code reported to be public: Yes</span><details class="bmore"><summary>details</summary><div class="bdetail">12 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2021-44228-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a><a class="chip" href="#CVE-2021-44228-NVD.ref.1" title="Show evidence NVD.ref.1">NVD.ref.1</a><a class="chip" href="#CVE-2021-44228-NVD.ref.2" title="Show evidence NVD.ref.2">NVD.ref.2</a><details class="more-chips"><summary class="chip more" title="NVD.ref.3, NVD.ref.4, NVD.ref.5, NVD.ref.6, NVD.ref.7, NVD.ref.8, NVD.ref.11, NVD.ref.14, NVD.ref.15">+9 more</summary><a class="chip" href="#CVE-2021-44228-NVD.ref.3" title="Show evidence NVD.ref.3">NVD.ref.3</a><a class="chip" href="#CVE-2021-44228-NVD.ref.4" title="Show evidence NVD.ref.4">NVD.ref.4</a><a class="chip" href="#CVE-2021-44228-NVD.ref.5" title="Show evidence NVD.ref.5">NVD.ref.5</a><a class="chip" href="#CVE-2021-44228-NVD.ref.6" title="Show evidence NVD.ref.6">NVD.ref.6</a><a class="chip" href="#CVE-2021-44228-NVD.ref.7" title="Show evidence NVD.ref.7">NVD.ref.7</a><a class="chip" href="#CVE-2021-44228-NVD.ref.8" title="Show evidence NVD.ref.8">NVD.ref.8</a><a class="chip" href="#CVE-2021-44228-NVD.ref.11" title="Show evidence NVD.ref.11">NVD.ref.11</a><a class="chip" href="#CVE-2021-44228-NVD.ref.14" title="Show evidence NVD.ref.14">NVD.ref.14</a><a class="chip" href="#CVE-2021-44228-NVD.ref.15" title="Show evidence NVD.ref.15">NVD.ref.15</a></details></span></span></div></details></li><li><span class="bshort">CISA&#39;s rating: attacks have been seen</span><details class="bmore"><summary>details</summary><div class="bdetail">CISA SSVC decision points: Exploitation=active, Automatable=yes, Technical Impact=total; assessed 2025-02-04. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2021-44228-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">Predicted chance of attacks in the next 30 days: &gt;99.9%</span><details class="bmore"><summary>details</summary><div class="bdetail">EPSS 1.0000, higher than 100.0% of all scored CVEs, scored 2026-10-10 (FIRST EPSS model). Estimates exploitation activity, not difficulty or impact. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2021-44228-EPSS" title="Show evidence EPSS">EPSS</a></span></span></div></details></li><li><span class="bshort">web-portal-01: log4j-core 2.14.1 is affected</span><details class="bmore"><summary>details</summary><div class="bdetail">Matched by NVD apache:log4j. NVD apache:log4j: in range ≥2.13.0 &lt;2.15.0 <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2021-44228-NVD.cpe" title="Show evidence NVD.cpe">NVD.cpe</a></span></span></div></details></li></ul>
+      </section>
+      <section class="sec sec-unc">
+        <h3><span class="ico" aria-hidden="true">?</span>What's uncertain</h3>
+        <p class="hint">Gaps, conflicts between sources, and things a person should check.</p>
+        <ul class="items"><li><span class="bshort">legacy-billing-03: Log4j 2.x (bundled by appliance vendor) needs a manual version check</span><details class="bmore"><summary>details</summary><div class="bdetail">No exact product match; similar product names found (similarity does not establish that this deployment is affected):; CNA:apache: similar name: &#39;log4j&#39; vs &#39;apache log4j2&#39; <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2021-44228-CVE.affected.1" title="Show evidence CVE.affected.1">CVE.affected.1</a></span></span></div></details></li></ul>
+      </section>
+    </div>
+
+    <section class="sec sec-change">
+      <h3><span class="ico" aria-hidden="true">↻</span>What would change this decision</h3>
+      <p class="hint">New information that would move the priority up or down.</p>
+      <ul class="items"><li><span class="bshort">If a firewall rule or other protection blocks access to it → Fix in the next patch cycle (P2)</span><details class="bmore"><summary>details</summary><div class="bdetail">a verified compensating control removes reachability</div></details></li><li><span class="bshort">Once the fix is installed and confirmed → no action needed</span><details class="bmore"><summary>details</summary><div class="bdetail">the fix is applied and verified</div></details></li></ul>
+    </section>
+
+    <details class="desc-box">
+      <summary><b>Severity score details</b> <span class="meta">(4 scores from 3 sources; what the score is based on)</span></summary>
+      <p class="hint" style="margin-top:8px">CVSS rates how serious a flaw is on paper (0–10). The rules use the highest score of the newest CVSS version — here 10.0 from CISA.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Source</th><th>CVSS version</th><th>Score</th><th>Rating</th><th>Technical code</th><th>Evidence</th></tr></thead>
+        <tbody>
+        <tr class="primary-row"><td>CISA <b>(used)</b><br><span class="fcode">source ID: <code>ADP:CISA-ADP</code> · adp</span></td><td>3.1</td><td class="num">10.0</td><td>Critical</td><td><code class="vec">CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H</code></td><td><span class="chips"><a class="chip" href="#CVE-2021-44228-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a></span></td></tr>
+        <tr><td>NVD<br><span class="fcode">source ID: <code>nvd@nist.gov</code> · Primary</span></td><td>3.1</td><td class="num">10.0</td><td>Critical</td><td><code class="vec">CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H</code></td><td><span class="chips"><a class="chip" href="#CVE-2021-44228-NVD.cvss.1" title="Show evidence NVD.cvss.1">NVD.cvss.1</a></span></td></tr>
+        <tr><td>CISA (copy in NVD)<br><span class="fcode">source ID: <code>134c704f-9b21-4f2e-91b3-4a467353bcc0</code> · Secondary</span></td><td>3.1</td><td class="num">10.0</td><td>Critical</td><td><code class="vec">CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H</code></td><td><span class="chips"><a class="chip" href="#CVE-2021-44228-NVD.cvss.2" title="Show evidence NVD.cvss.2">NVD.cvss.2</a></span></td></tr>
+        <tr><td>NVD<br><span class="fcode">source ID: <code>nvd@nist.gov</code> · Primary</span></td><td>2.0</td><td class="num">9.3</td><td>High</td><td><code class="vec">AV:N/AC:M/Au:N/C:C/I:C/A:C</code></td><td><span class="chips"><a class="chip" href="#CVE-2021-44228-NVD.cvss.3" title="Show evidence NVD.cvss.3">NVD.cvss.3</a></span></td></tr>
+        </tbody></table></div>
+      <h4 style="margin:12px 0 4px">What the 10.0 score says, in plain words</h4>
+      <ul class="items"><li><b>Attack from:</b> the network (remotely)</li><li><b>Attack complexity:</b> low — no special conditions</li><li><b>Login / privileges needed:</b> none</li><li><b>A user must do something:</b> no</li><li><b>Impact spreads beyond the component:</b> yes</li><li><b>Impact on confidentiality (data theft):</b> high</li><li><b>Impact on integrity (data tampering):</b> high</li><li><b>Impact on availability (outage):</b> high</li></ul>
+      <p class="meta">Technical code: <code>CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H</code></p>
+    </details>
+    <details class="desc-box tech">
+      <summary><b>Technical details</b> <span class="meta">(for specialists: rule codes and raw values)</span></summary>
+      <div class="table-wrap"><table>
+        <tbody>
+        <tr><th>Rule outcome</th><td><code>P1</code> — Act now: emergency change / out-of-band patching</td></tr>
+        <tr><th>Rule inputs</th><td>exploitation <code>confirmed</code> · severity <code>critical</code> · exposure <code>high</code></td></tr>
+        <tr><th>Severity-only baseline</th><td><code>P1</code> (what ranking by CVSS score alone would give)</td></tr>
+        <tr><th>Deterministic findings</th><td><code>kev_listed=true</code> · <code>exploited_in_wild=true</code> · <code>public_exploit_claimed=true</code> · <code>cvss_scored=true</code></td></tr>
+        <tr><th>Record</th><td>state <code>published</code> · weaknesses CWE-20, CWE-400, CWE-502, CWE-917 · EPSS <code>1.0000</code> (percentile 1.0000)</td></tr>
+        <tr><th>How this CVE was selected</th><td>supplied by the user (command line or watchlist)</td></tr>
+        <tr><th>Sources</th><td>cve_org=<code>ok</code> (cached) · nvd=<code>ok</code> (cached) · cisa_kev=<code>ok</code> (cached) · first_epss=<code>ok</code> (cached)</td></tr>
+        </tbody></table></div>
+    </details>
+
+    <details class="desc-box">
+      <summary><b>Official description</b> <span class="meta">(from the CVE record — copied word for word; untrusted text)</span></summary>
+      <p>Apache Log4j2 JNDI features do not protect against attacker controlled LDAP and other JNDI related endpoints — Apache Log4j2 2.0-beta9 through 2.15.0 (excluding security releases 2.12.2, 2.12.3, and 2.3.1) JNDI features used in configuration, log messages, and parameters do not protect against attacker controlled LDAP and other JNDI related endpoints. An attacker who can control log messages or log message parameters can execute arbitrary code loaded from LDAP servers when message lookup substitution is enabled. From log4j 2.15.0, this behavior has been disabled by default. From version 2.16.0 (along with 2.12.2, 2.12.3, and 2.3.1), this functionality has been completely removed. Note that this vulnerability is specific to log4j-core and does not affect log4net, log4cxx, or other Apache Logging Services projects.</p>
+    </details>
 
     <div class="ai">
       <div class="tag">AI-assisted assessment · judgement, not fact</div>
@@ -263,7 +364,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
         <tr id="CVE-2021-44228-NVD.cvss.2">
           <td class="num">NVD.cvss.2</td>
           <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
-          <td>CVSS 3.1 base score 10.0 (CRITICAL) from 134c704f-9b21-4f2e-91b3-4a467353bcc0 [Secondary]</td>
+          <td>CVSS 3.1 base score 10.0 (CRITICAL) from CISA-ADP (copy in NVD) [Secondary]</td>
           <td class="num">2026-10-10 21:13</td>
           <td class="num">- / -</td>
         </tr>
@@ -429,32 +530,84 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
   <summary>
     <span class="cveid">CVE-2023-44487</span>
     <span><span class="badge s-critical"><span aria-hidden="true">▲</span>P1</span></span>
-    <span class="headline">P1: Act now: emergency change / out-of-band patching</span>
+    <span class="headline">Fix now</span>
     <span class="factors">
-      <span>exploitation <b>confirmed</b></span>
-      <span>severity <b>high</b></span>
-      <span>exposure <b>high</b></span>
-      <span>CVSS-only baseline <b>P2</b></span>
+      <span>attacks: <b>actively attacked</b></span>
+      <span>severity: <b>high</b></span>
+      <span>exposure: <b>exposed or critical system</b></span>
+      <span>CVSS-only would say: <b>P2</b></span>
     </span>
   </summary>
   <div class="body">
-    <p class="desc"><b>Source description</b> (verbatim, untrusted) <span class="cite">[CVE.desc]</span><br>The HTTP/2 protocol allows a denial of service (server resource consumption) because request cancellation can reset many streams quickly, as exploited in the wild in August through October 2023.</p>
-    <div class="cols">
-      <div>
-        <h3>What is known (sourced facts)</h3>
-        <ul class="tight"><li>CVE record state PUBLISHED (assigner mitre, data version 5.2). [CVE.state]</li><li>Most severe CVSS 3.1: 7.5 HIGH (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H) from ADP:CISA-ADP [CVE.cvss.1]</li><li>Weakness: CWE-400 [NVD.cwe]</li><li>Kev listed: true — Listed in the CISA Known Exploited Vulnerabilities catalogue. [KEV]</li><li>Exploited in wild: true — Positive evidence of exploitation in the wild (KEV listing and/or CISA SSVC Exploitation=active). [KEV, CVE.ssvc]</li><li>Public exploit claimed: true — 3 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. [CVE.ssvc, NVD.ref.11, NVD.ref.12]</li><li>CISA-ADP SSVC decision points: Exploitation=active, Automatable=yes, Technical Impact=partial (assessed 2024-07-23T20:34:21.334116Z). [CVE.ssvc]</li><li>EPSS 1.0000 (percentile 1.0000) for 2026-10-10: estimated probability of exploitation activity being observed in the next 30 days. Not a difficulty or impact score. [EPSS]</li><li>web-portal-01: nginx 1.25.2 → affected [NVD.cpe] (matched by NVD f5:nginx)</li></ul>
-        <h3>Why this priority</h3>
-        <ol class="tight"><li>Base P1: exploitation confirmed (KEV and/or SSVC active).</li><li>Exposure high (internet-facing or high-criticality asset) → P1.</li></ol>
-        <h3>Action supported by the evidence</h3>
-        <ul class="tight"><li>Upgrade nginx 1.25.2 on web-portal-01 per the vendor advisory [NVD.ref.1, NVD.ref.2, NVD.ref.3].</li><li>CISA KEV required action (quoted source text) [KEV]: Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.</li></ul>
-      </div>
-      <div>
-        <h3>What remains uncertain</h3>
-        <ul class="tight"><li>Nothing flagged.</li></ul>
-        <h3>What would change the recommendation</h3>
-        <ul class="tight"><li>If a verified compensating control removes reachability → P2</li><li>Once the fix is applied and verified → NOT_APPLICABLE</li></ul>
-      </div>
+    <div class="summary-box s-critical">
+      <div class="sum-label"><span aria-hidden="true">▲</span> Fix now</div>
+<p class="sum-why">Attackers are known to be using it. An affected system is internet-facing or business-critical.</p>      <h4>What to do</h4>
+      <ul class="items"><li><span class="bshort">Upgrade nginx on web-portal-01</span><details class="bmore"><summary>details</summary><div class="bdetail">currently 1.25.2; follow the vendor advisory for the fixed version. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-44487-NVD.ref.1" title="Show evidence NVD.ref.1">NVD.ref.1</a><a class="chip" href="#CVE-2023-44487-NVD.ref.2" title="Show evidence NVD.ref.2">NVD.ref.2</a><a class="chip" href="#CVE-2023-44487-NVD.ref.3" title="Show evidence NVD.ref.3">NVD.ref.3</a></span></span></div></details></li><li><span class="bshort">Follow CISA&#39;s official instructions for this flaw</span><details class="bmore"><summary>details</summary><div class="bdetail">quoted source text: Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-44487-KEV" title="Show evidence KEV">KEV</a></span></span></div></details></li></ul>
     </div>
+
+    <div class="fgrid">
+      <div class="fcard"><div class="fname">Attack activity</div><div class="fval">Attackers are known to be using it</div></div>
+      <div class="fcard"><div class="fname">Severity on paper</div><div class="fval">High (CVSS 7–8.9)</div></div>
+      <div class="fcard"><div class="fname">Your exposure</div><div class="fval">An affected system is internet-facing or business-critical</div></div>
+    </div>
+
+    <section class="sec sec-why">
+      <h3><span class="ico" aria-hidden="true">→</span>Why this priority</h3>
+      <p class="hint">The rules that produced this decision, step by step.</p>
+      <ol class="items"><li><span class="bshort">Starts at P1: attackers are known to be using it</span><details class="bmore"><summary>details</summary><div class="bdetail">exploitation confirmed by the CISA KEV list and/or CISA SSVC Exploitation=active.</div></details></li><li><span class="bshort">Raised to P1: the system is exposed or critical</span><details class="bmore"><summary>details</summary><div class="bdetail">an affected asset is internet-facing or high-criticality (one step up).</div></details></li></ol>
+    </section>
+
+    <div class="cols">
+      <section class="sec sec-known">
+        <h3><span class="ico" aria-hidden="true">✓</span>What we know</h3>
+        <p class="hint">Facts taken directly from the sources. Open “details” for the full explanation and where it came from.</p>
+        <ul class="items"><li><span class="bshort">CVE status: Published (active)</span><details class="bmore"><summary>details</summary><div class="bdetail">assigned by mitre; published 2023-10-10; last updated 2026-07-14 <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-44487-CVE.state" title="Show evidence CVE.state">CVE.state</a></span></span></div></details></li><li><span class="bshort">Severity: 7.5 / 10 (High)</span><details class="bmore"><summary>details</summary><div class="bdetail">CVSS 3.1 score from CISA; 3 sources agree. Full breakdown in Severity score details. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-44487-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a></span></span></div></details></li><li><span class="bshort">Type of flaw: Uncontrolled Resource Consumption</span><details class="bmore"><summary>details</summary><div class="bdetail">CWE-400: Uncontrolled Resource Consumption. CWE = MITRE&#39;s Common Weakness Enumeration. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-44487-NVD.cwe" title="Show evidence NVD.cwe">NVD.cwe</a></span></span></div></details></li><li><span class="bshort">On the US government&#39;s list of actively attacked flaws (KEV): Yes</span><details class="bmore"><summary>details</summary><div class="bdetail">Listed in the CISA Known Exploited Vulnerabilities catalogue. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-44487-KEV" title="Show evidence KEV">KEV</a></span></span></div></details></li><li><span class="bshort">Known to be exploited by attackers: Yes</span><details class="bmore"><summary>details</summary><div class="bdetail">Positive evidence of exploitation in the wild (KEV listing and/or CISA SSVC Exploitation=active). <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-44487-KEV" title="Show evidence KEV">KEV</a><a class="chip" href="#CVE-2023-44487-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">Attack code reported to be public: Yes</span><details class="bmore"><summary>details</summary><div class="bdetail">3 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-44487-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a><a class="chip" href="#CVE-2023-44487-NVD.ref.11" title="Show evidence NVD.ref.11">NVD.ref.11</a><a class="chip" href="#CVE-2023-44487-NVD.ref.12" title="Show evidence NVD.ref.12">NVD.ref.12</a></span></span></div></details></li><li><span class="bshort">CISA&#39;s rating: attacks have been seen</span><details class="bmore"><summary>details</summary><div class="bdetail">CISA SSVC decision points: Exploitation=active, Automatable=yes, Technical Impact=partial; assessed 2024-07-23. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-44487-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">Predicted chance of attacks in the next 30 days: &gt;99.9%</span><details class="bmore"><summary>details</summary><div class="bdetail">EPSS 1.0000, higher than 100.0% of all scored CVEs, scored 2026-10-10 (FIRST EPSS model). Estimates exploitation activity, not difficulty or impact. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-44487-EPSS" title="Show evidence EPSS">EPSS</a></span></span></div></details></li><li><span class="bshort">web-portal-01: nginx 1.25.2 is affected</span><details class="bmore"><summary>details</summary><div class="bdetail">Matched by NVD f5:nginx. NVD f5:nginx: in range ≥1.9.5 ≤1.25.2 <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-44487-NVD.cpe" title="Show evidence NVD.cpe">NVD.cpe</a></span></span></div></details></li></ul>
+      </section>
+      <section class="sec sec-unc">
+        <h3><span class="ico" aria-hidden="true">?</span>What's uncertain</h3>
+        <p class="hint">Gaps, conflicts between sources, and things a person should check.</p>
+        <ul class="items"><li>Nothing flagged.</li></ul>
+      </section>
+    </div>
+
+    <section class="sec sec-change">
+      <h3><span class="ico" aria-hidden="true">↻</span>What would change this decision</h3>
+      <p class="hint">New information that would move the priority up or down.</p>
+      <ul class="items"><li><span class="bshort">If a firewall rule or other protection blocks access to it → Fix in the next patch cycle (P2)</span><details class="bmore"><summary>details</summary><div class="bdetail">a verified compensating control removes reachability</div></details></li><li><span class="bshort">Once the fix is installed and confirmed → no action needed</span><details class="bmore"><summary>details</summary><div class="bdetail">the fix is applied and verified</div></details></li></ul>
+    </section>
+
+    <details class="desc-box">
+      <summary><b>Severity score details</b> <span class="meta">(3 scores from 3 sources; what the score is based on)</span></summary>
+      <p class="hint" style="margin-top:8px">CVSS rates how serious a flaw is on paper (0–10). The rules use the highest score of the newest CVSS version — here 7.5 from CISA.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Source</th><th>CVSS version</th><th>Score</th><th>Rating</th><th>Technical code</th><th>Evidence</th></tr></thead>
+        <tbody>
+        <tr class="primary-row"><td>CISA <b>(used)</b><br><span class="fcode">source ID: <code>ADP:CISA-ADP</code> · adp</span></td><td>3.1</td><td class="num">7.5</td><td>High</td><td><code class="vec">CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H</code></td><td><span class="chips"><a class="chip" href="#CVE-2023-44487-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a></span></td></tr>
+        <tr><td>NVD<br><span class="fcode">source ID: <code>nvd@nist.gov</code> · Primary</span></td><td>3.1</td><td class="num">7.5</td><td>High</td><td><code class="vec">CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H</code></td><td><span class="chips"><a class="chip" href="#CVE-2023-44487-NVD.cvss.1" title="Show evidence NVD.cvss.1">NVD.cvss.1</a></span></td></tr>
+        <tr><td>CISA (copy in NVD)<br><span class="fcode">source ID: <code>134c704f-9b21-4f2e-91b3-4a467353bcc0</code> · Secondary</span></td><td>3.1</td><td class="num">7.5</td><td>High</td><td><code class="vec">CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H</code></td><td><span class="chips"><a class="chip" href="#CVE-2023-44487-NVD.cvss.2" title="Show evidence NVD.cvss.2">NVD.cvss.2</a></span></td></tr>
+        </tbody></table></div>
+      <h4 style="margin:12px 0 4px">What the 7.5 score says, in plain words</h4>
+      <ul class="items"><li><b>Attack from:</b> the network (remotely)</li><li><b>Attack complexity:</b> low — no special conditions</li><li><b>Login / privileges needed:</b> none</li><li><b>A user must do something:</b> no</li><li><b>Impact spreads beyond the component:</b> no</li><li><b>Impact on confidentiality (data theft):</b> none</li><li><b>Impact on integrity (data tampering):</b> none</li><li><b>Impact on availability (outage):</b> high</li></ul>
+      <p class="meta">Technical code: <code>CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H</code></p>
+    </details>
+    <details class="desc-box tech">
+      <summary><b>Technical details</b> <span class="meta">(for specialists: rule codes and raw values)</span></summary>
+      <div class="table-wrap"><table>
+        <tbody>
+        <tr><th>Rule outcome</th><td><code>P1</code> — Act now: emergency change / out-of-band patching</td></tr>
+        <tr><th>Rule inputs</th><td>exploitation <code>confirmed</code> · severity <code>high</code> · exposure <code>high</code></td></tr>
+        <tr><th>Severity-only baseline</th><td><code>P2</code> (what ranking by CVSS score alone would give)</td></tr>
+        <tr><th>Deterministic findings</th><td><code>kev_listed=true</code> · <code>exploited_in_wild=true</code> · <code>public_exploit_claimed=true</code> · <code>cvss_scored=true</code></td></tr>
+        <tr><th>Record</th><td>state <code>published</code> · weaknesses CWE-400 · EPSS <code>1.0000</code> (percentile 1.0000)</td></tr>
+        <tr><th>How this CVE was selected</th><td>supplied by the user (command line or watchlist)</td></tr>
+        <tr><th>Sources</th><td>cve_org=<code>ok</code> (cached) · nvd=<code>ok</code> (cached) · cisa_kev=<code>ok</code> (cached) · first_epss=<code>ok</code> (cached)</td></tr>
+        </tbody></table></div>
+    </details>
+
+    <details class="desc-box">
+      <summary><b>Official description</b> <span class="meta">(from the CVE record — copied word for word; untrusted text)</span></summary>
+      <p>The HTTP/2 protocol allows a denial of service (server resource consumption) because request cancellation can reset many streams quickly, as exploited in the wild in August through October 2023.</p>
+    </details>
 
     <div class="ai">
       <div class="tag">AI-assisted assessment · judgement, not fact</div>
@@ -534,7 +687,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
         <tr id="CVE-2023-44487-NVD.cvss.2">
           <td class="num">NVD.cvss.2</td>
           <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-44487" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
-          <td>CVSS 3.1 base score 7.5 (HIGH) from 134c704f-9b21-4f2e-91b3-4a467353bcc0 [Secondary]</td>
+          <td>CVSS 3.1 base score 7.5 (HIGH) from CISA-ADP (copy in NVD) [Secondary]</td>
           <td class="num">2026-10-10 21:13</td>
           <td class="num">- / -</td>
         </tr>
@@ -658,32 +811,84 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
   <summary>
     <span class="cveid">CVE-2024-6387</span>
     <span><span class="badge s-critical"><span aria-hidden="true">▲</span>P1</span></span>
-    <span class="headline">P1: Act now: emergency change / out-of-band patching</span>
+    <span class="headline">Fix now · <span class="meta">Openssh: regresshion - race condition in ssh allows rce/dos</span></span>
     <span class="factors">
-      <span>exploitation <b>elevated</b></span>
-      <span>severity <b>high</b></span>
-      <span>exposure <b>high</b></span>
-      <span>CVSS-only baseline <b>P2</b></span>
+      <span>attacks: <b>exploit claimed / likely</b></span>
+      <span>severity: <b>high</b></span>
+      <span>exposure: <b>exposed or critical system</b></span>
+      <span>CVSS-only would say: <b>P2</b></span>
 <span class="flag">⚠ 1 source conflict</span>    </span>
   </summary>
   <div class="body">
-    <p class="desc"><b>Source description</b> (verbatim, untrusted) <span class="cite">[CVE.desc]</span><br>Openssh: regresshion - race condition in ssh allows rce/dos — A security regression (CVE-2006-5051) was discovered in OpenSSH&#39;s server (sshd). There is a race condition which can lead sshd to handle some signals in an unsafe manner. An unauthenticated, remote attacker may be able to trigger it by failing to authenticate within a set time period.</p>
-    <div class="cols">
-      <div>
-        <h3>What is known (sourced facts)</h3>
-        <ul class="tight"><li>CVE record state PUBLISHED (assigner redhat, data version 5.2). [CVE.state]</li><li>Most severe CVSS 3.1: 8.1 HIGH (CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H) from CNA:redhat [CVE.cvss.1]</li><li>Weakness: CWE-364, CWE-362 [CVE.cwe, NVD.cwe]</li><li>Kev listed: false — Not in KEV catalogue 2026.10.08 (absence is not evidence of no exploitation). [KEV]</li><li>Public exploit claimed: true — 10 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. [CVE.ssvc, NVD.ref.1, NVD.ref.2, NVD.ref.3, NVD.ref.5, NVD.ref.6, NVD.ref.7, NVD.ref.8, NVD.ref.12, NVD.ref.13]</li><li>CISA-ADP SSVC decision points: Exploitation=poc, Automatable=no, Technical Impact=total (assessed 2024-07-02T13:18:34.695298Z). [CVE.ssvc]</li><li>EPSS 0.9951 (percentile 0.9994) for 2026-10-10: estimated probability of exploitation activity being observed in the next 30 days. Not a difficulty or impact score. [EPSS]</li><li>bastion-01: OpenSSH 9.6p1 → affected [CVE.affected.1, NVD.cpe] (matched by CNA:redhat &#39;OpenSSH&#39;)</li></ul>
-        <h3>Why this priority</h3>
-        <ol class="tight"><li>Base P2: exploitation signal elevated (public exploit claimed, EPSS ≥ 0.10, or validated AI difficulty=low).</li><li>Exposure high (internet-facing or high-criticality asset) → P1.</li><li>Other assets need version review: ops-ubuntu-02</li></ol>
-        <h3>Action supported by the evidence</h3>
-        <ul class="tight"><li>Upgrade OpenSSH 9.6p1 on bastion-01 per the vendor advisory [NVD.ref.4, NVD.ref.9, NVD.ref.10].</li><li>Confirm the exact build/version (and any platform condition) of OpenSSH 1:9.6p1-3ubuntu13.4 on ops-ubuntu-02, then re-run; see reasons [CVE.affected.1].</li></ul>
-      </div>
-      <div>
-        <h3>What remains uncertain</h3>
-        <ul class="tight"><li>Exploited in wild: unknown — No positive evidence of in-the-wild exploitation in the sources checked. This is not proof that exploitation has not occurred. [KEV, CVE.ssvc]</li><li>ops-ubuntu-02: OpenSSH 1:9.6p1-3ubuntu13.4 → needs_review [CVE.affected.1] — [ambiguous] CNA:redhat &#39;OpenSSH&#39;: name &#39;openssh&#39;: cannot compare &#39;1:9.6p1-3ubuntu13.4&#39; with range 8.5p1..9.7p1 (custom); &#39;1:9.6p1-3ubuntu13.4&#39; looks like a distribution package version; vendors often backport fixes without changing the upstream version — check the distribution&#39;s advisory.</li><li>Conflict (stale_signal): SSVC Exploitation=poc was assessed 2024-07-02 (&gt; 180 days ago) and may no longer reflect current activity. [CVE.ssvc]</li><li>Offline demo uses a trimmed KEV fixture; absence was verified against the full catalogue at capture time only.</li><li>Open question (scripted demo example): Which builds and architectures do the public PoCs target, and how many attempts do they need?</li><li>Open question (scripted demo example): Has in-the-wild exploitation been reported since the SSVC assessment date?</li><li>Exploit-development difficulty from public evidence is inherently limited: the absence of public research does not mean exploitation is hard.</li></ul>
-        <h3>What would change the recommendation</h3>
-        <ul class="tight"><li>If a verified compensating control removes reachability → P3</li><li>Once the fix is applied and verified → NOT_APPLICABLE</li><li>Resolving the listed source conflicts could change the inputs above.</li></ul>
-      </div>
+    <div class="summary-box s-critical">
+      <div class="sum-label"><span aria-hidden="true">▲</span> Fix now</div>
+<p class="sum-why">Attack code is publicly claimed, or attacks are likely soon. An affected system is internet-facing or business-critical.</p>      <h4>What to do</h4>
+      <ul class="items"><li><span class="bshort">Upgrade OpenSSH on bastion-01</span><details class="bmore"><summary>details</summary><div class="bdetail">currently 9.6p1; follow the vendor advisory for the fixed version. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-NVD.ref.4" title="Show evidence NVD.ref.4">NVD.ref.4</a><a class="chip" href="#CVE-2024-6387-NVD.ref.9" title="Show evidence NVD.ref.9">NVD.ref.9</a><a class="chip" href="#CVE-2024-6387-NVD.ref.10" title="Show evidence NVD.ref.10">NVD.ref.10</a></span></span></div></details></li><li><span class="bshort">Check the exact version of OpenSSH on ops-ubuntu-02</span><details class="bmore"><summary>details</summary><div class="bdetail">recorded as 1:9.6p1-3ubuntu13.4; confirm the build and any platform condition, then re-run. See the applicability table for why it is unclear. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-CVE.affected.1" title="Show evidence CVE.affected.1">CVE.affected.1</a></span></span></div></details></li></ul>
     </div>
+
+    <div class="fgrid">
+      <div class="fcard"><div class="fname">Attack activity</div><div class="fval">Attack code is publicly claimed, or attacks are likely soon</div></div>
+      <div class="fcard"><div class="fname">Severity on paper</div><div class="fval">High (CVSS 7–8.9)</div></div>
+      <div class="fcard"><div class="fname">Your exposure</div><div class="fval">An affected system is internet-facing or business-critical</div></div>
+    </div>
+
+    <section class="sec sec-why">
+      <h3><span class="ico" aria-hidden="true">→</span>Why this priority</h3>
+      <p class="hint">The rules that produced this decision, step by step.</p>
+      <ol class="items"><li><span class="bshort">Starts at P2: attack code is claimed or attacks are likely</span><details class="bmore"><summary>details</summary><div class="bdetail">exploitation &#39;elevated&#39;: public exploit claimed, EPSS ≥ 0.10, or validated AI difficulty=low.</div></details></li><li><span class="bshort">Raised to P1: the system is exposed or critical</span><details class="bmore"><summary>details</summary><div class="bdetail">an affected asset is internet-facing or high-criticality (one step up).</div></details></li><li><span class="bshort">Other assets need a version check</span><details class="bmore"><summary>details</summary><div class="bdetail">ops-ubuntu-02</div></details></li></ol>
+    </section>
+
+    <div class="cols">
+      <section class="sec sec-known">
+        <h3><span class="ico" aria-hidden="true">✓</span>What we know</h3>
+        <p class="hint">Facts taken directly from the sources. Open “details” for the full explanation and where it came from.</p>
+        <ul class="items"><li><span class="bshort">CVE status: Published (active)</span><details class="bmore"><summary>details</summary><div class="bdetail">assigned by redhat; published 2024-07-01; last updated 2026-09-01 <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-CVE.state" title="Show evidence CVE.state">CVE.state</a></span></span></div></details></li><li><span class="bshort">Severity: 8.1 / 10 (High)</span><details class="bmore"><summary>details</summary><div class="bdetail">CVSS 3.1 score from redhat, which published the CVE; 3 sources agree. Full breakdown in Severity score details. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a></span></span></div></details></li><li><span class="bshort">Type of flaw: Signal Handler Race Condition (+1 more)</span><details class="bmore"><summary>details</summary><div class="bdetail">CWE-364: Signal Handler Race Condition; CWE-362: Concurrent Execution using Shared Resource with Improper Synchronization (&#39;Race Condition&#39;). CWE = MITRE&#39;s Common Weakness Enumeration. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-CVE.cwe" title="Show evidence CVE.cwe">CVE.cwe</a><a class="chip" href="#CVE-2024-6387-NVD.cwe" title="Show evidence NVD.cwe">NVD.cwe</a></span></span></div></details></li><li><span class="bshort">On the US government&#39;s list of actively attacked flaws (KEV): No</span><details class="bmore"><summary>details</summary><div class="bdetail">Not in KEV catalogue 2026.10.08 (absence is not evidence of no exploitation). <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-KEV" title="Show evidence KEV">KEV</a></span></span></div></details></li><li><span class="bshort">Attack code reported to be public: Yes</span><details class="bmore"><summary>details</summary><div class="bdetail">10 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a><a class="chip" href="#CVE-2024-6387-NVD.ref.1" title="Show evidence NVD.ref.1">NVD.ref.1</a><a class="chip" href="#CVE-2024-6387-NVD.ref.2" title="Show evidence NVD.ref.2">NVD.ref.2</a><details class="more-chips"><summary class="chip more" title="NVD.ref.3, NVD.ref.5, NVD.ref.6, NVD.ref.7, NVD.ref.8, NVD.ref.12, NVD.ref.13">+7 more</summary><a class="chip" href="#CVE-2024-6387-NVD.ref.3" title="Show evidence NVD.ref.3">NVD.ref.3</a><a class="chip" href="#CVE-2024-6387-NVD.ref.5" title="Show evidence NVD.ref.5">NVD.ref.5</a><a class="chip" href="#CVE-2024-6387-NVD.ref.6" title="Show evidence NVD.ref.6">NVD.ref.6</a><a class="chip" href="#CVE-2024-6387-NVD.ref.7" title="Show evidence NVD.ref.7">NVD.ref.7</a><a class="chip" href="#CVE-2024-6387-NVD.ref.8" title="Show evidence NVD.ref.8">NVD.ref.8</a><a class="chip" href="#CVE-2024-6387-NVD.ref.12" title="Show evidence NVD.ref.12">NVD.ref.12</a><a class="chip" href="#CVE-2024-6387-NVD.ref.13" title="Show evidence NVD.ref.13">NVD.ref.13</a></details></span></span></div></details></li><li><span class="bshort">CISA&#39;s rating: demo attack code exists</span><details class="bmore"><summary>details</summary><div class="bdetail">CISA SSVC decision points: Exploitation=poc, Automatable=no, Technical Impact=total; assessed 2024-07-02. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">Predicted chance of attacks in the next 30 days: 99.5%</span><details class="bmore"><summary>details</summary><div class="bdetail">EPSS 0.9951, higher than 99.9% of all scored CVEs, scored 2026-10-10 (FIRST EPSS model). Estimates exploitation activity, not difficulty or impact. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-EPSS" title="Show evidence EPSS">EPSS</a></span></span></div></details></li><li><span class="bshort">bastion-01: OpenSSH 9.6p1 is affected</span><details class="bmore"><summary>details</summary><div class="bdetail">Matched by CNA:redhat &#39;OpenSSH&#39;. CNA:redhat &#39;OpenSSH&#39;: name &#39;openssh&#39;: in range 8.5p1..≤9.7p1 → affected; NVD openbsd:openssh: in range ≥8.6 ≤9.8 <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-CVE.affected.1" title="Show evidence CVE.affected.1">CVE.affected.1</a><a class="chip" href="#CVE-2024-6387-NVD.cpe" title="Show evidence NVD.cpe">NVD.cpe</a></span></span></div></details></li></ul>
+      </section>
+      <section class="sec sec-unc">
+        <h3><span class="ico" aria-hidden="true">?</span>What's uncertain</h3>
+        <p class="hint">Gaps, conflicts between sources, and things a person should check.</p>
+        <ul class="items"><li><span class="bshort">Known to be exploited by attackers: Unknown</span><details class="bmore"><summary>details</summary><div class="bdetail">No positive evidence of in-the-wild exploitation in the sources checked. This is not proof that exploitation has not occurred. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-KEV" title="Show evidence KEV">KEV</a><a class="chip" href="#CVE-2024-6387-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">ops-ubuntu-02: OpenSSH 1:9.6p1-3ubuntu13.4 needs a manual version check</span><details class="bmore"><summary>details</summary><div class="bdetail">CNA:redhat &#39;OpenSSH&#39;: name &#39;openssh&#39;: cannot compare &#39;1:9.6p1-3ubuntu13.4&#39; with range 8.5p1..9.7p1 (custom); &#39;1:9.6p1-3ubuntu13.4&#39; looks like a distribution package version; vendors often backport fixes without changing the upstream version — check the distribution&#39;s advisory. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-CVE.affected.1" title="Show evidence CVE.affected.1">CVE.affected.1</a></span></span></div></details></li><li><span class="bshort">Some evidence may be out of date</span><details class="bmore"><summary>details</summary><div class="bdetail">SSVC Exploitation=poc was assessed 2024-07-02 (&gt; 180 days ago) and may no longer reflect current activity. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">Demo data: the attacked-flaws list (KEV) is a reduced copy</span><details class="bmore"><summary>details</summary><div class="bdetail">Offline demo uses a trimmed KEV fixture; absence was verified against the full catalogue at capture time only.</div></details></li><li><span class="bshort">Open question: Which builds and architectures do the public PoCs target, and how…</span><details class="bmore"><summary>details</summary><div class="bdetail">Which builds and architectures do the public PoCs target, and how many attempts do they need? (Source: scripted demo example; not verified.)</div></details></li><li><span class="bshort">Open question: Has in-the-wild exploitation been reported since the SSVC assessment…</span><details class="bmore"><summary>details</summary><div class="bdetail">Has in-the-wild exploitation been reported since the SSVC assessment date? (Source: scripted demo example; not verified.)</div></details></li><li><span class="bshort">Little public research doesn&#39;t mean it&#39;s hard to exploit</span><details class="bmore"><summary>details</summary><div class="bdetail">Exploit-development difficulty judged from public evidence is inherently limited: the absence of public research does not mean exploitation is hard.</div></details></li></ul>
+      </section>
+    </div>
+
+    <section class="sec sec-change">
+      <h3><span class="ico" aria-hidden="true">↻</span>What would change this decision</h3>
+      <p class="hint">New information that would move the priority up or down.</p>
+      <ul class="items"><li><span class="bshort">If a firewall rule or other protection blocks access to it → Schedule a fix (P3)</span><details class="bmore"><summary>details</summary><div class="bdetail">a verified compensating control removes reachability</div></details></li><li><span class="bshort">Once the fix is installed and confirmed → no action needed</span><details class="bmore"><summary>details</summary><div class="bdetail">the fix is applied and verified</div></details></li><li><span class="bshort">If the sources&#39; disagreements are resolved → the decision may change</span><details class="bmore"><summary>details</summary><div class="bdetail">resolving the listed source conflicts could change the inputs above.</div></details></li></ul>
+    </section>
+
+    <details class="desc-box">
+      <summary><b>Severity score details</b> <span class="meta">(3 scores from 3 sources; what the score is based on)</span></summary>
+      <p class="hint" style="margin-top:8px">CVSS rates how serious a flaw is on paper (0–10). The rules use the highest score of the newest CVSS version — here 8.1 from redhat, which published the CVE.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Source</th><th>CVSS version</th><th>Score</th><th>Rating</th><th>Technical code</th><th>Evidence</th></tr></thead>
+        <tbody>
+        <tr class="primary-row"><td>redhat, which published the CVE <b>(used)</b><br><span class="fcode">source ID: <code>CNA:redhat</code> · cna</span></td><td>3.1</td><td class="num">8.1</td><td>High</td><td><code class="vec">CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H</code></td><td><span class="chips"><a class="chip" href="#CVE-2024-6387-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a></span></td></tr>
+        <tr><td>redhat.com<br><span class="fcode">source ID: <code>secalert@redhat.com</code> · Secondary</span></td><td>3.1</td><td class="num">8.1</td><td>High</td><td><code class="vec">CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H</code></td><td><span class="chips"><a class="chip" href="#CVE-2024-6387-NVD.cvss.1" title="Show evidence NVD.cvss.1">NVD.cvss.1</a></span></td></tr>
+        <tr><td>NVD<br><span class="fcode">source ID: <code>nvd@nist.gov</code> · Primary</span></td><td>3.1</td><td class="num">8.1</td><td>High</td><td><code class="vec">CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H</code></td><td><span class="chips"><a class="chip" href="#CVE-2024-6387-NVD.cvss.2" title="Show evidence NVD.cvss.2">NVD.cvss.2</a></span></td></tr>
+        </tbody></table></div>
+      <h4 style="margin:12px 0 4px">What the 8.1 score says, in plain words</h4>
+      <ul class="items"><li><b>Attack from:</b> the network (remotely)</li><li><b>Attack complexity:</b> high — needs special conditions or timing</li><li><b>Login / privileges needed:</b> none</li><li><b>A user must do something:</b> no</li><li><b>Impact spreads beyond the component:</b> no</li><li><b>Impact on confidentiality (data theft):</b> high</li><li><b>Impact on integrity (data tampering):</b> high</li><li><b>Impact on availability (outage):</b> high</li></ul>
+      <p class="meta">Technical code: <code>CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H</code></p>
+    </details>
+    <details class="desc-box tech">
+      <summary><b>Technical details</b> <span class="meta">(for specialists: rule codes and raw values)</span></summary>
+      <div class="table-wrap"><table>
+        <tbody>
+        <tr><th>Rule outcome</th><td><code>P1</code> — Act now: emergency change / out-of-band patching</td></tr>
+        <tr><th>Rule inputs</th><td>exploitation <code>elevated</code> · severity <code>high</code> · exposure <code>high</code></td></tr>
+        <tr><th>Severity-only baseline</th><td><code>P2</code> (what ranking by CVSS score alone would give)</td></tr>
+        <tr><th>Deterministic findings</th><td><code>kev_listed=false</code> · <code>exploited_in_wild=unknown</code> · <code>public_exploit_claimed=true</code> · <code>cvss_scored=true</code></td></tr>
+        <tr><th>Record</th><td>state <code>published</code> · weaknesses CWE-364, CWE-362 · EPSS <code>0.9951</code> (percentile 0.9994)</td></tr>
+        <tr><th>How this CVE was selected</th><td>supplied by the user (command line or watchlist)</td></tr>
+        <tr><th>Sources</th><td>cve_org=<code>ok</code> (cached) · nvd=<code>ok</code> (cached) · cisa_kev=<code>ok</code> (cached) · first_epss=<code>ok</code> (cached)</td></tr>
+        </tbody></table></div>
+    </details>
+
+    <details class="desc-box">
+      <summary><b>Official description</b> <span class="meta">(from the CVE record — copied word for word; untrusted text)</span></summary>
+      <p>Openssh: regresshion - race condition in ssh allows rce/dos — A security regression (CVE-2006-5051) was discovered in OpenSSH&#39;s server (sshd). There is a race condition which can lead sshd to handle some signals in an unsafe manner. An unauthenticated, remote attacker may be able to trigger it by failing to authenticate within a set time period.</p>
+    </details>
 
     <div class="ai">
       <div class="tag">AI-assisted assessment · judgement, not fact</div>
@@ -692,12 +897,12 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
         <div>
           <h3>Exploit-development difficulty: <code>moderate</code></h3>
           <ul class="tight">
-<li><i>Prerequisite (fact):</i> The attacker needs only network access to sshd and no credentials; the trigger is failing to authenticate within the login time limit. <span class="cite">[CVE.desc, CVE.cvss.1]</span></li><li><i>Complexity (inference):</i> The flaw is a race condition in signal handling, and the CNA scores attack complexity as High, which suggests exploitation depends on winning a timing window. <span class="cite">[CVE.desc, CVE.cvss.1]</span></li><li><i>Research (fact):</i> Several references tagged &#39;Exploit&#39; by NVD, including a researcher advisory, indicate detailed public research exists. <span class="cite">[NVD.ref.2, NVD.ref.12]</span></li>          </ul>
+<li><span class="bshort">The attacker needs only network access to sshd and no credentials; the trigger is failing to authenticate within the login time limit.</span><details class="bmore"><summary>details</summary><div class="bdetail">Prerequisite · sourced fact <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-CVE.desc" title="Show evidence CVE.desc">CVE.desc</a><a class="chip" href="#CVE-2024-6387-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a></span></span></div></details></li><li><span class="bshort">The flaw is a race condition in signal handling, and the CNA scores attack complexity as High, which suggests exploitation depends on winning a timing window.</span><details class="bmore"><summary>details</summary><div class="bdetail">Complexity · AI inference <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-CVE.desc" title="Show evidence CVE.desc">CVE.desc</a><a class="chip" href="#CVE-2024-6387-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a></span></span></div></details></li><li><span class="bshort">Several references tagged &#39;Exploit&#39; by NVD, including a researcher advisory, indicate detailed public research exists.</span><details class="bmore"><summary>details</summary><div class="bdetail">Research · sourced fact <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-NVD.ref.2" title="Show evidence NVD.ref.2">NVD.ref.2</a><a class="chip" href="#CVE-2024-6387-NVD.ref.12" title="Show evidence NVD.ref.12">NVD.ref.12</a></span></span></div></details></li>          </ul>
         </div>
         <div>
           <h3>Existing-exploit usability: <code>public_exploit_claimed</code></h3>
           <ul class="tight">
-<li><i>Exploit evidence (fact):</i> CISA&#39;s SSVC assessment records Exploitation=poc. <span class="cite">[CVE.ssvc]</span></li><li><i>Reliability limit (inference):</i> A race-condition exploit is likely to need many connection attempts, which may be visible in authentication logs. <span class="cite">[CVE.desc, CVE.cvss.1]</span></li><li><i>Required access (fact):</i> Network reachability to the SSH service; no privileges or user interaction. <span class="cite">[CVE.cvss.1]</span></li>          </ul>
+<li><span class="bshort">CISA&#39;s SSVC assessment records Exploitation=poc.</span><details class="bmore"><summary>details</summary><div class="bdetail">Exploit evidence · sourced fact <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">A race-condition exploit is likely to need many connection attempts, which may be visible in authentication logs.</span><details class="bmore"><summary>details</summary><div class="bdetail">Reliability limit · AI inference <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-CVE.desc" title="Show evidence CVE.desc">CVE.desc</a><a class="chip" href="#CVE-2024-6387-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a></span></span></div></details></li><li><span class="bshort">Network reachability to the SSH service; no privileges or user interaction.</span><details class="bmore"><summary>details</summary><div class="bdetail">Required access · sourced fact <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a></span></span></div></details></li>          </ul>
         </div>
       </div>
 <p class="meta"><i>Scripted summary (uncited free text):</i> Unauthenticated remote race condition in sshd with public research and PoC claims; timing complexity is the main barrier.</p>      <h3>Removed or overridden by validation</h3>
@@ -1022,16 +1227,83 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
   <summary>
     <span class="cveid">CVE-2023-38545</span>
     <span><span class="badge s-serious"><span aria-hidden="true">◆</span>P2 · provisional</span></span>
-    <span class="headline">P2: Next patch cycle, ahead of routine work (provisional)</span>
+    <span class="headline">Fix in the next patch cycle</span>
     <span class="factors">
-      <span>exploitation <b>elevated</b></span>
-      <span>severity <b>critical</b></span>
-      <span>exposure <b>context_unknown</b></span>
-      <span>CVSS-only baseline <b>P1</b></span>
+      <span>attacks: <b>exploit claimed / likely</b></span>
+      <span>severity: <b>critical</b></span>
+      <span>exposure: <b>context missing</b></span>
+      <span>CVSS-only would say: <b>P1</b></span>
 <span class="flag">⚠ 2 source conflicts</span>    </span>
   </summary>
   <div class="body">
-    <p class="desc"><b>Source description</b> (verbatim, untrusted) <span class="cite">[CVE.desc]</span><br>This flaw makes curl overflow a heap based buffer in the SOCKS5 proxy
+    <div class="summary-box s-serious">
+      <div class="sum-label"><span aria-hidden="true">◆</span> Fix in the next patch cycle <span class="prov">(provisional — depends on information not supplied)</span></div>
+<p class="sum-why">Attack code is publicly claimed, or attacks are likely soon. Affected, but how exposed/important the system is was not recorded.</p>      <h4>What to do</h4>
+      <ul class="items"><li><span class="bshort">Upgrade curl on ops-ubuntu-02</span><details class="bmore"><summary>details</summary><div class="bdetail">currently 8.3.0; sources indicate the fix is in version 8.4.0 or later. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-38545-NVD.ref.1" title="Show evidence NVD.ref.1">NVD.ref.1</a><a class="chip" href="#CVE-2023-38545-NVD.ref.2" title="Show evidence NVD.ref.2">NVD.ref.2</a></span></span></div></details></li><li><span class="bshort">Upgrade curl on dev-laptop-17</span><details class="bmore"><summary>details</summary><div class="bdetail">currently 8.3.0; sources indicate the fix is in version 8.4.0 or later. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-38545-NVD.ref.1" title="Show evidence NVD.ref.1">NVD.ref.1</a><a class="chip" href="#CVE-2023-38545-NVD.ref.2" title="Show evidence NVD.ref.2">NVD.ref.2</a></span></span></div></details></li></ul>
+    </div>
+
+    <div class="fgrid">
+      <div class="fcard"><div class="fname">Attack activity</div><div class="fval">Attack code is publicly claimed, or attacks are likely soon</div></div>
+      <div class="fcard"><div class="fname">Severity on paper</div><div class="fval">Critical (CVSS 9–10)</div></div>
+      <div class="fcard"><div class="fname">Your exposure</div><div class="fval">Affected, but how exposed/important the system is was not recorded</div></div>
+    </div>
+
+    <section class="sec sec-why">
+      <h3><span class="ico" aria-hidden="true">→</span>Why this priority</h3>
+      <p class="hint">The rules that produced this decision, step by step.</p>
+      <ol class="items"><li><span class="bshort">Starts at P2: attack code is claimed or attacks are likely</span><details class="bmore"><summary>details</summary><div class="bdetail">exploitation &#39;elevated&#39;: public exploit claimed, EPSS ≥ 0.10, or validated AI difficulty=low.</div></details></li><li><span class="bshort">Stays the same for now: some system details are missing</span><details class="bmore"><summary>details</summary><div class="bdetail">internet exposure and/or criticality were not supplied, so the result is provisional rather than assumed.</div></details></li><li><span class="bshort">dev-laptop-17: importance or internet exposure not recorded</span><details class="bmore"><summary>details</summary><div class="bdetail">internet_facing, criticality not supplied; not assumed.</div></details></li></ol>
+    </section>
+
+    <div class="cols">
+      <section class="sec sec-known">
+        <h3><span class="ico" aria-hidden="true">✓</span>What we know</h3>
+        <p class="hint">Facts taken directly from the sources. Open “details” for the full explanation and where it came from.</p>
+        <ul class="items"><li><span class="bshort">CVE status: Published (active)</span><details class="bmore"><summary>details</summary><div class="bdetail">assigned by hackerone; published 2023-10-18; last updated 2026-07-14 <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-38545-CVE.state" title="Show evidence CVE.state">CVE.state</a></span></span></div></details></li><li><span class="bshort">Severity: 9.8 / 10 (Critical)</span><details class="bmore"><summary>details</summary><div class="bdetail">CVSS 3.1 score from NVD; the highest of 2 different scores from 3 sources (see What&#39;s uncertain). Full breakdown in Severity score details. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-38545-NVD.cvss.1" title="Show evidence NVD.cvss.1">NVD.cvss.1</a></span></span></div></details></li><li><span class="bshort">Type of flaw: Out-of-bounds Write</span><details class="bmore"><summary>details</summary><div class="bdetail">CWE-787: Out-of-bounds Write. CWE = MITRE&#39;s Common Weakness Enumeration. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-38545-NVD.cwe" title="Show evidence NVD.cwe">NVD.cwe</a></span></span></div></details></li><li><span class="bshort">On the US government&#39;s list of actively attacked flaws (KEV): No</span><details class="bmore"><summary>details</summary><div class="bdetail">Not in KEV catalogue 2026.10.08 (absence is not evidence of no exploitation). <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-38545-KEV" title="Show evidence KEV">KEV</a></span></span></div></details></li><li><span class="bshort">Attack code reported to be public: Yes</span><details class="bmore"><summary>details</summary><div class="bdetail">1 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-38545-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">CISA&#39;s rating: demo attack code exists</span><details class="bmore"><summary>details</summary><div class="bdetail">CISA SSVC decision points: Exploitation=poc, Automatable=no, Technical Impact=total; assessed 2024-10-17. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-38545-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">Predicted chance of attacks in the next 30 days: 78.5%</span><details class="bmore"><summary>details</summary><div class="bdetail">EPSS 0.7848, higher than 99.6% of all scored CVEs, scored 2026-10-10 (FIRST EPSS model). Estimates exploitation activity, not difficulty or impact. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-38545-EPSS" title="Show evidence EPSS">EPSS</a></span></span></div></details></li><li><span class="bshort">ops-ubuntu-02: curl 8.3.0 is affected</span><details class="bmore"><summary>details</summary><div class="bdetail">Matched by NVD haxx:libcurl. NVD haxx:libcurl: in range ≥7.69.0 &lt;8.4.0 <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-38545-NVD.cpe" title="Show evidence NVD.cpe">NVD.cpe</a></span></span></div></details></li><li><span class="bshort">dev-laptop-17: curl 8.3.0 is affected</span><details class="bmore"><summary>details</summary><div class="bdetail">Matched by NVD haxx:libcurl. NVD haxx:libcurl: in range ≥7.69.0 &lt;8.4.0 <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-38545-NVD.cpe" title="Show evidence NVD.cpe">NVD.cpe</a></span></span></div></details></li></ul>
+      </section>
+      <section class="sec sec-unc">
+        <h3><span class="ico" aria-hidden="true">?</span>What's uncertain</h3>
+        <p class="hint">Gaps, conflicts between sources, and things a person should check.</p>
+        <ul class="items"><li><span class="bshort">Known to be exploited by attackers: Unknown</span><details class="bmore"><summary>details</summary><div class="bdetail">No positive evidence of in-the-wild exploitation in the sources checked. This is not proof that exploitation has not occurred. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-38545-KEV" title="Show evidence KEV">KEV</a><a class="chip" href="#CVE-2023-38545-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">Sources give different severity scores</span><details class="bmore"><summary>details</summary><div class="bdetail">Sources disagree on CVSS 3.1 base score: CISA 8.8; NVD 9.8; CISA (copy in NVD) 8.8. Rules use the most severe value; verify against the vendor advisory. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-38545-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a><a class="chip" href="#CVE-2023-38545-NVD.cvss.1" title="Show evidence NVD.cvss.1">NVD.cvss.1</a><a class="chip" href="#CVE-2023-38545-NVD.cvss.2" title="Show evidence NVD.cvss.2">NVD.cvss.2</a></span></span></div></details></li><li><span class="bshort">Some evidence may be out of date</span><details class="bmore"><summary>details</summary><div class="bdetail">SSVC Exploitation=poc was assessed 2024-10-17 (&gt; 180 days ago) and may no longer reflect current activity. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-38545-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">Demo data: the attacked-flaws list (KEV) is a reduced copy</span><details class="bmore"><summary>details</summary><div class="bdetail">Offline demo uses a trimmed KEV fixture; absence was verified against the full catalogue at capture time only.</div></details></li><li><span class="bshort">Little public research doesn&#39;t mean it&#39;s hard to exploit</span><details class="bmore"><summary>details</summary><div class="bdetail">Exploit-development difficulty judged from public evidence is inherently limited: the absence of public research does not mean exploitation is hard.</div></details></li></ul>
+      </section>
+    </div>
+
+    <section class="sec sec-change">
+      <h3><span class="ico" aria-hidden="true">↻</span>What would change this decision</h3>
+      <p class="hint">New information that would move the priority up or down.</p>
+      <ul class="items"><li><span class="bshort">If attackers are reported using it → Fix now (P1)</span><details class="bmore"><summary>details</summary><div class="bdetail">e.g. it is added to CISA&#39;s KEV list or CISA SSVC says exploitation is active</div></details></li><li><span class="bshort">If the system is internet-facing or critical → Fix now (P1)</span><details class="bmore"><summary>details</summary><div class="bdetail">an affected asset is internet-facing or has high/critical criticality</div></details></li><li><span class="bshort">If the sources&#39; disagreements are resolved → the decision may change</span><details class="bmore"><summary>details</summary><div class="bdetail">resolving the listed source conflicts could change the inputs above.</div></details></li></ul>
+    </section>
+
+    <details class="desc-box">
+      <summary><b>Severity score details</b> <span class="meta">(3 scores from 3 sources; what the score is based on)</span></summary>
+      <p class="hint" style="margin-top:8px">CVSS rates how serious a flaw is on paper (0–10). The rules use the highest score of the newest CVSS version — here 9.8 from NVD.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Source</th><th>CVSS version</th><th>Score</th><th>Rating</th><th>Technical code</th><th>Evidence</th></tr></thead>
+        <tbody>
+        <tr><td>CISA<br><span class="fcode">source ID: <code>ADP:CISA-ADP</code> · adp</span></td><td>3.1</td><td class="num">8.8</td><td>High</td><td><code class="vec">CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H</code></td><td><span class="chips"><a class="chip" href="#CVE-2023-38545-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a></span></td></tr>
+        <tr class="primary-row"><td>NVD <b>(used)</b><br><span class="fcode">source ID: <code>nvd@nist.gov</code> · Primary</span></td><td>3.1</td><td class="num">9.8</td><td>Critical</td><td><code class="vec">CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H</code></td><td><span class="chips"><a class="chip" href="#CVE-2023-38545-NVD.cvss.1" title="Show evidence NVD.cvss.1">NVD.cvss.1</a></span></td></tr>
+        <tr><td>CISA (copy in NVD)<br><span class="fcode">source ID: <code>134c704f-9b21-4f2e-91b3-4a467353bcc0</code> · Secondary</span></td><td>3.1</td><td class="num">8.8</td><td>High</td><td><code class="vec">CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H</code></td><td><span class="chips"><a class="chip" href="#CVE-2023-38545-NVD.cvss.2" title="Show evidence NVD.cvss.2">NVD.cvss.2</a></span></td></tr>
+        </tbody></table></div>
+      <h4 style="margin:12px 0 4px">What the 9.8 score says, in plain words</h4>
+      <ul class="items"><li><b>Attack from:</b> the network (remotely)</li><li><b>Attack complexity:</b> low — no special conditions</li><li><b>Login / privileges needed:</b> none</li><li><b>A user must do something:</b> no</li><li><b>Impact spreads beyond the component:</b> no</li><li><b>Impact on confidentiality (data theft):</b> high</li><li><b>Impact on integrity (data tampering):</b> high</li><li><b>Impact on availability (outage):</b> high</li></ul>
+      <p class="meta">Technical code: <code>CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H</code></p>
+    </details>
+    <details class="desc-box tech">
+      <summary><b>Technical details</b> <span class="meta">(for specialists: rule codes and raw values)</span></summary>
+      <div class="table-wrap"><table>
+        <tbody>
+        <tr><th>Rule outcome</th><td><code>P2</code> · provisional — Next patch cycle, ahead of routine work (provisional)</td></tr>
+        <tr><th>Rule inputs</th><td>exploitation <code>elevated</code> · severity <code>critical</code> · exposure <code>context_unknown</code></td></tr>
+        <tr><th>Severity-only baseline</th><td><code>P1</code> (what ranking by CVSS score alone would give)</td></tr>
+        <tr><th>Deterministic findings</th><td><code>kev_listed=false</code> · <code>exploited_in_wild=unknown</code> · <code>public_exploit_claimed=true</code> · <code>cvss_scored=true</code></td></tr>
+        <tr><th>Record</th><td>state <code>published</code> · weaknesses CWE-787 · EPSS <code>0.7848</code> (percentile 0.9958)</td></tr>
+        <tr><th>How this CVE was selected</th><td>supplied by the user (command line or watchlist)</td></tr>
+        <tr><th>Sources</th><td>cve_org=<code>ok</code> (cached) · nvd=<code>ok</code> (cached) · cisa_kev=<code>ok</code> (cached) · first_epss=<code>ok</code> (cached)</td></tr>
+        </tbody></table></div>
+    </details>
+
+    <details class="desc-box">
+      <summary><b>Official description</b> <span class="meta">(from the CVE record — copied word for word; untrusted text)</span></summary>
+      <p>This flaw makes curl overflow a heap based buffer in the SOCKS5 proxy
 handshake.
 
 When curl is asked to pass along the host name to the SOCKS5 proxy to allow
@@ -1047,22 +1319,7 @@ resolved address there.
 
 The target buffer being a heap based buffer, and the host name coming from the
 URL that curl has been told to operate with.</p>
-    <div class="cols">
-      <div>
-        <h3>What is known (sourced facts)</h3>
-        <ul class="tight"><li>CVE record state PUBLISHED (assigner hackerone, data version 5.2). [CVE.state]</li><li>Most severe CVSS 3.1: 9.8 CRITICAL (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H) from nvd@nist.gov [NVD.cvss.1]</li><li>Weakness: CWE-787 [NVD.cwe]</li><li>Kev listed: false — Not in KEV catalogue 2026.10.08 (absence is not evidence of no exploitation). [KEV]</li><li>Public exploit claimed: true — 1 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. [CVE.ssvc]</li><li>CISA-ADP SSVC decision points: Exploitation=poc, Automatable=no, Technical Impact=total (assessed 2024-10-17T21:11:03.346985Z). [CVE.ssvc]</li><li>EPSS 0.7848 (percentile 0.9958) for 2026-10-10: estimated probability of exploitation activity being observed in the next 30 days. Not a difficulty or impact score. [EPSS]</li><li>ops-ubuntu-02: curl 8.3.0 → affected [NVD.cpe] (matched by NVD haxx:libcurl)</li><li>dev-laptop-17: curl 8.3.0 → affected [NVD.cpe] (matched by NVD haxx:libcurl)</li></ul>
-        <h3>Why this priority</h3>
-        <ol class="tight"><li>Base P2: exploitation signal elevated (public exploit claimed, EPSS ≥ 0.10, or validated AI difficulty=low).</li><li>Asset context missing (internet exposure/criticality not supplied) → unchanged, provisional.</li><li>dev-laptop-17: context missing (internet_facing, criticality); not assumed.</li></ol>
-        <h3>Action supported by the evidence</h3>
-        <ul class="tight"><li>Upgrade curl 8.3.0 on ops-ubuntu-02 to a fixed release (sources indicate fixed at/after 8.4.0) [NVD.ref.1, NVD.ref.2].</li><li>Upgrade curl 8.3.0 on dev-laptop-17 to a fixed release (sources indicate fixed at/after 8.4.0) [NVD.ref.1, NVD.ref.2].</li></ul>
-      </div>
-      <div>
-        <h3>What remains uncertain</h3>
-        <ul class="tight"><li>Exploited in wild: unknown — No positive evidence of in-the-wild exploitation in the sources checked. This is not proof that exploitation has not occurred. [KEV, CVE.ssvc]</li><li>Conflict (cvss_disagreement): Sources disagree on CVSS 3.1 base score: ADP:CISA-ADP 8.8; nvd@nist.gov 9.8; 134c704f-9b21-4f2e-91b3-4a467353bcc0 8.8. Rules use the most severe value; verify against the vendor advisory. [CVE.cvss.1, NVD.cvss.1, NVD.cvss.2]</li><li>Conflict (stale_signal): SSVC Exploitation=poc was assessed 2024-10-17 (&gt; 180 days ago) and may no longer reflect current activity. [CVE.ssvc]</li><li>Offline demo uses a trimmed KEV fixture; absence was verified against the full catalogue at capture time only.</li><li>Exploit-development difficulty from public evidence is inherently limited: the absence of public research does not mean exploitation is hard.</li></ul>
-        <h3>What would change the recommendation</h3>
-        <ul class="tight"><li>If exploitation in the wild is reported (e.g. KEV listing) → P1</li><li>If the affected asset is internet-facing or high-criticality → P1</li><li>Resolving the listed source conflicts could change the inputs above.</li></ul>
-      </div>
-    </div>
+    </details>
 
     <div class="ai">
       <div class="tag">AI-assisted assessment · judgement, not fact</div>
@@ -1137,7 +1394,7 @@ URL that curl has been told to operate with.</p>
         <tr id="CVE-2023-38545-NVD.cvss.2">
           <td class="num">NVD.cvss.2</td>
           <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2023-38545" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
-          <td>CVSS 3.1 base score 8.8 (HIGH) from 134c704f-9b21-4f2e-91b3-4a467353bcc0 [Secondary]</td>
+          <td>CVSS 3.1 base score 8.8 (HIGH) from CISA-ADP (copy in NVD) [Secondary]</td>
           <td class="num">2026-10-10 21:13</td>
           <td class="num">- / -</td>
         </tr>
@@ -1191,32 +1448,85 @@ URL that curl has been told to operate with.</p>
   <summary>
     <span class="cveid">CVE-2022-22965</span>
     <span><span class="badge s-warning"><span aria-hidden="true">?</span>NEEDS_REVIEW · provisional</span></span>
-    <span class="headline">Needs version review (would be P1 if affected)</span>
+    <span class="headline">Check before deciding</span>
     <span class="factors">
-      <span>exploitation <b>confirmed</b></span>
-      <span>severity <b>critical</b></span>
-      <span>exposure <b>needs_review</b></span>
-      <span>CVSS-only baseline <b>P1</b></span>
+      <span>attacks: <b>actively attacked</b></span>
+      <span>severity: <b>critical</b></span>
+      <span>exposure: <b>version unclear</b></span>
+      <span>CVSS-only would say: <b>P1</b></span>
     </span>
   </summary>
   <div class="body">
-    <p class="desc"><b>Source description</b> (verbatim, untrusted) <span class="cite">[CVE.desc]</span><br>A Spring MVC or Spring WebFlux application running on JDK 9+ may be vulnerable to remote code execution (RCE) via data binding. The specific exploit requires the application to run on Tomcat as a WAR deployment. If the application is deployed as a Spring Boot executable jar, i.e. the default, it is not vulnerable to the exploit. However, the nature of the vulnerability is more general, and there may be other ways to exploit it.</p>
-    <div class="cols">
-      <div>
-        <h3>What is known (sourced facts)</h3>
-        <ul class="tight"><li>CVE record state PUBLISHED (assigner vmware, data version 5.1). [CVE.state]</li><li>Most severe CVSS 3.1: 9.8 CRITICAL (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H) from ADP:CISA-ADP [CVE.cvss.1]</li><li>Weakness: CWE-94 [CVE.cwe, NVD.cwe]</li><li>Kev listed: true — Listed in the CISA Known Exploited Vulnerabilities catalogue. [KEV]</li><li>Exploited in wild: true — Positive evidence of exploitation in the wild (KEV listing and/or CISA SSVC Exploitation=active). [KEV, CVE.ssvc]</li><li>Public exploit claimed: true — 2 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. [CVE.ssvc, NVD.ref.1]</li><li>CISA-ADP SSVC decision points: Exploitation=active, Automatable=yes, Technical Impact=total (assessed 2025-01-29T17:52:10.886552Z). [CVE.ssvc]</li><li>EPSS 0.9964 (percentile 0.9995) for 2026-10-10: estimated probability of exploitation activity being observed in the next 30 days. Not a difficulty or impact score. [EPSS]</li></ul>
-        <h3>Why this priority</h3>
-        <ol class="tight"><li>Base P1: exploitation confirmed (KEV and/or SSVC active).</li><li>Applicability ambiguous → NEEDS_REVIEW; would be P1 if confirmed affected.</li></ol>
-        <h3>Action supported by the evidence</h3>
-        <ul class="tight"><li>Confirm the exact build/version (and any platform condition) of Spring Framework 5.3.17 on web-portal-01, then re-run; see reasons [CVE.affected.1, NVD.cpe].</li><li>CISA KEV required action (quoted source text) [KEV]: Apply updates per vendor instructions.</li></ul>
-      </div>
-      <div>
-        <h3>What remains uncertain</h3>
-        <ul class="tight"><li>web-portal-01: Spring Framework 5.3.17 → needs_review [CVE.affected.1, NVD.cpe] — [ambiguous] CNA:vmware &#39;Spring Framework&#39;: name &#39;spring framework&#39;: version statement &#39;Spring Framework versions 5.3.X prior to 5.3.18+, 5.2.x prior to 5.2.20+ and all&#39; is not machine-comparable; [ambiguous] NVD vmware:spring_framework: in range ≥5.3.0 &lt;5.3.18; NVD applies this only in combination with cpe:2.3:a:oracle:jdk:*:*:*:*:*:*:*:* (AND configuration) — confirm that platform condition for this deployment</li></ul>
-        <h3>What would change the recommendation</h3>
-        <ul class="tight"><li>If the affected asset is internet-facing or high-criticality → P1</li><li>If the affected asset is internal and low/medium criticality → P1</li><li>If the deployed version is confirmed NOT affected → NOT_APPLICABLE</li></ul>
-      </div>
+    <div class="summary-box s-warning">
+      <div class="sum-label"><span aria-hidden="true">?</span> Check before deciding <span class="prov">(provisional — depends on information not supplied)</span></div>
+<p class="sum-why">Attackers are known to be using it. Unclear whether your version is affected.</p>      <h4>What to do</h4>
+      <ul class="items"><li><span class="bshort">Check the exact version of Spring Framework on web-portal-01</span><details class="bmore"><summary>details</summary><div class="bdetail">recorded as 5.3.17; confirm the build and any platform condition, then re-run. See the applicability table for why it is unclear. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2022-22965-CVE.affected.1" title="Show evidence CVE.affected.1">CVE.affected.1</a><a class="chip" href="#CVE-2022-22965-NVD.cpe" title="Show evidence NVD.cpe">NVD.cpe</a></span></span></div></details></li><li><span class="bshort">Follow CISA&#39;s official instructions for this flaw</span><details class="bmore"><summary>details</summary><div class="bdetail">quoted source text: Apply updates per vendor instructions. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2022-22965-KEV" title="Show evidence KEV">KEV</a></span></span></div></details></li></ul>
     </div>
+
+    <div class="fgrid">
+      <div class="fcard"><div class="fname">Attack activity</div><div class="fval">Attackers are known to be using it</div></div>
+      <div class="fcard"><div class="fname">Severity on paper</div><div class="fval">Critical (CVSS 9–10)</div></div>
+      <div class="fcard"><div class="fname">Your exposure</div><div class="fval">Unclear whether your version is affected</div></div>
+    </div>
+
+    <section class="sec sec-why">
+      <h3><span class="ico" aria-hidden="true">→</span>Why this priority</h3>
+      <p class="hint">The rules that produced this decision, step by step.</p>
+      <ol class="items"><li><span class="bshort">Starts at P1: attackers are known to be using it</span><details class="bmore"><summary>details</summary><div class="bdetail">exploitation confirmed by the CISA KEV list and/or CISA SSVC Exploitation=active.</div></details></li><li><span class="bshort">Needs review: your version may or may not be affected</span><details class="bmore"><summary>details</summary><div class="bdetail">applicability is ambiguous; would be P1 if confirmed affected.</div></details></li></ol>
+    </section>
+
+    <div class="cols">
+      <section class="sec sec-known">
+        <h3><span class="ico" aria-hidden="true">✓</span>What we know</h3>
+        <p class="hint">Facts taken directly from the sources. Open “details” for the full explanation and where it came from.</p>
+        <ul class="items"><li><span class="bshort">CVE status: Published (active)</span><details class="bmore"><summary>details</summary><div class="bdetail">assigned by vmware; published 2022-04-01; last updated 2025-10-21 <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2022-22965-CVE.state" title="Show evidence CVE.state">CVE.state</a></span></span></div></details></li><li><span class="bshort">Severity: 9.8 / 10 (Critical)</span><details class="bmore"><summary>details</summary><div class="bdetail">CVSS 3.1 score from CISA; 3 sources agree. Full breakdown in Severity score details. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2022-22965-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a></span></span></div></details></li><li><span class="bshort">Type of flaw: Code Injection</span><details class="bmore"><summary>details</summary><div class="bdetail">CWE-94: Improper Control of Generation of Code (&#39;Code Injection&#39;). CWE = MITRE&#39;s Common Weakness Enumeration. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2022-22965-CVE.cwe" title="Show evidence CVE.cwe">CVE.cwe</a><a class="chip" href="#CVE-2022-22965-NVD.cwe" title="Show evidence NVD.cwe">NVD.cwe</a></span></span></div></details></li><li><span class="bshort">On the US government&#39;s list of actively attacked flaws (KEV): Yes</span><details class="bmore"><summary>details</summary><div class="bdetail">Listed in the CISA Known Exploited Vulnerabilities catalogue. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2022-22965-KEV" title="Show evidence KEV">KEV</a></span></span></div></details></li><li><span class="bshort">Known to be exploited by attackers: Yes</span><details class="bmore"><summary>details</summary><div class="bdetail">Positive evidence of exploitation in the wild (KEV listing and/or CISA SSVC Exploitation=active). <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2022-22965-KEV" title="Show evidence KEV">KEV</a><a class="chip" href="#CVE-2022-22965-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">Attack code reported to be public: Yes</span><details class="bmore"><summary>details</summary><div class="bdetail">2 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2022-22965-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a><a class="chip" href="#CVE-2022-22965-NVD.ref.1" title="Show evidence NVD.ref.1">NVD.ref.1</a></span></span></div></details></li><li><span class="bshort">CISA&#39;s rating: attacks have been seen</span><details class="bmore"><summary>details</summary><div class="bdetail">CISA SSVC decision points: Exploitation=active, Automatable=yes, Technical Impact=total; assessed 2025-01-29. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2022-22965-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">Predicted chance of attacks in the next 30 days: 99.6%</span><details class="bmore"><summary>details</summary><div class="bdetail">EPSS 0.9964, higher than 99.9% of all scored CVEs, scored 2026-10-10 (FIRST EPSS model). Estimates exploitation activity, not difficulty or impact. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2022-22965-EPSS" title="Show evidence EPSS">EPSS</a></span></span></div></details></li></ul>
+      </section>
+      <section class="sec sec-unc">
+        <h3><span class="ico" aria-hidden="true">?</span>What's uncertain</h3>
+        <p class="hint">Gaps, conflicts between sources, and things a person should check.</p>
+        <ul class="items"><li><span class="bshort">web-portal-01: Spring Framework 5.3.17 needs a manual version check</span><details class="bmore"><summary>details</summary><div class="bdetail">CNA:vmware &#39;Spring Framework&#39;: name &#39;spring framework&#39;: version statement &#39;Spring Framework versions 5.3.X prior to 5.3.18+, 5.2.x prior to 5.2.20+ and all&#39; is not machine-comparable; NVD vmware:spring_framework: in range ≥5.3.0 &lt;5.3.18; NVD applies this only in combination with cpe:2.3:a:oracle:jdk:*:*:*:*:*:*:*:* (AND configuration) — confirm that platform condition for this deployment <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2022-22965-CVE.affected.1" title="Show evidence CVE.affected.1">CVE.affected.1</a><a class="chip" href="#CVE-2022-22965-NVD.cpe" title="Show evidence NVD.cpe">NVD.cpe</a></span></span></div></details></li></ul>
+      </section>
+    </div>
+
+    <section class="sec sec-change">
+      <h3><span class="ico" aria-hidden="true">↻</span>What would change this decision</h3>
+      <p class="hint">New information that would move the priority up or down.</p>
+      <ul class="items"><li><span class="bshort">If your version is affected → Fix now (P1), however exposed the system is</span><details class="bmore"><summary>details</summary><div class="bdetail">internet-facing/critical and internal/non-critical give the same result</div></details></li><li><span class="bshort">If your version turns out not to be affected → no action needed</span><details class="bmore"><summary>details</summary><div class="bdetail">the deployed version is confirmed NOT affected</div></details></li></ul>
+    </section>
+
+    <details class="desc-box">
+      <summary><b>Severity score details</b> <span class="meta">(4 scores from 3 sources; what the score is based on)</span></summary>
+      <p class="hint" style="margin-top:8px">CVSS rates how serious a flaw is on paper (0–10). The rules use the highest score of the newest CVSS version — here 9.8 from CISA.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Source</th><th>CVSS version</th><th>Score</th><th>Rating</th><th>Technical code</th><th>Evidence</th></tr></thead>
+        <tbody>
+        <tr class="primary-row"><td>CISA <b>(used)</b><br><span class="fcode">source ID: <code>ADP:CISA-ADP</code> · adp</span></td><td>3.1</td><td class="num">9.8</td><td>Critical</td><td><code class="vec">CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H</code></td><td><span class="chips"><a class="chip" href="#CVE-2022-22965-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a></span></td></tr>
+        <tr><td>NVD<br><span class="fcode">source ID: <code>nvd@nist.gov</code> · Primary</span></td><td>3.1</td><td class="num">9.8</td><td>Critical</td><td><code class="vec">CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H</code></td><td><span class="chips"><a class="chip" href="#CVE-2022-22965-NVD.cvss.1" title="Show evidence NVD.cvss.1">NVD.cvss.1</a></span></td></tr>
+        <tr><td>CISA (copy in NVD)<br><span class="fcode">source ID: <code>134c704f-9b21-4f2e-91b3-4a467353bcc0</code> · Secondary</span></td><td>3.1</td><td class="num">9.8</td><td>Critical</td><td><code class="vec">CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H</code></td><td><span class="chips"><a class="chip" href="#CVE-2022-22965-NVD.cvss.2" title="Show evidence NVD.cvss.2">NVD.cvss.2</a></span></td></tr>
+        <tr><td>NVD<br><span class="fcode">source ID: <code>nvd@nist.gov</code> · Primary</span></td><td>2.0</td><td class="num">7.5</td><td>High</td><td><code class="vec">AV:N/AC:L/Au:N/C:P/I:P/A:P</code></td><td><span class="chips"><a class="chip" href="#CVE-2022-22965-NVD.cvss.3" title="Show evidence NVD.cvss.3">NVD.cvss.3</a></span></td></tr>
+        </tbody></table></div>
+      <h4 style="margin:12px 0 4px">What the 9.8 score says, in plain words</h4>
+      <ul class="items"><li><b>Attack from:</b> the network (remotely)</li><li><b>Attack complexity:</b> low — no special conditions</li><li><b>Login / privileges needed:</b> none</li><li><b>A user must do something:</b> no</li><li><b>Impact spreads beyond the component:</b> no</li><li><b>Impact on confidentiality (data theft):</b> high</li><li><b>Impact on integrity (data tampering):</b> high</li><li><b>Impact on availability (outage):</b> high</li></ul>
+      <p class="meta">Technical code: <code>CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H</code></p>
+    </details>
+    <details class="desc-box tech">
+      <summary><b>Technical details</b> <span class="meta">(for specialists: rule codes and raw values)</span></summary>
+      <div class="table-wrap"><table>
+        <tbody>
+        <tr><th>Rule outcome</th><td><code>NEEDS_REVIEW</code> (priority if affected: <code>P1</code>) · provisional — Needs version review (would be P1 if affected)</td></tr>
+        <tr><th>Rule inputs</th><td>exploitation <code>confirmed</code> · severity <code>critical</code> · exposure <code>needs_review</code></td></tr>
+        <tr><th>Severity-only baseline</th><td><code>P1</code> (what ranking by CVSS score alone would give)</td></tr>
+        <tr><th>Deterministic findings</th><td><code>kev_listed=true</code> · <code>exploited_in_wild=true</code> · <code>public_exploit_claimed=true</code> · <code>cvss_scored=true</code></td></tr>
+        <tr><th>Record</th><td>state <code>published</code> · weaknesses CWE-94 · EPSS <code>0.9964</code> (percentile 0.9995)</td></tr>
+        <tr><th>How this CVE was selected</th><td>supplied by the user (command line or watchlist)</td></tr>
+        <tr><th>Sources</th><td>cve_org=<code>ok</code> (cached) · nvd=<code>ok</code> (cached) · cisa_kev=<code>ok</code> (cached) · first_epss=<code>ok</code> (cached)</td></tr>
+        </tbody></table></div>
+    </details>
+
+    <details class="desc-box">
+      <summary><b>Official description</b> <span class="meta">(from the CVE record — copied word for word; untrusted text)</span></summary>
+      <p>A Spring MVC or Spring WebFlux application running on JDK 9+ may be vulnerable to remote code execution (RCE) via data binding. The specific exploit requires the application to run on Tomcat as a WAR deployment. If the application is deployed as a Spring Boot executable jar, i.e. the default, it is not vulnerable to the exploit. However, the nature of the vulnerability is more general, and there may be other ways to exploit it.</p>
+    </details>
 
     <div class="ai">
       <div class="tag">AI-assisted assessment · judgement, not fact</div>
@@ -1296,7 +1606,7 @@ URL that curl has been told to operate with.</p>
         <tr id="CVE-2022-22965-NVD.cvss.2">
           <td class="num">NVD.cvss.2</td>
           <td><a href="https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2022-22965" rel="noopener noreferrer nofollow">nvd</a> <span class="meta">(demo)</span></td>
-          <td>CVSS 3.1 base score 9.8 (CRITICAL) from 134c704f-9b21-4f2e-91b3-4a467353bcc0 [Secondary]</td>
+          <td>CVSS 3.1 base score 9.8 (CRITICAL) from CISA-ADP (copy in NVD) [Secondary]</td>
           <td class="num">2026-10-10 21:13</td>
           <td class="num">- / -</td>
         </tr>
@@ -1371,32 +1681,83 @@ URL that curl has been told to operate with.</p>
   <summary>
     <span class="cveid">CVE-2024-47176</span>
     <span><span class="badge s-neutral"><span aria-hidden="true">●</span>P3</span></span>
-    <span class="headline">P3: Scheduled remediation in normal maintenance</span>
+    <span class="headline">Schedule a fix · <span class="meta">cups-browsed binds to `INADDR_ANY:631`, trusting any packet from any source</span></span>
     <span class="factors">
-      <span>exploitation <b>elevated</b></span>
-      <span>severity <b>medium</b></span>
-      <span>exposure <b>reduced</b></span>
-      <span>CVSS-only baseline <b>P3</b></span>
+      <span>attacks: <b>exploit claimed / likely</b></span>
+      <span>severity: <b>medium</b></span>
+      <span>exposure: <b>protected by a control</b></span>
+      <span>CVSS-only would say: <b>P3</b></span>
 <span class="flag">⚠ 1 source conflict</span>    </span>
   </summary>
   <div class="body">
-    <p class="desc"><b>Source description</b> (verbatim, untrusted) <span class="cite">[CVE.desc]</span><br>cups-browsed binds to `INADDR_ANY:631`, trusting any packet from any source — CUPS is a standards-based, open-source printing system, and `cups-browsed` contains network printing functionality including, but not limited to, auto-discovering print services and shared printers. `cups-browsed` binds to `INADDR_ANY:631`, causing it to trust any packet from any source, and can cause the `Get-Printer-Attributes` IPP request to an attacker controlled URL. When combined with other vulnerabilities, such as CVE-2024-47076, CVE-2024-47175, and CVE-2024-47177, an attacker can execute arbitrary commands remotely on the target machine without authentication when a malicious printer is printed to.</p>
-    <div class="cols">
-      <div>
-        <h3>What is known (sourced facts)</h3>
-        <ul class="tight"><li>CVE record state PUBLISHED (assigner GitHub_M, data version 5.2). [CVE.state]</li><li>Most severe CVSS 3.1: 5.3 MEDIUM (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N) from CNA:GitHub_M [CVE.cvss.1]</li><li>Weakness: CWE-1327 [CVE.cwe, NVD.cwe]</li><li>Kev listed: false — Not in KEV catalogue 2026.10.08 (absence is not evidence of no exploitation). [KEV]</li><li>Public exploit claimed: true — 3 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. [CVE.ssvc, NVD.ref.1, NVD.ref.2]</li><li>CISA-ADP SSVC decision points: Exploitation=poc, Automatable=no, Technical Impact=partial (assessed 2024-09-27T18:10:15.456578Z). [CVE.ssvc]</li><li>EPSS 0.5060 (percentile 0.9889) for 2026-10-10: estimated probability of exploitation activity being observed in the next 30 days. Not a difficulty or impact score. [EPSS]</li><li>print-srv-01: cups-browsed 2.0.1 → affected [CVE.affected.1] (matched by CNA:GitHub_M &#39;cups-browsed&#39;)</li></ul>
-        <h3>Why this priority</h3>
-        <ol class="tight"><li>Base P2: exploitation signal elevated (public exploit claimed, EPSS ≥ 0.10, or validated AI difficulty=low).</li><li>Exposure reduced by a documented compensating control → P3.</li><li>print-srv-01: compensating control (reduces_reachability): Host firewall drops inbound traffic to port 631 except from the warehouse printer VLAN — operator-supplied, not verified by this tool.</li></ol>
-        <h3>Action supported by the evidence</h3>
-        <ul class="tight"><li>Upgrade cups-browsed 2.0.1 on print-srv-01 per the vendor advisory [NVD.ref.3].</li><li>Verify the claimed control on print-srv-01 is in place until patched: Host firewall drops inbound traffic to port 631 except from the warehouse printer VLAN.</li></ul>
-      </div>
-      <div>
-        <h3>What remains uncertain</h3>
-        <ul class="tight"><li>Exploited in wild: unknown — No positive evidence of in-the-wild exploitation in the sources checked. This is not proof that exploitation has not occurred. [KEV, CVE.ssvc]</li><li>Conflict (stale_signal): SSVC Exploitation=poc was assessed 2024-09-27 (&gt; 180 days ago) and may no longer reflect current activity. [CVE.ssvc]</li><li>Offline demo uses a trimmed KEV fixture; absence was verified against the full catalogue at capture time only.</li><li>Open question (scripted demo example): The bundle does not describe the other chained CVEs, so the difficulty of the full chain cannot be assessed from this evidence.</li><li>Exploit-development difficulty from public evidence is inherently limited: the absence of public research does not mean exploitation is hard.</li></ul>
-        <h3>What would change the recommendation</h3>
-        <ul class="tight"><li>If exploitation in the wild is reported (e.g. KEV listing) → P2</li><li>Resolving the listed source conflicts could change the inputs above.</li></ul>
-      </div>
+    <div class="summary-box s-neutral">
+      <div class="sum-label"><span aria-hidden="true">●</span> Schedule a fix</div>
+<p class="sum-why">Attack code is publicly claimed, or attacks are likely soon. Affected, but a protection (e.g. firewall rule) limits access.</p>      <h4>What to do</h4>
+      <ul class="items"><li><span class="bshort">Upgrade cups-browsed on print-srv-01</span><details class="bmore"><summary>details</summary><div class="bdetail">currently 2.0.1; follow the vendor advisory for the fixed version. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-47176-NVD.ref.3" title="Show evidence NVD.ref.3">NVD.ref.3</a></span></span></div></details></li><li><span class="bshort">Confirm the protection on print-srv-01 is really in place until patched</span><details class="bmore"><summary>details</summary><div class="bdetail">Host firewall drops inbound traffic to port 631 except from the warehouse printer VLAN.</div></details></li></ul>
     </div>
+
+    <div class="fgrid">
+      <div class="fcard"><div class="fname">Attack activity</div><div class="fval">Attack code is publicly claimed, or attacks are likely soon</div></div>
+      <div class="fcard"><div class="fname">Severity on paper</div><div class="fval">Medium (CVSS 4–6.9)</div></div>
+      <div class="fcard"><div class="fname">Your exposure</div><div class="fval">Affected, but a protection (e.g. firewall rule) limits access</div></div>
+    </div>
+
+    <section class="sec sec-why">
+      <h3><span class="ico" aria-hidden="true">→</span>Why this priority</h3>
+      <p class="hint">The rules that produced this decision, step by step.</p>
+      <ol class="items"><li><span class="bshort">Starts at P2: attack code is claimed or attacks are likely</span><details class="bmore"><summary>details</summary><div class="bdetail">exploitation &#39;elevated&#39;: public exploit claimed, EPSS ≥ 0.10, or validated AI difficulty=low.</div></details></li><li><span class="bshort">Lowered to P3: a protection limits access</span><details class="bmore"><summary>details</summary><div class="bdetail">an operator-declared compensating control applies (one step down; confirmed exploitation never goes below P2).</div></details></li><li><span class="bshort">print-srv-01: has a protection in place (not checked by this tool)</span><details class="bmore"><summary>details</summary><div class="bdetail">Host firewall drops inbound traffic to port 631 except from the warehouse printer VLAN (reduces_reachability); operator-supplied, not verified by this tool.</div></details></li></ol>
+    </section>
+
+    <div class="cols">
+      <section class="sec sec-known">
+        <h3><span class="ico" aria-hidden="true">✓</span>What we know</h3>
+        <p class="hint">Facts taken directly from the sources. Open “details” for the full explanation and where it came from.</p>
+        <ul class="items"><li><span class="bshort">CVE status: Published (active)</span><details class="bmore"><summary>details</summary><div class="bdetail">assigned by GitHub_M; published 2024-09-26; last updated 2025-11-04 <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-47176-CVE.state" title="Show evidence CVE.state">CVE.state</a></span></span></div></details></li><li><span class="bshort">Severity: 5.3 / 10 (Medium)</span><details class="bmore"><summary>details</summary><div class="bdetail">CVSS 3.1 score from GitHub_M, which published the CVE; 2 sources agree. Full breakdown in Severity score details. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-47176-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a></span></span></div></details></li><li><span class="bshort">Type of flaw: Binding to an Unrestricted IP Address</span><details class="bmore"><summary>details</summary><div class="bdetail">CWE-1327: Binding to an Unrestricted IP Address. CWE = MITRE&#39;s Common Weakness Enumeration. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-47176-CVE.cwe" title="Show evidence CVE.cwe">CVE.cwe</a><a class="chip" href="#CVE-2024-47176-NVD.cwe" title="Show evidence NVD.cwe">NVD.cwe</a></span></span></div></details></li><li><span class="bshort">On the US government&#39;s list of actively attacked flaws (KEV): No</span><details class="bmore"><summary>details</summary><div class="bdetail">Not in KEV catalogue 2026.10.08 (absence is not evidence of no exploitation). <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-47176-KEV" title="Show evidence KEV">KEV</a></span></span></div></details></li><li><span class="bshort">Attack code reported to be public: Yes</span><details class="bmore"><summary>details</summary><div class="bdetail">3 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-47176-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a><a class="chip" href="#CVE-2024-47176-NVD.ref.1" title="Show evidence NVD.ref.1">NVD.ref.1</a><a class="chip" href="#CVE-2024-47176-NVD.ref.2" title="Show evidence NVD.ref.2">NVD.ref.2</a></span></span></div></details></li><li><span class="bshort">CISA&#39;s rating: demo attack code exists</span><details class="bmore"><summary>details</summary><div class="bdetail">CISA SSVC decision points: Exploitation=poc, Automatable=no, Technical Impact=partial; assessed 2024-09-27. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-47176-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">Predicted chance of attacks in the next 30 days: 50.6%</span><details class="bmore"><summary>details</summary><div class="bdetail">EPSS 0.5060, higher than 98.9% of all scored CVEs, scored 2026-10-10 (FIRST EPSS model). Estimates exploitation activity, not difficulty or impact. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-47176-EPSS" title="Show evidence EPSS">EPSS</a></span></span></div></details></li><li><span class="bshort">print-srv-01: cups-browsed 2.0.1 is affected</span><details class="bmore"><summary>details</summary><div class="bdetail">Matched by CNA:GitHub_M &#39;cups-browsed&#39;. CNA:GitHub_M &#39;cups-browsed&#39;: name &#39;cups browsed&#39;: matches free-text constraint &#39;&lt;= 2.0.1&#39; (parsed as &lt;= 2.0.1) <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-47176-CVE.affected.1" title="Show evidence CVE.affected.1">CVE.affected.1</a></span></span></div></details></li></ul>
+      </section>
+      <section class="sec sec-unc">
+        <h3><span class="ico" aria-hidden="true">?</span>What's uncertain</h3>
+        <p class="hint">Gaps, conflicts between sources, and things a person should check.</p>
+        <ul class="items"><li><span class="bshort">Known to be exploited by attackers: Unknown</span><details class="bmore"><summary>details</summary><div class="bdetail">No positive evidence of in-the-wild exploitation in the sources checked. This is not proof that exploitation has not occurred. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-47176-KEV" title="Show evidence KEV">KEV</a><a class="chip" href="#CVE-2024-47176-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">Some evidence may be out of date</span><details class="bmore"><summary>details</summary><div class="bdetail">SSVC Exploitation=poc was assessed 2024-09-27 (&gt; 180 days ago) and may no longer reflect current activity. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-47176-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">Demo data: the attacked-flaws list (KEV) is a reduced copy</span><details class="bmore"><summary>details</summary><div class="bdetail">Offline demo uses a trimmed KEV fixture; absence was verified against the full catalogue at capture time only.</div></details></li><li><span class="bshort">Open question: The bundle does not describe the other chained CVEs, so the…</span><details class="bmore"><summary>details</summary><div class="bdetail">The bundle does not describe the other chained CVEs, so the difficulty of the full chain cannot be assessed from this evidence. (Source: scripted demo example; not verified.)</div></details></li><li><span class="bshort">Little public research doesn&#39;t mean it&#39;s hard to exploit</span><details class="bmore"><summary>details</summary><div class="bdetail">Exploit-development difficulty judged from public evidence is inherently limited: the absence of public research does not mean exploitation is hard.</div></details></li></ul>
+      </section>
+    </div>
+
+    <section class="sec sec-change">
+      <h3><span class="ico" aria-hidden="true">↻</span>What would change this decision</h3>
+      <p class="hint">New information that would move the priority up or down.</p>
+      <ul class="items"><li><span class="bshort">If attackers are reported using it → Fix in the next patch cycle (P2)</span><details class="bmore"><summary>details</summary><div class="bdetail">e.g. it is added to CISA&#39;s KEV list or CISA SSVC says exploitation is active</div></details></li><li><span class="bshort">If the sources&#39; disagreements are resolved → the decision may change</span><details class="bmore"><summary>details</summary><div class="bdetail">resolving the listed source conflicts could change the inputs above.</div></details></li></ul>
+    </section>
+
+    <details class="desc-box">
+      <summary><b>Severity score details</b> <span class="meta">(2 scores from 2 sources; what the score is based on)</span></summary>
+      <p class="hint" style="margin-top:8px">CVSS rates how serious a flaw is on paper (0–10). The rules use the highest score of the newest CVSS version — here 5.3 from GitHub_M, which published the CVE.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Source</th><th>CVSS version</th><th>Score</th><th>Rating</th><th>Technical code</th><th>Evidence</th></tr></thead>
+        <tbody>
+        <tr class="primary-row"><td>GitHub_M, which published the CVE <b>(used)</b><br><span class="fcode">source ID: <code>CNA:GitHub_M</code> · cna</span></td><td>3.1</td><td class="num">5.3</td><td>Medium</td><td><code class="vec">CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N</code></td><td><span class="chips"><a class="chip" href="#CVE-2024-47176-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a></span></td></tr>
+        <tr><td>github.com<br><span class="fcode">source ID: <code>security-advisories@github.com</code> · Secondary</span></td><td>3.1</td><td class="num">5.3</td><td>Medium</td><td><code class="vec">CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N</code></td><td><span class="chips"><a class="chip" href="#CVE-2024-47176-NVD.cvss.1" title="Show evidence NVD.cvss.1">NVD.cvss.1</a></span></td></tr>
+        </tbody></table></div>
+      <h4 style="margin:12px 0 4px">What the 5.3 score says, in plain words</h4>
+      <ul class="items"><li><b>Attack from:</b> the network (remotely)</li><li><b>Attack complexity:</b> low — no special conditions</li><li><b>Login / privileges needed:</b> none</li><li><b>A user must do something:</b> no</li><li><b>Impact spreads beyond the component:</b> no</li><li><b>Impact on confidentiality (data theft):</b> none</li><li><b>Impact on integrity (data tampering):</b> low</li><li><b>Impact on availability (outage):</b> none</li></ul>
+      <p class="meta">Technical code: <code>CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N</code></p>
+    </details>
+    <details class="desc-box tech">
+      <summary><b>Technical details</b> <span class="meta">(for specialists: rule codes and raw values)</span></summary>
+      <div class="table-wrap"><table>
+        <tbody>
+        <tr><th>Rule outcome</th><td><code>P3</code> — Scheduled remediation in normal maintenance</td></tr>
+        <tr><th>Rule inputs</th><td>exploitation <code>elevated</code> · severity <code>medium</code> · exposure <code>reduced</code></td></tr>
+        <tr><th>Severity-only baseline</th><td><code>P3</code> (what ranking by CVSS score alone would give)</td></tr>
+        <tr><th>Deterministic findings</th><td><code>kev_listed=false</code> · <code>exploited_in_wild=unknown</code> · <code>public_exploit_claimed=true</code> · <code>cvss_scored=true</code></td></tr>
+        <tr><th>Record</th><td>state <code>published</code> · weaknesses CWE-1327 · EPSS <code>0.5060</code> (percentile 0.9889)</td></tr>
+        <tr><th>How this CVE was selected</th><td>supplied by the user (command line or watchlist)</td></tr>
+        <tr><th>Sources</th><td>cve_org=<code>ok</code> (cached) · nvd=<code>ok</code> (cached) · cisa_kev=<code>ok</code> (cached) · first_epss=<code>ok</code> (cached)</td></tr>
+        </tbody></table></div>
+    </details>
+
+    <details class="desc-box">
+      <summary><b>Official description</b> <span class="meta">(from the CVE record — copied word for word; untrusted text)</span></summary>
+      <p>cups-browsed binds to `INADDR_ANY:631`, trusting any packet from any source — CUPS is a standards-based, open-source printing system, and `cups-browsed` contains network printing functionality including, but not limited to, auto-discovering print services and shared printers. `cups-browsed` binds to `INADDR_ANY:631`, causing it to trust any packet from any source, and can cause the `Get-Printer-Attributes` IPP request to an attacker controlled URL. When combined with other vulnerabilities, such as CVE-2024-47076, CVE-2024-47175, and CVE-2024-47177, an attacker can execute arbitrary commands remotely on the target machine without authentication when a malicious printer is printed to.</p>
+    </details>
 
     <div class="ai">
       <div class="tag">AI-assisted assessment · judgement, not fact</div>
@@ -1405,12 +1766,12 @@ URL that curl has been told to operate with.</p>
         <div>
           <h3>Exploit-development difficulty: <code>insufficient_evidence</code></h3>
           <ul class="tight">
-<li><i>Prerequisite (fact):</i> cups-browsed listens on port 631 on all interfaces and trusts packets from any source. <span class="cite">[CVE.desc]</span></li><li><i>Prerequisite (fact):</i> Code execution is described only when chained with other CVEs and when a user prints to the attacker&#39;s printer. <span class="cite">[CVE.desc]</span></li><li><i>Complexity (inference):</i> On its own this CVE is scored as integrity-low with no confidentiality or availability impact; the severe outcome depends on the chain. <span class="cite">[CVE.cvss.1, CVE.desc]</span></li><li><i>Research (fact):</i> NVD tags a researcher write-up and the vendor advisory as exploit references. <span class="cite">[NVD.ref.1, NVD.ref.2]</span></li>          </ul>
+<li><span class="bshort">cups-browsed listens on port 631 on all interfaces and trusts packets from any source.</span><details class="bmore"><summary>details</summary><div class="bdetail">Prerequisite · sourced fact <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-47176-CVE.desc" title="Show evidence CVE.desc">CVE.desc</a></span></span></div></details></li><li><span class="bshort">Code execution is described only when chained with other CVEs and when a user prints to the attacker&#39;s printer.</span><details class="bmore"><summary>details</summary><div class="bdetail">Prerequisite · sourced fact <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-47176-CVE.desc" title="Show evidence CVE.desc">CVE.desc</a></span></span></div></details></li><li><span class="bshort">On its own this CVE is scored as integrity-low with no confidentiality or availability impact; the severe outcome depends on the chain.</span><details class="bmore"><summary>details</summary><div class="bdetail">Complexity · AI inference <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-47176-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a><a class="chip" href="#CVE-2024-47176-CVE.desc" title="Show evidence CVE.desc">CVE.desc</a></span></span></div></details></li><li><span class="bshort">NVD tags a researcher write-up and the vendor advisory as exploit references.</span><details class="bmore"><summary>details</summary><div class="bdetail">Research · sourced fact <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-47176-NVD.ref.1" title="Show evidence NVD.ref.1">NVD.ref.1</a><a class="chip" href="#CVE-2024-47176-NVD.ref.2" title="Show evidence NVD.ref.2">NVD.ref.2</a></span></span></div></details></li>          </ul>
         </div>
         <div>
           <h3>Existing-exploit usability: <code>public_exploit_claimed</code></h3>
           <ul class="tight">
-<li><i>Exploit evidence (fact):</i> CISA SSVC records Exploitation=poc and Automatable=no. <span class="cite">[CVE.ssvc]</span></li><li><i>Reliability limit (inference):</i> Full impact requires user interaction (printing to a malicious printer), which limits automated exploitation. <span class="cite">[CVE.desc, CVE.ssvc]</span></li><li><i>Required access (fact):</i> Network access to port 631 on the target; no authentication. <span class="cite">[CVE.desc, CVE.cvss.1]</span></li>          </ul>
+<li><span class="bshort">CISA SSVC records Exploitation=poc and Automatable=no.</span><details class="bmore"><summary>details</summary><div class="bdetail">Exploit evidence · sourced fact <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-47176-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">Full impact requires user interaction (printing to a malicious printer), which limits automated exploitation.</span><details class="bmore"><summary>details</summary><div class="bdetail">Reliability limit · AI inference <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-47176-CVE.desc" title="Show evidence CVE.desc">CVE.desc</a><a class="chip" href="#CVE-2024-47176-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">Network access to port 631 on the target; no authentication.</span><details class="bmore"><summary>details</summary><div class="bdetail">Required access · sourced fact <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-47176-CVE.desc" title="Show evidence CVE.desc">CVE.desc</a><a class="chip" href="#CVE-2024-47176-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a></span></span></div></details></li>          </ul>
         </div>
       </div>
 <p class="meta"><i>Scripted summary (uncited free text):</i> Network-reachable cups-browsed accepts attacker-supplied printer data; serious impact requires chaining and a user print action.</p>    </div>
@@ -1549,33 +1910,85 @@ URL that curl has been told to operate with.</p>
   <summary>
     <span class="cveid">CVE-2024-3094</span>
     <span><span class="badge s-good"><span aria-hidden="true">✓</span>NOT_APPLICABLE</span></span>
-    <span class="headline">Not applicable to the supplied inventory</span>
+    <span class="headline">Not affected — no action needed · <span class="meta">Xz: malicious code in distributed source</span></span>
     <span class="factors">
-      <span>exploitation <b>elevated</b></span>
-      <span>severity <b>critical</b></span>
-      <span>exposure <b>not_affected</b></span>
-      <span>CVSS-only baseline <b>P1</b></span>
+      <span>attacks: <b>exploit claimed / likely</b></span>
+      <span>severity: <b>critical</b></span>
+      <span>exposure: <b>not affected</b></span>
+      <span>CVSS-only would say: <b>P1</b></span>
 <span class="flag">⚠ 1 source conflict</span>    </span>
   </summary>
   <div class="body">
-    <p class="desc"><b>Source description</b> (verbatim, untrusted) <span class="cite">[CVE.desc]</span><br>Xz: malicious code in distributed source — Malicious code was discovered in the upstream tarballs of xz, starting with version 5.6.0. 
-Through a series of complex obfuscations, the liblzma build process extracts a prebuilt object file from a disguised test file existing in the source code, which is then used to modify specific functions in the liblzma code. This results in a modified liblzma library that can be used by any software linked against this library, intercepting and modifying the data interaction with this library.</p>
-    <div class="cols">
-      <div>
-        <h3>What is known (sourced facts)</h3>
-        <ul class="tight"><li>CVE record state PUBLISHED (assigner redhat, data version 5.2). [CVE.state]</li><li>Most severe CVSS 3.1: 10.0 CRITICAL (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H) from CNA:redhat [CVE.cvss.1]</li><li>Weakness: CWE-506 [CVE.cwe, NVD.cwe]</li><li>Kev listed: false — Not in KEV catalogue 2026.10.08 (absence is not evidence of no exploitation). [KEV]</li><li>CISA-ADP SSVC decision points: Exploitation=none, Automatable=yes, Technical Impact=total (assessed 2024-04-02T04:00:23.138684Z). [CVE.ssvc]</li><li>EPSS 0.8597 (percentile 0.9973) for 2026-10-10: estimated probability of exploitation activity being observed in the next 30 days. Not a difficulty or impact score. [EPSS]</li><li>ops-ubuntu-02: xz 5.4.6 → not_affected [CVE.affected.1, NVD.cpe]</li></ul>
-        <h3>Why this priority</h3>
-        <ol class="tight"><li>Base P2: exploitation signal elevated (public exploit claimed, EPSS ≥ 0.10, or validated AI difficulty=low).</li><li>All matching inventory items are not affected → no priority.</li></ol>
-        <h3>Action supported by the evidence</h3>
-        <ul class="tight"><li>No action for the listed assets. Keep the inventory accurate; re-assess if versions change.</li></ul>
-      </div>
-      <div>
-        <h3>What remains uncertain</h3>
-        <ul class="tight"><li>Exploited in wild: unknown — No positive evidence of in-the-wild exploitation in the sources checked. This is not proof that exploitation has not occurred. [KEV, CVE.ssvc]</li><li>Public exploit claimed: unknown — No exploit-tagged references or SSVC PoC signal found. Exploit databases were not searched.</li><li>Conflict (stale_signal): SSVC Exploitation=none was assessed 2024-04-02 (&gt; 180 days ago) and may no longer reflect current activity. [CVE.ssvc]</li><li>Offline demo uses a trimmed KEV fixture; absence was verified against the full catalogue at capture time only.</li><li>Exploit-development difficulty from public evidence is inherently limited: the absence of public research does not mean exploitation is hard.</li></ul>
-        <h3>What would change the recommendation</h3>
-        <ul class="tight"><li>Resolving the listed source conflicts could change the inputs above.</li></ul>
-      </div>
+    <div class="summary-box s-good">
+      <div class="sum-label"><span aria-hidden="true">✓</span> Not affected — no action needed</div>
+<p class="sum-why">Attack code is publicly claimed, or attacks are likely soon. Your installed version is not affected.</p>      <h4>What to do</h4>
+      <ul class="items"><li><span class="bshort">No action needed for the listed systems</span><details class="bmore"><summary>details</summary><div class="bdetail">keep the inventory accurate and re-check if versions change.</div></details></li></ul>
     </div>
+
+    <div class="fgrid">
+      <div class="fcard"><div class="fname">Attack activity</div><div class="fval">Attack code is publicly claimed, or attacks are likely soon</div></div>
+      <div class="fcard"><div class="fname">Severity on paper</div><div class="fval">Critical (CVSS 9–10)</div></div>
+      <div class="fcard"><div class="fname">Your exposure</div><div class="fval">Your installed version is not affected</div></div>
+    </div>
+
+    <section class="sec sec-why">
+      <h3><span class="ico" aria-hidden="true">→</span>Why this priority</h3>
+      <p class="hint">The rules that produced this decision, step by step.</p>
+      <ol class="items"><li><span class="bshort">Starts at P2: attack code is claimed or attacks are likely</span><details class="bmore"><summary>details</summary><div class="bdetail">exploitation &#39;elevated&#39;: public exploit claimed, EPSS ≥ 0.10, or validated AI difficulty=low.</div></details></li><li><span class="bshort">No priority: your installed versions are not affected</span><details class="bmore"><summary>details</summary><div class="bdetail">all matching inventory items are outside the affected versions.</div></details></li></ol>
+    </section>
+
+    <div class="cols">
+      <section class="sec sec-known">
+        <h3><span class="ico" aria-hidden="true">✓</span>What we know</h3>
+        <p class="hint">Facts taken directly from the sources. Open “details” for the full explanation and where it came from.</p>
+        <ul class="items"><li><span class="bshort">CVE status: Published (active)</span><details class="bmore"><summary>details</summary><div class="bdetail">assigned by redhat; published 2024-03-29; last updated 2026-08-04 <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-3094-CVE.state" title="Show evidence CVE.state">CVE.state</a></span></span></div></details></li><li><span class="bshort">Severity: 10.0 / 10 (Critical)</span><details class="bmore"><summary>details</summary><div class="bdetail">CVSS 3.1 score from redhat, which published the CVE; 3 sources agree. Full breakdown in Severity score details. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-3094-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a></span></span></div></details></li><li><span class="bshort">Type of flaw: Embedded Malicious Code</span><details class="bmore"><summary>details</summary><div class="bdetail">CWE-506: Embedded Malicious Code. CWE = MITRE&#39;s Common Weakness Enumeration. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-3094-CVE.cwe" title="Show evidence CVE.cwe">CVE.cwe</a><a class="chip" href="#CVE-2024-3094-NVD.cwe" title="Show evidence NVD.cwe">NVD.cwe</a></span></span></div></details></li><li><span class="bshort">On the US government&#39;s list of actively attacked flaws (KEV): No</span><details class="bmore"><summary>details</summary><div class="bdetail">Not in KEV catalogue 2026.10.08 (absence is not evidence of no exploitation). <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-3094-KEV" title="Show evidence KEV">KEV</a></span></span></div></details></li><li><span class="bshort">CISA&#39;s rating: no attacks or attack code known</span><details class="bmore"><summary>details</summary><div class="bdetail">CISA SSVC decision points: Exploitation=none, Automatable=yes, Technical Impact=total; assessed 2024-04-02. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-3094-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">Predicted chance of attacks in the next 30 days: 86.0%</span><details class="bmore"><summary>details</summary><div class="bdetail">EPSS 0.8597, higher than 99.7% of all scored CVEs, scored 2026-10-10 (FIRST EPSS model). Estimates exploitation activity, not difficulty or impact. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-3094-EPSS" title="Show evidence EPSS">EPSS</a></span></span></div></details></li><li><span class="bshort">ops-ubuntu-02: xz 5.4.6 is not affected</span><details class="bmore"><summary>details</summary><div class="bdetail">CNA:redhat &#39;xz&#39;: name &#39;xz&#39;: version not listed; source default status is &#39;unaffected&#39;; NVD tukaani:xz: version 5.4.6 outside all 2 NVD ranges <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-3094-CVE.affected.1" title="Show evidence CVE.affected.1">CVE.affected.1</a><a class="chip" href="#CVE-2024-3094-NVD.cpe" title="Show evidence NVD.cpe">NVD.cpe</a></span></span></div></details></li></ul>
+      </section>
+      <section class="sec sec-unc">
+        <h3><span class="ico" aria-hidden="true">?</span>What's uncertain</h3>
+        <p class="hint">Gaps, conflicts between sources, and things a person should check.</p>
+        <ul class="items"><li><span class="bshort">Known to be exploited by attackers: Unknown</span><details class="bmore"><summary>details</summary><div class="bdetail">No positive evidence of in-the-wild exploitation in the sources checked. This is not proof that exploitation has not occurred. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-3094-KEV" title="Show evidence KEV">KEV</a><a class="chip" href="#CVE-2024-3094-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">Attack code reported to be public: Unknown</span><details class="bmore"><summary>details</summary><div class="bdetail">No exploit-tagged references or SSVC PoC signal found. Exploit databases were not searched.</div></details></li><li><span class="bshort">Some evidence may be out of date</span><details class="bmore"><summary>details</summary><div class="bdetail">SSVC Exploitation=none was assessed 2024-04-02 (&gt; 180 days ago) and may no longer reflect current activity. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-3094-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">Demo data: the attacked-flaws list (KEV) is a reduced copy</span><details class="bmore"><summary>details</summary><div class="bdetail">Offline demo uses a trimmed KEV fixture; absence was verified against the full catalogue at capture time only.</div></details></li><li><span class="bshort">Little public research doesn&#39;t mean it&#39;s hard to exploit</span><details class="bmore"><summary>details</summary><div class="bdetail">Exploit-development difficulty judged from public evidence is inherently limited: the absence of public research does not mean exploitation is hard.</div></details></li></ul>
+      </section>
+    </div>
+
+    <section class="sec sec-change">
+      <h3><span class="ico" aria-hidden="true">↻</span>What would change this decision</h3>
+      <p class="hint">New information that would move the priority up or down.</p>
+      <ul class="items"><li><span class="bshort">If the sources&#39; disagreements are resolved → the decision may change</span><details class="bmore"><summary>details</summary><div class="bdetail">resolving the listed source conflicts could change the inputs above.</div></details></li></ul>
+    </section>
+
+    <details class="desc-box">
+      <summary><b>Severity score details</b> <span class="meta">(3 scores from 3 sources; what the score is based on)</span></summary>
+      <p class="hint" style="margin-top:8px">CVSS rates how serious a flaw is on paper (0–10). The rules use the highest score of the newest CVSS version — here 10.0 from redhat, which published the CVE.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Source</th><th>CVSS version</th><th>Score</th><th>Rating</th><th>Technical code</th><th>Evidence</th></tr></thead>
+        <tbody>
+        <tr class="primary-row"><td>redhat, which published the CVE <b>(used)</b><br><span class="fcode">source ID: <code>CNA:redhat</code> · cna</span></td><td>3.1</td><td class="num">10.0</td><td>Critical</td><td><code class="vec">CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H</code></td><td><span class="chips"><a class="chip" href="#CVE-2024-3094-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a></span></td></tr>
+        <tr><td>redhat.com<br><span class="fcode">source ID: <code>secalert@redhat.com</code> · Secondary</span></td><td>3.1</td><td class="num">10.0</td><td>Critical</td><td><code class="vec">CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H</code></td><td><span class="chips"><a class="chip" href="#CVE-2024-3094-NVD.cvss.1" title="Show evidence NVD.cvss.1">NVD.cvss.1</a></span></td></tr>
+        <tr><td>NVD<br><span class="fcode">source ID: <code>nvd@nist.gov</code> · Primary</span></td><td>3.1</td><td class="num">10.0</td><td>Critical</td><td><code class="vec">CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H</code></td><td><span class="chips"><a class="chip" href="#CVE-2024-3094-NVD.cvss.2" title="Show evidence NVD.cvss.2">NVD.cvss.2</a></span></td></tr>
+        </tbody></table></div>
+      <h4 style="margin:12px 0 4px">What the 10.0 score says, in plain words</h4>
+      <ul class="items"><li><b>Attack from:</b> the network (remotely)</li><li><b>Attack complexity:</b> low — no special conditions</li><li><b>Login / privileges needed:</b> none</li><li><b>A user must do something:</b> no</li><li><b>Impact spreads beyond the component:</b> yes</li><li><b>Impact on confidentiality (data theft):</b> high</li><li><b>Impact on integrity (data tampering):</b> high</li><li><b>Impact on availability (outage):</b> high</li></ul>
+      <p class="meta">Technical code: <code>CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H</code></p>
+    </details>
+    <details class="desc-box tech">
+      <summary><b>Technical details</b> <span class="meta">(for specialists: rule codes and raw values)</span></summary>
+      <div class="table-wrap"><table>
+        <tbody>
+        <tr><th>Rule outcome</th><td><code>NOT_APPLICABLE</code> — Not applicable to the supplied inventory</td></tr>
+        <tr><th>Rule inputs</th><td>exploitation <code>elevated</code> · severity <code>critical</code> · exposure <code>not_affected</code></td></tr>
+        <tr><th>Severity-only baseline</th><td><code>P1</code> (what ranking by CVSS score alone would give)</td></tr>
+        <tr><th>Deterministic findings</th><td><code>kev_listed=false</code> · <code>exploited_in_wild=unknown</code> · <code>public_exploit_claimed=unknown</code> · <code>cvss_scored=true</code></td></tr>
+        <tr><th>Record</th><td>state <code>published</code> · weaknesses CWE-506 · EPSS <code>0.8597</code> (percentile 0.9973)</td></tr>
+        <tr><th>How this CVE was selected</th><td>supplied by the user (command line or watchlist)</td></tr>
+        <tr><th>Sources</th><td>cve_org=<code>ok</code> (cached) · nvd=<code>ok</code> (cached) · cisa_kev=<code>ok</code> (cached) · first_epss=<code>ok</code> (cached)</td></tr>
+        </tbody></table></div>
+    </details>
+
+    <details class="desc-box">
+      <summary><b>Official description</b> <span class="meta">(from the CVE record — copied word for word; untrusted text)</span></summary>
+      <p>Xz: malicious code in distributed source — Malicious code was discovered in the upstream tarballs of xz, starting with version 5.6.0. 
+Through a series of complex obfuscations, the liblzma build process extracts a prebuilt object file from a disguised test file existing in the source code, which is then used to modify specific functions in the liblzma code. This results in a modified liblzma library that can be used by any software linked against this library, intercepting and modifying the data interaction with this library.</p>
+    </details>
 
     <div class="ai">
       <div class="tag">AI-assisted assessment · judgement, not fact</div>
@@ -1772,31 +2185,61 @@ Through a series of complex obfuscations, the liblzma build process extracts a p
   <summary>
     <span class="cveid">CVE-2026-11415</span>
     <span><span class="badge s-muted"><span aria-hidden="true">✕</span>NO_ACTION_REJECTED</span></span>
-    <span class="headline">Rejected CVE — no remediation needed</span>
+    <span class="headline">Cancelled CVE — no action needed</span>
     <span class="factors">
-      <span>exploitation <b>n/a</b></span>
-      <span>severity <b>n/a</b></span>
-      <span>exposure <b>n/a</b></span>
-      <span>CVSS-only baseline <b>N/A</b></span>
+      <span>attacks: <b>n/a</b></span>
+      <span>severity: <b>n/a</b></span>
+      <span>exposure: <b>n/a</b></span>
+      <span>CVSS-only would say: <b>N/A</b></span>
     </span>
   </summary>
   <div class="body">
-    <div class="cols">
-      <div>
-        <h3>What is known (sourced facts)</h3>
-        <ul class="tight"><li>CVE record state REJECTED (assigner VulnCheck, data version 5.2). [CVE.state]</li><li>Rejection reason (source text): This CVE ID has been rejected or withdrawn by its CVE Numbering Authority. [CVE.rejected]</li></ul>
-        <h3>Why this priority</h3>
-        <ol class="tight"><li>Record is REJECTED → no remediation priority.</li></ol>
-        <h3>Action supported by the evidence</h3>
-        <ul class="tight"><li>No remediation: the CVE record is rejected. Remove it from tracking and check whether the issue was re-assigned under another CVE ID [CVE.rejected].</li></ul>
-      </div>
-      <div>
-        <h3>What remains uncertain</h3>
-        <ul class="tight"><li>Nothing flagged.</li></ul>
-        <h3>What would change the recommendation</h3>
-        <ul class="tight"><li>No single input change identified.</li></ul>
-      </div>
+    <div class="summary-box s-muted">
+      <div class="sum-label"><span aria-hidden="true">✕</span> Cancelled CVE — no action needed</div>
+      <h4>What to do</h4>
+      <ul class="items"><li><span class="bshort">No fix needed: this CVE was rejected</span><details class="bmore"><summary>details</summary><div class="bdetail">remove it from tracking and check whether the issue was re-assigned under another CVE ID. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2026-11415-CVE.rejected" title="Show evidence CVE.rejected">CVE.rejected</a></span></span></div></details></li></ul>
     </div>
+
+
+    <section class="sec sec-why">
+      <h3><span class="ico" aria-hidden="true">→</span>Why this priority</h3>
+      <p class="hint">The rules that produced this decision, step by step.</p>
+      <ol class="items"><li><span class="bshort">No priority: this CVE was cancelled</span><details class="bmore"><summary>details</summary><div class="bdetail">the CVE record is REJECTED, so there is nothing to fix.</div></details></li></ol>
+    </section>
+
+    <div class="cols">
+      <section class="sec sec-known">
+        <h3><span class="ico" aria-hidden="true">✓</span>What we know</h3>
+        <p class="hint">Facts taken directly from the sources. Open “details” for the full explanation and where it came from.</p>
+        <ul class="items"><li><span class="bshort">CVE status: Cancelled (rejected)</span><details class="bmore"><summary>details</summary><div class="bdetail">assigned by VulnCheck; last updated 2026-09-29 <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2026-11415-CVE.state" title="Show evidence CVE.state">CVE.state</a></span></span></div></details></li><li><span class="bshort">Reason given for rejection</span><details class="bmore"><summary>details</summary><div class="bdetail">(source text) This CVE ID has been rejected or withdrawn by its CVE Numbering Authority. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2026-11415-CVE.rejected" title="Show evidence CVE.rejected">CVE.rejected</a></span></span></div></details></li></ul>
+      </section>
+      <section class="sec sec-unc">
+        <h3><span class="ico" aria-hidden="true">?</span>What's uncertain</h3>
+        <p class="hint">Gaps, conflicts between sources, and things a person should check.</p>
+        <ul class="items"><li>Nothing flagged.</li></ul>
+      </section>
+    </div>
+
+    <section class="sec sec-change">
+      <h3><span class="ico" aria-hidden="true">↻</span>What would change this decision</h3>
+      <p class="hint">New information that would move the priority up or down.</p>
+      <ul class="items"><li>No single change identified.</li></ul>
+    </section>
+
+    <details class="desc-box tech">
+      <summary><b>Technical details</b> <span class="meta">(for specialists: rule codes and raw values)</span></summary>
+      <div class="table-wrap"><table>
+        <tbody>
+        <tr><th>Rule outcome</th><td><code>NO_ACTION_REJECTED</code> — Rejected CVE — no remediation needed</td></tr>
+        <tr><th>Rule inputs</th><td>exploitation <code>n/a</code> · severity <code>n/a</code> · exposure <code>n/a</code></td></tr>
+        <tr><th>Severity-only baseline</th><td><code>N/A</code> (what ranking by CVSS score alone would give)</td></tr>
+        <tr><th>Deterministic findings</th><td><code>exploited_in_wild=not_applicable</code> · <code>public_exploit_claimed=not_applicable</code> · <code>cvss_scored=not_applicable</code></td></tr>
+        <tr><th>Record</th><td>state <code>rejected</code></td></tr>
+        <tr><th>How this CVE was selected</th><td>supplied by the user (command line or watchlist)</td></tr>
+        <tr><th>Sources</th><td>cve_org=<code>ok</code> (cached) · nvd=<code>ok</code> (cached) · cisa_kev=<code>ok</code> (cached) · first_epss=<code>not_found</code> (cached)</td></tr>
+        </tbody></table></div>
+    </details>
+
 
     <div class="ai">
       <div class="tag">AI-assisted assessment · judgement, not fact</div>
@@ -1839,31 +2282,61 @@ Through a series of complex obfuscations, the liblzma build process extracts a p
   <summary>
     <span class="cveid">CVE-2026-99001</span>
     <span><span class="badge s-muted"><span aria-hidden="true">∅</span>INVALID_OR_UNPUBLISHED</span></span>
-    <span class="headline">No published record — cannot assess</span>
+    <span class="headline">No public details yet — nothing to do</span>
     <span class="factors">
-      <span>exploitation <b>n/a</b></span>
-      <span>severity <b>n/a</b></span>
-      <span>exposure <b>n/a</b></span>
-      <span>CVSS-only baseline <b>N/A</b></span>
+      <span>attacks: <b>n/a</b></span>
+      <span>severity: <b>n/a</b></span>
+      <span>exposure: <b>n/a</b></span>
+      <span>CVSS-only would say: <b>N/A</b></span>
     </span>
   </summary>
   <div class="body">
-    <div class="cols">
-      <div>
-        <h3>What is known (sourced facts)</h3>
-        <ul class="tight"><li>CVE ID is RESERVED: assigned but no public record has been published. [CVE.state]</li></ul>
-        <h3>Why this priority</h3>
-        <ol class="tight"><li>Record is reserved → nothing to assess.</li></ol>
-        <h3>Action supported by the evidence</h3>
-        <ul class="tight"><li>Verify the CVE ID. A reserved ID has no public details yet; re-check later [CVE.state].</li></ul>
-      </div>
-      <div>
-        <h3>What remains uncertain</h3>
-        <ul class="tight"><li>Nothing flagged.</li></ul>
-        <h3>What would change the recommendation</h3>
-        <ul class="tight"><li>No single input change identified.</li></ul>
-      </div>
+    <div class="summary-box s-muted">
+      <div class="sum-label"><span aria-hidden="true">∅</span> No public details yet — nothing to do</div>
+      <h4>What to do</h4>
+      <ul class="items"><li><span class="bshort">Check the CVE ID and look again later</span><details class="bmore"><summary>details</summary><div class="bdetail">a reserved ID has no public details yet. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2026-99001-CVE.state" title="Show evidence CVE.state">CVE.state</a></span></span></div></details></li></ul>
     </div>
+
+
+    <section class="sec sec-why">
+      <h3><span class="ico" aria-hidden="true">→</span>Why this priority</h3>
+      <p class="hint">The rules that produced this decision, step by step.</p>
+      <ol class="items"><li><span class="bshort">No priority: there are no public details</span><details class="bmore"><summary>details</summary><div class="bdetail">the CVE ID is reserved but not yet published.</div></details></li></ol>
+    </section>
+
+    <div class="cols">
+      <section class="sec sec-known">
+        <h3><span class="ico" aria-hidden="true">✓</span>What we know</h3>
+        <p class="hint">Facts taken directly from the sources. Open “details” for the full explanation and where it came from.</p>
+        <ul class="items"><li><span class="bshort">CVE status: Reserved, no details published yet</span><details class="bmore"><summary>details</summary><div class="bdetail">CVE ID is RESERVED: assigned but no public record has been published. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2026-99001-CVE.state" title="Show evidence CVE.state">CVE.state</a></span></span></div></details></li></ul>
+      </section>
+      <section class="sec sec-unc">
+        <h3><span class="ico" aria-hidden="true">?</span>What's uncertain</h3>
+        <p class="hint">Gaps, conflicts between sources, and things a person should check.</p>
+        <ul class="items"><li>Nothing flagged.</li></ul>
+      </section>
+    </div>
+
+    <section class="sec sec-change">
+      <h3><span class="ico" aria-hidden="true">↻</span>What would change this decision</h3>
+      <p class="hint">New information that would move the priority up or down.</p>
+      <ul class="items"><li>No single change identified.</li></ul>
+    </section>
+
+    <details class="desc-box tech">
+      <summary><b>Technical details</b> <span class="meta">(for specialists: rule codes and raw values)</span></summary>
+      <div class="table-wrap"><table>
+        <tbody>
+        <tr><th>Rule outcome</th><td><code>INVALID_OR_UNPUBLISHED</code> — No published record — cannot assess</td></tr>
+        <tr><th>Rule inputs</th><td>exploitation <code>n/a</code> · severity <code>n/a</code> · exposure <code>n/a</code></td></tr>
+        <tr><th>Severity-only baseline</th><td><code>N/A</code> (what ranking by CVSS score alone would give)</td></tr>
+        <tr><th>Deterministic findings</th><td><code>exploited_in_wild=not_applicable</code> · <code>public_exploit_claimed=not_applicable</code> · <code>cvss_scored=not_applicable</code></td></tr>
+        <tr><th>Record</th><td>state <code>reserved</code></td></tr>
+        <tr><th>How this CVE was selected</th><td>supplied by the user (command line or watchlist)</td></tr>
+        <tr><th>Sources</th><td>cve_org=<code>not_found</code> (cached) · nvd=<code>not_found</code> (cached) · cisa_kev=<code>ok</code> (cached) · first_epss=<code>not_found</code> (cached)</td></tr>
+        </tbody></table></div>
+    </details>
+
 
     <div class="ai">
       <div class="tag">AI-assisted assessment · judgement, not fact</div>
@@ -1914,6 +2387,12 @@ Through a series of complex obfuscations, the liblzma build process extracts a p
   });
   q.addEventListener("input", apply);
   document.getElementById("reset").addEventListener("click", function () { active = null; q.value = ""; tiles.forEach(function (x) { x.setAttribute("aria-pressed", "false"); }); apply(); });
+  document.querySelectorAll("a.chip").forEach(function (c) {
+    c.addEventListener("click", function () {
+      var t = document.getElementById(c.getAttribute("href").slice(1));
+      for (var p = t && t.parentElement; p; p = p.parentElement) { if (p.tagName === "DETAILS") p.open = true; }
+    });
+  });
   document.getElementById("expand").addEventListener("click", function () { var open = this.textContent === "Expand all"; items.forEach(function (el) { el.open = open; }); this.textContent = open ? "Collapse all" : "Expand all"; });
 })();
 </script>

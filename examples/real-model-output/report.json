@@ -31,6 +31,7 @@
             "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
             "provider": "ADP:CISA-ADP",
             "provider_type": "adp",
+            "provider_id": null,
             "attack_vector": "NETWORK",
             "attack_complexity": "LOW",
             "attack_requirements": null,
@@ -45,6 +46,7 @@
             "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
             "provider": "nvd@nist.gov",
             "provider_type": "Primary",
+            "provider_id": null,
             "attack_vector": "NETWORK",
             "attack_complexity": "LOW",
             "attack_requirements": null,
@@ -59,6 +61,7 @@
             "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
             "provider": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
             "provider_type": "Secondary",
+            "provider_id": null,
             "attack_vector": "NETWORK",
             "attack_complexity": "LOW",
             "attack_requirements": null,
@@ -73,6 +76,7 @@
             "vector": "AV:N/AC:M/Au:N/C:C/I:C/A:C",
             "provider": "nvd@nist.gov",
             "provider_type": "Primary",
+            "provider_id": null,
             "attack_vector": "NETWORK",
             "attack_complexity": "MEDIUM",
             "attack_requirements": null,
@@ -88,6 +92,7 @@
           "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
           "provider": "ADP:CISA-ADP",
           "provider_type": "adp",
+          "provider_id": null,
           "attack_vector": "NETWORK",
           "attack_complexity": "LOW",
           "attack_requirements": null,
@@ -6523,43 +6528,45 @@
           "exposure": "not_assessed"
         },
         "trace": [
-          "Base P1: exploitation confirmed (KEV and/or SSVC active).",
-          "No inventory supplied \u2192 priority applies only if the product is deployed (provisional)."
+          "Starts at P1: attackers are known to be using it \u2014 exploitation confirmed by the CISA KEV list and/or CISA SSVC Exploitation=active.",
+          "Provisional: only applies if you run this software \u2014 No inventory supplied; the priority applies only if the product is deployed."
         ],
         "baseline_label": "P1",
         "counterfactuals": [
-          "If no affected product/version is deployed \u2192 NOT_IN_INVENTORY"
+          "If you don't run an affected version \u2192 no action needed \u2014 no affected product/version is deployed"
         ],
         "actions": [
-          "Determine whether an affected product/version is deployed (supply an inventory to automate this); if so, remediate [NVD.ref.9, NVD.ref.10, NVD.ref.12].",
-          "CISA KEV required action (quoted source text) [KEV]: For all affected software assets for which updates exist, the only acceptable remediation actions are: 1) Apply updates; OR 2) remove affected assets from agency networks. Temporary mitigations using one of the measures provided at https://www.cisa.gov/uscert/ed-22-02-apache-log4j-recommended-mitigation-measures are only acceptable until updates are available."
+          "Find out whether you run an affected version \u2014 supply an inventory to automate this; if you do, remediate. [NVD.ref.9, NVD.ref.10, NVD.ref.12]",
+          "Follow CISA's official instructions for this flaw \u2014 quoted source text: For all affected software assets for which updates exist, the only acceptable remediation actions are: 1) Apply updates; OR 2) remove affected assets from agency networks. Temporary mitigations using one of the measures provided at https://www.cisa.gov/uscert/ed-22-02-apache-log4j-recommended-mitigation-measures are only acceptable until updates are available. [KEV]"
         ]
       },
       "known": [
-        "CVE record state PUBLISHED (assigner apache, data version 5.1). [CVE.state]",
-        "Most severe CVSS 3.1: 10.0 CRITICAL (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H) from ADP:CISA-ADP [CVE.cvss.1]",
-        "Weakness: CWE-20, CWE-400, CWE-502, CWE-917 [CVE.cwe, NVD.cwe]",
-        "Kev listed: true \u2014 Listed in the CISA Known Exploited Vulnerabilities catalogue. [KEV]",
-        "Exploited in wild: true \u2014 Positive evidence of exploitation in the wild (KEV listing and/or CISA SSVC Exploitation=active). [KEV, CVE.ssvc]",
-        "Public exploit claimed: true \u2014 12 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. [CVE.ssvc, NVD.ref.1, NVD.ref.2, NVD.ref.3, NVD.ref.4, NVD.ref.5, NVD.ref.6, NVD.ref.7, NVD.ref.8, NVD.ref.11, NVD.ref.14, NVD.ref.15]",
-        "CISA-ADP SSVC decision points: Exploitation=active, Automatable=yes, Technical Impact=total (assessed 2025-02-04T14:25:34.416117Z). [CVE.ssvc]",
-        "EPSS 1.0000 (percentile 1.0000) for 2026-10-10: estimated probability of exploitation activity being observed in the next 30 days. Not a difficulty or impact score. [EPSS]"
+        "CVE status: Published (active) \u2014 assigned by apache; published 2021-12-10; last updated 2025-10-21 [CVE.state]",
+        "Severity: 10.0 / 10 (Critical) \u2014 CVSS 3.1 score from CISA; 3 sources agree. Full breakdown in Severity score details. [CVE.cvss.1]",
+        "Type of flaw: Improper Input Validation (+3 more) \u2014 CWE-20: Improper Input Validation; CWE-400: Uncontrolled Resource Consumption; CWE-502: Deserialization of Untrusted Data; CWE-917: Improper Neutralization of Special Elements used in an Expression Language Statement ('Expression Language Injection'). CWE = MITRE's Common Weakness Enumeration. [CVE.cwe, NVD.cwe]",
+        "On the US government's list of actively attacked flaws (KEV): Yes \u2014 Listed in the CISA Known Exploited Vulnerabilities catalogue. [KEV]",
+        "Known to be exploited by attackers: Yes \u2014 Positive evidence of exploitation in the wild (KEV listing and/or CISA SSVC Exploitation=active). [KEV, CVE.ssvc]",
+        "Attack code reported to be public: Yes \u2014 12 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. [CVE.ssvc, NVD.ref.1, NVD.ref.2, NVD.ref.3, NVD.ref.4, NVD.ref.5, NVD.ref.6, NVD.ref.7, NVD.ref.8, NVD.ref.11, NVD.ref.14, NVD.ref.15]",
+        "CISA's rating: attacks have been seen \u2014 CISA SSVC decision points: Exploitation=active, Automatable=yes, Technical Impact=total; assessed 2025-02-04. [CVE.ssvc]",
+        "Predicted chance of attacks in the next 30 days: >99.9% \u2014 EPSS 1.0000, higher than 100.0% of all scored CVEs, scored 2026-10-10 (FIRST EPSS model). Estimates exploitation activity, not difficulty or impact. [EPSS]"
       ],
       "uncertain": [
-        "No inventory or business context supplied: whether this CVE affects your environment, and how exposed that system is, is unknown (not assumed).",
-        "Open question (AI-identified): What specific versions of Apache Log4j2 are known to be vulnerable and how can they be identified?",
-        "Open question (AI-identified): What specific configurations of Apache Log4j2 are known to be vulnerable and how can they be identified?",
-        "Open question (AI-identified): What specific types of log messages or log message parameters are known to be vulnerable and how can they be identified?",
-        "Open question (AI-identified): What specific versions of Apache Log4j2 are known to be vulnerable and how can they be identified?",
-        "Open question (AI-identified): What specific configurations of Apache Log4j2 are known to be vulnerable and how can they be identified?",
-        "Open question (AI-identified): What specific types of log messages or log message parameters are known to be vulnerable and how can they be identified?"
+        "We don't know if you run this software \u2014 No inventory or business context was supplied, so whether this CVE affects you, and how exposed that system is, is unknown (not assumed).",
+        "Open question: What specific versions of Apache Log4j2 are known to be vulnerable\u2026 \u2014 What specific versions of Apache Log4j2 are known to be vulnerable and how can they be identified? (Source: raised by the AI assessment; not verified.)",
+        "Open question: What specific configurations of Apache Log4j2 are known to be\u2026 \u2014 What specific configurations of Apache Log4j2 are known to be vulnerable and how can they be identified? (Source: raised by the AI assessment; not verified.)",
+        "Open question: What specific types of log messages or log message parameters are\u2026 \u2014 What specific types of log messages or log message parameters are known to be vulnerable and how can they be identified? (Source: raised by the AI assessment; not verified.)",
+        "Open question: What specific versions of Apache Log4j2 are known to be vulnerable\u2026 \u2014 What specific versions of Apache Log4j2 are known to be vulnerable and how can they be identified? (Source: raised by the AI assessment; not verified.)",
+        "Open question: What specific configurations of Apache Log4j2 are known to be\u2026 \u2014 What specific configurations of Apache Log4j2 are known to be vulnerable and how can they be identified? (Source: raised by the AI assessment; not verified.)",
+        "Open question: What specific types of log messages or log message parameters are\u2026 \u2014 What specific types of log messages or log message parameters are known to be vulnerable and how can they be identified? (Source: raised by the AI assessment; not verified.)"
       ],
-      "context_supplied": false
+      "context_supplied": false,
+      "discovered_by": []
     }
   ],
   "notices": [
     "OFFLINE DEMO MODE: data comes from recorded fixtures (see retrieval times), not live sources. Results may be out of date.",
     "This product uses the NVD API but is not endorsed or certified by the NVD.",
     "CVE records: CVE Program (cve.org). KEV: CISA Known Exploited Vulnerabilities catalogue (CC0). EPSS: FIRST.org Exploit Prediction Scoring System (https://www.first.org/epss)."
-  ]
+  ],
+  "discovery": null
 }

@@ -10,12 +10,14 @@ from typing import Literal
 from cveprio import __version__
 from cveprio.applicability import assess
 from cveprio.config import DEFAULT_FIXTURES, Settings
+from cveprio.discovery import discover
 from cveprio.llm import analyze
 from cveprio.llm.providers import NoProvider, Provider, ProviderError, make_provider
 from cveprio.models import (
     ApplicabilityResult,
     Asset,
     CveReport,
+    DiscoverySummary,
     Inventory,
     LlmAnalysis,
     LlmStatus,
@@ -65,9 +67,19 @@ def make_runtime(settings: Settings, *, offline: bool, provider_name: str | None
 
 
 def run(cve_ids: list[str], rt: Runtime, inventory: Inventory | None = None,
-        now: datetime | None = None) -> RunReport:
+        now: datetime | None = None, *, discover_cves: bool = False, max_cves: int = 150) -> RunReport:
     ids = list(dict.fromkeys(normalize_cve_id(c) for c in cve_ids))  # validates before any network call
     kev = fetch_kev(rt.fetcher)
+    discovery: DiscoverySummary | None = None
+    found_by: dict[str, list[str]] = {}
+    if discover_cves:
+        if rt.offline:
+            raise ValueError("CVE discovery needs live sources; it is not available in offline mode")
+        if inventory is None:
+            raise ValueError("CVE discovery needs an inventory")
+        discovery, found_by = discover(inventory, rt.fetcher, nvd_api_key=rt.settings.nvd_api_key, kev=kev,
+                                       max_cves=max_cves)
+        ids = list(dict.fromkeys(ids + discovery.analyzed))
     epss = fetch_epss(rt.fetcher, ids)
     assets: dict[str, Asset] | None = {a.id: a for a in inventory.assets} if inventory else None
     mode: Literal["live", "offline_demo"] = "offline_demo" if rt.offline else "live"
@@ -88,9 +100,10 @@ def run(cve_ids: list[str], rt: Runtime, inventory: Inventory | None = None,
         reports.append(CveReport(
             generated_at=datetime.now(UTC), tool_version=__version__, mode=mode, cve_id=cid, bundle=bundle,
             applicability=[r for r in results if r.status.value != "no_product_match"], llm=llm,
-            decision=decision, known=known, uncertain=uncertain, context_supplied=assets is not None))
+            decision=decision, known=known, uncertain=uncertain, context_supplied=assets is not None,
+            discovered_by=found_by.get(cid, [])))
 
-    order = {"P1": 0, "P2": 1, "NEEDS_REVIEW": 2, "P3": 3, "P4": 4}
+    order = {"P1": 0, "P2": 1, "NEEDS_REVIEW": 2, "P3": 3, "P4": 4, "NOT_APPLICABLE": 6, "NOT_IN_INVENTORY": 7}
     reports.sort(key=lambda r: (order.get(r.decision.label, 9), r.cve_id))
     notices = list(SOURCE_NOTICES)
     if rt.offline:
@@ -100,4 +113,5 @@ def run(cve_ids: list[str], rt: Runtime, inventory: Inventory | None = None,
         notices.insert(1 if rt.offline else 0, "Inventory and business context are FICTIONAL example data.")
     return RunReport(generated_at=datetime.now(UTC), tool_version=__version__, mode=mode,
                      organization=inventory.organization if inventory else None,
-                     fictional_context=bool(inventory and inventory.fictional), reports=reports, notices=notices)
+                     fictional_context=bool(inventory and inventory.fictional), reports=reports, notices=notices,
+                     discovery=discovery)

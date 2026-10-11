@@ -16,6 +16,7 @@ import re
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
+from cveprio.cvss import source_name
 from cveprio.models import (
     AffectedEntry,
     Conflict,
@@ -106,6 +107,7 @@ class _Builder:
     def __init__(self, cve_id: str, demo: bool):
         self.bundle = EvidenceBundle(cve_id=cve_id, record_state=RecordState.UNKNOWN, demo=demo)
         self._counters: dict[str, int] = {}
+        self.org_names: dict[str, str] = {}  # CVE Program org UUID -> short name (NVD cites some sources by UUID)
 
     def add(self, prefix: str, **kwargs: Any) -> Evidence:
         n = self._counters.get(prefix, 0) + 1
@@ -156,11 +158,12 @@ def _add_cvss(b: _Builder, raw: dict[str, Any], source: SourceName, url: str, re
         summary=f"CVSS {raw['version']} base score {score} ({d.get('baseSeverity') or _severity_band(score)}) "
                 f"from {raw['provider']}" + (f" [{raw['provider_type']}]" if raw.get("provider_type") else ""),
         fields={"version": raw["version"], "baseScore": score, "vectorString": d.get("vectorString"),
-                "provider": raw["provider"], "type": raw.get("provider_type")},
+                "provider": raw["provider"], "provider_id": raw.get("provider_id"), "type": raw.get("provider_type")},
     )
     b.bundle.cvss.append(CvssScore(
         version=raw["version"], base_score=score, severity=(d.get("baseSeverity") or _severity_band(score)).upper(),
         vector=d.get("vectorString"), provider=raw["provider"], provider_type=raw.get("provider_type"),
+        provider_id=raw.get("provider_id"),
         attack_vector=d.get("attackVector") or d.get("accessVector"),
         attack_complexity=d.get("attackComplexity") or d.get("accessComplexity"),
         attack_requirements=d.get("attackRequirements"),
@@ -183,7 +186,7 @@ def _choose_primary_cvss(b: _Builder) -> None:
         b.bundle.conflicts.append(Conflict(
             kind="cvss_disagreement",
             description="Sources disagree on CVSS " + same[0].version + " base score: "
-            + "; ".join(f"{c.provider} {c.base_score}" for c in same)
+            + "; ".join(f"{source_name(c.provider)} {c.base_score}" for c in same)
             + ". Rules use the most severe value; verify against the vendor advisory.",
             evidence_ids=[c.evidence_id for c in same],
         ))
@@ -218,6 +221,12 @@ def _ingest_cve_org(b: _Builder, data: SourceData) -> None:
     state = str(meta.get("state", "")).upper()
     containers = rec.get("containers", {})
     cna = containers.get("cna", {}) or {}
+    for c in [cna, *(containers.get("adp", []) or [])]:
+        pm = c.get("providerMetadata") or {}
+        if pm.get("orgId") and pm.get("shortName"):
+            b.org_names[pm["orgId"]] = pm["shortName"]
+    if meta.get("assignerOrgId") and meta.get("assignerShortName"):
+        b.org_names[meta["assignerOrgId"]] = meta["assignerShortName"]
     b.bundle.record_state = {"PUBLISHED": RecordState.PUBLISHED, "REJECTED": RecordState.REJECTED}.get(
         state, RecordState.UNKNOWN)
     b.add("CVE.state", singleton=True, source=SourceName.CVE_ORG, kind="record_state", url=url,
@@ -238,6 +247,10 @@ def _ingest_cve_org(b: _Builder, data: SourceData) -> None:
                 None)
     b.bundle.title = cna.get("title")
     b.bundle.description = desc
+    cna_tags = sorted({str(t) for t in cna.get("tags", []) or []})
+    if cna_tags:
+        b.add("CVE.tags", singleton=True, source=SourceName.CVE_ORG, kind="record_tags", url=url,
+              retrieved_at=retrieved, summary="CNA record tags: " + ", ".join(cna_tags), fields={"tags": cna_tags})
     b.add("CVE.desc", singleton=True, source=SourceName.CVE_ORG, kind="description", url=url,
           retrieved_at=retrieved, published=meta.get("datePublished"), updated=meta.get("dateUpdated"),
           summary="CNA description of the vulnerability (verbatim, untrusted text).",
@@ -332,8 +345,15 @@ def _ingest_nvd(b: _Builder, data: SourceData) -> None:
                   "lastModified": cve.get("lastModified"), "cisaExploitAdd": cve.get("cisaExploitAdd")})
     if nvd_status == "Rejected":
         return
+    nvd_tags = sorted({str(t) for entry in cve.get("cveTags", []) or [] for t in entry.get("tags", []) or []})
+    if nvd_tags:
+        b.add("NVD.tags", singleton=True, source=SourceName.NVD, kind="record_tags", url=url, retrieved_at=retrieved,
+              summary="NVD CVE tags: " + ", ".join(nvd_tags), fields={"tags": nvd_tags})
 
     for raw in _cvss_from_nvd(cve.get("metrics") or {}):
+        if raw["provider"] in b.org_names:  # NVD names some sources only by UUID; resolve via the CVE record
+            raw["provider_id"] = raw["provider"]
+            raw["provider"] = f"{b.org_names[raw['provider']]} (copy in NVD)"
         _add_cvss(b, raw, SourceName.NVD, url, retrieved, "NVD.cvss")
 
     nvd_cwes = sorted({d.get("value", "") for w in cve.get("weaknesses", []) for d in w.get("description", [])
@@ -451,6 +471,30 @@ def _ingest_epss(b: _Builder, epss: EpssBatch, now: datetime) -> None:
 # -------------------------------------------------------------------- derived facts
 
 
+DISPUTE_TEXT = re.compile(r"\*\*\s*DISPUTED\s*\*\*|NOTE:\s*(the\s+)?vendor'?s?\s+position|vendor\s+disputes|"
+                          r"(is|has been)\s+disputed", re.IGNORECASE)
+
+
+def _dispute_findings(b: _Builder) -> None:
+    """Disputed / unsupported records: structured tags first, then description wording (heuristic)."""
+    tag_ids = [e.id for e in b.bundle.evidence if e.kind == "record_tags" and "disputed" in e.fields.get("tags", [])]
+    text = b.bundle.description or ""
+    if tag_ids:
+        b.finding("disputed", Truth.TRUE, "A source tags this record as DISPUTED (someone, often the vendor, "
+                  "contests that it is a vulnerability).", tag_ids)
+    elif DISPUTE_TEXT.search(text):
+        b.finding("disputed", Truth.TRUE, "The description contains dispute wording (e.g. 'NOTE: the vendor's "
+                  "position…'); detected from text, not a structured tag.", ["CVE.desc"])
+    if "disputed" in b.bundle.findings:
+        b.bundle.warnings.append("This CVE is disputed. Priority is NOT lowered automatically; read the dispute and "
+                                 "decide whether your use case is affected.")
+    eol = [e.id for e in b.bundle.evidence if e.kind == "record_tags"
+           and "unsupported-when-assigned" in e.fields.get("tags", [])]
+    if eol:
+        b.bundle.warnings.append("Tagged 'unsupported-when-assigned': the affected product was already end-of-life; "
+                                 "a fix may never be published — plan replacement.")
+
+
 def _derive(b: _Builder, cve_org: SourceData, nvd: SourceData, now: datetime) -> None:
     bundle = b.bundle
     ev_by_kind: dict[str, list[str]] = {}
@@ -510,6 +554,7 @@ def _derive(b: _Builder, cve_org: SourceData, nvd: SourceData, now: datetime) ->
                   "No exploit-tagged references or SSVC PoC signal found. Exploit databases were not searched.")
 
     _choose_primary_cvss(b)
+    _dispute_findings(b)
     if bundle.primary_cvss:
         p = bundle.primary_cvss
         b.finding("cvss_scored", Truth.TRUE, f"CVSS {p.version} {p.base_score} ({p.severity}) from {p.provider}.",
