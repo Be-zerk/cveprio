@@ -31,7 +31,7 @@ FINDING_LABEL = {
     "kev_listed": "On the US government's list of actively attacked flaws (KEV)",
     "exploited_in_wild": "Known to be exploited by attackers",
     "public_exploit_claimed": "Attack code reported to be public",
-    "disputed": "Disputed by the vendor or others",
+    "disputed": "Disputed as a real vulnerability",
 }
 VALUE_WORD = {"true": "Yes", "false": "No", "unknown": "Unknown", "not_applicable": "Not applicable",
               "retrieval_failed": "Could not check"}
@@ -64,6 +64,83 @@ def _cite(ids: list[str]) -> str:
 def item(short: str, detail: str = "", ids: list[str] | None = None) -> str:
     short = short.replace(SEP, ", ").strip()
     return short + (SEP + detail.strip() if detail.strip() else "") + _cite(ids or [])
+
+
+def _plain_source(src: str) -> str:
+    src = src.strip()
+    if src.startswith("CNA:"):
+        org = src[4:].split(" '")[0]
+        return f"{org}'s CVE record"
+    if src.startswith("ADP:"):
+        return "CISA's additions to the CVE record" if "CISA" in src else f"{src[4:].split(' ')[0]}'s additions"
+    if src.startswith("NVD"):
+        return "NVD"
+    return src
+
+
+def _plain_range(text: str) -> str:
+    def nvd(m: re.Match[str]) -> str:
+        b = dict((s, v) for s, v in re.findall(r"(≥|>|≤|<)(\S+)", m.group(1)))
+        lo = f"{b['≥']}" if "≥" in b else (f"after {b['>']}" if ">" in b else "")
+        if "<" in b:
+            hi_txt = f"up to (not including) {b['<']}" if lo else f"before {b['<']}"
+        elif "≤" in b:
+            hi_txt = f"up to and including {b['≤']}"
+        else:
+            hi_txt = "and later" if lo else ""
+        return f"versions {lo} {hi_txt} are affected".replace("  ", " ")
+    text = re.sub(r"in range ((?:(?:≥|>|≤|<)\S+ ?)+)$", nvd, text)
+    text = re.sub(r"in range 0\.\.<(\S+) → affected", r"versions before \1 are affected", text)
+    text = re.sub(r"in range (\S+?)\.\.<(\S+) → affected", r"versions \1 up to (not including) \2 are affected", text)
+    text = re.sub(r"in range (\S+?)\.\.≤(\S+) → affected", r"versions \1 up to and including \2 are affected", text)
+    text = re.sub(r"in range (\S+?)\.\.[<≤]?(\S+) → unaffected", r"versions \1 to \2 are listed as not affected", text)
+    return text
+
+
+def plain_reason(line: str) -> str:
+    """'[affected] CNA:redhat 'OpenSSH': name 'openssh': in range 8.5p1..≤9.7p1 → affected' -> a sentence."""
+    m = re.match(r"\[(affected|not_affected|ambiguous)\] (.+?): (.*)$", line)
+    if not m:
+        if line.startswith("No exact product match"):
+            return ("The product name in your inventory does not exactly match any affected product in this CVE; "
+                    "a similar name is not proof you are affected")
+        sim = re.match(r"^(CNA|ADP):(\S+): similar name: '([^']+)' vs '([^']+)'", line)
+        if sim:
+            return f"{sim.group(2)}'s CVE record lists '{sim.group(4)}', which only resembles your '{sim.group(3)}'"
+        ven = re.match(r"^(CNA|ADP):(\S+): name '([^']+)' matches but vendor differs \((.+)\)", line)
+        if ven:
+            return f"{ven.group(2)}'s CVE record lists the same name '{ven.group(3)}' but a different vendor ({ven.group(4)})"
+        cpe = re.match(r"^NVD CPE (\S+) resembles (\S+)", line)
+        if cpe:
+            return f"NVD lists {cpe.group(1)}, which resembles your {cpe.group(2)}"
+        return line.replace("Sources disagree for this version:", "The sources disagree about this version").rstrip(":")
+    _, src, rest = m.groups()
+    rest = re.sub(r"^(name '[^']*'|CPE [^:]+:[^:]+|similar name[^:]*): ", "", rest)
+    if "AND configuration" in rest:
+        other = re.search(r"cpe:2\.3:\w:([^:]+):([^:]+)", rest)
+        name = " ".join(w.upper() if len(w) <= 3 else w.capitalize()
+                        for w in f"{other.group(1)} {other.group(2)}".replace("_", " ").split()) if other else ""
+        rest = _plain_range(rest.split(";")[0]) + (f", but only together with {name}" if name else "")
+    rest = _plain_range(rest)
+    rest = re.sub(r"version not listed; source default status is 'unaffected'",
+                  "your version is not listed, and the record marks unlisted versions as not affected", rest)
+    rest = re.sub(r"version not listed; source default status is 'affected'",
+                  "your version is not listed, and the record marks unlisted versions as affected", rest)
+    rest = re.sub(r"version (\S+) outside all (\d+) NVD ranges", r"version \1 is outside all \2 affected ranges", rest)
+    rest = re.sub(r"cannot compare '([^']+)' with .*", r"version \1 could not be compared with the listed versions "
+                  "automatically", rest)
+    rest = re.sub(r"matches free-text constraint '([^']+)' \(parsed as [^)]*\)", r"the record says '\1', which "
+                  "includes your version", rest)
+    rest = re.sub(r"malformed range in source: .*", "the record's version range contains an error", rest)
+    rest = re.sub(r"exact (?:CPE )?version (\S+)(?: → affected)?", r"version \1 is listed as affected", rest)
+    rest = re.sub(r"upper bound '([^']+)' is not a comparable version", r"its upper version limit ('\1') is not a "
+                  "normal version number", rest)
+    rest = rest.replace("OSV lists", "lists").replace(" → affected", "")
+    return f"{_plain_source(src)}: {rest}"
+
+
+def _plain_reasons(reasons: list[str]) -> str:
+    return " ".join(plain_reason(x).rstrip(".") + "." for x in reasons if x.strip())
 
 
 def _shorten(text: str, limit: int = 70) -> str:
@@ -135,10 +212,9 @@ def known_and_uncertain(bundle: EvidenceBundle, results: list[ApplicabilityResul
 
     for r in results:
         who = f"{r.asset_id}: {r.software.product} {r.software.version}"
-        detail = "; ".join(x.replace("[affected] ", "").replace("[not_affected] ", "").replace("[ambiguous] ", "")
-                           for x in r.reasons)
+        detail = _plain_reasons(r.reasons)
         if r.status == ApplicabilityStatus.AFFECTED:
-            known.append(item(f"{who} is affected", f"Matched by {r.matched_by}. {detail}", r.evidence_ids))
+            known.append(item(f"{who} is affected", detail, r.evidence_ids))
         elif r.status == ApplicabilityStatus.NOT_AFFECTED:
             known.append(item(f"{who} is not affected", detail, r.evidence_ids))
         elif r.status == ApplicabilityStatus.NEEDS_REVIEW:
@@ -229,14 +305,17 @@ def explain_decision(bundle: EvidenceBundle, results: list[ApplicabilityResult],
         if ssvc and ssvc.exploitation in ("poc", "active"):
             parts.append("CISA says demo attack code exists")
         if n_refs:
-            parts.append(f"{n_refs} public source{'s' if n_refs != 1 else ''} point to attack code")
+            parts.append(f"{n_refs} public source{'s point' if n_refs != 1 else ' points'} to attack code")
         if epss and epss.probability >= 0.10:
             parts.append(f"the predicted chance of attacks in the next 30 days is {_pct(epss.probability)}")
         if not parts:
             parts.append("the AI assessment rates it easy to exploit (cited and validated)")
         out.append("Attacks are likely: " + "; ".join(parts) + ". No confirmed attacks are on record.")
     elif e == "claimed_unverified":
-        bits = [f"{n_refs} source{'s' if n_refs != 1 else ''} tagged as attack code by NVD or the CVE record"]
+        ids = claimed.evidence_ids if claimed else []
+        where = " and ".join(w for w, pre in (("NVD", "NVD.ref"), ("the CVE record", "CVE.ref"))
+                             if any(i.startswith(pre) for i in ids)) or "NVD"
+        bits = [f"{n_refs} source{'s' if n_refs != 1 else ''} tagged as attack code by {where}"]
         if epss:
             bits.append(f"the predicted chance of attacks in the next 30 days is only {_pct(epss.probability)}")
         out.append("Attack code may be public, but this is unconfirmed: " + "; ".join(bits)

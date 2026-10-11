@@ -27,8 +27,8 @@ Generated 2026-10-10T22:16:50+00:00 · mode **offline_demo** · cveprio 0.1.0
 - Severity: 10.0 / 10 (Critical) — CVSS 3.1 score from CISA; 3 sources agree. Full breakdown in Severity score details. [CVE.cvss.1]
 - Type of flaw: Improper Input Validation (+3 more) — CWE-20: Improper Input Validation; CWE-400: Uncontrolled Resource Consumption; CWE-502: Deserialization of Untrusted Data; CWE-917: Improper Neutralization of Special Elements used in an Expression Language Statement ('Expression Language Injection'). CWE = MITRE's Common Weakness Enumeration. [CVE.cwe, NVD.cwe]
 - On the US government's list of actively attacked flaws (KEV): Yes — Listed in the CISA Known Exploited Vulnerabilities catalogue. [KEV]
-- Known to be exploited by attackers: Yes — Positive evidence of exploitation in the wild (KEV listing and/or CISA SSVC Exploitation=active). [KEV, CVE.ssvc]
-- Attack code reported to be public: Yes — 12 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. [CVE.ssvc, NVD.ref.1, NVD.ref.2, NVD.ref.3, NVD.ref.4, NVD.ref.5, NVD.ref.6, NVD.ref.7, NVD.ref.8, NVD.ref.11, NVD.ref.14, NVD.ref.15]
+- Known to be exploited by attackers: Yes — Attacks have been seen: it is listed in CISA's Known Exploited Vulnerabilities catalogue and CISA's SSVC assessment rates exploitation as active. [KEV, CVE.ssvc]
+- Attack code reported to be public: Yes — Cisa's ssvc assessment says proof-of-concept code exists; 11 references are tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool. [CVE.ssvc, NVD.ref.1, NVD.ref.2, NVD.ref.3, NVD.ref.4, NVD.ref.5, NVD.ref.6, NVD.ref.7, NVD.ref.8, NVD.ref.11, NVD.ref.14, NVD.ref.15]
 - CISA's rating: attacks have been seen — CISA SSVC decision points: Exploitation=active, Automatable=yes, Technical Impact=total; assessed 2025-02-04. [CVE.ssvc]
 - Predicted chance of attacks in the next 30 days: >99.9% — EPSS 1.0000, higher than 100.0% of all scored CVEs, scored 2026-10-10 (FIRST EPSS model). Estimates exploitation activity, not difficulty or impact. [EPSS]
 
@@ -42,7 +42,7 @@ Generated 2026-10-10T22:16:50+00:00 · mode **offline_demo** · cveprio 0.1.0
 - Open question: What specific types of log messages or log message parameters are… — What specific types of log messages or log message parameters are known to be vulnerable and how can they be identified? (Source: raised by the AI assessment; not verified.)
 
 ### Why this priority (rule trace)
-1. Starts at P1: attackers are known to be using it — exploitation confirmed by the CISA KEV list and/or CISA SSVC Exploitation=active.
+1. Starts at P1: it has been on CISA's list of actively attacked flaws since 2021-12-10 and CISA rates exploitation as active — rule: flaws that are known to be attacked always start at P1.
 2. Provisional: only applies if you run this software — No inventory supplied; the priority applies only if the product is deployed.
 
 ### Action supported by the evidence
@@ -50,7 +50,7 @@ Generated 2026-10-10T22:16:50+00:00 · mode **offline_demo** · cveprio 0.1.0
 - Follow CISA's official instructions for this flaw — quoted source text: For all affected software assets for which updates exist, the only acceptable remediation actions are: 1) Apply updates; OR 2) remove affected assets from agency networks. Temporary mitigations using one of the measures provided at https://www.cisa.gov/uscert/ed-22-02-apache-log4j-recommended-mitigation-measures are only acceptable until updates are available. [KEV]
 
 ### What would change the recommendation
-- If you don't run an affected version → no action needed — no affected product/version is deployed
+- If you don't run an affected version → no action needed — check whether this software is installed anywhere
 
 ### AI-assisted assessment (judgement, not fact)
 
@@ -91,7 +91,7 @@ Provider `ollama`, model `qwen2.5:3b`. Claims with valid citation IDs: 23/23 (ci
 |---|---|---|---|---|
 | CISA **(used)** | 3.1 | 10.0 | Critical | CVE.cvss.1 |
 | NVD | 3.1 | 10.0 | Critical | NVD.cvss.1 |
-| another scoring organisation | 3.1 | 10.0 | Critical | NVD.cvss.2 |
+| CISA (copy in NVD) | 3.1 | 10.0 | Critical | NVD.cvss.2 |
 | NVD | 2.0 | 9.3 | High | NVD.cvss.3 |
 
 What the 10.0 score says: Attack from: the network (remotely); Attack complexity: low — no special conditions; Login / privileges needed: none; A user must do something: no; Impact spreads beyond the component: yes; Impact on confidentiality (data theft): high; Impact on integrity (data tampering): high; Impact on availability (outage): high (`CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H`)
@@ -108,7 +108,7 @@ What the 10.0 score says: Attack from: the network (remotely); Attack complexity
 | CVE.ssvc | cve_org (demo) | CISA-ADP SSVC decision points: Exploitation=active, Automatable=yes, Technical Impact=total (assessed 2025-02-04T14:25:34.416117Z). | 2026-10-10T21:13:11+00:00 | - / 2025-02-04T14:25:34.416117Z | https://cveawg.mitre.org/api/cve/CVE-2021-44228 |
 | NVD.status | nvd (demo) | NVD analysis status: Analyzed (last modified 2026-08-11T19:33:44.513). | 2026-10-10T21:13:11+00:00 | 2021-12-10T10:15:09.143 / 2026-08-11T19:33:44.513 | https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228 |
 | NVD.cvss.1 | nvd (demo) | CVSS 3.1 base score 10.0 (CRITICAL) from nvd@nist.gov [Primary] | 2026-10-10T21:13:11+00:00 | - / - | https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228 |
-| NVD.cvss.2 | nvd (demo) | CVSS 3.1 base score 10.0 (CRITICAL) from 134c704f-9b21-4f2e-91b3-4a467353bcc0 [Secondary] | 2026-10-10T21:13:11+00:00 | - / - | https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228 |
+| NVD.cvss.2 | nvd (demo) | CVSS 3.1 base score 10.0 (CRITICAL) from CISA-ADP (copy in NVD) [Secondary] | 2026-10-10T21:13:11+00:00 | - / - | https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228 |
 | NVD.cvss.3 | nvd (demo) | CVSS 2.0 base score 9.3 (HIGH) from nvd@nist.gov [Primary] | 2026-10-10T21:13:11+00:00 | - / - | https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228 |
 | NVD.cwe | nvd (demo) | NVD weakness classification: CWE-20, CWE-400, CWE-502, CWE-917 | 2026-10-10T21:13:11+00:00 | - / - | https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228 |
 | NVD.cpe | nvd (demo) | NVD lists 373 vulnerable CPE match criteria. | 2026-10-10T21:13:11+00:00 | - / 2026-08-11T19:33:44.513 | https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228 |

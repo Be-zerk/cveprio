@@ -81,7 +81,7 @@ def test_partial_context_counts_as_unknown_not_low():
     a = _asset(criticality="medium")  # internet_facing not supplied
     d = prioritize(synthetic_bundle(), None, _affected(), {"a1": a})
     assert d.factors["exposure"] == "context_unknown" and d.provisional
-    assert any("internet_facing" in t for t in d.trace)
+    assert any("internet exposure is not recorded" in t for t in d.trace)
 
 
 def test_business_context_changes_priority():
@@ -92,7 +92,7 @@ def test_business_context_changes_priority():
                             compensating_controls=[CompensatingControl(description="WAF rule",
                                                                        effect="reduces_reachability")])})
     assert (internal.label, exposed.label, controlled.label) == ("P3", "P2", "P4")
-    assert any("not verified" in t for t in controlled.trace)
+    assert any("does not verify" in t for t in controlled.trace)
     assert any("1.4.2" in a for a in exposed.actions)
 
 
@@ -105,7 +105,7 @@ def test_baseline_is_severity_only():
 def test_kev_counterfactual_and_listing():
     b = synthetic_bundle()
     d = prioritize(b, None, _affected(), {"a1": _asset(criticality="low", internet_facing=False)})
-    assert any("KEV" in c and "P1" in c for c in d.counterfactuals)
+    assert any("attacked" in c and "P1" in c for c in d.counterfactuals)
     b2 = synthetic_bundle(kev=(200, kev_feed(["CVE-1999-99001"])))
     d2 = prioritize(b2, None, _affected(), {"a1": _asset(criticality="low", internet_facing=False)})
     assert d2.label == "P1" and any("CISA" in a and "Apply updates per vendor instructions" in a for a in d2.actions)

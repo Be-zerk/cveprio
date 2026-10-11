@@ -199,7 +199,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
   {% for r in differs %}
     {% set base = r.decision.baseline_label %}
     <li><span class="bshort"><a href="#{{ r.cve_id }}">{{ r.cve_id }}</a>{% if r.bundle.title %} <span class="meta">({{ r.bundle.title|truncate(40) }})</span>{% endif %}: score alone says <b>{{ PLAIN_LABEL.get(base, base) }}{% if base in ("P1","P2","P3","P4") %} ({{ base }}){% endif %}</b>, this tool says <b>{{ PLAIN_LABEL.get(r.decision.label, r.decision.label) }}{% if r.decision.label in ("P1","P2","P3","P4") %} ({{ r.decision.label }}){% endif %}</b></span>
-      <details class="bmore"><summary>why</summary><div class="bdetail">Because {{ compare_reason(r.decision.factors) }}.</div></details></li>
+      <details class="bmore"><summary>why</summary><div class="bdetail">Because: {{ compare_why(r) }}.</div></details></li>
   {% endfor %}
   </ul>
   {% else %}<p style="margin:0">Every vulnerability gets the same answer as sorting by score alone.</p>{% endif %}

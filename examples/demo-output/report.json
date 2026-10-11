@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-10-11T02:42:06.871450Z",
+  "generated_at": "2026-10-11T02:51:00.791132Z",
   "tool_version": "0.1.0",
   "mode": "offline_demo",
   "organization": "Northbeam Logistics (fictional)",
@@ -8,7 +8,7 @@
   "reports": [
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T02:42:06.763950Z",
+      "generated_at": "2026-10-11T02:51:00.682263Z",
       "tool_version": "0.1.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2021-44228",
@@ -5452,7 +5452,7 @@
           "exploited_in_wild": {
             "name": "exploited_in_wild",
             "value": "true",
-            "detail": "Positive evidence of exploitation in the wild (KEV listing and/or CISA SSVC Exploitation=active).",
+            "detail": "Attacks have been seen: it is listed in CISA's Known Exploited Vulnerabilities catalogue and CISA's SSVC assessment rates exploitation as active.",
             "evidence_ids": [
               "KEV",
               "CVE.ssvc"
@@ -5461,7 +5461,7 @@
           "public_exploit_claimed": {
             "name": "public_exploit_claimed",
             "value": "true",
-            "detail": "12 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool.",
+            "detail": "Cisa's ssvc assessment says proof-of-concept code exists; 11 references are tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool.",
             "evidence_ids": [
               "CVE.ssvc",
               "NVD.ref.1",
@@ -6288,13 +6288,14 @@
           "exposure": "high"
         },
         "trace": [
-          "Starts at P1: attackers are known to be using it \u2014 exploitation confirmed by the CISA KEV list and/or CISA SSVC Exploitation=active.",
-          "Other assets need a version check \u2014 legacy-billing-03"
+          "Starts at P1: it has been on CISA's list of actively attacked flaws since 2021-12-10 and CISA rates exploitation as active \u2014 rule: flaws that are known to be attacked always start at P1.",
+          "Stays at P1: web-portal-01 is internet-facing and of high importance \u2014 it is already at the highest level.",
+          "Also check legacy-billing-03 \u2014 whether it is affected could not be confirmed automatically."
         ],
         "baseline_label": "P1",
         "counterfactuals": [
-          "If a firewall rule or other protection blocks access to it \u2192 Fix in the next patch cycle (P2) \u2014 a verified compensating control removes reachability",
-          "Once the fix is installed and confirmed \u2192 no action needed \u2014 the fix is applied and verified"
+          "If a protection such as a firewall rule blocks access to web-portal-01 \u2192 Fix in the next patch cycle (P2) \u2014 a declared protection lowers the priority by one step",
+          "Once web-portal-01 is upgraded and checked \u2192 no action needed \u2014 the fix is installed and confirmed"
         ],
         "actions": [
           "Upgrade log4j-core on web-portal-01 \u2014 currently 2.14.1; sources indicate the fix is in version 2.15.0 or later. [NVD.ref.9, NVD.ref.10, NVD.ref.12]",
@@ -6307,14 +6308,14 @@
         "Severity: 10.0 / 10 (Critical) \u2014 CVSS 3.1 score from CISA; 3 sources agree. Full breakdown in Severity score details. [CVE.cvss.1]",
         "Type of flaw: Improper Input Validation (+3 more) \u2014 CWE-20: Improper Input Validation; CWE-400: Uncontrolled Resource Consumption; CWE-502: Deserialization of Untrusted Data; CWE-917: Improper Neutralization of Special Elements used in an Expression Language Statement ('Expression Language Injection'). CWE = MITRE's Common Weakness Enumeration. [CVE.cwe, NVD.cwe]",
         "On the US government's list of actively attacked flaws (KEV): Yes \u2014 Listed in the CISA Known Exploited Vulnerabilities catalogue. [KEV]",
-        "Known to be exploited by attackers: Yes \u2014 Positive evidence of exploitation in the wild (KEV listing and/or CISA SSVC Exploitation=active). [KEV, CVE.ssvc]",
-        "Attack code reported to be public: Yes \u2014 12 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. [CVE.ssvc, NVD.ref.1, NVD.ref.2, NVD.ref.3, NVD.ref.4, NVD.ref.5, NVD.ref.6, NVD.ref.7, NVD.ref.8, NVD.ref.11, NVD.ref.14, NVD.ref.15]",
+        "Known to be exploited by attackers: Yes \u2014 Attacks have been seen: it is listed in CISA's Known Exploited Vulnerabilities catalogue and CISA's SSVC assessment rates exploitation as active. [KEV, CVE.ssvc]",
+        "Attack code reported to be public: Yes \u2014 Cisa's ssvc assessment says proof-of-concept code exists; 11 references are tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool. [CVE.ssvc, NVD.ref.1, NVD.ref.2, NVD.ref.3, NVD.ref.4, NVD.ref.5, NVD.ref.6, NVD.ref.7, NVD.ref.8, NVD.ref.11, NVD.ref.14, NVD.ref.15]",
         "CISA's rating: attacks have been seen \u2014 CISA SSVC decision points: Exploitation=active, Automatable=yes, Technical Impact=total; assessed 2025-02-04. [CVE.ssvc]",
         "Predicted chance of attacks in the next 30 days: >99.9% \u2014 EPSS 1.0000, higher than 100.0% of all scored CVEs, scored 2026-10-10 (FIRST EPSS model). Estimates exploitation activity, not difficulty or impact. [EPSS]",
-        "web-portal-01: log4j-core 2.14.1 is affected \u2014 Matched by NVD apache:log4j. NVD apache:log4j: in range \u22652.13.0 <2.15.0 [NVD.cpe]"
+        "web-portal-01: log4j-core 2.14.1 is affected \u2014 NVD: versions 2.13.0 up to (not including) 2.15.0 are affected. [NVD.cpe]"
       ],
       "uncertain": [
-        "legacy-billing-03: Log4j 2.x (bundled by appliance vendor) needs a manual version check \u2014 No exact product match; similar product names found (similarity does not establish that this deployment is affected):; CNA:apache: similar name: 'log4j' vs 'apache log4j2' [CVE.affected.1]"
+        "legacy-billing-03: Log4j 2.x (bundled by appliance vendor) needs a manual version check \u2014 The product name in your inventory does not exactly match any affected product in this CVE; a similar name is not proof you are affected. apache's CVE record lists 'apache log4j2', which only resembles your 'log4j'. [CVE.affected.1]"
       ],
       "context_supplied": true,
       "summary": [
@@ -6326,7 +6327,7 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T02:42:06.837688Z",
+      "generated_at": "2026-10-11T02:51:00.756398Z",
       "tool_version": "0.1.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2023-44487",
@@ -10774,7 +10775,7 @@
           "exploited_in_wild": {
             "name": "exploited_in_wild",
             "value": "true",
-            "detail": "Positive evidence of exploitation in the wild (KEV listing and/or CISA SSVC Exploitation=active).",
+            "detail": "Attacks have been seen: it is listed in CISA's Known Exploited Vulnerabilities catalogue and CISA's SSVC assessment rates exploitation as active.",
             "evidence_ids": [
               "KEV",
               "CVE.ssvc"
@@ -10783,7 +10784,7 @@
           "public_exploit_claimed": {
             "name": "public_exploit_claimed",
             "value": "true",
-            "detail": "3 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool.",
+            "detail": "Cisa's ssvc assessment says proof-of-concept code exists; 2 references are tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool.",
             "evidence_ids": [
               "CVE.ssvc",
               "NVD.ref.11",
@@ -11413,12 +11414,13 @@
           "exposure": "high"
         },
         "trace": [
-          "Starts at P1: attackers are known to be using it \u2014 exploitation confirmed by the CISA KEV list and/or CISA SSVC Exploitation=active."
+          "Starts at P1: it has been on CISA's list of actively attacked flaws since 2023-10-10 and CISA rates exploitation as active \u2014 rule: flaws that are known to be attacked always start at P1.",
+          "Stays at P1: web-portal-01 is internet-facing and of high importance \u2014 it is already at the highest level."
         ],
         "baseline_label": "P2",
         "counterfactuals": [
-          "If a firewall rule or other protection blocks access to it \u2192 Fix in the next patch cycle (P2) \u2014 a verified compensating control removes reachability",
-          "Once the fix is installed and confirmed \u2192 no action needed \u2014 the fix is applied and verified"
+          "If a protection such as a firewall rule blocks access to web-portal-01 \u2192 Fix in the next patch cycle (P2) \u2014 a declared protection lowers the priority by one step",
+          "Once web-portal-01 is upgraded and checked \u2192 no action needed \u2014 the fix is installed and confirmed"
         ],
         "actions": [
           "Upgrade nginx on web-portal-01 \u2014 currently 1.25.2; follow the vendor advisory for the fixed version. [NVD.ref.1, NVD.ref.2, NVD.ref.3]",
@@ -11430,11 +11432,11 @@
         "Severity: 7.5 / 10 (High) \u2014 CVSS 3.1 score from CISA; 3 sources agree. Full breakdown in Severity score details. [CVE.cvss.1]",
         "Type of flaw: Uncontrolled Resource Consumption \u2014 CWE-400: Uncontrolled Resource Consumption. CWE = MITRE's Common Weakness Enumeration. [NVD.cwe]",
         "On the US government's list of actively attacked flaws (KEV): Yes \u2014 Listed in the CISA Known Exploited Vulnerabilities catalogue. [KEV]",
-        "Known to be exploited by attackers: Yes \u2014 Positive evidence of exploitation in the wild (KEV listing and/or CISA SSVC Exploitation=active). [KEV, CVE.ssvc]",
-        "Attack code reported to be public: Yes \u2014 3 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. [CVE.ssvc, NVD.ref.11, NVD.ref.12]",
+        "Known to be exploited by attackers: Yes \u2014 Attacks have been seen: it is listed in CISA's Known Exploited Vulnerabilities catalogue and CISA's SSVC assessment rates exploitation as active. [KEV, CVE.ssvc]",
+        "Attack code reported to be public: Yes \u2014 Cisa's ssvc assessment says proof-of-concept code exists; 2 references are tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool. [CVE.ssvc, NVD.ref.11, NVD.ref.12]",
         "CISA's rating: attacks have been seen \u2014 CISA SSVC decision points: Exploitation=active, Automatable=yes, Technical Impact=partial; assessed 2024-07-23. [CVE.ssvc]",
         "Predicted chance of attacks in the next 30 days: >99.9% \u2014 EPSS 1.0000, higher than 100.0% of all scored CVEs, scored 2026-10-10 (FIRST EPSS model). Estimates exploitation activity, not difficulty or impact. [EPSS]",
-        "web-portal-01: nginx 1.25.2 is affected \u2014 Matched by NVD f5:nginx. NVD f5:nginx: in range \u22651.9.5 \u22641.25.2 [NVD.cpe]"
+        "web-portal-01: nginx 1.25.2 is affected \u2014 NVD: versions 1.9.5 up to and including 1.25.2 are affected. [NVD.cpe]"
       ],
       "uncertain": [],
       "context_supplied": true,
@@ -11446,7 +11448,7 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T02:42:06.859252Z",
+      "generated_at": "2026-10-11T02:51:00.778224Z",
       "tool_version": "0.1.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2024-6387",
@@ -13194,7 +13196,7 @@
           "public_exploit_claimed": {
             "name": "public_exploit_claimed",
             "value": "true",
-            "detail": "10 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool.",
+            "detail": "Cisa's ssvc assessment says proof-of-concept code exists; 9 references are tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool.",
             "evidence_ids": [
               "CVE.ssvc",
               "NVD.ref.1",
@@ -14405,15 +14407,15 @@
           "exposure": "high"
         },
         "trace": [
-          "Starts at P2: attack code exists or attacks are likely \u2014 exploitation 'elevated': CISA SSVC says proof-of-concept, EPSS \u2265 0.10, or validated AI difficulty=low.",
-          "Raised to P1: the system is exposed or critical \u2014 an affected asset is internet-facing or high-criticality (one step up).",
-          "Other assets need a version check \u2014 ops-ubuntu-02"
+          "Starts at P2: CISA says demo attack code exists \u2014 rule: a CISA proof-of-concept rating, a predicted chance of attacks of 10% or more, or a validated AI rating of 'easy to exploit' each start at P2.",
+          "Raised to P1: bastion-01 is internet-facing and of high importance \u2014 rule: internet-facing systems, and systems of high or critical importance, move the priority up one step.",
+          "Also check ops-ubuntu-02 \u2014 whether it is affected could not be confirmed automatically."
         ],
         "baseline_label": "P2",
         "counterfactuals": [
-          "If a firewall rule or other protection blocks access to it \u2192 Schedule a fix (P3) \u2014 a verified compensating control removes reachability",
-          "Once the fix is installed and confirmed \u2192 no action needed \u2014 the fix is applied and verified",
-          "If the sources' disagreements are resolved \u2192 the decision may change \u2014 resolving the listed source conflicts could change the inputs above."
+          "If a protection such as a firewall rule blocks access to bastion-01 \u2192 Schedule a fix (P3) \u2014 a declared protection lowers the priority by one step",
+          "Once bastion-01 is upgraded and checked \u2192 no action needed \u2014 the fix is installed and confirmed",
+          "If the sources' disagreements are resolved \u2192 the decision may change \u2014 see 'What's uncertain' for which sources disagree."
         ],
         "actions": [
           "Upgrade OpenSSH on bastion-01 \u2014 currently 9.6p1; follow the vendor advisory for the fixed version. [NVD.ref.4, NVD.ref.9, NVD.ref.10]",
@@ -14425,14 +14427,14 @@
         "Severity: 8.1 / 10 (High) \u2014 CVSS 3.1 score from redhat, which published the CVE; 3 sources agree. Full breakdown in Severity score details. [CVE.cvss.1]",
         "Type of flaw: Signal Handler Race Condition (+1 more) \u2014 CWE-364: Signal Handler Race Condition; CWE-362: Concurrent Execution using Shared Resource with Improper Synchronization ('Race Condition'). CWE = MITRE's Common Weakness Enumeration. [CVE.cwe, NVD.cwe]",
         "On the US government's list of actively attacked flaws (KEV): No \u2014 Not in KEV catalogue 2026.10.08 (absence is not evidence of no exploitation). [KEV]",
-        "Attack code reported to be public: Yes \u2014 10 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. [CVE.ssvc, NVD.ref.1, NVD.ref.2, NVD.ref.3, NVD.ref.5, NVD.ref.6, NVD.ref.7, NVD.ref.8, NVD.ref.12, NVD.ref.13]",
+        "Attack code reported to be public: Yes \u2014 Cisa's ssvc assessment says proof-of-concept code exists; 9 references are tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool. [CVE.ssvc, NVD.ref.1, NVD.ref.2, NVD.ref.3, NVD.ref.5, NVD.ref.6, NVD.ref.7, NVD.ref.8, NVD.ref.12, NVD.ref.13]",
         "CISA's rating: demo attack code exists \u2014 CISA SSVC decision points: Exploitation=poc, Automatable=no, Technical Impact=total; assessed 2024-07-02. [CVE.ssvc]",
         "Predicted chance of attacks in the next 30 days: 99.5% \u2014 EPSS 0.9951, higher than 99.9% of all scored CVEs, scored 2026-10-10 (FIRST EPSS model). Estimates exploitation activity, not difficulty or impact. [EPSS]",
-        "bastion-01: OpenSSH 9.6p1 is affected \u2014 Matched by CNA:redhat 'OpenSSH'. CNA:redhat 'OpenSSH': name 'openssh': in range 8.5p1..\u22649.7p1 \u2192 affected; NVD openbsd:openssh: in range \u22658.6 \u22649.8 [CVE.affected.1, NVD.cpe]"
+        "bastion-01: OpenSSH 9.6p1 is affected \u2014 redhat's CVE record: versions 8.5p1 up to and including 9.7p1 are affected. NVD: versions 8.6 up to and including 9.8 are affected. [CVE.affected.1, NVD.cpe]"
       ],
       "uncertain": [
         "Known to be exploited by attackers: Unknown \u2014 No positive evidence of in-the-wild exploitation in the sources checked. This is not proof that exploitation has not occurred. [KEV, CVE.ssvc]",
-        "ops-ubuntu-02: OpenSSH 1:9.6p1-3ubuntu13.4 needs a manual version check \u2014 CNA:redhat 'OpenSSH': name 'openssh': cannot compare '1:9.6p1-3ubuntu13.4' with range 8.5p1..9.7p1 (custom); '1:9.6p1-3ubuntu13.4' looks like a distribution package version; vendors often backport fixes without changing the upstream version \u2014 check the distribution's advisory. [CVE.affected.1]",
+        "ops-ubuntu-02: OpenSSH 1:9.6p1-3ubuntu13.4 needs a manual version check \u2014 redhat's CVE record: version 1:9.6p1-3ubuntu13.4 could not be compared with the listed versions automatically. '1:9.6p1-3ubuntu13.4' looks like a distribution package version; vendors often backport fixes without changing the upstream version \u2014 check the distribution's advisory. [CVE.affected.1]",
         "Some evidence may be out of date \u2014 SSVC Exploitation=poc was assessed 2024-07-02 (> 180 days ago) and may no longer reflect current activity. [CVE.ssvc]",
         "Demo data: the attacked-flaws list (KEV) is a reduced copy \u2014 Offline demo uses a trimmed KEV fixture; absence was verified against the full catalogue at capture time only.",
         "Open question: Which builds and architectures do the public PoCs target, and how\u2026 \u2014 Which builds and architectures do the public PoCs target, and how many attempts do they need? (Source: scripted demo example; not verified.)",
@@ -14449,7 +14451,7 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T02:42:06.863275Z",
+      "generated_at": "2026-10-11T02:51:00.781978Z",
       "tool_version": "0.1.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2023-38545",
@@ -14785,7 +14787,7 @@
           "public_exploit_claimed": {
             "name": "public_exploit_claimed",
             "value": "true",
-            "detail": "1 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool.",
+            "detail": "Cisa's ssvc assessment says proof-of-concept code exists. Whether that code exists, works or is reliable is NOT verified by this tool.",
             "evidence_ids": [
               "CVE.ssvc"
             ]
@@ -15232,15 +15234,14 @@
           "exposure": "context_unknown"
         },
         "trace": [
-          "Starts at P2: attack code exists or attacks are likely \u2014 exploitation 'elevated': CISA SSVC says proof-of-concept, EPSS \u2265 0.10, or validated AI difficulty=low.",
-          "Stays the same for now: some system details are missing \u2014 internet exposure and/or criticality were not supplied, so the result is provisional rather than assumed.",
-          "dev-laptop-17: importance or internet exposure not recorded \u2014 internet_facing, criticality not supplied; not assumed."
+          "Starts at P2: CISA says demo attack code exists \u2014 rule: a CISA proof-of-concept rating, a predicted chance of attacks of 10% or more, or a validated AI rating of 'easy to exploit' each start at P2.",
+          "Stays the same for now: dev-laptop-17's internet exposure and importance are not recorded \u2014 the result is marked provisional instead of guessing the missing details."
         ],
         "baseline_label": "P1",
         "counterfactuals": [
-          "If attackers are reported using it \u2192 Fix now (P1) \u2014 e.g. it is added to CISA's KEV list or CISA SSVC says exploitation is active",
-          "If the system is internet-facing or critical \u2192 Fix now (P1) \u2014 an affected asset is internet-facing or has high/critical criticality",
-          "If the sources' disagreements are resolved \u2192 the decision may change \u2014 resolving the listed source conflicts could change the inputs above."
+          "If attackers are reported using it \u2192 Fix now (P1) \u2014 for example, if CISA adds it to its list of actively attacked flaws",
+          "If dev-laptop-17 is internet-facing \u2192 Fix now (P1) \u2014 recording it as high or critical importance would have the same effect",
+          "If the sources' disagreements are resolved \u2192 the decision may change \u2014 see 'What's uncertain' for which sources disagree."
         ],
         "actions": [
           "Upgrade curl on ops-ubuntu-02 \u2014 currently 8.3.0; sources indicate the fix is in version 8.4.0 or later. [NVD.ref.1, NVD.ref.2]",
@@ -15252,11 +15253,11 @@
         "Severity: 9.8 / 10 (Critical) \u2014 CVSS 3.1 score from NVD; the highest of 2 different scores from 3 sources (see What's uncertain). Full breakdown in Severity score details. [NVD.cvss.1]",
         "Type of flaw: Out-of-bounds Write \u2014 CWE-787: Out-of-bounds Write. CWE = MITRE's Common Weakness Enumeration. [NVD.cwe]",
         "On the US government's list of actively attacked flaws (KEV): No \u2014 Not in KEV catalogue 2026.10.08 (absence is not evidence of no exploitation). [KEV]",
-        "Attack code reported to be public: Yes \u2014 1 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. [CVE.ssvc]",
+        "Attack code reported to be public: Yes \u2014 Cisa's ssvc assessment says proof-of-concept code exists. Whether that code exists, works or is reliable is NOT verified by this tool. [CVE.ssvc]",
         "CISA's rating: demo attack code exists \u2014 CISA SSVC decision points: Exploitation=poc, Automatable=no, Technical Impact=total; assessed 2024-10-17. [CVE.ssvc]",
         "Predicted chance of attacks in the next 30 days: 78.5% \u2014 EPSS 0.7848, higher than 99.6% of all scored CVEs, scored 2026-10-10 (FIRST EPSS model). Estimates exploitation activity, not difficulty or impact. [EPSS]",
-        "ops-ubuntu-02: curl 8.3.0 is affected \u2014 Matched by NVD haxx:libcurl. NVD haxx:libcurl: in range \u22657.69.0 <8.4.0 [NVD.cpe]",
-        "dev-laptop-17: curl 8.3.0 is affected \u2014 Matched by NVD haxx:libcurl. NVD haxx:libcurl: in range \u22657.69.0 <8.4.0 [NVD.cpe]"
+        "ops-ubuntu-02: curl 8.3.0 is affected \u2014 NVD: versions 7.69.0 up to (not including) 8.4.0 are affected. [NVD.cpe]",
+        "dev-laptop-17: curl 8.3.0 is affected \u2014 NVD: versions 7.69.0 up to (not including) 8.4.0 are affected. [NVD.cpe]"
       ],
       "uncertain": [
         "Known to be exploited by attackers: Unknown \u2014 No positive evidence of in-the-wild exploitation in the sources checked. This is not proof that exploitation has not occurred. [KEV, CVE.ssvc]",
@@ -15274,7 +15275,7 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T02:42:06.784311Z",
+      "generated_at": "2026-10-11T02:51:00.702750Z",
       "tool_version": "0.1.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2022-22965",
@@ -16774,7 +16775,7 @@
           "exploited_in_wild": {
             "name": "exploited_in_wild",
             "value": "true",
-            "detail": "Positive evidence of exploitation in the wild (KEV listing and/or CISA SSVC Exploitation=active).",
+            "detail": "Attacks have been seen: it is listed in CISA's Known Exploited Vulnerabilities catalogue and CISA's SSVC assessment rates exploitation as active.",
             "evidence_ids": [
               "KEV",
               "CVE.ssvc"
@@ -16783,7 +16784,7 @@
           "public_exploit_claimed": {
             "name": "public_exploit_claimed",
             "value": "true",
-            "detail": "2 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool.",
+            "detail": "Cisa's ssvc assessment says proof-of-concept code exists; 1 reference is tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool.",
             "evidence_ids": [
               "CVE.ssvc",
               "NVD.ref.1"
@@ -17267,13 +17268,13 @@
           "exposure": "needs_review"
         },
         "trace": [
-          "Starts at P1: attackers are known to be using it \u2014 exploitation confirmed by the CISA KEV list and/or CISA SSVC Exploitation=active.",
-          "Needs review: your version may or may not be affected \u2014 applicability is ambiguous; would be P1 if confirmed affected."
+          "Starts at P1: it has been on CISA's list of actively attacked flaws since 2022-04-04 and CISA rates exploitation as active \u2014 rule: flaws that are known to be attacked always start at P1.",
+          "Needs review: it is unclear whether web-portal-01's Spring Framework 5.3.17 is affected \u2014 it would be P1 if it is."
         ],
         "baseline_label": "P1",
         "counterfactuals": [
-          "If your version is affected \u2192 Fix now (P1), however exposed the system is \u2014 internet-facing/critical and internal/non-critical give the same result",
-          "If your version turns out not to be affected \u2192 no action needed \u2014 the deployed version is confirmed NOT affected"
+          "If web-portal-01's Spring Framework 5.3.17 turns out to be affected \u2192 Fix now (P1) \u2014 how exposed or important the system is would not change this",
+          "If web-portal-01's Spring Framework 5.3.17 turns out not to be affected \u2192 no action needed \u2014 check the exact build and any platform condition"
         ],
         "actions": [
           "Check the exact version of Spring Framework on web-portal-01 \u2014 recorded as 5.3.17; confirm the build and any platform condition, then re-run. See the applicability table for why it is unclear [CVE.affected.1, NVD.cpe].",
@@ -17285,13 +17286,13 @@
         "Severity: 9.8 / 10 (Critical) \u2014 CVSS 3.1 score from CISA; 3 sources agree. Full breakdown in Severity score details. [CVE.cvss.1]",
         "Type of flaw: Code Injection \u2014 CWE-94: Improper Control of Generation of Code ('Code Injection'). CWE = MITRE's Common Weakness Enumeration. [CVE.cwe, NVD.cwe]",
         "On the US government's list of actively attacked flaws (KEV): Yes \u2014 Listed in the CISA Known Exploited Vulnerabilities catalogue. [KEV]",
-        "Known to be exploited by attackers: Yes \u2014 Positive evidence of exploitation in the wild (KEV listing and/or CISA SSVC Exploitation=active). [KEV, CVE.ssvc]",
-        "Attack code reported to be public: Yes \u2014 2 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. [CVE.ssvc, NVD.ref.1]",
+        "Known to be exploited by attackers: Yes \u2014 Attacks have been seen: it is listed in CISA's Known Exploited Vulnerabilities catalogue and CISA's SSVC assessment rates exploitation as active. [KEV, CVE.ssvc]",
+        "Attack code reported to be public: Yes \u2014 Cisa's ssvc assessment says proof-of-concept code exists; 1 reference is tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool. [CVE.ssvc, NVD.ref.1]",
         "CISA's rating: attacks have been seen \u2014 CISA SSVC decision points: Exploitation=active, Automatable=yes, Technical Impact=total; assessed 2025-01-29. [CVE.ssvc]",
         "Predicted chance of attacks in the next 30 days: 99.6% \u2014 EPSS 0.9964, higher than 99.9% of all scored CVEs, scored 2026-10-10 (FIRST EPSS model). Estimates exploitation activity, not difficulty or impact. [EPSS]"
       ],
       "uncertain": [
-        "web-portal-01: Spring Framework 5.3.17 needs a manual version check \u2014 CNA:vmware 'Spring Framework': name 'spring framework': version statement 'Spring Framework versions 5.3.X prior to 5.3.18+, 5.2.x prior to 5.2.20+ and all' is not machine-comparable; NVD vmware:spring_framework: in range \u22655.3.0 <5.3.18; NVD applies this only in combination with cpe:2.3:a:oracle:jdk:*:*:*:*:*:*:*:* (AND configuration) \u2014 confirm that platform condition for this deployment [CVE.affected.1, NVD.cpe]"
+        "web-portal-01: Spring Framework 5.3.17 needs a manual version check \u2014 vmware's CVE record: version statement 'Spring Framework versions 5.3.X prior to 5.3.18+, 5.2.x prior to 5.2.20+ and all' is not machine-comparable. NVD: versions 5.3.0 up to (not including) 5.3.18 are affected, but only together with Oracle JDK. [CVE.affected.1, NVD.cpe]"
       ],
       "context_supplied": true,
       "summary": [
@@ -17302,7 +17303,7 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T02:42:06.865656Z",
+      "generated_at": "2026-10-11T02:51:00.784685Z",
       "tool_version": "0.1.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2024-47176",
@@ -17454,7 +17455,7 @@
           "public_exploit_claimed": {
             "name": "public_exploit_claimed",
             "value": "true",
-            "detail": "3 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool.",
+            "detail": "Cisa's ssvc assessment says proof-of-concept code exists; 2 references are tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool.",
             "evidence_ids": [
               "CVE.ssvc",
               "NVD.ref.1",
@@ -17979,14 +17980,13 @@
           "exposure": "reduced"
         },
         "trace": [
-          "Starts at P2: attack code exists or attacks are likely \u2014 exploitation 'elevated': CISA SSVC says proof-of-concept, EPSS \u2265 0.10, or validated AI difficulty=low.",
-          "Lowered to P3: a protection limits access \u2014 an operator-declared compensating control applies (one step down; confirmed exploitation never goes below P2).",
-          "print-srv-01: has a protection in place (not checked by this tool) \u2014 Host firewall drops inbound traffic to port 631 except from the warehouse printer VLAN (reduces_reachability); operator-supplied, not verified by this tool."
+          "Starts at P2: CISA says demo attack code exists \u2014 rule: a CISA proof-of-concept rating, a predicted chance of attacks of 10% or more, or a validated AI rating of 'easy to exploit' each start at P2.",
+          "Lowered to P3: print-srv-01 has a declared protection (Host firewall drops inbound traffic to port 631 except from the warehouse printer VLAN) \u2014 rule: a declared protection moves the priority down one step. The tool does not verify it, and known-attacked flaws never go below P2."
         ],
         "baseline_label": "P3",
         "counterfactuals": [
-          "If attackers are reported using it \u2192 Fix in the next patch cycle (P2) \u2014 e.g. it is added to CISA's KEV list or CISA SSVC says exploitation is active",
-          "If the sources' disagreements are resolved \u2192 the decision may change \u2014 resolving the listed source conflicts could change the inputs above."
+          "If attackers are reported using it \u2192 Fix in the next patch cycle (P2) \u2014 for example, if CISA adds it to its list of actively attacked flaws",
+          "If the sources' disagreements are resolved \u2192 the decision may change \u2014 see 'What's uncertain' for which sources disagree."
         ],
         "actions": [
           "Upgrade cups-browsed on print-srv-01 \u2014 currently 2.0.1; follow the vendor advisory for the fixed version. [NVD.ref.3]",
@@ -17998,10 +17998,10 @@
         "Severity: 5.3 / 10 (Medium) \u2014 CVSS 3.1 score from GitHub_M, which published the CVE; 2 sources agree. Full breakdown in Severity score details. [CVE.cvss.1]",
         "Type of flaw: Binding to an Unrestricted IP Address \u2014 CWE-1327: Binding to an Unrestricted IP Address. CWE = MITRE's Common Weakness Enumeration. [CVE.cwe, NVD.cwe]",
         "On the US government's list of actively attacked flaws (KEV): No \u2014 Not in KEV catalogue 2026.10.08 (absence is not evidence of no exploitation). [KEV]",
-        "Attack code reported to be public: Yes \u2014 3 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. [CVE.ssvc, NVD.ref.1, NVD.ref.2]",
+        "Attack code reported to be public: Yes \u2014 Cisa's ssvc assessment says proof-of-concept code exists; 2 references are tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool. [CVE.ssvc, NVD.ref.1, NVD.ref.2]",
         "CISA's rating: demo attack code exists \u2014 CISA SSVC decision points: Exploitation=poc, Automatable=no, Technical Impact=partial; assessed 2024-09-27. [CVE.ssvc]",
         "Predicted chance of attacks in the next 30 days: 50.6% \u2014 EPSS 0.5060, higher than 98.9% of all scored CVEs, scored 2026-10-10 (FIRST EPSS model). Estimates exploitation activity, not difficulty or impact. [EPSS]",
-        "print-srv-01: cups-browsed 2.0.1 is affected \u2014 Matched by CNA:GitHub_M 'cups-browsed'. CNA:GitHub_M 'cups-browsed': name 'cups browsed': matches free-text constraint '<= 2.0.1' (parsed as <= 2.0.1) [CVE.affected.1]"
+        "print-srv-01: cups-browsed 2.0.1 is affected \u2014 GitHub_M's CVE record: the record says '<= 2.0.1', which includes your version. [CVE.affected.1]"
       ],
       "uncertain": [
         "Known to be exploited by attackers: Unknown \u2014 No positive evidence of in-the-wild exploitation in the sources checked. This is not proof that exploitation has not occurred. [KEV, CVE.ssvc]",
@@ -18019,7 +18019,7 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T02:42:06.870263Z",
+      "generated_at": "2026-10-11T02:51:00.789390Z",
       "tool_version": "0.1.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2024-3094",
@@ -18875,12 +18875,12 @@
           "exposure": "not_affected"
         },
         "trace": [
-          "Starts at P2: attack code exists or attacks are likely \u2014 exploitation 'elevated': CISA SSVC says proof-of-concept, EPSS \u2265 0.10, or validated AI difficulty=low.",
+          "Starts at P2: the predicted chance of attacks in the next 30 days is 86.0% \u2014 rule: a CISA proof-of-concept rating, a predicted chance of attacks of 10% or more, or a validated AI rating of 'easy to exploit' each start at P2.",
           "No priority: your installed versions are not affected \u2014 all matching inventory items are outside the affected versions."
         ],
         "baseline_label": "P1",
         "counterfactuals": [
-          "If the sources' disagreements are resolved \u2192 the decision may change \u2014 resolving the listed source conflicts could change the inputs above."
+          "If the sources' disagreements are resolved \u2192 the decision may change \u2014 see 'What's uncertain' for which sources disagree."
         ],
         "actions": [
           "No action needed for the listed systems \u2014 keep the inventory accurate and re-check if versions change."
@@ -18893,7 +18893,7 @@
         "On the US government's list of actively attacked flaws (KEV): No \u2014 Not in KEV catalogue 2026.10.08 (absence is not evidence of no exploitation). [KEV]",
         "CISA's rating: no attacks or attack code known \u2014 CISA SSVC decision points: Exploitation=none, Automatable=yes, Technical Impact=total; assessed 2024-04-02. [CVE.ssvc]",
         "Predicted chance of attacks in the next 30 days: 86.0% \u2014 EPSS 0.8597, higher than 99.7% of all scored CVEs, scored 2026-10-10 (FIRST EPSS model). Estimates exploitation activity, not difficulty or impact. [EPSS]",
-        "ops-ubuntu-02: xz 5.4.6 is not affected \u2014 CNA:redhat 'xz': name 'xz': version not listed; source default status is 'unaffected'; NVD tukaani:xz: version 5.4.6 outside all 2 NVD ranges [CVE.affected.1, NVD.cpe]"
+        "ops-ubuntu-02: xz 5.4.6 is not affected \u2014 redhat's CVE record: your version is not listed, and the record marks unlisted versions as not affected. NVD: version 5.4.6 is outside all 2 affected ranges. [CVE.affected.1, NVD.cpe]"
       ],
       "uncertain": [
         "Known to be exploited by attackers: Unknown \u2014 No positive evidence of in-the-wild exploitation in the sources checked. This is not proof that exploitation has not occurred. [KEV, CVE.ssvc]",
@@ -18911,7 +18911,7 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T02:42:06.870927Z",
+      "generated_at": "2026-10-11T02:51:00.790284Z",
       "tool_version": "0.1.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2026-11415",
@@ -19093,7 +19093,7 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T02:42:06.871417Z",
+      "generated_at": "2026-10-11T02:51:00.791099Z",
       "tool_version": "0.1.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2026-99001",

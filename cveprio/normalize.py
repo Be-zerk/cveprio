@@ -527,8 +527,12 @@ def _derive(b: _Builder, cve_org: SourceData, nvd: SourceData, now: datetime) ->
     if ssvc and ssvc.exploitation == "active":
         exploited_ids.append(ssvc.evidence_id)
     if exploited_ids:
-        b.finding("exploited_in_wild", Truth.TRUE, "Positive evidence of exploitation in the wild (KEV listing "
-                  "and/or CISA SSVC Exploitation=active).", exploited_ids)
+        how = []
+        if "KEV" in exploited_ids:
+            how.append("it is listed in CISA's Known Exploited Vulnerabilities catalogue")
+        if ssvc and ssvc.exploitation == "active":
+            how.append("CISA's SSVC assessment rates exploitation as active")
+        b.finding("exploited_in_wild", Truth.TRUE, "Attacks have been seen: " + " and ".join(how) + ".", exploited_ids)
     elif kev and kev.value == Truth.RETRIEVAL_FAILED and not ssvc:
         b.finding("exploited_in_wild", Truth.RETRIEVAL_FAILED,
                   "KEV could not be retrieved and no SSVC assessment is available.")
@@ -543,9 +547,15 @@ def _derive(b: _Builder, cve_org: SourceData, nvd: SourceData, now: datetime) ->
         claim_ids = [ssvc.evidence_id, *claim_ids]
     nvd_ok = nvd.outcome.status == SourceStatus.OK
     if claim_ids:
+        n_refs = len([i for i in claim_ids if ".ref" in i])
+        parts = []
+        if ssvc and ssvc.exploitation in ("poc", "active"):
+            parts.append("CISA's SSVC assessment says proof-of-concept code exists")
+        if n_refs:
+            parts.append(f"{n_refs} reference{'s are' if n_refs != 1 else ' is'} tagged as exploit material")
         b.finding("public_exploit_claimed", Truth.TRUE,
-                  f"{len(claim_ids)} source item(s) indicate public exploit/PoC material. Existence, reliability "
-                  f"and impact of that code are NOT verified by this tool.", claim_ids)
+                  "; ".join(parts).capitalize() + ". Whether that code exists, works or is reliable is NOT "
+                  "verified by this tool.", claim_ids)
     elif not nvd_ok and not ssvc:
         b.finding("public_exploit_claimed", Truth.RETRIEVAL_FAILED,
                   "NVD references could not be retrieved and no SSVC assessment is available.")

@@ -59,9 +59,9 @@
             "base_score": 10.0,
             "severity": "CRITICAL",
             "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
-            "provider": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+            "provider": "CISA-ADP (copy in NVD)",
             "provider_type": "Secondary",
-            "provider_id": null,
+            "provider_id": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
             "attack_vector": "NETWORK",
             "attack_complexity": "LOW",
             "attack_requirements": null,
@@ -5452,7 +5452,7 @@
           "exploited_in_wild": {
             "name": "exploited_in_wild",
             "value": "true",
-            "detail": "Positive evidence of exploitation in the wild (KEV listing and/or CISA SSVC Exploitation=active).",
+            "detail": "Attacks have been seen: it is listed in CISA's Known Exploited Vulnerabilities catalogue and CISA's SSVC assessment rates exploitation as active.",
             "evidence_ids": [
               "KEV",
               "CVE.ssvc"
@@ -5461,7 +5461,7 @@
           "public_exploit_claimed": {
             "name": "public_exploit_claimed",
             "value": "true",
-            "detail": "12 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool.",
+            "detail": "Cisa's ssvc assessment says proof-of-concept code exists; 11 references are tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool.",
             "evidence_ids": [
               "CVE.ssvc",
               "NVD.ref.1",
@@ -5604,6 +5604,7 @@
               "baseScore": 10,
               "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
               "provider": "ADP:CISA-ADP",
+              "provider_id": null,
               "type": "adp"
             },
             "excerpt": null,
@@ -5665,6 +5666,7 @@
               "baseScore": 10.0,
               "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
               "provider": "nvd@nist.gov",
+              "provider_id": null,
               "type": "Primary"
             },
             "excerpt": null,
@@ -5675,7 +5677,7 @@
             "id": "NVD.cvss.2",
             "source": "nvd",
             "kind": "cvss",
-            "summary": "CVSS 3.1 base score 10.0 (CRITICAL) from 134c704f-9b21-4f2e-91b3-4a467353bcc0 [Secondary]",
+            "summary": "CVSS 3.1 base score 10.0 (CRITICAL) from CISA-ADP (copy in NVD) [Secondary]",
             "url": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228",
             "retrieved_at": "2026-10-10T21:13:11.285609Z",
             "published": null,
@@ -5684,7 +5686,8 @@
               "version": "3.1",
               "baseScore": 10.0,
               "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
-              "provider": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+              "provider": "CISA-ADP (copy in NVD)",
+              "provider_id": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
               "type": "Secondary"
             },
             "excerpt": null,
@@ -5705,6 +5708,7 @@
               "baseScore": 9.3,
               "vectorString": "AV:N/AC:M/Au:N/C:C/I:C/A:C",
               "provider": "nvd@nist.gov",
+              "provider_id": null,
               "type": "Primary"
             },
             "excerpt": null,
@@ -6528,12 +6532,12 @@
           "exposure": "not_assessed"
         },
         "trace": [
-          "Starts at P1: attackers are known to be using it \u2014 exploitation confirmed by the CISA KEV list and/or CISA SSVC Exploitation=active.",
+          "Starts at P1: it has been on CISA's list of actively attacked flaws since 2021-12-10 and CISA rates exploitation as active \u2014 rule: flaws that are known to be attacked always start at P1.",
           "Provisional: only applies if you run this software \u2014 No inventory supplied; the priority applies only if the product is deployed."
         ],
         "baseline_label": "P1",
         "counterfactuals": [
-          "If you don't run an affected version \u2192 no action needed \u2014 no affected product/version is deployed"
+          "If you don't run an affected version \u2192 no action needed \u2014 check whether this software is installed anywhere"
         ],
         "actions": [
           "Find out whether you run an affected version \u2014 supply an inventory to automate this; if you do, remediate. [NVD.ref.9, NVD.ref.10, NVD.ref.12]",
@@ -6545,8 +6549,8 @@
         "Severity: 10.0 / 10 (Critical) \u2014 CVSS 3.1 score from CISA; 3 sources agree. Full breakdown in Severity score details. [CVE.cvss.1]",
         "Type of flaw: Improper Input Validation (+3 more) \u2014 CWE-20: Improper Input Validation; CWE-400: Uncontrolled Resource Consumption; CWE-502: Deserialization of Untrusted Data; CWE-917: Improper Neutralization of Special Elements used in an Expression Language Statement ('Expression Language Injection'). CWE = MITRE's Common Weakness Enumeration. [CVE.cwe, NVD.cwe]",
         "On the US government's list of actively attacked flaws (KEV): Yes \u2014 Listed in the CISA Known Exploited Vulnerabilities catalogue. [KEV]",
-        "Known to be exploited by attackers: Yes \u2014 Positive evidence of exploitation in the wild (KEV listing and/or CISA SSVC Exploitation=active). [KEV, CVE.ssvc]",
-        "Attack code reported to be public: Yes \u2014 12 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. [CVE.ssvc, NVD.ref.1, NVD.ref.2, NVD.ref.3, NVD.ref.4, NVD.ref.5, NVD.ref.6, NVD.ref.7, NVD.ref.8, NVD.ref.11, NVD.ref.14, NVD.ref.15]",
+        "Known to be exploited by attackers: Yes \u2014 Attacks have been seen: it is listed in CISA's Known Exploited Vulnerabilities catalogue and CISA's SSVC assessment rates exploitation as active. [KEV, CVE.ssvc]",
+        "Attack code reported to be public: Yes \u2014 Cisa's ssvc assessment says proof-of-concept code exists; 11 references are tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool. [CVE.ssvc, NVD.ref.1, NVD.ref.2, NVD.ref.3, NVD.ref.4, NVD.ref.5, NVD.ref.6, NVD.ref.7, NVD.ref.8, NVD.ref.11, NVD.ref.14, NVD.ref.15]",
         "CISA's rating: attacks have been seen \u2014 CISA SSVC decision points: Exploitation=active, Automatable=yes, Technical Impact=total; assessed 2025-02-04. [CVE.ssvc]",
         "Predicted chance of attacks in the next 30 days: >99.9% \u2014 EPSS 1.0000, higher than 100.0% of all scored CVEs, scored 2026-10-10 (FIRST EPSS model). Estimates exploitation activity, not difficulty or impact. [EPSS]"
       ],

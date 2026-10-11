@@ -1,6 +1,6 @@
 # CVE prioritization report
 
-Generated 2026-10-11T02:42:06+00:00 · mode **offline_demo** · cveprio 0.1.0 · organisation: Northbeam Logistics (fictional)
+Generated 2026-10-11T02:51:00+00:00 · mode **offline_demo** · cveprio 0.1.0 · organisation: Northbeam Logistics (fictional)
 
 > OFFLINE DEMO MODE: data comes from recorded fixtures (see retrieval times), not live sources. Results may be out of date.
 > Inventory and business context are FICTIONAL example data.
@@ -36,18 +36,19 @@ Generated 2026-10-11T02:42:06+00:00 · mode **offline_demo** · cveprio 0.1.0 ·
 - Severity: 10.0 / 10 (Critical) — CVSS 3.1 score from CISA; 3 sources agree. Full breakdown in Severity score details. [CVE.cvss.1]
 - Type of flaw: Improper Input Validation (+3 more) — CWE-20: Improper Input Validation; CWE-400: Uncontrolled Resource Consumption; CWE-502: Deserialization of Untrusted Data; CWE-917: Improper Neutralization of Special Elements used in an Expression Language Statement ('Expression Language Injection'). CWE = MITRE's Common Weakness Enumeration. [CVE.cwe, NVD.cwe]
 - On the US government's list of actively attacked flaws (KEV): Yes — Listed in the CISA Known Exploited Vulnerabilities catalogue. [KEV]
-- Known to be exploited by attackers: Yes — Positive evidence of exploitation in the wild (KEV listing and/or CISA SSVC Exploitation=active). [KEV, CVE.ssvc]
-- Attack code reported to be public: Yes — 12 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. [CVE.ssvc, NVD.ref.1, NVD.ref.2, NVD.ref.3, NVD.ref.4, NVD.ref.5, NVD.ref.6, NVD.ref.7, NVD.ref.8, NVD.ref.11, NVD.ref.14, NVD.ref.15]
+- Known to be exploited by attackers: Yes — Attacks have been seen: it is listed in CISA's Known Exploited Vulnerabilities catalogue and CISA's SSVC assessment rates exploitation as active. [KEV, CVE.ssvc]
+- Attack code reported to be public: Yes — Cisa's ssvc assessment says proof-of-concept code exists; 11 references are tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool. [CVE.ssvc, NVD.ref.1, NVD.ref.2, NVD.ref.3, NVD.ref.4, NVD.ref.5, NVD.ref.6, NVD.ref.7, NVD.ref.8, NVD.ref.11, NVD.ref.14, NVD.ref.15]
 - CISA's rating: attacks have been seen — CISA SSVC decision points: Exploitation=active, Automatable=yes, Technical Impact=total; assessed 2025-02-04. [CVE.ssvc]
 - Predicted chance of attacks in the next 30 days: >99.9% — EPSS 1.0000, higher than 100.0% of all scored CVEs, scored 2026-10-10 (FIRST EPSS model). Estimates exploitation activity, not difficulty or impact. [EPSS]
-- web-portal-01: log4j-core 2.14.1 is affected — Matched by NVD apache:log4j. NVD apache:log4j: in range ≥2.13.0 <2.15.0 [NVD.cpe]
+- web-portal-01: log4j-core 2.14.1 is affected — NVD: versions 2.13.0 up to (not including) 2.15.0 are affected. [NVD.cpe]
 
 ### What remains uncertain
-- legacy-billing-03: Log4j 2.x (bundled by appliance vendor) needs a manual version check — No exact product match; similar product names found (similarity does not establish that this deployment is affected):; CNA:apache: similar name: 'log4j' vs 'apache log4j2' [CVE.affected.1]
+- legacy-billing-03: Log4j 2.x (bundled by appliance vendor) needs a manual version check — The product name in your inventory does not exactly match any affected product in this CVE; a similar name is not proof you are affected. apache's CVE record lists 'apache log4j2', which only resembles your 'log4j'. [CVE.affected.1]
 
 ### Why this priority (rule trace)
-1. Starts at P1: attackers are known to be using it — exploitation confirmed by the CISA KEV list and/or CISA SSVC Exploitation=active.
-2. Other assets need a version check — legacy-billing-03
+1. Starts at P1: it has been on CISA's list of actively attacked flaws since 2021-12-10 and CISA rates exploitation as active — rule: flaws that are known to be attacked always start at P1.
+2. Stays at P1: web-portal-01 is internet-facing and of high importance — it is already at the highest level.
+3. Also check legacy-billing-03 — whether it is affected could not be confirmed automatically.
 
 ### Action supported by the evidence
 - Upgrade log4j-core on web-portal-01 — currently 2.14.1; sources indicate the fix is in version 2.15.0 or later. [NVD.ref.9, NVD.ref.10, NVD.ref.12]
@@ -55,8 +56,8 @@ Generated 2026-10-11T02:42:06+00:00 · mode **offline_demo** · cveprio 0.1.0 ·
 - Follow CISA's official instructions for this flaw — quoted source text: For all affected software assets for which updates exist, the only acceptable remediation actions are: 1) Apply updates; OR 2) remove affected assets from agency networks. Temporary mitigations using one of the measures provided at https://www.cisa.gov/uscert/ed-22-02-apache-log4j-recommended-mitigation-measures are only acceptable until updates are available. [KEV]
 
 ### What would change the recommendation
-- If a firewall rule or other protection blocks access to it → Fix in the next patch cycle (P2) — a verified compensating control removes reachability
-- Once the fix is installed and confirmed → no action needed — the fix is applied and verified
+- If a protection such as a firewall rule blocks access to web-portal-01 → Fix in the next patch cycle (P2) — a declared protection lowers the priority by one step
+- Once web-portal-01 is upgraded and checked → no action needed — the fix is installed and confirmed
 
 ### AI-assisted assessment (judgement, not fact)
 
@@ -135,25 +136,26 @@ What the 10.0 score says: Attack from: the network (remotely); Attack complexity
 - Severity: 7.5 / 10 (High) — CVSS 3.1 score from CISA; 3 sources agree. Full breakdown in Severity score details. [CVE.cvss.1]
 - Type of flaw: Uncontrolled Resource Consumption — CWE-400: Uncontrolled Resource Consumption. CWE = MITRE's Common Weakness Enumeration. [NVD.cwe]
 - On the US government's list of actively attacked flaws (KEV): Yes — Listed in the CISA Known Exploited Vulnerabilities catalogue. [KEV]
-- Known to be exploited by attackers: Yes — Positive evidence of exploitation in the wild (KEV listing and/or CISA SSVC Exploitation=active). [KEV, CVE.ssvc]
-- Attack code reported to be public: Yes — 3 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. [CVE.ssvc, NVD.ref.11, NVD.ref.12]
+- Known to be exploited by attackers: Yes — Attacks have been seen: it is listed in CISA's Known Exploited Vulnerabilities catalogue and CISA's SSVC assessment rates exploitation as active. [KEV, CVE.ssvc]
+- Attack code reported to be public: Yes — Cisa's ssvc assessment says proof-of-concept code exists; 2 references are tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool. [CVE.ssvc, NVD.ref.11, NVD.ref.12]
 - CISA's rating: attacks have been seen — CISA SSVC decision points: Exploitation=active, Automatable=yes, Technical Impact=partial; assessed 2024-07-23. [CVE.ssvc]
 - Predicted chance of attacks in the next 30 days: >99.9% — EPSS 1.0000, higher than 100.0% of all scored CVEs, scored 2026-10-10 (FIRST EPSS model). Estimates exploitation activity, not difficulty or impact. [EPSS]
-- web-portal-01: nginx 1.25.2 is affected — Matched by NVD f5:nginx. NVD f5:nginx: in range ≥1.9.5 ≤1.25.2 [NVD.cpe]
+- web-portal-01: nginx 1.25.2 is affected — NVD: versions 1.9.5 up to and including 1.25.2 are affected. [NVD.cpe]
 
 ### What remains uncertain
 - Nothing flagged.
 
 ### Why this priority (rule trace)
-1. Starts at P1: attackers are known to be using it — exploitation confirmed by the CISA KEV list and/or CISA SSVC Exploitation=active.
+1. Starts at P1: it has been on CISA's list of actively attacked flaws since 2023-10-10 and CISA rates exploitation as active — rule: flaws that are known to be attacked always start at P1.
+2. Stays at P1: web-portal-01 is internet-facing and of high importance — it is already at the highest level.
 
 ### Action supported by the evidence
 - Upgrade nginx on web-portal-01 — currently 1.25.2; follow the vendor advisory for the fixed version. [NVD.ref.1, NVD.ref.2, NVD.ref.3]
 - Follow CISA's official instructions for this flaw — quoted source text: Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable. [KEV]
 
 ### What would change the recommendation
-- If a firewall rule or other protection blocks access to it → Fix in the next patch cycle (P2) — a verified compensating control removes reachability
-- Once the fix is installed and confirmed → no action needed — the fix is applied and verified
+- If a protection such as a firewall rule blocks access to web-portal-01 → Fix in the next patch cycle (P2) — a declared protection lowers the priority by one step
+- Once web-portal-01 is upgraded and checked → no action needed — the fix is installed and confirmed
 
 ### AI-assisted assessment (judgement, not fact)
 
@@ -224,14 +226,14 @@ What the 7.5 score says: Attack from: the network (remotely); Attack complexity:
 - Severity: 8.1 / 10 (High) — CVSS 3.1 score from redhat, which published the CVE; 3 sources agree. Full breakdown in Severity score details. [CVE.cvss.1]
 - Type of flaw: Signal Handler Race Condition (+1 more) — CWE-364: Signal Handler Race Condition; CWE-362: Concurrent Execution using Shared Resource with Improper Synchronization ('Race Condition'). CWE = MITRE's Common Weakness Enumeration. [CVE.cwe, NVD.cwe]
 - On the US government's list of actively attacked flaws (KEV): No — Not in KEV catalogue 2026.10.08 (absence is not evidence of no exploitation). [KEV]
-- Attack code reported to be public: Yes — 10 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. [CVE.ssvc, NVD.ref.1, NVD.ref.2, NVD.ref.3, NVD.ref.5, NVD.ref.6, NVD.ref.7, NVD.ref.8, NVD.ref.12, NVD.ref.13]
+- Attack code reported to be public: Yes — Cisa's ssvc assessment says proof-of-concept code exists; 9 references are tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool. [CVE.ssvc, NVD.ref.1, NVD.ref.2, NVD.ref.3, NVD.ref.5, NVD.ref.6, NVD.ref.7, NVD.ref.8, NVD.ref.12, NVD.ref.13]
 - CISA's rating: demo attack code exists — CISA SSVC decision points: Exploitation=poc, Automatable=no, Technical Impact=total; assessed 2024-07-02. [CVE.ssvc]
 - Predicted chance of attacks in the next 30 days: 99.5% — EPSS 0.9951, higher than 99.9% of all scored CVEs, scored 2026-10-10 (FIRST EPSS model). Estimates exploitation activity, not difficulty or impact. [EPSS]
-- bastion-01: OpenSSH 9.6p1 is affected — Matched by CNA:redhat 'OpenSSH'. CNA:redhat 'OpenSSH': name 'openssh': in range 8.5p1..≤9.7p1 → affected; NVD openbsd:openssh: in range ≥8.6 ≤9.8 [CVE.affected.1, NVD.cpe]
+- bastion-01: OpenSSH 9.6p1 is affected — redhat's CVE record: versions 8.5p1 up to and including 9.7p1 are affected. NVD: versions 8.6 up to and including 9.8 are affected. [CVE.affected.1, NVD.cpe]
 
 ### What remains uncertain
 - Known to be exploited by attackers: Unknown — No positive evidence of in-the-wild exploitation in the sources checked. This is not proof that exploitation has not occurred. [KEV, CVE.ssvc]
-- ops-ubuntu-02: OpenSSH 1:9.6p1-3ubuntu13.4 needs a manual version check — CNA:redhat 'OpenSSH': name 'openssh': cannot compare '1:9.6p1-3ubuntu13.4' with range 8.5p1..9.7p1 (custom); '1:9.6p1-3ubuntu13.4' looks like a distribution package version; vendors often backport fixes without changing the upstream version — check the distribution's advisory. [CVE.affected.1]
+- ops-ubuntu-02: OpenSSH 1:9.6p1-3ubuntu13.4 needs a manual version check — redhat's CVE record: version 1:9.6p1-3ubuntu13.4 could not be compared with the listed versions automatically. '1:9.6p1-3ubuntu13.4' looks like a distribution package version; vendors often backport fixes without changing the upstream version — check the distribution's advisory. [CVE.affected.1]
 - Some evidence may be out of date — SSVC Exploitation=poc was assessed 2024-07-02 (> 180 days ago) and may no longer reflect current activity. [CVE.ssvc]
 - Demo data: the attacked-flaws list (KEV) is a reduced copy — Offline demo uses a trimmed KEV fixture; absence was verified against the full catalogue at capture time only.
 - Open question: Which builds and architectures do the public PoCs target, and how… — Which builds and architectures do the public PoCs target, and how many attempts do they need? (Source: scripted demo example; not verified.)
@@ -239,18 +241,18 @@ What the 7.5 score says: Attack from: the network (remotely); Attack complexity:
 - Little public research doesn't mean it's hard to exploit — Exploit-development difficulty judged from public evidence is inherently limited: the absence of public research does not mean exploitation is hard.
 
 ### Why this priority (rule trace)
-1. Starts at P2: attack code exists or attacks are likely — exploitation 'elevated': CISA SSVC says proof-of-concept, EPSS ≥ 0.10, or validated AI difficulty=low.
-2. Raised to P1: the system is exposed or critical — an affected asset is internet-facing or high-criticality (one step up).
-3. Other assets need a version check — ops-ubuntu-02
+1. Starts at P2: CISA says demo attack code exists — rule: a CISA proof-of-concept rating, a predicted chance of attacks of 10% or more, or a validated AI rating of 'easy to exploit' each start at P2.
+2. Raised to P1: bastion-01 is internet-facing and of high importance — rule: internet-facing systems, and systems of high or critical importance, move the priority up one step.
+3. Also check ops-ubuntu-02 — whether it is affected could not be confirmed automatically.
 
 ### Action supported by the evidence
 - Upgrade OpenSSH on bastion-01 — currently 9.6p1; follow the vendor advisory for the fixed version. [NVD.ref.4, NVD.ref.9, NVD.ref.10]
 - Check the exact version of OpenSSH on ops-ubuntu-02 — recorded as 1:9.6p1-3ubuntu13.4; confirm the build and any platform condition, then re-run. See the applicability table for why it is unclear [CVE.affected.1].
 
 ### What would change the recommendation
-- If a firewall rule or other protection blocks access to it → Schedule a fix (P3) — a verified compensating control removes reachability
-- Once the fix is installed and confirmed → no action needed — the fix is applied and verified
-- If the sources' disagreements are resolved → the decision may change — resolving the listed source conflicts could change the inputs above.
+- If a protection such as a firewall rule blocks access to bastion-01 → Schedule a fix (P3) — a declared protection lowers the priority by one step
+- Once bastion-01 is upgraded and checked → no action needed — the fix is installed and confirmed
+- If the sources' disagreements are resolved → the decision may change — see 'What's uncertain' for which sources disagree.
 
 ### AI-assisted assessment (judgement, not fact)
 
@@ -358,11 +360,11 @@ What the 8.1 score says: Attack from: the network (remotely); Attack complexity:
 - Severity: 9.8 / 10 (Critical) — CVSS 3.1 score from NVD; the highest of 2 different scores from 3 sources (see What's uncertain). Full breakdown in Severity score details. [NVD.cvss.1]
 - Type of flaw: Out-of-bounds Write — CWE-787: Out-of-bounds Write. CWE = MITRE's Common Weakness Enumeration. [NVD.cwe]
 - On the US government's list of actively attacked flaws (KEV): No — Not in KEV catalogue 2026.10.08 (absence is not evidence of no exploitation). [KEV]
-- Attack code reported to be public: Yes — 1 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. [CVE.ssvc]
+- Attack code reported to be public: Yes — Cisa's ssvc assessment says proof-of-concept code exists. Whether that code exists, works or is reliable is NOT verified by this tool. [CVE.ssvc]
 - CISA's rating: demo attack code exists — CISA SSVC decision points: Exploitation=poc, Automatable=no, Technical Impact=total; assessed 2024-10-17. [CVE.ssvc]
 - Predicted chance of attacks in the next 30 days: 78.5% — EPSS 0.7848, higher than 99.6% of all scored CVEs, scored 2026-10-10 (FIRST EPSS model). Estimates exploitation activity, not difficulty or impact. [EPSS]
-- ops-ubuntu-02: curl 8.3.0 is affected — Matched by NVD haxx:libcurl. NVD haxx:libcurl: in range ≥7.69.0 <8.4.0 [NVD.cpe]
-- dev-laptop-17: curl 8.3.0 is affected — Matched by NVD haxx:libcurl. NVD haxx:libcurl: in range ≥7.69.0 <8.4.0 [NVD.cpe]
+- ops-ubuntu-02: curl 8.3.0 is affected — NVD: versions 7.69.0 up to (not including) 8.4.0 are affected. [NVD.cpe]
+- dev-laptop-17: curl 8.3.0 is affected — NVD: versions 7.69.0 up to (not including) 8.4.0 are affected. [NVD.cpe]
 
 ### What remains uncertain
 - Known to be exploited by attackers: Unknown — No positive evidence of in-the-wild exploitation in the sources checked. This is not proof that exploitation has not occurred. [KEV, CVE.ssvc]
@@ -372,18 +374,17 @@ What the 8.1 score says: Attack from: the network (remotely); Attack complexity:
 - Little public research doesn't mean it's hard to exploit — Exploit-development difficulty judged from public evidence is inherently limited: the absence of public research does not mean exploitation is hard.
 
 ### Why this priority (rule trace)
-1. Starts at P2: attack code exists or attacks are likely — exploitation 'elevated': CISA SSVC says proof-of-concept, EPSS ≥ 0.10, or validated AI difficulty=low.
-2. Stays the same for now: some system details are missing — internet exposure and/or criticality were not supplied, so the result is provisional rather than assumed.
-3. dev-laptop-17: importance or internet exposure not recorded — internet_facing, criticality not supplied; not assumed.
+1. Starts at P2: CISA says demo attack code exists — rule: a CISA proof-of-concept rating, a predicted chance of attacks of 10% or more, or a validated AI rating of 'easy to exploit' each start at P2.
+2. Stays the same for now: dev-laptop-17's internet exposure and importance are not recorded — the result is marked provisional instead of guessing the missing details.
 
 ### Action supported by the evidence
 - Upgrade curl on ops-ubuntu-02 — currently 8.3.0; sources indicate the fix is in version 8.4.0 or later. [NVD.ref.1, NVD.ref.2]
 - Upgrade curl on dev-laptop-17 — currently 8.3.0; sources indicate the fix is in version 8.4.0 or later. [NVD.ref.1, NVD.ref.2]
 
 ### What would change the recommendation
-- If attackers are reported using it → Fix now (P1) — e.g. it is added to CISA's KEV list or CISA SSVC says exploitation is active
-- If the system is internet-facing or critical → Fix now (P1) — an affected asset is internet-facing or has high/critical criticality
-- If the sources' disagreements are resolved → the decision may change — resolving the listed source conflicts could change the inputs above.
+- If attackers are reported using it → Fix now (P1) — for example, if CISA adds it to its list of actively attacked flaws
+- If dev-laptop-17 is internet-facing → Fix now (P1) — recording it as high or critical importance would have the same effect
+- If the sources' disagreements are resolved → the decision may change — see 'What's uncertain' for which sources disagree.
 
 ### AI-assisted assessment (judgement, not fact)
 
@@ -444,25 +445,25 @@ What the 9.8 score says: Attack from: the network (remotely); Attack complexity:
 - Severity: 9.8 / 10 (Critical) — CVSS 3.1 score from CISA; 3 sources agree. Full breakdown in Severity score details. [CVE.cvss.1]
 - Type of flaw: Code Injection — CWE-94: Improper Control of Generation of Code ('Code Injection'). CWE = MITRE's Common Weakness Enumeration. [CVE.cwe, NVD.cwe]
 - On the US government's list of actively attacked flaws (KEV): Yes — Listed in the CISA Known Exploited Vulnerabilities catalogue. [KEV]
-- Known to be exploited by attackers: Yes — Positive evidence of exploitation in the wild (KEV listing and/or CISA SSVC Exploitation=active). [KEV, CVE.ssvc]
-- Attack code reported to be public: Yes — 2 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. [CVE.ssvc, NVD.ref.1]
+- Known to be exploited by attackers: Yes — Attacks have been seen: it is listed in CISA's Known Exploited Vulnerabilities catalogue and CISA's SSVC assessment rates exploitation as active. [KEV, CVE.ssvc]
+- Attack code reported to be public: Yes — Cisa's ssvc assessment says proof-of-concept code exists; 1 reference is tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool. [CVE.ssvc, NVD.ref.1]
 - CISA's rating: attacks have been seen — CISA SSVC decision points: Exploitation=active, Automatable=yes, Technical Impact=total; assessed 2025-01-29. [CVE.ssvc]
 - Predicted chance of attacks in the next 30 days: 99.6% — EPSS 0.9964, higher than 99.9% of all scored CVEs, scored 2026-10-10 (FIRST EPSS model). Estimates exploitation activity, not difficulty or impact. [EPSS]
 
 ### What remains uncertain
-- web-portal-01: Spring Framework 5.3.17 needs a manual version check — CNA:vmware 'Spring Framework': name 'spring framework': version statement 'Spring Framework versions 5.3.X prior to 5.3.18+, 5.2.x prior to 5.2.20+ and all' is not machine-comparable; NVD vmware:spring_framework: in range ≥5.3.0 <5.3.18; NVD applies this only in combination with cpe:2.3:a:oracle:jdk:*:*:*:*:*:*:*:* (AND configuration) — confirm that platform condition for this deployment [CVE.affected.1, NVD.cpe]
+- web-portal-01: Spring Framework 5.3.17 needs a manual version check — vmware's CVE record: version statement 'Spring Framework versions 5.3.X prior to 5.3.18+, 5.2.x prior to 5.2.20+ and all' is not machine-comparable. NVD: versions 5.3.0 up to (not including) 5.3.18 are affected, but only together with Oracle JDK. [CVE.affected.1, NVD.cpe]
 
 ### Why this priority (rule trace)
-1. Starts at P1: attackers are known to be using it — exploitation confirmed by the CISA KEV list and/or CISA SSVC Exploitation=active.
-2. Needs review: your version may or may not be affected — applicability is ambiguous; would be P1 if confirmed affected.
+1. Starts at P1: it has been on CISA's list of actively attacked flaws since 2022-04-04 and CISA rates exploitation as active — rule: flaws that are known to be attacked always start at P1.
+2. Needs review: it is unclear whether web-portal-01's Spring Framework 5.3.17 is affected — it would be P1 if it is.
 
 ### Action supported by the evidence
 - Check the exact version of Spring Framework on web-portal-01 — recorded as 5.3.17; confirm the build and any platform condition, then re-run. See the applicability table for why it is unclear [CVE.affected.1, NVD.cpe].
 - Follow CISA's official instructions for this flaw — quoted source text: Apply updates per vendor instructions. [KEV]
 
 ### What would change the recommendation
-- If your version is affected → Fix now (P1), however exposed the system is — internet-facing/critical and internal/non-critical give the same result
-- If your version turns out not to be affected → no action needed — the deployed version is confirmed NOT affected
+- If web-portal-01's Spring Framework 5.3.17 turns out to be affected → Fix now (P1) — how exposed or important the system is would not change this
+- If web-portal-01's Spring Framework 5.3.17 turns out not to be affected → no action needed — check the exact build and any platform condition
 
 ### AI-assisted assessment (judgement, not fact)
 
@@ -527,10 +528,10 @@ What the 9.8 score says: Attack from: the network (remotely); Attack complexity:
 - Severity: 5.3 / 10 (Medium) — CVSS 3.1 score from GitHub_M, which published the CVE; 2 sources agree. Full breakdown in Severity score details. [CVE.cvss.1]
 - Type of flaw: Binding to an Unrestricted IP Address — CWE-1327: Binding to an Unrestricted IP Address. CWE = MITRE's Common Weakness Enumeration. [CVE.cwe, NVD.cwe]
 - On the US government's list of actively attacked flaws (KEV): No — Not in KEV catalogue 2026.10.08 (absence is not evidence of no exploitation). [KEV]
-- Attack code reported to be public: Yes — 3 source item(s) indicate public exploit/PoC material. Existence, reliability and impact of that code are NOT verified by this tool. [CVE.ssvc, NVD.ref.1, NVD.ref.2]
+- Attack code reported to be public: Yes — Cisa's ssvc assessment says proof-of-concept code exists; 2 references are tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool. [CVE.ssvc, NVD.ref.1, NVD.ref.2]
 - CISA's rating: demo attack code exists — CISA SSVC decision points: Exploitation=poc, Automatable=no, Technical Impact=partial; assessed 2024-09-27. [CVE.ssvc]
 - Predicted chance of attacks in the next 30 days: 50.6% — EPSS 0.5060, higher than 98.9% of all scored CVEs, scored 2026-10-10 (FIRST EPSS model). Estimates exploitation activity, not difficulty or impact. [EPSS]
-- print-srv-01: cups-browsed 2.0.1 is affected — Matched by CNA:GitHub_M 'cups-browsed'. CNA:GitHub_M 'cups-browsed': name 'cups browsed': matches free-text constraint '<= 2.0.1' (parsed as <= 2.0.1) [CVE.affected.1]
+- print-srv-01: cups-browsed 2.0.1 is affected — GitHub_M's CVE record: the record says '<= 2.0.1', which includes your version. [CVE.affected.1]
 
 ### What remains uncertain
 - Known to be exploited by attackers: Unknown — No positive evidence of in-the-wild exploitation in the sources checked. This is not proof that exploitation has not occurred. [KEV, CVE.ssvc]
@@ -540,17 +541,16 @@ What the 9.8 score says: Attack from: the network (remotely); Attack complexity:
 - Little public research doesn't mean it's hard to exploit — Exploit-development difficulty judged from public evidence is inherently limited: the absence of public research does not mean exploitation is hard.
 
 ### Why this priority (rule trace)
-1. Starts at P2: attack code exists or attacks are likely — exploitation 'elevated': CISA SSVC says proof-of-concept, EPSS ≥ 0.10, or validated AI difficulty=low.
-2. Lowered to P3: a protection limits access — an operator-declared compensating control applies (one step down; confirmed exploitation never goes below P2).
-3. print-srv-01: has a protection in place (not checked by this tool) — Host firewall drops inbound traffic to port 631 except from the warehouse printer VLAN (reduces_reachability); operator-supplied, not verified by this tool.
+1. Starts at P2: CISA says demo attack code exists — rule: a CISA proof-of-concept rating, a predicted chance of attacks of 10% or more, or a validated AI rating of 'easy to exploit' each start at P2.
+2. Lowered to P3: print-srv-01 has a declared protection (Host firewall drops inbound traffic to port 631 except from the warehouse printer VLAN) — rule: a declared protection moves the priority down one step. The tool does not verify it, and known-attacked flaws never go below P2.
 
 ### Action supported by the evidence
 - Upgrade cups-browsed on print-srv-01 — currently 2.0.1; follow the vendor advisory for the fixed version. [NVD.ref.3]
 - Confirm the protection on print-srv-01 is really in place until patched — Host firewall drops inbound traffic to port 631 except from the warehouse printer VLAN.
 
 ### What would change the recommendation
-- If attackers are reported using it → Fix in the next patch cycle (P2) — e.g. it is added to CISA's KEV list or CISA SSVC says exploitation is active
-- If the sources' disagreements are resolved → the decision may change — resolving the listed source conflicts could change the inputs above.
+- If attackers are reported using it → Fix in the next patch cycle (P2) — for example, if CISA adds it to its list of actively attacked flaws
+- If the sources' disagreements are resolved → the decision may change — see 'What's uncertain' for which sources disagree.
 
 ### AI-assisted assessment (judgement, not fact)
 
@@ -628,7 +628,7 @@ What the 5.3 score says: Attack from: the network (remotely); Attack complexity:
 - On the US government's list of actively attacked flaws (KEV): No — Not in KEV catalogue 2026.10.08 (absence is not evidence of no exploitation). [KEV]
 - CISA's rating: no attacks or attack code known — CISA SSVC decision points: Exploitation=none, Automatable=yes, Technical Impact=total; assessed 2024-04-02. [CVE.ssvc]
 - Predicted chance of attacks in the next 30 days: 86.0% — EPSS 0.8597, higher than 99.7% of all scored CVEs, scored 2026-10-10 (FIRST EPSS model). Estimates exploitation activity, not difficulty or impact. [EPSS]
-- ops-ubuntu-02: xz 5.4.6 is not affected — CNA:redhat 'xz': name 'xz': version not listed; source default status is 'unaffected'; NVD tukaani:xz: version 5.4.6 outside all 2 NVD ranges [CVE.affected.1, NVD.cpe]
+- ops-ubuntu-02: xz 5.4.6 is not affected — redhat's CVE record: your version is not listed, and the record marks unlisted versions as not affected. NVD: version 5.4.6 is outside all 2 affected ranges. [CVE.affected.1, NVD.cpe]
 
 ### What remains uncertain
 - Known to be exploited by attackers: Unknown — No positive evidence of in-the-wild exploitation in the sources checked. This is not proof that exploitation has not occurred. [KEV, CVE.ssvc]
@@ -638,14 +638,14 @@ What the 5.3 score says: Attack from: the network (remotely); Attack complexity:
 - Little public research doesn't mean it's hard to exploit — Exploit-development difficulty judged from public evidence is inherently limited: the absence of public research does not mean exploitation is hard.
 
 ### Why this priority (rule trace)
-1. Starts at P2: attack code exists or attacks are likely — exploitation 'elevated': CISA SSVC says proof-of-concept, EPSS ≥ 0.10, or validated AI difficulty=low.
+1. Starts at P2: the predicted chance of attacks in the next 30 days is 86.0% — rule: a CISA proof-of-concept rating, a predicted chance of attacks of 10% or more, or a validated AI rating of 'easy to exploit' each start at P2.
 2. No priority: your installed versions are not affected — all matching inventory items are outside the affected versions.
 
 ### Action supported by the evidence
 - No action needed for the listed systems — keep the inventory accurate and re-check if versions change.
 
 ### What would change the recommendation
-- If the sources' disagreements are resolved → the decision may change — resolving the listed source conflicts could change the inputs above.
+- If the sources' disagreements are resolved → the decision may change — see 'What's uncertain' for which sources disagree.
 
 ### AI-assisted assessment (judgement, not fact)
 

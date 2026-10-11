@@ -175,6 +175,15 @@ def factor_cards(r: CveReport) -> list[tuple[str, str]]:
     return [("Attack activity", attack), ("Severity on paper", severity), ("Your exposure", exposure)]
 
 
+def compare_why(r: CveReport) -> str:
+    """Specific reason the decision differs from a score-only ranking, from the factor cards."""
+    attack, _, exposure = (v for _, v in factor_cards(r))
+    x = r.decision.factors.get("exposure")
+    if x in ("needs_review", "not_affected", "not_in_inventory"):
+        return exposure[0].lower() + exposure[1:]
+    return f"{attack[0].lower() + attack[1:]}; {exposure}"
+
+
 def why_sentence(factors: dict[str, str]) -> str:
     e, x = factors.get("exploitation", "n/a"), factors.get("exposure", "n/a")
     if e == "n/a":
@@ -194,7 +203,7 @@ def render_dashboard(run: RunReport) -> str:
     env.filters["split_item"] = split_item
     env.filters["explain_vector"] = explain_vector
     env.filters["source_name"] = source_name
-    env.globals.update(factor_cards=factor_cards, compare_reason=compare_reason, PLAIN_LABEL=PLAIN_LABEL, PLAIN_FACTOR=PLAIN_FACTOR, SHORT_FACTOR=SHORT_FACTOR,
+    env.globals.update(factor_cards=factor_cards, compare_reason=compare_reason, compare_why=compare_why, PLAIN_LABEL=PLAIN_LABEL, PLAIN_FACTOR=PLAIN_FACTOR, SHORT_FACTOR=SHORT_FACTOR,
                        why_sentence=why_sentence)
     counts = Counter(r.decision.label for r in run.reports)
     tiles = [(k, label, counts.get(k, 0) if k != "OTHER" else

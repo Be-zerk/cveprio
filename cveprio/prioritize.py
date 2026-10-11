@@ -68,6 +68,11 @@ class RuleInputs:
     exploitation: str
     severity: str
     exposure: str
+    # Wording only (never used by the rules): the concrete facts behind each factor.
+    exploit_why: str = ""   # e.g. "it is on CISA's list of actively attacked flaws"
+    exposure_why: str = ""  # e.g. "web-portal-01 is internet-facing and of high importance"
+    asset: str = ""         # the system the exposure statement is about
+    review_what: str = ""   # e.g. "web-portal-01's Spring Framework 5.3.17"
 
 
 def _step(p: Priority, delta: int, floor: Priority = "P4") -> Priority:
@@ -89,22 +94,25 @@ def decide(x: RuleInputs) -> tuple[str, Priority | None, bool, list[str]]:
 
     if x.exploitation == "confirmed":
         base: Priority = "P1"
-        trace.append("Starts at P1: attackers are known to be using it — exploitation confirmed by the CISA KEV list and/or CISA SSVC Exploitation=active.")
+        trace.append(f"Starts at P1: {x.exploit_why or 'attackers are known to be using it'} — rule: flaws that are "
+                     "known to be attacked always start at P1.")
     elif x.exploitation == "elevated":
         base = "P2"
-        trace.append("Starts at P2: attack code exists or attacks are likely — exploitation 'elevated': CISA SSVC "
-                     f"says proof-of-concept, EPSS ≥ {EPSS_ELEVATED:.2f}, or validated AI difficulty=low.")
+        trace.append(f"Starts at P2: {x.exploit_why or 'there is a strong sign of attack code or attacks'} — rule: a "
+                     f"CISA proof-of-concept rating, a predicted chance of attacks of {EPSS_ELEVATED:.0%} or more, or a "
+                     "validated AI rating of 'easy to exploit' each start at P2.")
     elif x.exploitation == "claimed_unverified":
         base = "P3"
-        trace.append("Starts at P3: attack code may be public, unverified — a reference is tagged 'Exploit', but "
-                     "there is no CISA proof-of-concept rating, no high EPSS and no known attacks. Such tags often "
-                     "point at advisories or bug reports.")
+        trace.append(f"Starts at P3: {x.exploit_why or 'a source tags possible attack code, unverified'} — there is no "
+                     "CISA proof-of-concept rating, no high predicted chance of attacks and no known attacks. Such "
+                     "tags often point at advisories or bug reports, so on their own they count as a weak signal.")
     elif x.exploitation == "evidence_incomplete":
         base = "P2"
         trace.append("Starts at P2 to be safe: attack data could not be checked — exploitation sources failed, so the rules do not assume it is quiet.")
     else:
         base = "P3" if x.severity in ("critical", "high", "unscored") else "P4"
-        trace.append(f"Starts at {base}: no sign of attacks — no exploitation signal found; severity on paper is {x.severity}.")
+        trace.append(f"Starts at {base}: no sign of attacks — {x.exploit_why or 'no exploitation signal was found'}; "
+                     f"the severity score is {x.severity}, so the rules start at {base}.")
 
     provisional = x.exposure in ("context_unknown", "not_assessed", "needs_review")
     p = base
@@ -112,30 +120,38 @@ def decide(x: RuleInputs) -> tuple[str, Priority | None, bool, list[str]]:
         p = _step(base, -1)
         if p == "P1" and not (x.exploitation == "confirmed" or x.severity in ("critical", "high")):
             p = "P2"
-            trace.append("Raised to P2 (not P1): the system is exposed or critical — P1 is reserved for confirmed "
-                         "attacks or high/critical severity.")
+            trace.append(f"Raised to P2, not P1: {x.exposure_why or 'an affected system is exposed'} — P1 is kept for "
+                         f"flaws that are known to be attacked or rated high/critical; this one is rated {x.severity} "
+                         "with no confirmed attacks.")
         elif p != base:
-            trace.append(f"Raised to {p}: the system is exposed or critical — an affected asset is internet-facing or "
-                         "high-criticality (one step up).")
+            trace.append(f"Raised to {p}: {x.exposure_why or 'an affected system is exposed'} — rule: internet-facing "
+                         "systems, and systems of high or critical importance, move the priority up one step.")
+        else:
+            trace.append(f"Stays at {p}: {x.exposure_why or 'an affected system is exposed'} — it is already at the "
+                         "highest level.")
     elif x.exposure == "reduced":
         p = _step(base, +1, floor="P2" if x.exploitation == "confirmed" else "P4")
-        trace.append(f"Lowered to {p}: a protection limits access — an operator-declared compensating control applies (one step down; confirmed exploitation never goes below P2).")
+        trace.append(f"Lowered to {p}: {x.exposure_why or 'a declared protection limits access'} — rule: a declared "
+                     "protection moves the priority down one step. The tool does not verify it, and known-attacked "
+                     "flaws never go below P2.")
     elif x.exposure == "standard":
-        trace.append("Stays the same: the systems are internal and not critical — affected assets are internal "
-                     "with low/medium criticality.")
+        trace.append(f"Stays the same: {x.exposure_why or 'the affected systems are internal and not critical'} — "
+                     "rule: internal systems of low or medium importance do not change the priority.")
     elif x.exposure == "context_unknown":
-        trace.append("Stays the same for now: some system details are missing — internet exposure and/or "
-                     "criticality were not supplied, so the result is provisional rather than assumed.")
+        trace.append(f"Stays the same for now: {x.exposure_why or 'some system details are missing'} — the result is "
+                     "marked provisional instead of guessing the missing details.")
     elif x.exposure == "not_assessed":
         trace.append("Provisional: only applies if you run this software — No inventory supplied; the priority applies only if the product is deployed.")
 
     if x.severity == "low" and x.exploitation in ("elevated", "claimed_unverified", "low_observed") \
             and p in ("P1", "P2"):
         p = "P3"
-        trace.append("Capped at P3: low severity — CVSS below 4 and no confirmed attacks, so it stays at P3 or lower.")
+        trace.append("Capped at P3: the severity score is low — rule: flaws scored below 4 out of 10 that are not "
+                     "known to be attacked stay at P3 or lower.")
 
     if x.exposure == "needs_review":
-        trace.append(f"Needs review: your version may or may not be affected — applicability is ambiguous; would be {p} if confirmed affected.")
+        trace.append(f"Needs review: it is unclear whether {x.review_what or 'your installed version'} is affected — "
+                     f"it would be {p} if it is.")
         return "NEEDS_REVIEW", p, True, trace
     if x.exposure == "not_affected":
         trace.append("No priority: your installed versions are not affected — all matching inventory items are outside the affected versions.")
@@ -195,8 +211,9 @@ def _asset_exposure(asset: Asset, cve_id: str) -> tuple[str, list[str]]:
     else:
         missing = [n for n, v in (("internet_facing", asset.internet_facing), ("criticality", asset.criticality))
                    if v is None]
-        notes.append(f"{asset.id}: importance or internet exposure not recorded — {', '.join(missing)} not "
-                     "supplied; not assumed.")
+        words = {"internet_facing": "internet exposure", "criticality": "importance"}
+        notes.append(f"{asset.id}: {' and '.join(words[m] for m in missing)} not recorded — the inventory does not "
+                     "say, so the tool does not assume.")
         level = "context_unknown"
     controls = [c for c in asset.compensating_controls if "*" in c.applies_to or cve_id in c.applies_to]
     if controls:
@@ -226,8 +243,10 @@ def exposure_level(cve_id: str, results: list[ApplicabilityResult], assets: dict
             levels.append(lvl)
             notes.extend(n)
         if review:
-            notes.append("Other assets need a version check — " + ", ".join(sorted({r.asset_id for r in review})))
-        return max(levels, key=lambda v: RANK[v]), notes
+            names = ", ".join(sorted({r.asset_id for r in review}))
+            notes.append(f"Also check {names} — whether {'they are' if ',' in names else 'it is'} affected could not "
+                         "be confirmed automatically.")
+        return max(levels, key=lambda v: RANK[v]), [n for n in notes if n.startswith("Also check")]
     if review:
         return "needs_review", notes
     return "not_affected", notes
@@ -284,48 +303,130 @@ def _counterfactuals(x: RuleInputs, current: tuple[str, Priority | None], bundle
 
     if x.record_state != RecordState.PUBLISHED:
         return out
+    who = x.asset or "the affected system"
     if x.exploitation != "confirmed":
-        what_if("If attackers are reported using it", "e.g. it is added to CISA's KEV list or CISA SSVC says "
-                "exploitation is active", exploitation="confirmed")
+        what_if("If attackers are reported using it", "for example, if CISA adds it to its list of actively attacked "
+                "flaws", exploitation="confirmed")
     if x.exploitation in ("low_observed", "claimed_unverified"):
-        what_if("If attack code is confirmed or attacks become likely", f"CISA rates a proof-of-concept as existing, "
-                f"or the EPSS score rises to {EPSS_ELEVATED:.2f} or more", exploitation="elevated")
+        what_if("If attack code is confirmed to exist", "a CISA proof-of-concept rating, or a predicted chance of "
+                f"attacks of {EPSS_ELEVATED:.0%} or more, would have the same effect", exploitation="elevated")
     if x.exploitation == "evidence_incomplete":
-        what_if("If the missing sources show no sign of attacks", "the sources that failed are retried and "
-                "contain no exploitation signal", exploitation="low_observed")
+        what_if("If the missing sources show no sign of attacks", "once the sources that failed are retried",
+                exploitation="low_observed")
     if x.exposure == "not_assessed":
-        what_if("If you don't run an affected version", "no affected product/version is deployed",
+        what_if("If you don't run an affected version", "check whether this software is installed anywhere",
                 exposure="not_in_inventory")
     if x.exposure in ("not_assessed", "context_unknown", "needs_review"):
         hi, std = decide(replace(x, exposure="high")), decide(replace(x, exposure="standard"))
         if (hi[0], hi[1]) == (std[0], std[1]):
             if (hi[0], hi[1]) != current:
-                lead = "If your version is affected" if x.exposure == "needs_review" else "Once the system details are known"
-                out.append(f"{lead} → {OUTCOME_WORDS.get(hi[0], hi[0])}, however exposed the system is — "
-                           "internet-facing/critical and internal/non-critical give the same result")
+                lead = (f"If {x.review_what or 'your version'} turns out to be affected" if x.exposure == "needs_review"
+                        else f"Once {who}'s details are recorded")
+                out.append(f"{lead} → {OUTCOME_WORDS.get(hi[0], hi[0])} — how exposed or important the system is "
+                           "would not change this")
         else:
-            prefix = "If your version is affected and the system is" if x.exposure == "needs_review" else "If the system is"
-            what_if(f"{prefix} internet-facing or critical", "an affected asset is internet-facing or has "
-                    "high/critical criticality", exposure="high")
-            what_if(f"{prefix} internal and not critical", "affected assets are internal with low/medium "
-                    "criticality", exposure="standard")
+            subject = (who if x.exposure != "not_assessed" else "the system running it")
+            pre = f"If {x.review_what} is affected and {subject}" if x.exposure == "needs_review" else f"If {subject}"
+            what_if(f"{pre} is internet-facing", "recording it as high or critical importance would have the same "
+                    "effect", exposure="high")
+            what_if(f"{pre} is internal and of low importance", "medium importance gives the same result",
+                    exposure="standard")
     if x.exposure == "needs_review":
-        what_if("If your version turns out not to be affected", "the deployed version is confirmed NOT affected",
-                exposure="not_affected")
+        what_if(f"If {x.review_what or 'your version'} turns out not to be affected", "check the exact build and any "
+                "platform condition", exposure="not_affected")
     if x.exposure in ("high", "standard"):
-        what_if("If a firewall rule or other protection blocks access to it", "a verified compensating control "
-                "removes reachability", exposure="reduced")
-        what_if("Once the fix is installed and confirmed", "the fix is applied and verified", exposure="not_affected")
+        what_if(f"If a protection such as a firewall rule blocks access to {who}", "a declared protection lowers the "
+                "priority by one step", exposure="reduced")
+        what_if(f"Once {who} is upgraded and checked", "the fix is installed and confirmed", exposure="not_affected")
     if x.severity == "unscored":
-        what_if("If its severity score comes out medium or low", "CVSS is published as medium/low",
+        what_if("If its severity score is published as medium", "a low score gives the same result",
                 severity="medium")
     if bundle.conflicts:
-        out.append("If the sources' disagreements are resolved → the decision may change — resolving the listed "
-                   "source conflicts could change the inputs above.")
+        out.append("If the sources' disagreements are resolved → the decision may change — see 'What's uncertain' "
+                   "for which sources disagree.")
     if "disputed" in bundle.findings:
         out.append("If the dispute turns out to be right for your use → no action needed — review concludes the "
                    "disputed issue does not apply to how you use the software.")
     return out
+
+
+def _pct(p: float) -> str:
+    return ">99.9%" if p >= 0.9995 else "<0.1%" if p < 0.0005 else f"{p * 100:.1f}%"
+
+
+def _describe_asset(a: Asset) -> str:
+    bits = []
+    if a.internet_facing is True:
+        bits.append("internet-facing")
+    elif a.internet_facing is False:
+        bits.append("internal")
+    if a.criticality:
+        bits.append(f"of {a.criticality} importance")
+    return " and ".join(bits)
+
+
+def _wording(bundle: EvidenceBundle, exploitation: str, exposure: str, results: list[ApplicabilityResult],
+             assets: dict[str, Asset] | None) -> dict[str, str]:
+    """Concrete facts for the trace and counterfactual sentences. Wording only; never changes a decision."""
+    w = {"exploit_why": "", "exposure_why": "", "asset": "", "review_what": ""}
+    kev, ssvc, epss = bundle.get("KEV"), bundle.ssvc, bundle.epss
+    claimed = bundle.findings.get("public_exploit_claimed")
+    n_refs = len([i for i in (claimed.evidence_ids if claimed else []) if ".ref" in i])
+    if exploitation == "confirmed":
+        parts = []
+        if kev and kev.kind == "kev_entry":
+            parts.append(f"it has been on CISA's list of actively attacked flaws since {kev.fields.get('dateAdded')}")
+        if ssvc and ssvc.exploitation == "active":
+            parts.append("CISA rates exploitation as active")
+        w["exploit_why"] = " and ".join(parts)
+    elif exploitation == "elevated":
+        if ssvc and ssvc.exploitation == "poc":
+            w["exploit_why"] = "CISA says demo attack code exists"
+        elif epss and epss.probability >= EPSS_ELEVATED:
+            w["exploit_why"] = f"the predicted chance of attacks in the next 30 days is {_pct(epss.probability)}"
+        else:
+            w["exploit_why"] = "the validated AI assessment rates it easy to exploit"
+    elif exploitation == "claimed_unverified":
+        noun = "source" if n_refs == 1 else "sources"
+        w["exploit_why"] = f"{n_refs} unverified {noun} tag possible attack code" if n_refs != 1 else \
+            "1 unverified source tags possible attack code"
+        if epss:
+            w["exploit_why"] += f" ({_pct(epss.probability)} predicted chance of attacks)"
+    elif exploitation == "low_observed":
+        w["exploit_why"] = "not on CISA's attacked list and no public attack code found" + (
+            f"; {_pct(epss.probability)} predicted chance of attacks" if epss else "")
+
+    affected = [r for r in results if r.status == ApplicabilityStatus.AFFECTED]
+    review = [r for r in results if r.status == ApplicabilityStatus.NEEDS_REVIEW]
+    if review:
+        r = review[0]
+        w["review_what"] = f"{r.asset_id}'s {r.software.product} {r.software.version}"
+        w["asset"] = r.asset_id
+    if assets and affected:
+        def pick(pred: object) -> ApplicabilityResult:
+            return next((r for r in affected if pred(assets[r.asset_id])), affected[0])  # type: ignore[operator]
+        if exposure == "high":
+            r = pick(lambda a: a.internet_facing is True or a.criticality in ("high", "critical"))
+        elif exposure == "context_unknown":
+            r = pick(lambda a: a.internet_facing is None or a.criticality is None)
+        elif exposure == "reduced":
+            r = pick(lambda a: bool(a.compensating_controls))
+        else:
+            r = affected[0]
+        a = assets[r.asset_id]
+        w["asset"] = a.id
+        if exposure in ("high", "standard"):
+            others = len({x.asset_id for x in affected}) - 1
+            w["exposure_why"] = f"{a.id} is {_describe_asset(a)}" + (
+                f" (+{others} other affected system{'s' if others > 1 else ''})" if others > 0 else "")
+        elif exposure == "context_unknown":
+            missing = [n for n, v in (("internet exposure", a.internet_facing), ("importance", a.criticality))
+                       if v is None]
+            w["exposure_why"] = f"{a.id}'s {' and '.join(missing)} {'is' if len(missing) == 1 else 'are'} not recorded"
+        elif exposure == "reduced":
+            ctrl = next((c.description for c in a.compensating_controls), "a declared protection")
+            w["exposure_why"] = f"{a.id} has a declared protection ({ctrl[:90]})"
+    return w
 
 
 def prioritize(bundle: EvidenceBundle, llm: LlmAnalysis | None, results: list[ApplicabilityResult],
@@ -333,7 +434,8 @@ def prioritize(bundle: EvidenceBundle, llm: LlmAnalysis | None, results: list[Ap
     exploitation, ex_notes = exploitation_level(bundle, llm)
     severity = severity_band(bundle)
     exposure, exp_notes = exposure_level(bundle.cve_id, results, assets)
-    x = RuleInputs(bundle.record_state, exploitation, severity, exposure)
+    x = RuleInputs(bundle.record_state, exploitation, severity, exposure,
+                   **_wording(bundle, exploitation, exposure, results, assets))
     label, p, provisional, trace = decide(x)
     factors = {"exploitation": exploitation, "severity": severity, "exposure": exposure}
     if bundle.record_state != RecordState.PUBLISHED:
