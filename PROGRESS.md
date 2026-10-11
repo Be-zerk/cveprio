@@ -19,19 +19,30 @@ used ("disregard the other repo"); nothing was copied from it.
 | 5. Evaluation, docs, demo | done | `evaluation/results/`, `docs/`, `README.md` |
 | 7. SBOM import (CycloneDX / SPDX 2.x JSON) | done | `--sbom`, `examples/inventory-sbom.json`; `tests/test_sbom.py`; real SBOM of this project scanned (0 known CVEs) |
 | 6. CVE discovery + disputed records (added after reviewing the demo) | done | `cveprio analyze --inventory examples/inventory.json --discover` → 83 CVEs; `tests/test_discovery.py` |
-| 8. Quote-grounded AI claims, Ubuntu/Red Hat advisories, held-out set (0.2.0) | done, except labelling | `tests/test_llm.py`, `tests/test_distro*.py`, `tests/test_holdout.py`; demo OpenSSH on Ubuntu 24.04 now `not_affected`; `evaluation/holdout/` (20 cases, unlabelled) |
+| 8. Quote-grounded AI claims, Ubuntu/Red Hat advisories, held-out set (0.2.0) | done; labelling 4/20 | `tests/test_llm.py`, `tests/test_distro*.py`, `tests/test_holdout.py`; demo OpenSSH on Ubuntu 24.04 now `not_affected`; `evaluation/holdout/` (20 cases, h02–h05 labelled by the author) |
+| 9. Portfolio polish (branch `portfolio-polish`) | done, awaiting review | README rebuilt with real screenshots; `docs/USAGE.md`; dashboard fixes (unassessable records, source-failure line, theme switch, focus); `test_missing_records_are_not_presented_as_safe` |
 
 Acceptance criteria AC1–AC34 are in [docs/PLAN.md](docs/PLAN.md); the assessment against
 them is at the end of this file.
 
-## What was run (latest: 2026-10-11, version 0.2.0)
+## What was run
 
-- `pytest`: **233 passed, 3 skipped** (the 3 live tests are opt-in).
-- `CVEPRIO_LIVE_TESTS=1 pytest -m live`: **3 passed** against the real CVE.org, NVD, KEV, EPSS and OSV APIs (incl. discovery).
-- `cveprio holdout-select`: 20 cases selected and their source data recorded (Ubuntu's API often returned HTTP 504 and needed retries).
-- `cveprio evaluate --set holdout`: runs; all 20 cases skipped as unlabelled, as intended.
+**2026-10-11, branch `portfolio-polish` (based on `a4d701e`), version 0.2.0, Python 3.13.2, macOS:**
+
+- `pytest`: **236 passed, 3 skipped** (the 3 skipped are the opt-in live tests).
+- `CVEPRIO_LIVE_TESTS=1 pytest -m live`: **3 passed** against the real CVE.org, NVD, KEV, EPSS and OSV APIs.
 - `ruff check cveprio tests`: clean. `mypy cveprio`: clean.
-- `cveprio demo`: completes offline, exit code 0.
+- `cveprio demo`: exit code 0. Also verified from a fresh `git clone https://github.com/Be-zerk/cveprio.git`
+  (commit `a4d701e`) in a new virtualenv: install succeeded, 235 tests passed, and `cveprio demo`
+  succeeded with all HTTP(S) traffic pointed at a dead proxy, i.e. without network access.
+- `cveprio evaluate`: development set 13/14 (baseline 6/14), applicability 14/14, 231/231 citations.
+- `cveprio evaluate --set holdout`: 4 labelled cases, applicability 3/4, 0 unsafe, decisions 2/4; 16 skipped as unlabelled.
+- Dashboard checked in a browser at 1280 px and 375 px (no horizontal scroll); theme switch,
+  tile filters, search, reset, "open all" and keyboard focus tested.
+
+**Earlier (2026-10-10/11):**
+
+- `cveprio holdout-select`: 20 cases selected and their source data recorded (Ubuntu's API often returned HTTP 504 and needed retries).
 - Live end-to-end: `cveprio analyze CVE-2024-3400 CVE-2023-4966 --inventory examples/inventory.json` → exit 0, all sources `ok`.
 - `cveprio evaluate` (deterministic): rules 13/14 within reference set vs baseline 6/14.
 - `cveprio evaluate --llm ollama` (qwen2.5:3b, local, ~30 min): 7/7 valid outputs, 88/93 claims with

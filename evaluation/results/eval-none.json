@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-11T22:13:21.042696+00:00",
+  "generated_at": "2026-10-11T22:55:36.024827+00:00",
   "review_status": "reviewed_by_author",
   "set": "dev",
   "unlabelled_cases_skipped": 0,
@@ -11,7 +11,7 @@
     "applicability_match": 14,
     "applicability_conservative_review": 0,
     "applicability_wrong_definite": 0,
-    "deterministic_citations_valid": "230/230"
+    "deterministic_citations_valid": "231/231"
   },
   "model_quality": {
     "provider": "none",

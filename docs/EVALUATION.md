@@ -1,6 +1,6 @@
 # Evaluation
 
-Three separate layers, never mixed:
+Four separate layers, never mixed:
 
 | Layer | What it checks | How to run | Needs network/model? |
 |---|---|---|---|
@@ -33,10 +33,11 @@ set addresses that:
   Versions alternate between the first affected and the first fixed version, and business
   contexts rotate. One KEV case has no product data and is a CVE-only case.
 - **Source data is recorded** in `evaluation/holdout/fixtures/`, so results are reproducible offline.
-- **Labels are deliberately empty.** A person fills in `labels.csv` (applicability, acceptable
-  decisions, rationale) from the linked sources **before** looking at the tool's output for
-  these CVEs. See `evaluation/holdout/LABELING.md`. Unlabelled cases are skipped and counted, so an
-  unlabelled run cannot be mistaken for a result.
+- **Labels come from a person, not the tool.** The cases shipped unlabelled; a person fills in
+  `labels.csv` (applicability, acceptable decisions, rationale) from the linked sources **before**
+  looking at the tool's output for those CVEs. See `evaluation/holdout/LABELING.md`. Unlabelled cases
+  are skipped and counted, so a partly labelled run cannot be mistaken for a full result.
+  **Status (2026-10-11): 4 of 20 labelled** (h02–h05, by the author); results below.
 
 ## Metrics
 
@@ -54,15 +55,15 @@ set addresses that:
 
 ## Results
 
-Generated files: `evaluation/results/eval-none.md` (deterministic) and
-`evaluation/results/eval-ollama-*.md` (local model). Summary of the 2026-10-10 runs is in
-the "Recorded results" section below.
+Generated files: `evaluation/results/eval-none.md` (deterministic, development set),
+`evaluation/results/eval-holdout-none.md` (held-out set) and `evaluation/results/eval-ollama-*.md`
+(local model, before the quote check). Each file records when it was generated.
 
 ## Recorded results (2026-10-10)
 
 **Deterministic** (`evaluation/results/eval-none.md`): contextual rules inside the
 reference set on 13/14 cases vs 6/14 for the CVSS-only baseline; applicability 14/14 with
-no wrong definite answers; 230/230 deterministic citations resolve. The one disagreement is
+no wrong definite answers; 230/230 deterministic citations resolve (231/231 on 2026-10-11, after reserved records gained an "unknown" line citing the record state). The one disagreement is
 the xz backdoor (rules P2, reference P1) — a real blind spot of the rules.
 
 **Local model, qwen2.5:3b via Ollama on an Intel CPU** (`eval-ollama-qwen2.5_3b.md`,
@@ -85,7 +86,11 @@ rated "high" for a famously easy exploit.
 1. **Citation checking ≠ faithfulness.** The validator proved a cited ID exists, not that
    the evidence says what the claim says, so "88/93" was an upper bound on quality.
    *Addressed in 0.2.0:* claims must now quote their evidence word for word (see
-   docs/ARCHITECTURE.md, "AI claim grounding"). The re-run is recorded below.
+   docs/ARCHITECTURE.md, "AI claim grounding"). A complete local-model re-run with the quote
+   check is **not yet recorded**. A partial attempt on 2026-10-11 (prompt 2026-10-11.1) removed 5
+   of 25 claims, all for quotes not found in the cited source, but 4 of 7 CVEs timed out on the
+   CPU, so it is not comparable with the run above. The timeout is now configurable
+   (`CVEPRIO_LLM_TIMEOUT_S`).
 2. **The small local model adds little value here.** It defaulted to "insufficient
    evidence", possibly encouraged by the prompt's instruction to prefer that over guessing
    (a hypothesis, not tested). A larger model and a revised prompt should be compared on

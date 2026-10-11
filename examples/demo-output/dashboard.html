@@ -145,6 +145,12 @@ tr:target td { background: var(--demo-bg); }
 .empty { padding: 20px; border: 1px dashed var(--border); border-radius: 10px; color: var(--text-2); }
 footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
 .hidden { display: none !important; }
+:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; border-radius: 4px; }
+.headrow { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+.theme { font: inherit; font-size: 13px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text); cursor: pointer; }
+.sources-line { margin: 10px 0 0; font-size: 13px; color: var(--text-2); }
+.sources-line.bad { color: var(--warning-ink); font-weight: 600; }
+.legend { margin: 10px 0 0; padding-left: 18px; color: var(--text-2); font-size: 13px; }
 @media (max-width: 760px) {
   details.cve > summary { grid-template-columns: 1fr; }
   .cols { grid-template-columns: minmax(0, 1fr); }
@@ -154,14 +160,21 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
 <body>
 <main>
 <header>
+  <div class="headrow">
   <h1>CVE prioritization · Northbeam Logistics (fictional)</h1>
-  <div class="meta">Generated 2026-10-11 22:13 UTC · <b>offline demo data</b> · 9 CVEs · cveprio 0.2.0</div>
+  <button id="theme" class="theme" type="button" aria-label="Colour theme: automatic">Theme: auto</button>
+  </div>
+  <div class="meta">Generated 2026-10-11 22:55 UTC · <b>offline demo data</b> · 9 CVEs · cveprio 0.2.0</div>
   <div class="banner" role="note">⚠ OFFLINE DEMO DATA — recorded fixtures, not live results.
     <small>Source responses were recorded at the retrieval times shown in each evidence table and may be out of date. The inventory and business context are fictional.</small></div>
-  <ul class="notices"><li>This product uses the NVD API but is not endorsed or certified by the NVD.</li><li>CVE records: CVE Program (cve.org). KEV: CISA Known Exploited Vulnerabilities catalogue (CC0). EPSS: FIRST.org Exploit Prediction Scoring System (https://www.first.org/epss).</li><li>When used: Ubuntu CVE tracker (ubuntu.com/security, Canonical) and Red Hat Security Data (access.redhat.com, CC BY 4.0, © Red Hat).</li></ul>
 </header>
 
 <p class="intro">Each card below is one vulnerability (CVE), most urgent first. Click a card to see why it got its priority and what to do; click “▸ details” on any line for the full explanation and its sources. Click a tile to show only that group.</p>
+<ul class="legend">
+  <li><b>Priority</b> (P1–P4) is the decision: how soon to act. It combines the three things below using fixed rules.</li>
+  <li><b>Attack activity</b>: evidence that attackers use the flaw. <b>Severity</b>: the technical score (CVSS, 0–10) on paper. <b>Exposure</b>: whether <i>your</i> systems are affected, reachable and important.</li>
+  <li><b>Provisional</b> means the decision depends on information that was not supplied. <b>Needs review</b> means a person must check before deciding.</li>
+</ul>
 <section aria-label="Summary">
   <div class="tiles">
     <button class="tile s-critical" data-filter="P1" aria-pressed="false">
@@ -184,11 +197,16 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
       <span class="label"><span class="dot" aria-hidden="true"></span>P4 · Low priority</span>
       <span class="value">0</span>
     </button>
-    <button class="tile s-muted" data-filter="OTHER" aria-pressed="false">
+    <button class="tile s-good" data-filter="OTHER" aria-pressed="false">
       <span class="label"><span class="dot" aria-hidden="true"></span>No action needed</span>
-      <span class="value">3</span>
+      <span class="value">2</span>
+    </button>
+    <button class="tile s-warning" data-filter="UNKNOWN" aria-pressed="false">
+      <span class="label"><span class="dot" aria-hidden="true"></span>Cannot assess yet</span>
+      <span class="value">1</span>
     </button>
   </div>
+  <p class="sources-line">All 43 source lookups returned an answer (recorded data). "Not found" answers count as answers; each card lists its sources.</p>
 </section>
 
 
@@ -227,7 +245,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
       <span>attacks: <b>Being attacked: on CISA&#39;s list since 2021-12-10</b></span>
       <span>severity: <b>10.0 out of 10 (critical)</b></span>
       <span>exposure: <b>web-portal-01 is internet-facing and high importance</b></span>
-      <span>severity score alone: <b>P1</b></span>
+      <span>ranked by score alone: <b>P1</b></span>
     </span>  </summary>
   <div class="body">
     <div class="summary-box s-critical">
@@ -560,7 +578,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
       <span>attacks: <b>Being attacked: on CISA&#39;s list since 2023-10-10</b></span>
       <span>severity: <b>7.5 out of 10 (high)</b></span>
       <span>exposure: <b>web-portal-01 is internet-facing and high importance</b></span>
-      <span>severity score alone: <b>P2</b></span>
+      <span>ranked by score alone: <b>P2</b></span>
     </span>  </summary>
   <div class="body">
     <div class="summary-box s-critical">
@@ -847,7 +865,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
       <span>attacks: <b>Demo attack code exists (CISA)</b></span>
       <span>severity: <b>8.1 out of 10 (high)</b></span>
       <span>exposure: <b>bastion-01 is internet-facing and high importance</b></span>
-      <span>severity score alone: <b>P2</b></span>
+      <span>ranked by score alone: <b>P2</b></span>
 <span class="flag">⚠ 1 source conflict</span>    </span>  </summary>
   <div class="body">
     <div class="summary-box s-critical">
@@ -874,7 +892,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
       <section class="sec sec-unc">
         <h3><span class="ico" aria-hidden="true">?</span>What's uncertain</h3>
         <p class="hint">Gaps, conflicts between sources, and things a person should check.</p>
-        <ul class="items"><li><span class="bshort">Known to be exploited by attackers: Unknown</span><details class="bmore"><summary>details</summary><div class="bdetail">No positive evidence of in-the-wild exploitation in the sources checked. This is not proof that exploitation has not occurred. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-KEV" title="Show evidence KEV">KEV</a><a class="chip" href="#CVE-2024-6387-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">Some evidence may be out of date</span><details class="bmore"><summary>details</summary><div class="bdetail">SSVC Exploitation=poc was assessed 2024-07-02 (&gt; 180 days ago) and may no longer reflect current activity. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">Demo data: the attacked-flaws list (KEV) is a reduced copy</span><details class="bmore"><summary>details</summary><div class="bdetail">Offline demo uses a trimmed KEV fixture; absence was verified against the full catalogue at capture time only.</div></details></li><li><span class="bshort">Open question: Which builds and architectures do the public PoCs target, and how…</span><details class="bmore"><summary>details</summary><div class="bdetail">Which builds and architectures do the public PoCs target, and how many attempts do they need? (Source: scripted demo example; not verified.)</div></details></li><li><span class="bshort">Open question: Has in-the-wild exploitation been reported since the SSVC assessment…</span><details class="bmore"><summary>details</summary><div class="bdetail">Has in-the-wild exploitation been reported since the SSVC assessment date? (Source: scripted demo example; not verified.)</div></details></li><li><span class="bshort">Little public research doesn&#39;t mean it&#39;s hard to exploit</span><details class="bmore"><summary>details</summary><div class="bdetail">Exploit-development difficulty judged from public evidence is inherently limited: the absence of public research does not mean exploitation is hard.</div></details></li></ul>
+        <ul class="items"><li><span class="bshort">Known to be exploited by attackers: Unknown</span><details class="bmore"><summary>details</summary><div class="bdetail">No positive evidence of in-the-wild exploitation in the sources checked. This is not proof that exploitation has not occurred. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-KEV" title="Show evidence KEV">KEV</a><a class="chip" href="#CVE-2024-6387-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">Some evidence may be out of date</span><details class="bmore"><summary>details</summary><div class="bdetail">SSVC Exploitation=poc was assessed 2024-07-02 (&gt; 180 days ago) and may no longer reflect current activity. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">Demo data: the attacked-flaws list (KEV) is a reduced copy</span><details class="bmore"><summary>details</summary><div class="bdetail">Offline demo uses a trimmed KEV fixture; absence was verified against the full catalogue at capture time only.</div></details></li><li><span class="bshort">Scripted AI example asks: Which builds and architectures do the public PoCs target, and how…</span><details class="bmore"><summary>details</summary><div class="bdetail">Which builds and architectures do the public PoCs target, and how many attempts do they need? (Source: scripted demo example; not verified.)</div></details></li><li><span class="bshort">Scripted AI example asks: Has in-the-wild exploitation been reported since the SSVC assessment…</span><details class="bmore"><summary>details</summary><div class="bdetail">Has in-the-wild exploitation been reported since the SSVC assessment date? (Source: scripted demo example; not verified.)</div></details></li><li><span class="bshort">Little public research doesn&#39;t mean it&#39;s hard to exploit</span><details class="bmore"><summary>details</summary><div class="bdetail">Exploit-development difficulty judged from public evidence is inherently limited: the absence of public research does not mean exploitation is hard.</div></details></li></ul>
       </section>
     </div>
 
@@ -1272,7 +1290,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
       <span>attacks: <b>Demo attack code exists (CISA)</b></span>
       <span>severity: <b>9.8 out of 10 (critical)</b></span>
       <span>exposure: <b>dev-laptop-17: internet exposure and importance not recorded (+1 more system)</b></span>
-      <span>severity score alone: <b>P1</b></span>
+      <span>ranked by score alone: <b>P1</b></span>
 <span class="flag">⚠ 2 source conflicts</span>    </span>  </summary>
   <div class="body">
     <div class="summary-box s-serious">
@@ -1500,7 +1518,7 @@ URL that curl has been told to operate with.</p>
       <span>attacks: <b>Being attacked: on CISA&#39;s list since 2022-04-04</b></span>
       <span>severity: <b>9.8 out of 10 (critical)</b></span>
       <span>exposure: <b>Unclear whether web-portal-01 is affected</b></span>
-      <span>severity score alone: <b>P1</b></span>
+      <span>ranked by score alone: <b>P1</b></span>
     </span>  </summary>
   <div class="body">
     <div class="summary-box s-warning">
@@ -1739,7 +1757,7 @@ URL that curl has been told to operate with.</p>
       <span>attacks: <b>Demo attack code exists (CISA)</b></span>
       <span>severity: <b>5.3 out of 10 (medium)</b></span>
       <span>exposure: <b>print-srv-01 is protected by a declared control (not verified)</b></span>
-      <span>severity score alone: <b>P3</b></span>
+      <span>ranked by score alone: <b>P3</b></span>
 <span class="flag">⚠ 1 source conflict</span>    </span>  </summary>
   <div class="body">
     <div class="summary-box s-neutral">
@@ -1766,7 +1784,7 @@ URL that curl has been told to operate with.</p>
       <section class="sec sec-unc">
         <h3><span class="ico" aria-hidden="true">?</span>What's uncertain</h3>
         <p class="hint">Gaps, conflicts between sources, and things a person should check.</p>
-        <ul class="items"><li><span class="bshort">Known to be exploited by attackers: Unknown</span><details class="bmore"><summary>details</summary><div class="bdetail">No positive evidence of in-the-wild exploitation in the sources checked. This is not proof that exploitation has not occurred. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-47176-KEV" title="Show evidence KEV">KEV</a><a class="chip" href="#CVE-2024-47176-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">Some evidence may be out of date</span><details class="bmore"><summary>details</summary><div class="bdetail">SSVC Exploitation=poc was assessed 2024-09-27 (&gt; 180 days ago) and may no longer reflect current activity. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-47176-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">Demo data: the attacked-flaws list (KEV) is a reduced copy</span><details class="bmore"><summary>details</summary><div class="bdetail">Offline demo uses a trimmed KEV fixture; absence was verified against the full catalogue at capture time only.</div></details></li><li><span class="bshort">Open question: The bundle does not describe the other chained CVEs, so the…</span><details class="bmore"><summary>details</summary><div class="bdetail">The bundle does not describe the other chained CVEs, so the difficulty of the full chain cannot be assessed from this evidence. (Source: scripted demo example; not verified.)</div></details></li><li><span class="bshort">Little public research doesn&#39;t mean it&#39;s hard to exploit</span><details class="bmore"><summary>details</summary><div class="bdetail">Exploit-development difficulty judged from public evidence is inherently limited: the absence of public research does not mean exploitation is hard.</div></details></li></ul>
+        <ul class="items"><li><span class="bshort">Known to be exploited by attackers: Unknown</span><details class="bmore"><summary>details</summary><div class="bdetail">No positive evidence of in-the-wild exploitation in the sources checked. This is not proof that exploitation has not occurred. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-47176-KEV" title="Show evidence KEV">KEV</a><a class="chip" href="#CVE-2024-47176-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">Some evidence may be out of date</span><details class="bmore"><summary>details</summary><div class="bdetail">SSVC Exploitation=poc was assessed 2024-09-27 (&gt; 180 days ago) and may no longer reflect current activity. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-47176-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">Demo data: the attacked-flaws list (KEV) is a reduced copy</span><details class="bmore"><summary>details</summary><div class="bdetail">Offline demo uses a trimmed KEV fixture; absence was verified against the full catalogue at capture time only.</div></details></li><li><span class="bshort">Scripted AI example asks: The bundle does not describe the other chained CVEs, so the…</span><details class="bmore"><summary>details</summary><div class="bdetail">The bundle does not describe the other chained CVEs, so the difficulty of the full chain cannot be assessed from this evidence. (Source: scripted demo example; not verified.)</div></details></li><li><span class="bshort">Little public research doesn&#39;t mean it&#39;s hard to exploit</span><details class="bmore"><summary>details</summary><div class="bdetail">Exploit-development difficulty judged from public evidence is inherently limited: the absence of public research does not mean exploitation is hard.</div></details></li></ul>
       </section>
     </div>
 
@@ -1974,7 +1992,7 @@ URL that curl has been told to operate with.</p>
       <span>attacks: <b>Attacks likely: 86.0% predicted chance in 30 days</b></span>
       <span>severity: <b>10.0 out of 10 (critical)</b></span>
       <span>exposure: <b>Not affected: your installed version is outside the affected range</b></span>
-      <span>severity score alone: <b>P1</b></span>
+      <span>ranked by score alone: <b>P1</b></span>
 <span class="flag">⚠ 1 source conflict</span>    </span>  </summary>
   <div class="body">
     <div class="summary-box s-good">
@@ -2337,15 +2355,15 @@ Through a series of complex obfuscations, the liblzma build process extracts a p
     </details>
   </div>
 </details>
-<details class="cve" id="CVE-2026-99001" data-group="OTHER" data-text="cve-2026-99001   ">
+<details class="cve" id="CVE-2026-99001" data-group="UNKNOWN" data-text="cve-2026-99001   ">
   <summary>
     <span class="cveid">CVE-2026-99001</span>
-    <span><span class="badge s-muted"><span aria-hidden="true">∅</span>No details yet</span></span>
-    <span class="headline">No public details yet — nothing to do</span>
+    <span><span class="badge s-muted"><span aria-hidden="true">∅</span>Not published yet</span></span>
+    <span class="headline">Not published yet — check again later</span>
   </summary>
   <div class="body">
     <div class="summary-box s-muted">
-      <div class="sum-label"><span aria-hidden="true">∅</span> No public details yet — nothing to do</div>
+      <div class="sum-label"><span aria-hidden="true">∅</span> Not published yet — check again later</div>
 <p class="sum-why">This CVE number has been reserved, but no details have been published yet.</p>      <h4>What to do</h4>
       <ul class="items"><li><span class="bshort">Check the CVE ID and look again later</span><details class="bmore"><summary>details</summary><div class="bdetail">a reserved ID has no public details yet. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2026-99001-CVE.state" title="Show evidence CVE.state">CVE.state</a></span></span></div></details></li></ul>
     </div>
@@ -2366,14 +2384,14 @@ Through a series of complex obfuscations, the liblzma build process extracts a p
       <section class="sec sec-unc">
         <h3><span class="ico" aria-hidden="true">?</span>What's uncertain</h3>
         <p class="hint">Gaps, conflicts between sources, and things a person should check.</p>
-        <ul class="items"><li>Nothing flagged.</li></ul>
+        <ul class="items"><li><span class="bshort">Nothing about this flaw is known yet</span><details class="bmore"><summary>details</summary><div class="bdetail">No details are public, so the affected products, severity and attack activity are all unknown. This is not a sign that your systems are safe; check again after publication. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2026-99001-CVE.state" title="Show evidence CVE.state">CVE.state</a></span></span></div></details></li></ul>
       </section>
     </div>
 
     <section class="sec sec-change">
       <h3><span class="ico" aria-hidden="true">↻</span>What would change this decision</h3>
       <p class="hint">New information that would move the priority up or down.</p>
-      <ul class="items"><li>No single change identified.</li></ul>
+      <ul class="items"><li><span class="bshort">The record is published with affected products and severity → it can then be assessed like any other CVE, at any priority</span></li></ul>
     </section>
 
     <details class="desc-box tech">
@@ -2417,7 +2435,8 @@ Through a series of complex obfuscations, the liblzma build process extracts a p
 </section>
 
 <footer>
-  <p>Priorities come from fixed, documented rules (docs/PRIORITIZATION.md), not from an AI. AI notes are checked against their cited evidence, and the only thing they can do is raise a flaw from "no sign of attacks" to "attacks likely". Automated tests do not prove every security judgement is right: review before acting.</p>
+  <ul class="notices"><li>This product uses the NVD API but is not endorsed or certified by the NVD.</li><li>CVE records: CVE Program (cve.org). KEV: CISA Known Exploited Vulnerabilities catalogue (CC0). EPSS: FIRST.org Exploit Prediction Scoring System (https://www.first.org/epss).</li><li>When used: Ubuntu CVE tracker (ubuntu.com/security, Canonical) and Red Hat Security Data (access.redhat.com, CC BY 4.0, © Red Hat).</li></ul>
+  <p>Priorities come from fixed, documented rules (docs/PRIORITIZATION.md), not from an AI. AI notes are checked against their cited evidence; the only way they can affect a priority is by raising one rule input, attack likelihood, from "no sign of attacks" to "attacks likely" (never lowering anything). Automated tests do not prove every security judgement is right: review before acting.</p>
 </footer>
 </main>
 <script>
@@ -2460,6 +2479,18 @@ Through a series of complex obfuscations, the liblzma build process extracts a p
     c.addEventListener("click", function (ev) { ev.preventDefault(); goTo(c.getAttribute("href").slice(1)); });
   });
   if (location.hash) { goTo(decodeURIComponent(location.hash.slice(1))); }
+  var themeBtn = document.getElementById("theme"), modes = ["auto", "light", "dark"], mode = "auto";
+  try { mode = localStorage.getItem("cveprio-theme") || "auto"; } catch (e) {}
+  function setTheme(m) {
+    mode = modes.indexOf(m) === -1 ? "auto" : m;
+    if (mode === "auto") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", mode);
+    themeBtn.textContent = "Theme: " + mode;
+    themeBtn.setAttribute("aria-label", "Colour theme: " + (mode === "auto" ? "automatic" : mode) + ". Click to change.");
+    try { localStorage.setItem("cveprio-theme", mode); } catch (e) {}
+  }
+  setTheme(mode);
+  themeBtn.addEventListener("click", function () { setTheme(modes[(modes.indexOf(mode) + 1) % modes.length]); });
   document.getElementById("expand").addEventListener("click", function () { var open = this.textContent === "Open all cards"; items.forEach(function (el) { el.open = open; }); this.textContent = open ? "Close all cards" : "Open all cards"; });
 })();
 </script>

@@ -21,7 +21,8 @@ CVEPRIO_LLM_NUM_CTX_MAX=16384
 Free; data stays on the machine. Uses Ollama's native `/api/chat` with the JSON Schema as
 `format` and an explicit `num_ctx` sized to the prompt. Prompts that would not fit are
 refused (`prompt_too_large`); if Ollama reports the prompt filled the whole context, the
-result is rejected as possibly truncated.
+result is rejected as possibly truncated. Each call waits up to `CVEPRIO_LLM_TIMEOUT_S` seconds
+(default 600); small models on a CPU, asked to quote their evidence, can need longer.
 
 **Why not just the OpenAI-compatible endpoint?** During development, Ollama's
 `/v1/chat/completions` silently truncated a 5,726-token prompt to 2,050 tokens (server

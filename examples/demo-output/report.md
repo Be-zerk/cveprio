@@ -1,6 +1,6 @@
 # CVE prioritization report
 
-Generated 2026-10-11T22:13:20+00:00 · mode **offline_demo** · cveprio 0.2.0 · organisation: Northbeam Logistics (fictional)
+Generated 2026-10-11T22:55:35+00:00 · mode **offline_demo** · cveprio 0.2.0 · organisation: Northbeam Logistics (fictional)
 
 > OFFLINE DEMO MODE: data comes from recorded fixtures (see retrieval times), not live sources. Results may be out of date.
 > Inventory and business context are FICTIONAL example data.
@@ -18,7 +18,7 @@ Generated 2026-10-11T22:13:20+00:00 · mode **offline_demo** · cveprio 0.2.0 ·
 | CVE-2024-47176 | P3 | P3 | Demo attack code exists (CISA) | 5.3 out of 10 (medium) | print-srv-01 is protected by a declared control (not verified) |
 | CVE-2024-3094 | Not affected | P1 | Attacks likely: 86.0% predicted chance in 30 days | 10.0 out of 10 (critical) | Not affected: your installed version is outside the affected range |
 | CVE-2026-11415 | Cancelled CVE | – | – | – | – |
-| CVE-2026-99001 | No details yet | – | – | – | – |
+| CVE-2026-99001 | Not published yet | – | – | – | – |
 
 ## CVE-2021-44228 — P1: Act now: emergency change / out-of-band patching
 
@@ -233,8 +233,8 @@ What the 7.5 score says: Attack from: the network (remotely); Attack complexity:
 - Known to be exploited by attackers: Unknown — No positive evidence of in-the-wild exploitation in the sources checked. This is not proof that exploitation has not occurred. [KEV, CVE.ssvc]
 - Some evidence may be out of date — SSVC Exploitation=poc was assessed 2024-07-02 (> 180 days ago) and may no longer reflect current activity. [CVE.ssvc]
 - Demo data: the attacked-flaws list (KEV) is a reduced copy — Offline demo uses a trimmed KEV fixture; absence was verified against the full catalogue at capture time only.
-- Open question: Which builds and architectures do the public PoCs target, and how… — Which builds and architectures do the public PoCs target, and how many attempts do they need? (Source: scripted demo example; not verified.)
-- Open question: Has in-the-wild exploitation been reported since the SSVC assessment… — Has in-the-wild exploitation been reported since the SSVC assessment date? (Source: scripted demo example; not verified.)
+- Scripted AI example asks: Which builds and architectures do the public PoCs target, and how… — Which builds and architectures do the public PoCs target, and how many attempts do they need? (Source: scripted demo example; not verified.)
+- Scripted AI example asks: Has in-the-wild exploitation been reported since the SSVC assessment… — Has in-the-wild exploitation been reported since the SSVC assessment date? (Source: scripted demo example; not verified.)
 - Little public research doesn't mean it's hard to exploit — Exploit-development difficulty judged from public evidence is inherently limited: the absence of public research does not mean exploitation is hard.
 
 ### Why this priority (rule trace)
@@ -530,7 +530,7 @@ What the 9.8 score says: Attack from: the network (remotely); Attack complexity:
 - Known to be exploited by attackers: Unknown — No positive evidence of in-the-wild exploitation in the sources checked. This is not proof that exploitation has not occurred. [KEV, CVE.ssvc]
 - Some evidence may be out of date — SSVC Exploitation=poc was assessed 2024-09-27 (> 180 days ago) and may no longer reflect current activity. [CVE.ssvc]
 - Demo data: the attacked-flaws list (KEV) is a reduced copy — Offline demo uses a trimmed KEV fixture; absence was verified against the full catalogue at capture time only.
-- Open question: The bundle does not describe the other chained CVEs, so the… — The bundle does not describe the other chained CVEs, so the difficulty of the full chain cannot be assessed from this evidence. (Source: scripted demo example; not verified.)
+- Scripted AI example asks: The bundle does not describe the other chained CVEs, so the… — The bundle does not describe the other chained CVEs, so the difficulty of the full chain cannot be assessed from this evidence. (Source: scripted demo example; not verified.)
 - Little public research doesn't mean it's hard to exploit — Exploit-development difficulty judged from public evidence is inherently limited: the absence of public research does not mean exploitation is hard.
 
 ### Why this priority (rule trace)
@@ -733,7 +733,7 @@ Status: `skipped` — Not run: record is rejected.
 
 > **OFFLINE DEMO DATA** — recorded fixtures, not live results. See retrieval times below.
 
-**Decision:** No public details yet · **Severity score alone would say:** N/A
+**Decision:** Not published yet — check again later · **Severity score alone would say:** N/A
 
 **In short:** This CVE number has been reserved, but no details have been published yet.
 
@@ -741,7 +741,7 @@ Status: `skipped` — Not run: record is rejected.
 - CVE status: Reserved, no details published yet — CVE ID is RESERVED: assigned but no public record has been published. [CVE.state]
 
 ### What remains uncertain
-- Nothing flagged.
+- Nothing about this flaw is known yet — No details are public, so the affected products, severity and attack activity are all unknown. This is not a sign that your systems are safe; check again after publication. [CVE.state]
 
 ### Why this priority (rule trace)
 1. No priority: there are no public details — the CVE ID is reserved but not yet published.
@@ -750,7 +750,7 @@ Status: `skipped` — Not run: record is rejected.
 - Check the CVE ID and look again later — a reserved ID has no public details yet [CVE.state].
 
 ### What would change the recommendation
-- No single input change identified.
+- The record is published with affected products and severity → it can then be assessed like any other CVE, at any priority
 
 ### AI-assisted assessment (judgement, not fact)
 

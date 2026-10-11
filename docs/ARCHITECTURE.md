@@ -25,8 +25,12 @@ evidence), and `LlmAnalysis` (AI judgement, validated, labelled).
 manipulated by text inside advisories, and are hard to audit. The priority comes from a
 small rule table anyone can read and reproduce. The model's job is narrower: turn
 unstructured public text into structured, *cited* observations about difficulty and
-usability. Its influence on priority is limited to raising "no exploitation signal" to
-"elevated" when it rates exploit development as low *with at least two cited claims*.
+usability. Its influence on priority is limited to one rule input: when there is no strong
+exploitation signal (`low_observed` or `claimed_unverified`), a validated rating of "low"
+exploit-development difficulty with at least two claims that passed validation raises
+exploitation to `elevated`. That can move a CVE up (to P2, or P1 with high exposure and
+high/critical severity); it can never lower one. A prompt injection that talks a model into
+"low difficulty" could therefore raise a priority. That is the accepted failure direction.
 
 **2. Every claim points at evidence IDs; citations are verified in code.** IDs like
 `CVE.desc`, `NVD.cvss.2`, `KEV` are stable and human-readable. Claims that cite nothing or

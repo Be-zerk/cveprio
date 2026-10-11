@@ -145,6 +145,12 @@ tr:target td { background: var(--demo-bg); }
 .empty { padding: 20px; border: 1px dashed var(--border); border-radius: 10px; color: var(--text-2); }
 footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
 .hidden { display: none !important; }
+:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; border-radius: 4px; }
+.headrow { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+.theme { font: inherit; font-size: 13px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text); cursor: pointer; }
+.sources-line { margin: 10px 0 0; font-size: 13px; color: var(--text-2); }
+.sources-line.bad { color: var(--warning-ink); font-weight: 600; }
+.legend { margin: 10px 0 0; padding-left: 18px; color: var(--text-2); font-size: 13px; }
 @media (max-width: 760px) {
   details.cve > summary { grid-template-columns: 1fr; }
   .cols { grid-template-columns: minmax(0, 1fr); }
@@ -154,7 +160,10 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
 <body>
 <main>
 <header>
+  <div class="headrow">
   <h1>CVE prioritization{% if run.organization %} · {{ run.organization }}{% endif %}</h1>
+  <button id="theme" class="theme" type="button" aria-label="Colour theme: automatic">Theme: auto</button>
+  </div>
   <div class="meta">Generated {{ run.generated_at.strftime("%Y-%m-%d %H:%M UTC") }} · <b>{{ "offline demo data" if run.mode == "offline_demo" else "live data" }}</b> · {{ run.reports|length }} CVEs · cveprio {{ run.tool_version }}</div>
   {% if run.mode == "offline_demo" %}
   <div class="banner" role="note">⚠ OFFLINE DEMO DATA — recorded fixtures, not live results.
@@ -162,10 +171,14 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
   {% elif run.fictional_context %}
   <div class="banner" role="note">⚠ Inventory and business context are FICTIONAL example data.</div>
   {% endif %}
-  <ul class="notices">{% for n in run.notices if not n.startswith(("OFFLINE DEMO", "Inventory and business context")) %}<li>{{ n }}</li>{% endfor %}</ul>
 </header>
 
 <p class="intro">Each card below is one vulnerability (CVE), most urgent first. Click a card to see why it got its priority and what to do; click “▸ details” on any line for the full explanation and its sources. Click a tile to show only that group.</p>
+<ul class="legend">
+  <li><b>Priority</b> (P1–P4) is the decision: how soon to act. It combines the three things below using fixed rules.</li>
+  <li><b>Attack activity</b>: evidence that attackers use the flaw. <b>Severity</b>: the technical score (CVSS, 0–10) on paper. <b>Exposure</b>: whether <i>your</i> systems are affected, reachable and important.</li>
+  <li><b>Provisional</b> means the decision depends on information that was not supplied. <b>Needs review</b> means a person must check before deciding.</li>
+</ul>
 <section aria-label="Summary">
   <div class="tiles">
   {% for key, label, n in tiles %}
@@ -176,6 +189,11 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
     </button>
   {% endfor %}
   </div>
+  {% if src.bad %}
+  <p class="sources-line bad" role="status">⚠ {{ src.bad|length }} of {{ src.total }} source lookups failed or were rate-limited, so some results are partial: {% for cid, name, st in src.bad %}<a href="#{{ cid }}">{{ cid }}</a> ({{ name }}: {{ st }}){% if not loop.last %}, {% endif %}{% endfor %}.</p>
+  {% else %}
+  <p class="sources-line">All {{ src.total }} source lookups returned an answer{% if run.mode == "offline_demo" %} (recorded data){% endif %}. "Not found" answers count as answers; each card lists its sources.</p>
+  {% endif %}
 </section>
 
 {% if run.discovery %}
@@ -187,8 +205,8 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
     <thead><tr><th>Asset</th><th>Software</th><th>Method</th><th>Status</th><th>CVEs</th><th>Notes</th></tr></thead>
     <tbody>
     {% for q in disc.queries %}
-    <tr><td>{{ q.asset_id }}</td><td>{{ q.product }} {{ q.version }}</td><td>{{ q.method }}</td>
-        <td class="{{ 'flag' if q.status != 'ok' else '' }}">{{ q.status }}</td><td class="num">{{ q.cve_ids|length }}</td>
+    <tr><td>{{ q.asset_id }}</td><td>{{ q.product }} {{ q.version }}</td><td>{{ {"nvd_cpe": "NVD (CPE match)", "osv_purl": "OSV (package URL)"}.get(q.method, q.method|replace("_", " ")) }}</td>
+        <td class="{{ 'flag' if q.status != 'ok' else '' }}">{{ q.status|replace("_", " ") }}</td><td class="num">{{ q.cve_ids|length }}</td>
         <td>{{ q.detail or "" }}{% if q.non_cve_ids %} {{ q.non_cve_ids|length }} non-CVE advisories not analysed{% endif %}</td></tr>
     {% endfor %}
     </tbody></table></div>
@@ -226,7 +244,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
 {% for r in run.reports %}
 {% set d = r.decision %}
 {% set st = status.get(d.label, ("muted", "–")) %}
-{% set group = d.label if d.label in ("P1", "P2", "P3", "P4", "NEEDS_REVIEW") else "OTHER" %}
+{% set group = group_of(d.label) %}
 <details class="cve" id="{{ r.cve_id }}" data-group="{{ group }}" data-text="{{ (r.cve_id ~ ' ' ~ (r.bundle.title or '') ~ ' ' ~ (r.applicability|map(attribute='asset_id')|join(' ')) ~ ' ' ~ (r.applicability|map(attribute='software.product')|join(' ')))|lower }}">
   <summary>
     <span class="cveid">{{ r.cve_id }}</span>
@@ -238,7 +256,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
       <span>attacks: <b>{{ fc[0][1] }}</b></span>
       <span>severity: <b>{{ fc[1][1] }}</b></span>
       <span>exposure: <b>{{ fc[2][1] }}</b></span>
-      <span>severity score alone: <b>{{ d.baseline_label }}</b></span>
+      <span>ranked by score alone: <b>{{ d.baseline_label }}</b></span>
       {% if r.bundle.conflicts %}<span class="flag">⚠ {{ r.bundle.conflicts|length }} source conflict{{ "s" if r.bundle.conflicts|length > 1 }}</span>{% endif %}
       {% if "disputed" in r.bundle.findings %}<span class="flag">⚠ disputed</span>{% endif %}
       {% if r.bundle.sources|selectattr("status", "in", ["failed", "rate_limited"])|list %}<span class="flag">⚠ degraded sources</span>{% endif %}
@@ -399,7 +417,8 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
 </section>
 
 <footer>
-  <p>Priorities come from fixed, documented rules (docs/PRIORITIZATION.md), not from an AI. AI notes are checked against their cited evidence, and the only thing they can do is raise a flaw from "no sign of attacks" to "attacks likely". Automated tests do not prove every security judgement is right: review before acting.</p>
+  <ul class="notices">{% for n in run.notices if not n.startswith(("OFFLINE DEMO", "Inventory and business context")) %}<li>{{ n }}</li>{% endfor %}</ul>
+  <p>Priorities come from fixed, documented rules (docs/PRIORITIZATION.md), not from an AI. AI notes are checked against their cited evidence; the only way they can affect a priority is by raising one rule input, attack likelihood, from "no sign of attacks" to "attacks likely" (never lowering anything). Automated tests do not prove every security judgement is right: review before acting.</p>
 </footer>
 </main>
 <script>
@@ -442,6 +461,18 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
     c.addEventListener("click", function (ev) { ev.preventDefault(); goTo(c.getAttribute("href").slice(1)); });
   });
   if (location.hash) { goTo(decodeURIComponent(location.hash.slice(1))); }
+  var themeBtn = document.getElementById("theme"), modes = ["auto", "light", "dark"], mode = "auto";
+  try { mode = localStorage.getItem("cveprio-theme") || "auto"; } catch (e) {}
+  function setTheme(m) {
+    mode = modes.indexOf(m) === -1 ? "auto" : m;
+    if (mode === "auto") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", mode);
+    themeBtn.textContent = "Theme: " + mode;
+    themeBtn.setAttribute("aria-label", "Colour theme: " + (mode === "auto" ? "automatic" : mode) + ". Click to change.");
+    try { localStorage.setItem("cveprio-theme", mode); } catch (e) {}
+  }
+  setTheme(mode);
+  themeBtn.addEventListener("click", function () { setTheme(modes[(modes.indexOf(mode) + 1) % modes.length]); });
   document.getElementById("expand").addEventListener("click", function () { var open = this.textContent === "Open all cards"; items.forEach(function (el) { el.open = open; }); this.textContent = open ? "Close all cards" : "Open all cards"; });
 })();
 </script>

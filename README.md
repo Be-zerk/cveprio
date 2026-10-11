@@ -1,205 +1,145 @@
-# cveprio — evidence-backed CVE prioritization assistant
+# cveprio: evidence-backed CVE prioritization
 
-A research prototype that takes a CVE ID (or a software inventory plus a CVE watch
-list), collects verifiable evidence from CVE.org, NVD, CISA KEV and FIRST EPSS
-(plus OSV.dev and Ubuntu/Red Hat advisories where relevant),
-and produces an explained priority with sources, uncertainty and "what would change
-this" for each recommendation.
+[![tests](https://github.com/Be-zerk/cveprio/actions/workflows/tests.yml/badge.svg)](https://github.com/Be-zerk/cveprio/actions/workflows/tests.yml)
+![Python 3.11 | 3.12 | 3.13](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13-blue)
 
-It keeps three questions separate:
+**cveprio decides which vulnerabilities to fix first, and shows its working.** Give it CVE IDs
+and a list of your systems (or an SBOM). It collects evidence from CVE.org, NVD, CISA KEV, FIRST EPSS,
+OSV.dev and Ubuntu/Red Hat advisories. It checks whether *your* installed versions are affected
+and assigns a priority (P1–P4) using a small, documented rule table. Every decision lists its
+sources, what is uncertain, and what would change it.
 
-1. **Exploit-development difficulty** — how hard would a working exploit be to build? *(AI-assisted, cited)*
-2. **Existing-exploit usability** — what exploits/exploitation are reported, with what limits? *(AI-assisted, checked against deterministic findings)*
-3. **Organisational exposure** — is *our* deployed version affected, how reachable and important is it? *(deterministic, local only)*
+**The problem:** teams often patch in order of CVSS score. A 10.0 that doesn't affect your version
+outranks a 7.5 that is being attacked on your internet-facing server. cveprio separates the four
+things that matter: *is it being attacked*, *how severe is it on paper*, *does it affect my installed
+version*, and *how exposed and important is that system*.
 
-The final priority comes from a **documented rule table**, not from a model-generated
-score. The model can raise one factor in one narrowly defined case and is otherwise
-advisory ([docs/PRIORITIZATION.md](docs/PRIORITIZATION.md)).
+> **Status: research prototype, not production software.** Built as a portfolio project. See
+> [Limitations](#limitations).
 
-> **Status: working prototype, not production software.** The offline test suite
-> (233 tests) and the 3 opt-in live API checks pass as of 2026-10-11, but tests do not
-> establish that every security judgement is correct. See [Limitations](#limitations).
+![cveprio dashboard: priority summary, comparison with severity-only ranking, and CVE cards (offline demo, fictional company)](docs/images/dashboard-overview.png)
 
-The idea of using LLMs to judge how practical exploit development is for incoming CVEs
-came from a suggestion by Matthew Devost; this project extends it with evidence
-provenance, applicability matching and transparent rules.
+<sub>Offline demo with a fictional company (Northbeam Logistics) and recorded source data. One opened
+assessment: [docs/images/dashboard-assessment.png](docs/images/dashboard-assessment.png).</sub>
 
-## Quick start (offline demo, no keys, no network)
+## Try the offline demo
 
 ```bash
-git clone <this repo> && cd cve-prioritization-assistant
+git clone https://github.com/Be-zerk/cveprio.git
+cd cveprio
 python3 -m venv .venv && source .venv/bin/activate
-pip install -e ".[dev]"
-cveprio demo
-cveprio serve out/demo        # open http://127.0.0.1:8765/dashboard.html
+pip install -e ".[dev]"            # downloads packages from PyPI (needs network once)
+cveprio demo                       # runs fully offline from recorded data
+cveprio serve out/demo             # open http://127.0.0.1:8765/dashboard.html
 ```
 
-The demo's CVE watchlist is **hand-picked** to show every kind of outcome; it is not a
-complete list of the CVEs affecting that inventory (live `--discover` finds those).
-The demo uses **recorded real API responses** (`fixtures/demo/`, captured 2026-10-10)
-and a **fictional** company inventory (`examples/inventory.json`). Every output is
-labelled `OFFLINE DEMO`. The AI section in the demo shows **scripted examples written
-by the author** to demonstrate validation — they are labelled as such and are not model
-output. Walkthrough: [docs/DEMO.md](docs/DEMO.md).
+Installation needs network access to download packages. **The demo itself makes no network
+requests**: it replays real API responses recorded on 2026-10-10 (`fixtures/demo/`). Every output is
+labelled `OFFLINE DEMO`. The company inventory is fictional, and the AI section shows **scripted
+examples written for the demo**, labelled as such, not model output. Walkthrough:
+[docs/DEMO.md](docs/DEMO.md). Live use, SBOMs and configuration: [docs/USAGE.md](docs/USAGE.md).
 
-Requires Python ≥ 3.11. Developed and tested locally on 3.13; the included GitHub Actions workflow
-(`.github/workflows/tests.yml`) runs the offline tests on 3.11, 3.12 and 3.13 once the repository is pushed.
-For the exact dependency versions used during development: `pip install -r requirements-lock.txt && pip install -e . --no-deps`.
+## What it does
 
-## Live use
-
-```bash
-cp .env.example .env                        # optional; edit values
-cveprio check-config                        # shows effective settings, secrets masked
-cveprio analyze CVE-2024-6387               # one CVE, live sources, no model
-cveprio analyze --inventory examples/inventory.json            # inventory + its (hand-picked) watchlist
-cveprio analyze --inventory examples/inventory.json --discover # find CVEs from the software list itself
-cveprio analyze CVE-2024-6387 --llm ollama                     # with a local Ollama model
-```
-
-Outputs go to `out/latest/`: `report.json` (full structured data), `report.md`
-(readable report), `dashboard.html` (self-contained, no network access).
-Exit codes: `0` ok · `2` invalid input · `3` finished but a source failed (results are partial and say so).
-
-### Data sources (no keys required)
-
-| Source | Used for | Notes |
-|---|---|---|
-| CVE.org (CVE Services API) | record state, description, CNA/ADP affected versions, CVSS, CISA SSVC | public |
-| NVD CVE API 2.0 | NVD CVSS, CPE configurations, reference tags | 5 req/30 s without key; a free [API key](https://nvd.nist.gov/developers/request-an-api-key) gives 50. *This product uses the NVD API but is not endorsed or certified by the NVD.* |
-| CISA KEV | known exploitation | CC0 JSON feed |
-| FIRST EPSS | 30-day exploitation-activity probability | free; attribution requested |
-| OSV.dev | CVE discovery for packages identified by purl (`--discover`) | free, no key |
-| Ubuntu CVE tracker | fixed builds per Ubuntu release, for inventory items with `"distro": "ubuntu:…"` | only the package-status fields are stored |
-| Red Hat Security Data API | fixed builds per RHEL release, for items with `"distro": "rhel:…"` | CC BY 4.0; credited in every report |
-
-### Model providers (optional) — separate from Claude Code
-
-The AI-assisted assessment is optional; everything else works without it.
-**The application's model access is separate from any Claude / Claude Code
-subscription you use to develop it.**
-
-| `CVEPRIO_LLM_PROVIDER` | What you need | Cost |
-|---|---|---|
-| `none` (default) | nothing | free |
-| `ollama` | local [Ollama](https://ollama.com) (`ollama pull qwen2.5:3b`) | free; runs on your machine |
-| `openai_compatible` | any `/v1/chat/completions` server (OpenAI, vLLM, LM Studio…) | hosted endpoints bill per token |
-| `anthropic` | `pip install '.[anthropic]'` and an `ANTHROPIC_API_KEY` from console.anthropic.com (pay-as-you-go API billing) | per token; see [docs/MODEL_PROVIDERS.md](docs/MODEL_PROVIDERS.md) |
-
-Only CVE evidence is sent to a model. **Inventory, asset names, owners and business
-context never leave your machine.**
-
-## Inventory format
-
-See [`examples/inventory.json`](examples/inventory.json). Per asset: `id`, `name`,
-`software[]` (`vendor`, `product`, `version`, optional `package_name`, `cpe`), and
-optional context: `criticality` (`low`…`critical`), `internet_facing`,
-`compensating_controls[]`. **Missing context is treated as unknown, never as "low" or
-"not exposed".** Providing a CPE (`cpe:2.3:a:vendor:product:version:...`) makes matching
-against NVD much more reliable, and it is what `--discover` searches with. Add a
-`purl` (`pkg:maven/group/artifact@version`, `pkg:pypi/name@version`, …) to also search OSV.dev.
-
-For a package installed from a Linux distribution, give the distribution's own version string
-and say which distribution it came from, for example
-`{"product": "OpenSSH", "package_name": "openssh-server", "version": "1:9.6p1-3ubuntu13.4", "distro": "ubuntu:24.04", "source_package": "openssh"}`
-(`rhel:9` works the same way). The tool then asks Ubuntu or Red Hat whether that build is fixed,
-instead of guessing from upstream version numbers, which distributions backport fixes into.
-
-### Using an SBOM instead of a hand-written list
-
-An SBOM (software bill of materials) is the "ingredients list" of an application: every
-library with its exact version. Build tools produce them automatically. cveprio reads
-**CycloneDX JSON** and **SPDX 2.x JSON**:
-
-```bash
-# one application from an SBOM file, with business context on the command line
-cveprio analyze --sbom my-app.cdx.json --criticality high --internet-facing yes --discover
-
-# or keep business context in an inventory and point each asset at its SBOM
-cveprio analyze --inventory examples/inventory-sbom.json --discover
-```
-
-To make an SBOM of a Python environment: `pip install cyclonedx-bom` then
-`cyclonedx-py environment --of JSON -o sbom.cdx.json`. (`examples/sbom/cveprio-python-env.cdx.json`
-is this project's own SBOM made that way; scanning it found no known vulnerabilities on 2026-10-10.)
-Components without a version, non-software entries and anything over the limits are listed
-as skipped. SBOM components are matched mainly by package URL (purl) through OSV.dev, whose
-"this exact version is affected" answer is recorded as evidence. CycloneDX XML and SPDX 3 are
-not supported yet.
-
-### Finding CVEs automatically (`--discover`)
-
-`--discover` starts from the inventory instead of a watchlist: each item with a versioned
-CPE is searched in NVD, each item with a versioned purl in OSV.dev, and every CVE found
-goes through the normal pipeline (where the deployed version is re-checked, so discovery
-false positives end up "not applicable"). The report lists every lookup, including items
-that **could not be searched** because they lack a CPE/purl, and the limits of discovery.
-Run against the example inventory on 2026-10-10 it found **83** candidate CVEs, versus 9 in
-the hand-picked watchlist. Live only; capped by `--max-cves` (default 150, KEV-listed kept first).
+- **Collects evidence with provenance:** every fact has an ID, source, URL and retrieval time.
+  Failed sources are reported as failed, never treated as "no".
+- **Checks affected versions conservatively:** compares the installed version with CNA and NVD
+  ranges, or with Ubuntu/Red Hat advisories for distribution packages. When it is ambiguous, the
+  answer is *needs review*.
+- **Applies business context:** internet exposure, importance and declared protections move the
+  priority by documented steps. Missing context makes a decision *provisional* rather than
+  assuming "low".
+- **Explains each decision:** a step-by-step rule trace, known vs. uncertain facts, "what would
+  change this", and a comparison with severity-only ranking.
+- **Optional AI analysis, checked:** a model (local Ollama, any OpenAI-compatible server, or Anthropic)
+  can describe exploit difficulty. Each claim must cite evidence and quote it word for word, or it
+  is removed.
+- **Outputs:** JSON, Markdown and a self-contained HTML dashboard with no external requests. Also
+  discovers CVEs from an inventory or SBOM (CycloneDX / SPDX JSON).
 
 ## How it works
 
-```
-CVE IDs ─► sources (allowlisted HTTPS, size/time limits, retries, SQLite cache)
-        ─► normalize (Evidence items with IDs + provenance; findings true/false/unknown/n.a./retrieval_failed;
-                      conflicts & staleness)
-        ─► applicability (inventory × CNA/NVD version data, or Ubuntu/Red Hat advisories for distro packages
-                          → affected / not_affected / needs_review)
-        ─► LLM (optional; evidence only → schema, citation and quote validation)
-        ─► rules (exploitation × severity × exposure → P1–P4 / NEEDS_REVIEW / N/A, with trace & counterfactuals)
-        ─► JSON + Markdown + dashboard
+```mermaid
+flowchart LR
+  A[CVE IDs, inventory or SBOM] --> B[Sources<br/>CVE.org · NVD · KEV · EPSS<br/>OSV · Ubuntu · Red Hat]
+  B --> C[Evidence bundle<br/>IDs, provenance,<br/>conflicts, failures]
+  C --> D[Applicability<br/>affected / not affected /<br/>needs review]
+  C -. public CVE evidence only .-> M[Optional AI model]
+  M --> V[Validator<br/>schema, citations,<br/>verbatim quotes]
+  V -. can raise one input .-> R
+  D --> R[Rule table<br/>attacks × severity × exposure]
+  R --> O[Priority + trace<br/>JSON · Markdown · dashboard]
 ```
 
-Details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · rules: [docs/PRIORITIZATION.md](docs/PRIORITIZATION.md) ·
-evaluation: [docs/EVALUATION.md](docs/EVALUATION.md) · plan & acceptance criteria: [docs/PLAN.md](docs/PLAN.md) ·
-status: [PROGRESS.md](PROGRESS.md).
+**The model never assigns the priority.** Its validated output can affect exactly one rule input.
+If there is no strong exploitation signal (*no sign of attacks* or *unverified exploit claim*), and
+the model rates exploit development as "low" with at least two claims that passed validation,
+exploitation becomes *attacks likely*. That can move a CVE up to P2, or to P1 when an affected system
+is highly exposed and severity is high or critical. It can never lower a priority, and the report
+labels the step as an AI judgement. Code: `exploitation_level()` in
+[cveprio/prioritize.py](cveprio/prioritize.py). Test:
+`test_ai_can_only_raise_from_low_observed_with_cited_support` in [tests/test_prioritize.py](tests/test_prioritize.py).
+Inventory and business context are never sent to the model.
+
+More: [architecture](docs/ARCHITECTURE.md) · [prioritization rules](docs/PRIORITIZATION.md) ·
+[evaluation](docs/EVALUATION.md) · [model providers](docs/MODEL_PROVIDERS.md) · [changelog](CHANGELOG.md).
+
+## Worked examples (from the offline demo)
+
+All from [examples/demo-output/report.md](examples/demo-output/report.md); systems are fictional.
+
+| Question | What the demo shows |
+|---|---|
+| **Why not just sort by CVSS?** | 5 of 7 published CVEs get a different answer. The xz backdoor CVE-2024-3094 scores 10.0, but the installed xz 5.4.6 is outside every affected range, so: *not affected*. HTTP/2 Rapid Reset CVE-2023-44487 scores 7.5 (P2 by score), but it is on CISA's attacked list and hits an internet-facing, high-importance web portal, so: **P1**. |
+| **How do versions and context matter?** | OpenSSH CVE-2024-6387 affects `bastion-01` (9.6p1, internet-facing), which gets **P1**. The same CVE on `ops-ubuntu-02` is *not affected*: Ubuntu fixed it in `1:9.6p1-3ubuntu13.3` and `13.4` is installed. Distributions backport fixes, so upstream version ranges alone would give the wrong answer. |
+| **What stays visible when data is missing?** | If a source fails, the run exits with code 3, the report says "partial result", and the dashboard lists the failed lookups. Nothing is filled in (`test_degraded_run_is_visible_not_filled_in`). A reserved CVE with no published details is shown as *Cannot assess yet*, with "nothing about this flaw is known yet", never "no action needed" (`test_missing_records_are_not_presented_as_safe`). Absence from KEV is never read as "not exploited". |
+| **What does quote validation catch?** | In the scripted OpenSSH example, 3 of 9 claims are removed. One quote does not appear in the cited evidence ("succeed in under a minute"). One claim cites an evidence ID that doesn't exist. One cites nothing. A rating claiming in-the-wild exploitation is corrected to "public exploit claimed". It **cannot** catch a wrong conclusion drawn from a genuine quote. |
+| **Where must a human decide?** | Spring4Shell CVE-2022-22965 on `web-portal-01` is *needs review*. The vendor states versions in free text, and NVD only marks it affected with a specific JDK, which the inventory does not record. The dashboard says what to check. |
+
+## Evaluation (small, and honest about it)
+
+| Set | Result | Caveat |
+|---|---|---|
+| 14 development cases ([results](evaluation/results/eval-none.md)) | Rules within the reference set 13/14; CVSS-only baseline 6/14; applicability 14/14 | Same CVEs used while building the tool; labels drafted with AI help and reviewed by the author |
+| 20 held-out recent CVEs ([results](evaluation/results/eval-holdout-none.md)) | **4 of 20 labelled so far**: applicability 3/4, no unsafe answers, decisions 2/4 | Far too few to measure accuracy; one label fix after the first run is disclosed |
+| Local model qwen2.5:3b ([results](docs/EVALUATION.md#recorded-results-2026-10-10)) | Usability rating matched the facts 0/6; priority never changed by the model | A small CPU model; grounding passes do not mean the reasoning is correct |
+
+None of this is a measure of real-world predictive accuracy. Details: [docs/EVALUATION.md](docs/EVALUATION.md).
+
+## Limitations
+
+- **Prototype.** Not hardened or load-tested; single user; `serve` has no authentication and binds to `127.0.0.1` only.
+- **Small evaluation** (above). The rules have known blind spots: a supply-chain backdoor with no KEV listing gets P2 on an internal system, where many analysts would say P1.
+- **Applicability is partial.** Free-text version ranges, platform-conditional NVD entries and distributions other than Ubuntu/RHEL go to *needs review*. Results depend on accurate inventory identifiers.
+- **AI claims are grounded, not fact-checked.** A real quote can support a wrong conclusion. Prompt-injection detection is heuristic; the defence is structural (data-only prompt, validation, limited influence).
+- **Exploit evidence is shallow by design.** Exploit references and CISA SSVC are treated as claims. The tool never downloads or runs exploit code.
+- **Offline fixtures go stale.** Use live mode for current data. DNS rebinding between validation and connection is not fully prevented (mitigated by a fixed host allowlist).
 
 ## Development
 
 ```bash
-pytest                              # offline tests (fixtures + synthetic edge cases)
-CVEPRIO_LIVE_TESTS=1 pytest -m live # live API checks
+pytest                                  # offline tests
+CVEPRIO_LIVE_TESTS=1 pytest -m live     # live API checks (network)
 ruff check cveprio tests && mypy cveprio
-cveprio evaluate                    # deterministic evaluation → evaluation/results/
-cveprio evaluate --llm ollama       # + model-quality evaluation (local model)
-cveprio evaluate --set holdout      # held-out set (fill in evaluation/holdout/labels.csv first)
-cveprio capture-fixtures CVE-...    # record new offline fixtures
+cveprio evaluate                        # deterministic evaluation → evaluation/results/
 ```
 
-## Limitations
-
-- **Prototype.** Not hardened, not load-tested, single-user, no authentication on `serve` (bound to 127.0.0.1).
-- **Small evaluation.** The 14 development cases were also used while building the tool (labels drafted with AI assistance, reviewed by the author). A 20-case held-out set of recent CVEs is only **4/20 labelled** so far (3/4 applicability matches, no unsafe answers), far too few to measure accuracy (see [docs/EVALUATION.md](docs/EVALUATION.md)). No claim of real-world predictive accuracy.
-- **SBOM support** covers CycloneDX JSON and SPDX 2.x JSON only; SBOM quality limits results (missing versions or purls mean components cannot be searched).
-- **Discovery is only as complete as the identifiers**: items without a CPE/purl are not searched (reported), a product listed under several CPE names (curl vs libcurl) may be missed, and vendor/distribution advisories are not searched.
-- **Disputed CVEs** are flagged (structured tags, or dispute wording in the description — heuristic) but their priority is not lowered automatically.
-- **Applicability is conservative and partial**: distribution packages are judged only for Ubuntu and RHEL (Debian, SUSE, Alpine and others go to `needs_review`, as does any distro package without a `distro` field). Free-text version ranges and platform-conditional NVD configurations also go to `needs_review`. Vendor/product naming differs across sources; supplying CPEs helps.
-- **Exploit evidence is shallow by design**: exploit-tagged references and CISA SSVC are treated as *claims*; the tool never downloads or runs exploit code and does not search exploit databases.
-- **Rules have blind spots** — e.g. a supply-chain backdoor (CVE-2024-3094) with no KEV listing gets P2 on an internal asset, where a human would say P1 (documented in the evaluation).
-- **AI claims are grounded, not fact-checked**: each claim must cite existing evidence, quote it word for word, and mention no version, number or date that evidence lacks. That catches invented details and mis-cited sources. It cannot catch a wrong *conclusion* drawn from a real quote. A small local model (qwen2.5:3b) missed obvious exploitation evidence (0/6), so treat AI notes as leads to verify.
-- **Prompt-injection detection is heuristic**; the real defence is structural (data-only prompt, schema + citation validation, model cannot set priority).
-- DNS-rebinding between validation and connection is not fully prevented (mitigated by the fixed host allowlist).
-- Offline fixtures go stale; the KEV fixture is trimmed to the demo CVEs.
-
-## Troubleshooting
-
-| Symptom | Fix |
-|---|---|
-| `! DEGRADED … nvd rate_limited` / exit code 3 | Wait 30 s or set `NVD_API_KEY`; results are cached in `.cache/` for 24 h. |
-| AI status `failed — unavailable: cannot reach Ollama` | Start Ollama (`ollama serve`) and `ollama pull qwen2.5:3b`, or set `CVEPRIO_LLM_PROVIDER=none`. |
-| AI status `failed — prompt_too_large` | Raise `CVEPRIO_LLM_NUM_CTX_MAX` (needs more RAM) — the tool refuses rather than truncating. |
-| Using Ollama through `openai_compatible` gives poor results | Ollama's OpenAI endpoint silently truncates prompts longer than the server's context (default 4096). Use `--llm ollama`, or start Ollama with `OLLAMA_CONTEXT_LENGTH=16384`. |
-| AI status `invalid_output` | The model returned malformed/schema-violating JSON; nothing from it is used. Try a larger model. |
-| AI status `refused` (Anthropic) | A safety classifier declined; keep `CVEPRIO_ANTHROPIC_FALLBACKS=on` or run without the model. |
-| Everything is `needs_review` | Add `cpe` and `vendor` to inventory items. For Linux packages add `"distro": "ubuntu:24.04"` (or `rhel:9`) and the distribution's version string. |
-| `skipped: no offline fixture recorded` | Offline mode only has the demo CVEs; use live mode or `cveprio capture-fixtures`. |
+CI ([tests.yml](.github/workflows/tests.yml)) runs ruff, mypy, the offline tests and the demo on
+Python 3.11–3.13 for every push and pull request. Current status: see the badge above and
+[PROGRESS.md](PROGRESS.md).
 
 ## Authorship and AI assistance
 
-The project author defined the problem, scope, requirements and evaluation
-expectations and directed the work. The code, tests, fixtures and documentation in
-this repository were written by **Claude Code (an AI coding assistant) during a
-directed sessions on 2026-10-10 and 2026-10-11**, with the author approving decisions along the way.
-The evaluation's reference judgements were drafted with AI assistance and then
-reviewed by the author. Update this section as you review, modify and extend
-the work.
+**The project author** (Suayip Ada) defined the problem, scope, requirements and evaluation approach,
+and made the design and policy decisions. Examples: keeping the declared-protection rule at P2
+after the held-out disagreement, and what the dashboard shows by default. They also reviewed the 14
+development reference judgements and labelled the first held-out cases. **The code, tests,
+fixtures and documentation were written by Claude Code, an AI coding assistant,** in sessions
+the author directed on 2026-10-10 and 2026-10-11.
+
+The idea of using language models to judge how practical exploit development is for new CVEs
+came from a suggestion by Matthew Devost. This project extends it with evidence provenance,
+applicability matching and transparent rules; it is not endorsed by him.
+
+*This product uses the NVD API but is not endorsed or certified by the NVD.* Source attributions
+appear in every report.
