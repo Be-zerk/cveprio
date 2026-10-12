@@ -164,7 +164,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
   <h1>CVE prioritization · Northbeam Logistics (fictional)</h1>
   <button id="theme" class="theme" type="button" aria-label="Colour theme: automatic">Theme: auto</button>
   </div>
-  <div class="meta">Generated 2026-10-11 23:47 UTC · <b>offline demo data</b> · 9 CVEs · cveprio 0.2.0</div>
+  <div class="meta">Generated 2026-10-12 01:35 UTC · <b>offline demo data</b> · 9 CVEs · cveprio 0.2.0</div>
   <div class="banner" role="note">⚠ OFFLINE DEMO DATA — recorded fixtures, not live results.
     <small>Source responses were recorded at the retrieval times shown in each evidence table and may be out of date. The inventory and business context are fictional.</small></div>
 </header>
@@ -2436,7 +2436,7 @@ Through a series of complex obfuscations, the liblzma build process extracts a p
 
 <footer>
   <ul class="notices"><li>This product uses the NVD API but is not endorsed or certified by the NVD.</li><li>CVE records: CVE Program (cve.org). KEV: CISA Known Exploited Vulnerabilities catalogue (CC0). EPSS: FIRST.org Exploit Prediction Scoring System (https://www.first.org/epss).</li><li>When used: Ubuntu CVE tracker (ubuntu.com/security, Canonical) and Red Hat Security Data (access.redhat.com, CC BY 4.0, © Red Hat).</li></ul>
-  <p>Priorities come from fixed, documented rules (docs/PRIORITIZATION.md), not from an AI. AI notes are checked against their cited evidence; the only way they can affect a priority is by raising one rule input, attack likelihood, from "no sign of attacks" to "attacks likely" (never lowering anything). Automated tests do not prove every security judgement is right: review before acting.</p>
+  <p>Priorities come from fixed, documented rules (docs/PRIORITIZATION.md), not from an AI. AI notes are checked against their cited evidence; they can affect a decision only by raising attack likelihood from "no sign of attacks" to "attacks likely", and, when auto-resolution is switched on, by reading a vendor's version wording (versions are compared in code, and an AI reading alone never marks a system not affected). Automated tests do not prove every security judgement is right: review before acting.</p>
 </footer>
 </main>
 <script>

@@ -20,6 +20,7 @@ import functools
 import http.server
 import re
 import sys
+from dataclasses import replace
 from pathlib import Path
 
 from pydantic import ValidationError
@@ -126,6 +127,8 @@ def cmd_analyze(args: argparse.Namespace, settings: Settings) -> int:
         hint = " (with an SBOM, add --discover to find CVEs for its components)" if getattr(args, "sbom", None) else ""
         print("error: give at least one CVE ID, an inventory with a watchlist, or --discover" + hint, file=sys.stderr)
         return 2
+    if getattr(args, "auto_resolve", False):
+        settings = replace(settings, auto_resolve=True)
     try:
         rt = make_runtime(settings, offline=args.offline, provider_name=args.llm,
                           fixtures=Path(args.fixtures) if args.fixtures else DEFAULT_FIXTURES)
@@ -150,7 +153,7 @@ def cmd_analyze(args: argparse.Namespace, settings: Settings) -> int:
 
 def cmd_demo(args: argparse.Namespace, settings: Settings) -> int:
     ns = argparse.Namespace(cve_ids=[], inventory=str(EXAMPLE_INVENTORY), offline=True,
-                            llm=args.llm, out=args.out, fixtures=None, sbom=None)
+                            llm=args.llm, out=args.out, fixtures=None, sbom=None, auto_resolve=args.auto_resolve)
     print("Running the OFFLINE DEMO: recorded fixtures + fictional inventory (no network, no API keys).")
     return cmd_analyze(ns, settings)
 
@@ -178,6 +181,8 @@ def cmd_serve(args: argparse.Namespace, settings: Settings) -> int:
 def cmd_evaluate(args: argparse.Namespace, settings: Settings) -> int:
     from cveprio.config import PROJECT_ROOT
     from cveprio.evaluation import run_evaluation
+    if args.auto_resolve:
+        settings = replace(settings, auto_resolve=True)
     if args.eval_set == "holdout":
         base = PROJECT_ROOT / "evaluation" / "holdout"
         path = run_evaluation(settings, provider_name=args.llm, out_dir=Path(args.out), cases_path=base / "cases.json",
@@ -252,11 +257,18 @@ def build_parser() -> argparse.ArgumentParser:
                    help="find CVEs from the inventory's cpe/purl identifiers (live only) instead of its watchlist")
     a.add_argument("--max-cves", type=int, default=150, help="cap on discovered CVEs to analyse (default 150)")
     a.add_argument("--out", default="out/latest")
+    a.add_argument("--auto-resolve", action="store_true", dest="auto_resolve",
+                   help="let the configured AI model read free-text version statements to resolve 'needs review' "
+                        "(an AI reading alone never marks a system 'not affected'; off by default)")
     a.set_defaults(func=cmd_analyze)
 
     d = sub.add_parser("demo", help="offline demonstration with fictional inventory")
     d.add_argument("--llm", default="scripted", choices=["none", "scripted", "ollama", "openai_compatible", "anthropic"])
     d.add_argument("--out", default="out/demo")
+    d.add_argument("--auto-resolve", action="store_true", dest="auto_resolve",
+                   help="let the configured AI model read free-text version statements to resolve 'needs review' "
+                        "(an AI reading alone never marks a system 'not affected'; off by default)")
+
     d.set_defaults(func=cmd_demo)
 
     db = sub.add_parser("dashboard", help="build dashboard HTML from a report.json")
@@ -274,6 +286,10 @@ def build_parser() -> argparse.ArgumentParser:
     e.add_argument("--set", dest="eval_set", default="dev", choices=["dev", "holdout"],
                    help="dev = the original 14 cases; holdout = the held-out set (needs human labels)")
     e.add_argument("--out", default="evaluation/results")
+    e.add_argument("--auto-resolve", action="store_true", dest="auto_resolve",
+                   help="let the configured AI model read free-text version statements to resolve 'needs review' "
+                        "(an AI reading alone never marks a system 'not affected'; off by default)")
+
     e.set_defaults(func=cmd_evaluate)
 
     h = sub.add_parser("holdout-select", help="pick a held-out evaluation set by a fixed rule (live)")

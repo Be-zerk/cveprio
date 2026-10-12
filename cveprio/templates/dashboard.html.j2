@@ -386,11 +386,18 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
         <thead><tr><th>System</th><th>Software</th><th>Result</th><th>Why</th></tr></thead>
         <tbody>
         {% for x in r.applicability %}
-        <tr><td>{{ x.asset_id }}</td><td>{{ x.software.product }} {{ x.software.version }}</td><td class="st-{{ x.status }}">{{ APPLIES.get(x.status, x.status) }}</td>
+        <tr><td>{{ x.asset_id }}</td><td>{{ x.software.product }} {{ x.software.version }}</td><td class="st-{{ x.status }}">{{ APPLIES.get(x.status, x.status) }}{% if x.resolved_with_ai %}<br><span class="meta" title="Resolved by an AI reading of the vendor's wording; versions compared in code">AI-read wording</span>{% endif %}</td>
             <td><ul class="tight">{% for reason in x.reasons %}<li>{{ plain_reason(reason) }}</li>{% endfor %}</ul>
             <details class="more-raw"><summary class="meta">raw matching data</summary><ul class="tight meta">{% for reason in x.reasons %}<li>{{ reason }}</li>{% endfor %}</ul></details></td></tr>
         {% endfor %}
         </tbody></table></div>
+      {% if r.version_reading %}{% set v = r.version_reading %}
+      <p class="meta"><b>AI reading of the vendor's version wording</b> ({{ "scripted example" if v.scripted else v.provider ~ " / " ~ v.model }}; {{ v.status|replace("_", " ") }}{% if v.detail %}: {{ v.detail|truncate(140) }}{% endif %}). Versions are compared in code, and an AI reading alone never marks a system not affected.</p>
+      <ul class="tight meta">
+      {% for a in v.accepted %}<li>Read “{{ a.quote }}” as {{ a.ranges }} ({{ "may support “not affected” when a structured source agrees" if a.may_clear else "can only confirm “affected”" }})</li>{% endfor %}
+      {% for x in v.rejected %}<li>Rejected: “{{ x.statement|truncate(100) }}”: {{ x.problem }}</li>{% endfor %}
+      </ul>
+      {% endif %}
     </details>
     {% endif %}
 
@@ -418,7 +425,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
 
 <footer>
   <ul class="notices">{% for n in run.notices if not n.startswith(("OFFLINE DEMO", "Inventory and business context")) %}<li>{{ n }}</li>{% endfor %}</ul>
-  <p>Priorities come from fixed, documented rules (docs/PRIORITIZATION.md), not from an AI. AI notes are checked against their cited evidence; the only way they can affect a priority is by raising one rule input, attack likelihood, from "no sign of attacks" to "attacks likely" (never lowering anything). Automated tests do not prove every security judgement is right: review before acting.</p>
+  <p>Priorities come from fixed, documented rules (docs/PRIORITIZATION.md), not from an AI. AI notes are checked against their cited evidence; they can affect a decision only by raising attack likelihood from "no sign of attacks" to "attacks likely", and, when auto-resolution is switched on, by reading a vendor's version wording (versions are compared in code, and an AI reading alone never marks a system not affected). Automated tests do not prove every security judgement is right: review before acting.</p>
 </footer>
 </main>
 <script>

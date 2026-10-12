@@ -203,7 +203,7 @@ def exploitation_level(bundle: EvidenceBundle, llm: LlmAnalysis | None) -> tuple
         if d.rating == "low" and n >= 2:
             notes.append("AI judgement raised attack likelihood — validated, cited AI judgement rates exploit "
                          f"development as LOW, so exploitation was raised from {level} to elevated. This is the "
-                         "only way the model affects priority.")
+                         "only way the AI assessment affects the priority rules.")
             return "elevated", notes
     return level, notes
 

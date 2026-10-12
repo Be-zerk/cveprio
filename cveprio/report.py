@@ -102,6 +102,13 @@ def _plain_range(text: str) -> str:
     return text
 
 
+def _plain_default(text: str) -> str:
+    return (text.replace("version not listed; source default status is 'unaffected'",
+                         "the record marks unlisted versions as not affected")
+                .replace("version not listed; source default status is 'affected'",
+                         "the record marks unlisted versions as affected"))
+
+
 def plain_reason(line: str) -> str:
     """'[affected] CNA:redhat 'OpenSSH': name 'openssh': in range 8.5p1..≤9.7p1 → affected' -> a sentence."""
     m = re.match(r"\[(affected|not_affected|ambiguous)\] (.+?): (.*)$", line)
@@ -140,6 +147,12 @@ def plain_reason(line: str) -> str:
     rest = re.sub(r"exact (?:CPE )?version (\S+)(?: → affected)?", r"version \1 is listed as affected", rest)
     rest = re.sub(r"upper bound '([^']+)' is not a comparable version", r"its upper version limit ('\1') is not a "
                   "normal version number", rest)
+    ai = re.match(r'AI reading of the vendor text "(.+?)" \((\w+): (.+?)\): (.+?)(?:; so: (.*))?$', rest)
+    if ai:
+        quote, _, ranges, outcome, then = ai.groups()
+        outcome = outcome.replace("is inside", "falls inside it").replace("is outside", "falls outside it")
+        tail = f" ({_plain_default(then)})" if then else ""
+        rest = f"an AI read the vendor's wording \"{quote}\" as {ranges}; {outcome}{tail}"
     rest = rest.replace("OSV lists", "lists").replace(" → affected", "")
     return f"{_plain_source(src)}: {rest}"
 
@@ -227,12 +240,20 @@ def known_and_uncertain(bundle: EvidenceBundle, results: list[ApplicabilityResul
     for r in results:
         who = f"{r.asset_id}: {r.software.product} {r.software.version}"
         detail = _plain_reasons(r.reasons)
+        via_ai = " (from an AI reading of the vendor's wording, checked against it)" if r.resolved_with_ai else ""
         if r.status == ApplicabilityStatus.AFFECTED:
-            known.append(item(f"{who} is affected", detail, r.evidence_ids))
+            known.append(item(f"{who} is affected{via_ai}", detail, r.evidence_ids))
         elif r.status == ApplicabilityStatus.NOT_AFFECTED:
-            known.append(item(f"{who} is not affected", detail, r.evidence_ids))
+            known.append(item(f"{who} is not affected{via_ai}", detail, r.evidence_ids))
         elif r.status == ApplicabilityStatus.NEEDS_REVIEW:
             unc.append(item(f"{who} needs a manual version check", detail, r.evidence_ids))
+        if r.resolved_with_ai and r.status != ApplicabilityStatus.NEEDS_REVIEW:
+            direction = ("treated as affected, the cautious direction" if r.status == ApplicabilityStatus.AFFECTED
+                         else "cleared only because a structured source independently agrees")
+            unc.append(item(f"{r.asset_id}'s result relies on an AI reading of the vendor's wording",
+                            f"The vendor states affected versions in prose. An AI turned it into version ranges; the "
+                            f"quote was checked against the record and the versions were compared in code ({direction}). "
+                            f"Confirm with the vendor advisory if in doubt. {detail}", r.evidence_ids))
 
     for c in bundle.conflicts:
         unc.append(item(CONFLICT_SHORT.get(c.kind, "Sources conflict"), c.description, c.evidence_ids))
@@ -435,7 +456,18 @@ def render_cve_markdown(r: CveReport) -> str:
         lines += ["### Applicability details", "", "| Asset | Software | Status | Reasons |", "|---|---|---|---|"]
         for a in r.applicability:
             lines.append(f"| {a.asset_id} | {_md_escape(a.software.product)} {_md_escape(a.software.version)} | "
-                         f"{a.status.value} | {_md_escape('; '.join(a.reasons))[:600]} |")
+                         f"{a.status.value}{' (AI-read)' if a.resolved_with_ai else ''} | "
+                         f"{_md_escape('; '.join(a.reasons))[:600]} |")
+        lines.append("")
+    if r.version_reading:
+        v = r.version_reading
+        who = "scripted example" if v.scripted else f"{v.provider} / {v.model}"
+        lines += ["### AI reading of version statements (auto-resolution)", "",
+                  f"Status `{v.status}` ({who}, prompt {v.prompt_version}){': ' + v.detail if v.detail else ''}. "
+                  "Versions are compared in code; an AI reading alone never marks a system not affected.", ""]
+        lines += [f"- Read \"{_md_escape(a['quote'])}\" as {a['ranges']} ({a['status']}; "
+                  f"{'may support not affected' if a['may_clear'] else 'can only confirm affected'})" for a in v.accepted]
+        lines += [f"- Rejected: \"{_md_escape(x['statement'][:120])}\": {x['problem']}" for x in v.rejected]
         lines.append("")
     if b.cvss:
         from cveprio.cvss import explain_vector

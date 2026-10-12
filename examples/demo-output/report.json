@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-10-11T23:47:24.237714Z",
+  "generated_at": "2026-10-12T01:35:00.727460Z",
   "tool_version": "0.2.0",
   "mode": "offline_demo",
   "organization": "Northbeam Logistics (fictional)",
@@ -8,7 +8,7 @@
   "reports": [
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T23:47:24.020234Z",
+      "generated_at": "2026-10-12T01:35:00.597021Z",
       "tool_version": "0.2.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2021-44228",
@@ -6312,6 +6312,7 @@
             "NVD.cpe"
           ],
           "fixed_version_hint": "2.15.0",
+          "resolved_with_ai": false,
           "asset_criticality": "high",
           "asset_internet_facing": true,
           "asset_controls": []
@@ -6339,6 +6340,7 @@
             "CVE.affected.1"
           ],
           "fixed_version_hint": null,
+          "resolved_with_ai": false,
           "asset_criticality": "critical",
           "asset_internet_facing": false,
           "asset_controls": []
@@ -6403,11 +6405,12 @@
         "It affects web-portal-01 (log4j-core 2.14.1) \u2014 internet-facing, high importance.",
         "Also check legacy-billing-03: it may be affected too, but this could not be confirmed automatically."
       ],
-      "discovered_by": []
+      "discovered_by": [],
+      "version_reading": null
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T23:47:24.171263Z",
+      "generated_at": "2026-10-12T01:35:00.684662Z",
       "tool_version": "0.2.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2023-44487",
@@ -12463,6 +12466,7 @@
             "NVD.cpe"
           ],
           "fixed_version_hint": null,
+          "resolved_with_ai": false,
           "asset_criticality": "high",
           "asset_internet_facing": true,
           "asset_controls": []
@@ -12522,11 +12526,12 @@
         "Attackers are known to be using it: it is on CISA's list of actively attacked flaws (added 2023-10-10), and CISA rates exploitation as active.",
         "It affects web-portal-01 (nginx 1.25.2) \u2014 internet-facing, high importance."
       ],
-      "discovered_by": []
+      "discovered_by": [],
+      "version_reading": null
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T23:47:24.212661Z",
+      "generated_at": "2026-10-12T01:35:00.711650Z",
       "tool_version": "0.2.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2024-6387",
@@ -15454,6 +15459,7 @@
             "NVD.cpe"
           ],
           "fixed_version_hint": null,
+          "resolved_with_ai": false,
           "asset_criticality": "high",
           "asset_internet_facing": true,
           "asset_controls": []
@@ -15481,6 +15487,7 @@
             "UBUNTU"
           ],
           "fixed_version_hint": null,
+          "resolved_with_ai": false,
           "asset_criticality": "medium",
           "asset_internet_facing": false,
           "asset_controls": []
@@ -15649,11 +15656,12 @@
         "Attacks are likely: CISA says demo attack code exists; 9 public sources point to attack code; the predicted chance of attacks in the next 30 days is 99.5%. No confirmed attacks are on record.",
         "It affects bastion-01 (OpenSSH 9.6p1) \u2014 internet-facing, high importance."
       ],
-      "discovered_by": []
+      "discovered_by": [],
+      "version_reading": null
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T23:47:24.220794Z",
+      "generated_at": "2026-10-12T01:35:00.717032Z",
       "tool_version": "0.2.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2023-38545",
@@ -16466,6 +16474,7 @@
             "NVD.cpe"
           ],
           "fixed_version_hint": "8.4.0",
+          "resolved_with_ai": false,
           "asset_criticality": "medium",
           "asset_internet_facing": false,
           "asset_controls": []
@@ -16492,6 +16501,7 @@
             "NVD.cpe"
           ],
           "fixed_version_hint": "8.4.0",
+          "resolved_with_ai": false,
           "asset_criticality": null,
           "asset_internet_facing": null,
           "asset_controls": []
@@ -16558,11 +16568,12 @@
         "Attacks are likely: CISA says demo attack code exists; the predicted chance of attacks in the next 30 days is 78.5%. No confirmed attacks are on record.",
         "It affects ops-ubuntu-02 (curl 8.3.0) \u2014 internal, medium importance; dev-laptop-17 (curl 8.3.0) \u2014 internet exposure and importance not recorded."
       ],
-      "discovered_by": []
+      "discovered_by": [],
+      "version_reading": null
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T23:47:24.060928Z",
+      "generated_at": "2026-10-12T01:35:00.623527Z",
       "tool_version": "0.2.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2022-22965",
@@ -18639,6 +18650,7 @@
             "NVD.cpe"
           ],
           "fixed_version_hint": null,
+          "resolved_with_ai": false,
           "asset_criticality": "high",
           "asset_internet_facing": true,
           "asset_controls": []
@@ -18699,11 +18711,12 @@
         "Attackers are known to be using it: it is on CISA's list of actively attacked flaws (added 2022-04-04), and CISA rates exploitation as active.",
         "It is unclear whether web-portal-01's Spring Framework 5.3.17 is affected: its version is in the affected range, but the flaw only applies together with Oracle JDK, which your inventory does not record."
       ],
-      "discovered_by": []
+      "discovered_by": [],
+      "version_reading": null
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T23:47:24.227036Z",
+      "generated_at": "2026-10-12T01:35:00.720580Z",
       "tool_version": "0.2.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2024-47176",
@@ -19364,6 +19377,7 @@
             "CVE.affected.1"
           ],
           "fixed_version_hint": null,
+          "resolved_with_ai": false,
           "asset_criticality": "low",
           "asset_internet_facing": false,
           "asset_controls": [
@@ -19515,11 +19529,12 @@
         "Attacks are likely: CISA says demo attack code exists; 2 public sources point to attack code; the predicted chance of attacks in the next 30 days is 50.6%. No confirmed attacks are on record.",
         "It affects print-srv-01 (cups-browsed 2.0.1) \u2014 internal, low importance; protected by: Host firewall drops inbound traffic to port 631 except from the warehouse printer VLAN (not checked by this tool)."
       ],
-      "discovered_by": []
+      "discovered_by": [],
+      "version_reading": null
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T23:47:24.235681Z",
+      "generated_at": "2026-10-12T01:35:00.726259Z",
       "tool_version": "0.2.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2024-3094",
@@ -20424,6 +20439,7 @@
             "NVD.cpe"
           ],
           "fixed_version_hint": null,
+          "resolved_with_ai": false,
           "asset_criticality": "medium",
           "asset_internet_facing": false,
           "asset_controls": []
@@ -20485,11 +20501,12 @@
         "Your installed version is outside the affected versions: ops-ubuntu-02's xz 5.4.6.",
         "For reference (it does not change the decision): attacks are likely \u2014 the predicted chance of attacks in the next 30 days is 86.0%. No confirmed attacks are on record."
       ],
-      "discovered_by": []
+      "discovered_by": [],
+      "version_reading": null
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T23:47:24.236827Z",
+      "generated_at": "2026-10-12T01:35:00.726908Z",
       "tool_version": "0.2.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2026-11415",
@@ -20668,11 +20685,12 @@
       "summary": [
         "This CVE was cancelled (rejected) by the organisation that issued it, so there is nothing to fix."
       ],
-      "discovered_by": []
+      "discovered_by": [],
+      "version_reading": null
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-11T23:47:24.237658Z",
+      "generated_at": "2026-10-12T01:35:00.727426Z",
       "tool_version": "0.2.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2026-99001",
@@ -20819,7 +20837,8 @@
       "summary": [
         "This CVE number has been reserved, but no details have been published yet."
       ],
-      "discovered_by": []
+      "discovered_by": [],
+      "version_reading": null
     }
   ],
   "notices": [

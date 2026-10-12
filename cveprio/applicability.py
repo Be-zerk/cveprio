@@ -13,10 +13,12 @@ a verdict: affected / not_affected / ambiguous. They are combined conservatively
 from __future__ import annotations
 
 import re
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 from difflib import SequenceMatcher
 from functools import cmp_to_key
 
+from cveprio.llm.versions import Reading
 from cveprio.models import (
     AffectedEntry,
     ApplicabilityResult,
@@ -55,6 +57,7 @@ class Verdict:
     reason: str
     evidence_id: str
     fixed_hint: str | None = None
+    ai: bool = False  # depends on an AI reading of a free-text version statement
 
 
 @dataclass
@@ -147,10 +150,29 @@ def _spec_verdict(version: str, spec: VersionSpec) -> tuple[str | None, str, str
     return AMBIGUOUS, "version statement has no version", None
 
 
-def _eval_entry(item: SoftwareItem, entry: AffectedEntry) -> Verdict:
-    verdicts = [_spec_verdict(item.version, s) for s in entry.versions]
+def _eval_entry(item: SoftwareItem, entry: AffectedEntry, readings: Mapping[tuple[str, str], Reading] | None = None,
+                ) -> Verdict:
+    verdicts = []
+    ai_notes: list[str] = []
+    for s in entry.versions:
+        v = _spec_verdict(item.version, s)
+        reading = (readings or {}).get((entry.evidence_id, (s.version or "").strip()[:500]))
+        if v[0] == AMBIGUOUS and reading:
+            verdict, why = reading.evaluate(item.version, s.version_type)
+            v = (verdict, why, None)
+            ai_notes.append(why)
+        verdicts.append(v)
     covered = [(v, r, f) for v, r, f in verdicts if v is not None]
     label = f"{entry.provider} '{entry.product or entry.package_name}'"
+    out = _combine_entry(entry, covered, label)
+    if ai_notes:
+        out.ai = True
+        if not any(n in out.reason for n in ai_notes):
+            out.reason = f"{'; '.join(ai_notes)}; so: {out.reason}"
+    return out
+
+
+def _combine_entry(entry: AffectedEntry, covered: list[tuple[str, str, str | None]], label: str) -> Verdict:
     if any(v == AFFECTED for v, _, _ in covered):
         _, r, f = next(x for x in covered if x[0] == AFFECTED)
         return Verdict(AFFECTED, label, r, entry.evidence_id, f)
@@ -334,11 +356,13 @@ def _distro_verdict(bundle: EvidenceBundle, item: SoftwareItem) -> Verdict | Non
 
 
 def assess(bundle: EvidenceBundle, asset_id: str, item: SoftwareItem,
-           osv_evidence_id: str | None = None) -> ApplicabilityResult:
+           osv_evidence_id: str | None = None,
+           readings: Mapping[tuple[str, str], Reading] | None = None) -> ApplicabilityResult:
     def result(status: ApplicabilityStatus, reasons: list[str], ids: list[str], by: str | None = None,
-               fixed: str | None = None) -> ApplicabilityResult:
+               fixed: str | None = None, ai: bool = False) -> ApplicabilityResult:
         return ApplicabilityResult(asset_id=asset_id, software=item, status=status, matched_by=by,
-                                   reasons=reasons, evidence_ids=sorted(set(ids)), fixed_version_hint=fixed)
+                                   reasons=reasons, evidence_ids=sorted(set(ids)), fixed_version_hint=fixed,
+                                   resolved_with_ai=ai)
 
     if bundle.record_state != RecordState.PUBLISHED:
         return result(ApplicabilityStatus.NO_PRODUCT_MATCH, [f"record is {bundle.record_state}"], [])
@@ -356,7 +380,7 @@ def assess(bundle: EvidenceBundle, asset_id: str, item: SoftwareItem,
     for entry in bundle.affected:
         exact, fuzzy, how = _identity_match(item, entry)
         if exact:
-            v = _eval_entry(item, entry)
+            v = _eval_entry(item, entry, readings)
             v.reason = f"{how}: {v.reason}"
             acc.verdicts.append(v)
         elif fuzzy:
@@ -408,8 +432,14 @@ def assess(bundle: EvidenceBundle, asset_id: str, item: SoftwareItem,
     if distro and kinds != {NOT_AFFECTED}:
         return result(ApplicabilityStatus.NEEDS_REVIEW, reasons, ids)
     if AFFECTED in kinds:
-        by = next(v.source for v in acc.verdicts if v.verdict == AFFECTED)
-        return result(ApplicabilityStatus.AFFECTED, reasons, ids, by, fixed)
+        firm = [v for v in acc.verdicts if v.verdict == AFFECTED and not v.ai]
+        hit = (firm or [v for v in acc.verdicts if v.verdict == AFFECTED])[0]
+        return result(ApplicabilityStatus.AFFECTED, reasons, ids, hit.source, fixed, ai=not firm)
     if AMBIGUOUS in kinds:
         return result(ApplicabilityStatus.NEEDS_REVIEW, reasons, ids)
-    return result(ApplicabilityStatus.NOT_AFFECTED, reasons, ids, acc.verdicts[0].source)
+    if all(v.ai for v in acc.verdicts):
+        # An AI reading alone never clears a system: a structured source must independently agree.
+        return result(ApplicabilityStatus.NEEDS_REVIEW, [*reasons, "The AI reading suggests this version is not "
+                      "affected, but no structured source confirms it, so it is not used to clear the system."], ids)
+    return result(ApplicabilityStatus.NOT_AFFECTED, reasons, ids, acc.verdicts[0].source,
+                  ai=any(v.ai for v in acc.verdicts))

@@ -72,7 +72,8 @@ local AI model with Ollama ([how to run Ollama safely](docs/MODEL_PROVIDERS.md#u
   change this", and a comparison with severity-only ranking.
 - **Optional AI analysis, checked:** a model (local Ollama, any OpenAI-compatible server, or Anthropic)
   can describe exploit difficulty. Each claim must cite evidence and quote it word for word, or it
-  is removed.
+  is removed. With `--auto-resolve`, it can also read vendors' version wording to settle some
+  *needs review* cases, under strict checks (below).
 - **Outputs:** JSON, Markdown and a self-contained HTML dashboard with no external requests. Also
   discovers CVEs from an inventory or SBOM (CycloneDX / SPDX JSON).
 
@@ -90,15 +91,25 @@ flowchart TD
   R --> O[Priority + trace<br/>JSON · Markdown · dashboard]
 ```
 
-**The model never assigns the priority.** Its validated output can affect exactly one rule input.
-If there is no strong exploitation signal (*no sign of attacks* or *unverified exploit claim*), and
-the model rates exploit development as "low" with at least two claims that passed validation,
-exploitation becomes *attacks likely*. That can move a CVE up to P2, or to P1 when an affected system
-is highly exposed and severity is high or critical. It can never lower a priority, and the report
-labels the step as an AI judgement. Code: `exploitation_level()` in
-[cveprio/prioritize.py](cveprio/prioritize.py). Test:
-`test_ai_can_only_raise_from_low_observed_with_cited_support` in [tests/test_prioritize.py](tests/test_prioritize.py).
-Inventory and business context are never sent to the model.
+**The model never assigns the priority.** Its validated output can reach the decision in two
+narrow, labelled ways:
+
+1. **Attack likelihood (always on with a model).** If there is no strong exploitation signal and the
+   model rates exploit development as "low" with at least two claims that passed validation,
+   exploitation becomes *attacks likely*. That can only raise a priority (to P2, or P1 when an
+   affected system is highly exposed and severity is high or critical). Code: `exploitation_level()`
+   in [cveprio/prioritize.py](cveprio/prioritize.py).
+2. **Reading vendor version wording (only with `--auto-resolve`).** Some records state versions in
+   prose ("All versions prior to 26.6.5"), which otherwise ends in *needs review*. The model turns
+   the wording into version ranges with an exact quote; the checker verifies the quote and every
+   version in it, and **code** does the comparison. A reading can confirm *affected* on its own,
+   but it can **never mark a system *not affected* unless a structured source (such as NVD's
+   ranges) independently agrees**, and open-ended wording ("all older versions") or stated
+   conditions block clearing entirely. Code: [cveprio/llm/versions.py](cveprio/llm/versions.py);
+   adversarial tests: [tests/test_auto_resolve.py](tests/test_auto_resolve.py).
+
+Both are shown in the report as AI judgements. Only public CVE text is sent to the model: never
+the inventory, system names, business context or installed versions.
 
 More: [architecture](docs/ARCHITECTURE.md) · [prioritization rules](docs/PRIORITIZATION.md) ·
 [evaluation](docs/EVALUATION.md) · [model providers](docs/MODEL_PROVIDERS.md) · [changelog](CHANGELOG.md).

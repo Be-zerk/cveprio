@@ -89,6 +89,10 @@ prototype (see the README's limitations).
 2. Download a model: `ollama pull qwen2.5:3b` (about 1.9 GB).
 3. In `.env`, set `CVEPRIO_LLM_PROVIDER=ollama` and `CVEPRIO_LLM_MODEL=qwen2.5:3b`.
 4. Run as in step 4; the AI section appears on each card.
+5. Optional: add `--auto-resolve` (or set `CVEPRIO_AUTO_RESOLVE=on`) to let the model read vendors'
+   free-text version wording and settle some *needs review* cases automatically. Versions are
+   compared in code, and an AI reading alone never marks a system *not affected*. Try it offline
+   first: `cveprio demo --auto-resolve` (uses a scripted example).
 
 Be realistic about quality: in this project's evaluation, qwen2.5:3b on a laptop CPU was slow
 (several minutes per CVE) and missed obvious attack evidence (see [EVALUATION.md](EVALUATION.md)).
