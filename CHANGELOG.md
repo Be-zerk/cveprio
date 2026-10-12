@@ -10,7 +10,9 @@ milestones, not production releases.
   references. A model rating that contradicts those facts is replaced and recorded as a correction,
   and the evaluation counts such contradictions. This fixes the small model's 0/6 miss for good.
 - Prompt `2026-10-12.1`: the deterministic findings are described as reliable facts, and the
-  "prefer insufficient evidence over guessing" line was replaced with balanced guidance.
+  "prefer insufficient evidence over guessing" line was replaced with balanced guidance. A spot check
+  with qwen2.5:3b on Log4Shell showed the attack rating now correct, but its difficulty rating still
+  wrong ("high"), so the small model remains the limit.
 
 ## 0.3.0 — 2026-10-12
 

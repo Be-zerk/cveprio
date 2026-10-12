@@ -98,7 +98,11 @@ rated "high" for a famously easy exploit.
    references. Any model rating that contradicts those facts is corrected and counted ("model
    ratings that contradicted the facts"). The "prefer insufficient evidence" line was replaced
    with guidance to rely on the deterministic findings. So the 0/6 failure above can no longer
-   reach a report; whether the new prompt improves the difficulty ratings is not yet measured.
+   reach a report. A spot check on 2026-10-12 (Log4Shell, qwen2.5:3b, prompt 2026-10-12.1, about
+   10 minutes): attack evidence shown as "exploitation reported" (set by code, correct); difficulty
+   still rated **"high"** for a famously easy exploit, so the prompt change did **not** fix the
+   small model's difficulty judgement; 6 of 10 claims passed (4 removed for quotes not in the
+   source). One CVE only; a stronger model is the next thing to compare.
 3. **The design limited the damage.** None of the wrong model output changed a priority,
    because the rules decide and the model can only raise one factor.
 4. An earlier run was discarded after discovering Ollama silently truncated prompts on its
