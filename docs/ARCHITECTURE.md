@@ -25,7 +25,10 @@ evidence), and `LlmAnalysis` (AI judgement, validated, labelled).
 manipulated by text inside advisories, and are hard to audit. The priority comes from a
 small rule table anyone can read and reproduce. The model's job is narrower: turn
 unstructured public text into structured, *cited* observations about difficulty and
-usability. Its influence on priority is limited to one rule input: when there is no strong
+the limits of existing exploits. Facts the code already knows are not asked of the model: since
+prompt `2026-10-12.1` the attack-evidence ("usability") rating is set by code from KEV, CISA SSVC
+and exploit-tagged references, and a model rating that contradicts it is replaced and recorded as
+a correction. Its influence on priority is limited to one rule input: when there is no strong
 exploitation signal (`low_observed` or `claimed_unverified`), a validated rating of "low"
 exploit-development difficulty with at least two claims that passed validation raises
 exploitation to `elevated`. That can move a CVE up (to P2, or P1 with high exposure and

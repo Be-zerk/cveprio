@@ -93,8 +93,12 @@ rated "high" for a famously easy exploit.
    (`CVEPRIO_LLM_TIMEOUT_S`).
 2. **The small local model adds little value here.** It defaulted to "insufficient
    evidence", possibly encouraged by the prompt's instruction to prefer that over guessing
-   (a hypothesis, not tested). A larger model and a revised prompt should be compared on
-   this same evaluation.
+   (a hypothesis, not tested). *Changed in prompt 2026-10-12.1:* the model is no longer asked
+   for the attack-evidence rating at all, because code sets it from KEV, CISA SSVC and exploit
+   references. Any model rating that contradicts those facts is corrected and counted ("model
+   ratings that contradicted the facts"). The "prefer insufficient evidence" line was replaced
+   with guidance to rely on the deterministic findings. So the 0/6 failure above can no longer
+   reach a report; whether the new prompt improves the difficulty ratings is not yet measured.
 3. **The design limited the damage.** None of the wrong model output changed a priority,
    because the rules decide and the model can only raise one factor.
 4. An earlier run was discarded after discovering Ollama silently truncated prompts on its

@@ -32,7 +32,7 @@ def output(**over):
             "rating": "moderate", "prerequisites": [claim("Network access required.", ["CVE.cvss.1"])],
             "complexity_factors": [], "research_availability": [], "open_questions": ["Is there a public PoC?"]},
         "existing_exploit_usability": {
-            "rating": "insufficient_evidence", "exploit_evidence": [], "reliability_limitations": [],
+            "exploit_evidence": [], "reliability_limitations": [],
             "required_access": [claim("No privileges required.", ["CVE.cvss.1"])], "open_questions": []},
         "suspicious_instructions_in_evidence": False,
         "summary": "Synthetic.",
@@ -112,7 +112,7 @@ def test_model_cannot_claim_exploitation_without_evidence():
     out = output(existing_exploit_usability__rating="exploitation_reported",
                  existing_exploit_usability__exploit_evidence=[claim("Widely exploited.", ["CVE.desc"])])
     res = analyze(synthetic_bundle(), StubProvider(json.dumps(out)))
-    assert res.assessment.existing_exploit_usability.rating == "insufficient_evidence"
+    assert res.assessment.existing_exploit_usability.rating == "no_public_exploit_evidence"
     assert "no source" in res.rating_overrides[0].problem
 
 
@@ -123,6 +123,37 @@ def test_model_cannot_deny_documented_exploit_claims():
     out = output(existing_exploit_usability__rating="no_public_exploit_evidence")
     res = analyze(b, StubProvider(json.dumps(out)))
     assert res.assessment.existing_exploit_usability.rating == "public_exploit_claimed"
+
+
+def test_attack_evidence_rating_comes_from_the_sources_not_the_model():
+    """The small model answered 'insufficient evidence' even for KEV-listed CVEs; that can no longer show."""
+    from tests.conftest import kev_feed
+    b = synthetic_bundle(kev=(200, kev_feed(["CVE-1999-99001"])))
+    out = output(existing_exploit_usability__rating="insufficient_evidence")
+    res = analyze(b, StubProvider(json.dumps(out)))
+    assert res.assessment.existing_exploit_usability.rating == "exploitation_reported"
+    assert "contradicts deterministic findings" in res.rating_overrides[0].problem
+
+
+def test_no_rating_from_the_model_is_fine_and_not_a_correction():
+    from tests.conftest import kev_feed
+    res = analyze(synthetic_bundle(kev=(200, kev_feed(["CVE-1999-99001"]))), StubProvider(json.dumps(output())))
+    assert res.assessment.existing_exploit_usability.rating == "exploitation_reported"
+    assert not [o for o in res.rating_overrides if o.path == "usability.rating"]
+
+
+def test_failed_sources_give_insufficient_evidence_not_none_found():
+    from cveprio.net import FetchError
+    b = synthetic_bundle(kev=FetchError("network", "down"))
+    res = analyze(b, StubProvider(json.dumps(output())))
+    assert res.assessment.existing_exploit_usability.rating == "insufficient_evidence"
+
+
+def test_model_is_not_asked_for_facts_code_already_knows():
+    from cveprio.llm.prompt import SYSTEM_PROMPT
+    assert "rating" not in ASSESSMENT_SCHEMA["properties"]["existing_exploit_usability"]["properties"]
+    assert "Prefer insufficient_evidence over guessing" not in SYSTEM_PROMPT
+    assert "deterministic_findings are reliable facts" in SYSTEM_PROMPT
 
 
 # ------------------------------------------------------------ AC12 injection

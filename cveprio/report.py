@@ -515,7 +515,7 @@ def _render_llm(llm: LlmAnalysis) -> list[str]:
                           ("Research availability", d.research_availability)):
         out += [f"- *{title}:* {c.statement} ({c.type}){_cite(c.evidence_ids)}"
                 + (f" — quote: “{_md_escape(c.quote)}”" if c.quote else "") for c in claims]
-    out.append(f"\n**Existing-exploit usability:** `{u.rating}`")
+    out.append(f"\n**Existing attacks and attack code (set from the sources, not the AI):** `{u.rating}`")
     for title, claims in (("Exploit evidence", u.exploit_evidence), ("Reliability limits", u.reliability_limitations),
                           ("Required access", u.required_access)):
         out += [f"- *{title}:* {c.statement} ({c.type}){_cite(c.evidence_ids)}"

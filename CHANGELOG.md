@@ -3,6 +3,15 @@
 Notable changes, newest first. The project is a portfolio prototype; version numbers mark
 milestones, not production releases.
 
+## Unreleased
+
+- **The model is no longer asked what code already knows.** The attack-evidence rating (attacks
+  reported / attack code claimed / none found) is set by code from CISA KEV, CISA SSVC and exploit
+  references. A model rating that contradicts those facts is replaced and recorded as a correction,
+  and the evaluation counts such contradictions. This fixes the small model's 0/6 miss for good.
+- Prompt `2026-10-12.1`: the deterministic findings are described as reliable facts, and the
+  "prefer insufficient evidence over guessing" line was replaced with balanced guidance.
+
 ## 0.3.0 — 2026-10-12
 
 **Settling "needs review" from vendors' version wording** (opt-in: `--auto-resolve`, `CVEPRIO_AUTO_RESOLVE`)

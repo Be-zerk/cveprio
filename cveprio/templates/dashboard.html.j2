@@ -359,6 +359,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
         </div>
         <div>
           <h3>Existing attacks and attack code: {{ AI_RATING.get(a.existing_exploit_usability.rating, a.existing_exploit_usability.rating) }}</h3>
+          <p class="meta">This rating comes from CISA's lists and exploit references, not from the AI. The points below are the AI's cited details.</p>
           <ul class="tight">
           {% for title, claims in [("Exploit evidence", a.existing_exploit_usability.exploit_evidence), ("Reliability limit", a.existing_exploit_usability.reliability_limitations), ("Required access", a.existing_exploit_usability.required_access)] %}
             {% for c in claims %}<li><span class="bshort">{{ c.statement }}</span><details class="bmore"><summary>details</summary><div class="bdetail">{% if c.quote %}Quoted from the source: “{{ c.quote }}”<br>{% endif %}{{ title }} · {{ "restates a source" if c.type == "fact" else "AI inference" }} <span class="srcs">Sources: {{ chips(r.cve_id, c.evidence_ids) }}</span></div></details></li>{% endfor %}

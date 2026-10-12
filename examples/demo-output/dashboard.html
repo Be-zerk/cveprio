@@ -164,7 +164,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
   <h1>CVE prioritization · Northbeam Logistics (fictional)</h1>
   <button id="theme" class="theme" type="button" aria-label="Colour theme: automatic">Theme: auto</button>
   </div>
-  <div class="meta">Generated 2026-10-12 02:42 UTC · <b>offline demo data</b> · 9 CVEs · cveprio 0.3.0</div>
+  <div class="meta">Generated 2026-10-12 21:34 UTC · <b>offline demo data</b> · 9 CVEs · cveprio 0.3.0</div>
   <div class="banner" role="note">⚠ OFFLINE DEMO DATA — recorded fixtures, not live results.
     <small>Source responses were recorded at the retrieval times shown in each evidence table and may be out of date. The inventory and business context are fictional.</small></div>
 </header>
@@ -937,7 +937,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
 
     <div class="ai">
       <div class="tag">AI-assisted assessment · judgement, not fact</div>
-<div class="scripted">SCRIPTED EXAMPLE — hand-written by the project author for the offline demo. Not produced by a language model.</div>      <p class="meta">Provider <b>scripted</b>, model <b>scripted-example</b>, prompt version 2026-10-11.1 · <b>6 of 9</b> claims passed the checks (the cited evidence exists, the claim's quote appears in it word for word, and any version numbers or dates it mentions are in it). This shows the claim is grounded in its source, not that the reasoning is correct. Ratings are opinions, not probabilities.</p>
+<div class="scripted">SCRIPTED EXAMPLE — hand-written by the project author for the offline demo. Not produced by a language model.</div>      <p class="meta">Provider <b>scripted</b>, model <b>scripted-example</b>, prompt version 2026-10-12.1 · <b>6 of 9</b> claims passed the checks (the cited evidence exists, the claim's quote appears in it word for word, and any version numbers or dates it mentions are in it). This shows the claim is grounded in its source, not that the reasoning is correct. Ratings are opinions, not probabilities.</p>
       <div class="cols">
         <div>
           <h3>How hard to build an attack: Moderate</h3>
@@ -946,6 +946,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
         </div>
         <div>
           <h3>Existing attacks and attack code: Public attack code claimed</h3>
+          <p class="meta">This rating comes from CISA's lists and exploit references, not from the AI. The points below are the AI's cited details.</p>
           <ul class="tight">
 <li><span class="bshort">CISA&#39;s SSVC assessment records Exploitation=poc.</span><details class="bmore"><summary>details</summary><div class="bdetail">Quoted from the source: “SSVC decision points: Exploitation=poc”<br>Exploit evidence · restates a source <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">A race-condition exploit is likely to need many connection attempts, which may be visible in authentication logs.</span><details class="bmore"><summary>details</summary><div class="bdetail">Quoted from the source: “There is a race condition which can lead sshd to handle some signals”<br>Reliability limit · AI inference <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-CVE.desc" title="Show evidence CVE.desc">CVE.desc</a><a class="chip" href="#CVE-2024-6387-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a></span></span></div></details></li><li><span class="bshort">Network reachability to the SSH service; no privileges or user interaction.</span><details class="bmore"><summary>details</summary><div class="bdetail">Quoted from the source: “An unauthenticated, remote attacker may be able to trigger it”<br>Required access · restates a source <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-CVE.desc" title="Show evidence CVE.desc">CVE.desc</a><a class="chip" href="#CVE-2024-6387-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a></span></span></div></details></li>          </ul>
         </div>
@@ -1828,7 +1829,7 @@ URL that curl has been told to operate with.</p>
 
     <div class="ai">
       <div class="tag">AI-assisted assessment · judgement, not fact</div>
-<div class="scripted">SCRIPTED EXAMPLE — hand-written by the project author for the offline demo. Not produced by a language model.</div>      <p class="meta">Provider <b>scripted</b>, model <b>scripted-example</b>, prompt version 2026-10-11.1 · <b>7 of 7</b> claims passed the checks (the cited evidence exists, the claim's quote appears in it word for word, and any version numbers or dates it mentions are in it). This shows the claim is grounded in its source, not that the reasoning is correct. Ratings are opinions, not probabilities.</p>
+<div class="scripted">SCRIPTED EXAMPLE — hand-written by the project author for the offline demo. Not produced by a language model.</div>      <p class="meta">Provider <b>scripted</b>, model <b>scripted-example</b>, prompt version 2026-10-12.1 · <b>7 of 7</b> claims passed the checks (the cited evidence exists, the claim's quote appears in it word for word, and any version numbers or dates it mentions are in it). This shows the claim is grounded in its source, not that the reasoning is correct. Ratings are opinions, not probabilities.</p>
       <div class="cols">
         <div>
           <h3>How hard to build an attack: Not enough evidence to say</h3>
@@ -1837,6 +1838,7 @@ URL that curl has been told to operate with.</p>
         </div>
         <div>
           <h3>Existing attacks and attack code: Public attack code claimed</h3>
+          <p class="meta">This rating comes from CISA's lists and exploit references, not from the AI. The points below are the AI's cited details.</p>
           <ul class="tight">
 <li><span class="bshort">CISA SSVC records Exploitation=poc and Automatable=no.</span><details class="bmore"><summary>details</summary><div class="bdetail">Quoted from the source: “SSVC decision points: Exploitation=poc, Automatable=no”<br>Exploit evidence · restates a source <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-47176-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">Full impact requires user interaction (printing to a malicious printer), which limits automated exploitation.</span><details class="bmore"><summary>details</summary><div class="bdetail">Quoted from the source: “when a malicious printer is printed to”<br>Reliability limit · AI inference <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-47176-CVE.desc" title="Show evidence CVE.desc">CVE.desc</a><a class="chip" href="#CVE-2024-47176-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">Network access to port 631 on the target; no authentication.</span><details class="bmore"><summary>details</summary><div class="bdetail">Quoted from the source: “trust any packet from any source”<br>Required access · restates a source <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-47176-CVE.desc" title="Show evidence CVE.desc">CVE.desc</a><a class="chip" href="#CVE-2024-47176-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a></span></span></div></details></li>          </ul>
         </div>

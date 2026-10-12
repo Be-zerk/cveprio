@@ -135,7 +135,7 @@ All from [examples/demo-output/report.md](examples/demo-output/report.md); syste
 |---|---|---|
 | 14 development cases ([results](evaluation/results/eval-none.md)) | Rules within the reference set 13/14; CVSS-only baseline 6/14; applicability 14/14 | Same CVEs used while building the tool; labels drafted with AI help and reviewed by the author |
 | 20 held-out recent CVEs ([results](evaluation/results/eval-holdout-none.md)) | **4 of 20 labelled so far**: applicability 3/4, no unsafe answers, decisions 2/4 | Far too few to measure accuracy; one label fix after the first run is disclosed |
-| Local model qwen2.5:3b ([results](docs/EVALUATION.md#recorded-results-2026-10-10)) | Usability rating matched the facts 0/6; priority never changed by the model | A small CPU model; grounding passes do not mean the reasoning is correct |
+| Local model qwen2.5:3b ([results](docs/EVALUATION.md#recorded-results-2026-10-10)) | Its attack-evidence rating matched the facts 0/6; priority never changed by the model. That rating is now set by code, so the miss can no longer appear in a report | A small CPU model; grounding passes do not mean the reasoning is correct |
 | Auto-resolve (`--auto-resolve`) ([results](docs/EVALUATION.md#auto-resolution-2026-10-12-development-result)) | Applicability 14/14 (dev) and 4/4 (held-out), 0 unsafe; resolves ScreenConnect (h05) by exact wording pattern. The small AI model resolved nothing; every misreading was rejected or contained | Development result: designed after seeing h05; needs new held-out cases |
 
 None of this is a measure of real-world predictive accuracy. Details: [docs/EVALUATION.md](docs/EVALUATION.md).

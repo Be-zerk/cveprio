@@ -1,6 +1,6 @@
 # CVE prioritization report
 
-Generated 2026-10-12T02:42:01+00:00 · mode **offline_demo** · cveprio 0.3.0 · organisation: Northbeam Logistics (fictional)
+Generated 2026-10-12T21:34:24+00:00 · mode **offline_demo** · cveprio 0.3.0 · organisation: Northbeam Logistics (fictional)
 
 > OFFLINE DEMO MODE: data comes from recorded fixtures (see retrieval times), not live sources. Results may be out of date.
 > Inventory and business context are FICTIONAL example data.
@@ -253,14 +253,14 @@ What the 7.5 score says: Attack from: the network (remotely); Attack complexity:
 
 > **SCRIPTED EXAMPLE** — hand-written by the project author to demonstrate validation in the offline demo. It was NOT produced by a language model.
 
-Provider `scripted`, model `scripted-example`, prompt version 2026-10-11.1. 6 of 9 claims passed the checks (cited evidence exists, the quote appears in it word for word, numbers and dates match). That shows grounding, not that the reasoning is right. Ratings are opinions, not probabilities.
+Provider `scripted`, model `scripted-example`, prompt version 2026-10-12.1. 6 of 9 claims passed the checks (cited evidence exists, the quote appears in it word for word, numbers and dates match). That shows grounding, not that the reasoning is right. Ratings are opinions, not probabilities.
 
 **Exploit-development difficulty:** `moderate`
 - *Prerequisites:* The attacker needs only network access to sshd and no credentials; the trigger is failing to authenticate within the login time limit. (fact) [CVE.desc, CVE.cvss.1] — quote: “An unauthenticated, remote attacker may be able to trigger it by failing to authenticate within a set time period”
 - *Complexity:* The flaw is a race condition in signal handling, and the CNA scores attack complexity as High, which suggests exploitation depends on winning a timing window. (inference) [CVE.desc, CVE.cvss.1] — quote: “There is a race condition which can lead sshd to handle some signals in an unsafe manner”
 - *Research availability:* Several references tagged 'Exploit' by NVD, including a researcher advisory, indicate detailed public research exists. (fact) [NVD.ref.2, NVD.ref.12] — quote: “NVD reference tagged 'Exploit' — indicates public exploit or PoC material may exist”
 
-**Existing-exploit usability:** `public_exploit_claimed`
+**Existing attacks and attack code (set from the sources, not the AI):** `public_exploit_claimed`
 - *Exploit evidence:* CISA's SSVC assessment records Exploitation=poc. (fact) [CVE.ssvc] — quote: “SSVC decision points: Exploitation=poc”
 - *Reliability limits:* A race-condition exploit is likely to need many connection attempts, which may be visible in authentication logs. (inference) [CVE.desc, CVE.cvss.1] — quote: “There is a race condition which can lead sshd to handle some signals”
 - *Required access:* Network reachability to the SSH service; no privileges or user interaction. (fact) [CVE.desc, CVE.cvss.1] — quote: “An unauthenticated, remote attacker may be able to trigger it”
@@ -549,7 +549,7 @@ What the 9.8 score says: Attack from: the network (remotely); Attack complexity:
 
 > **SCRIPTED EXAMPLE** — hand-written by the project author to demonstrate validation in the offline demo. It was NOT produced by a language model.
 
-Provider `scripted`, model `scripted-example`, prompt version 2026-10-11.1. 7 of 7 claims passed the checks (cited evidence exists, the quote appears in it word for word, numbers and dates match). That shows grounding, not that the reasoning is right. Ratings are opinions, not probabilities.
+Provider `scripted`, model `scripted-example`, prompt version 2026-10-12.1. 7 of 7 claims passed the checks (cited evidence exists, the quote appears in it word for word, numbers and dates match). That shows grounding, not that the reasoning is right. Ratings are opinions, not probabilities.
 
 **Exploit-development difficulty:** `insufficient_evidence`
 - *Prerequisites:* cups-browsed listens on port 631 on all interfaces and trusts packets from any source. (fact) [CVE.desc] — quote: “binds to `INADDR_ANY:631`, causing it to trust any packet from any source”
@@ -557,7 +557,7 @@ Provider `scripted`, model `scripted-example`, prompt version 2026-10-11.1. 7 of
 - *Complexity:* On its own this CVE is scored as integrity-low with no confidentiality or availability impact; the severe outcome depends on the chain. (inference) [CVE.cvss.1, CVE.desc] — quote: “CVSS 3.1 base score 5.3 (MEDIUM)”
 - *Research availability:* NVD tags a researcher write-up and the vendor advisory as exploit references. (fact) [NVD.ref.1, NVD.ref.2] — quote: “NVD reference tagged 'Exploit'”
 
-**Existing-exploit usability:** `public_exploit_claimed`
+**Existing attacks and attack code (set from the sources, not the AI):** `public_exploit_claimed`
 - *Exploit evidence:* CISA SSVC records Exploitation=poc and Automatable=no. (fact) [CVE.ssvc] — quote: “SSVC decision points: Exploitation=poc, Automatable=no”
 - *Reliability limits:* Full impact requires user interaction (printing to a malicious printer), which limits automated exploitation. (inference) [CVE.desc, CVE.ssvc] — quote: “when a malicious printer is printed to”
 - *Required access:* Network access to port 631 on the target; no authentication. (fact) [CVE.desc, CVE.cvss.1] — quote: “trust any packet from any source”

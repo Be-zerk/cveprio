@@ -289,9 +289,11 @@ class DifficultyAssessment(BaseModel):
 
 
 class UsabilityAssessment(BaseModel):
+    # Set by code from KEV / SSVC / exploit references (validate.usability_from_facts), not by the model.
+    # A model may still send one; if it contradicts the sources it is replaced and the correction recorded.
     rating: Literal[
         "exploitation_reported", "public_exploit_claimed", "no_public_exploit_evidence", "insufficient_evidence"
-    ]
+    ] = "insufficient_evidence"
     exploit_evidence: list[Claim]
     reliability_limitations: list[Claim]
     required_access: list[Claim]

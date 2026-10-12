@@ -23,6 +23,7 @@ from typing import Any
 from cveprio.config import PROJECT_ROOT, Settings
 from cveprio.llm import analyze
 from cveprio.llm.providers import Provider, ProviderResponse
+from cveprio.llm.validate import usability_from_facts
 from cveprio.models import Asset, CompensatingControl, CveReport, Inventory, LlmStatus, SoftwareItem
 from cveprio.pipeline import make_runtime, run
 
@@ -122,21 +123,6 @@ def _injection_probe(provider: Provider) -> dict[str, Any]:
     }
 
 
-def _usability_supported_by_facts(report: CveReport) -> str | None:
-    """The usability rating the deterministic findings support (None = facts don't decide it).
-
-    The validator only overrides ratings that OVERSTATE or DENY the facts. A model that answers
-    'insufficient_evidence' when KEV says exploited is under-calling; that is not overridden (it
-    cannot lower priority) but it is a quality problem, so it is measured here.
-    """
-    f = report.bundle.findings
-    if f.get("exploited_in_wild") and f["exploited_in_wild"].value.value == "true":
-        return "exploitation_reported"
-    if f.get("public_exploit_claimed") and f["public_exploit_claimed"].value.value == "true":
-        return "public_exploit_claimed"
-    return None
-
-
 def _reason(problem: str) -> str:
     for key, label in (("unknown evidence", "cited evidence that does not exist"), ("no evidence", "cited nothing"),
                        ("no supporting quote", "gave no quote"), ("quote does not appear", "quote not found in source"),
@@ -226,7 +212,7 @@ def run_evaluation(settings: Settings, provider_name: str | None, out_dir: Path,
                      "rationale": case["rationale"]})
         if report.llm.status != LlmStatus.NOT_CONFIGURED:
             llm_by_cve[case["cve_id"]] = report.llm
-            facts_by_cve[case["cve_id"]] = _usability_supported_by_facts(report)
+            facts_by_cve[case["cve_id"]] = usability_from_facts(report.bundle)
 
     n = len(rows)
     summary = {
@@ -250,7 +236,9 @@ def run_evaluation(settings: Settings, provider_name: str | None, out_dir: Path,
             "removed_by_reason": dict(Counter(_reason(i.problem) for v in llm_by_cve.values() for i in v.removed_claims)),
             "prompt_version": next((v.prompt_version for v in llm_by_cve.values() if v.prompt_version), None),
             "scripted": any(v.scripted for v in llm_by_cve.values()),
-            "usability_matches_facts": f"{sum(1 for k, v in llm_by_cve.items() if facts_by_cve.get(k) and v.assessment and v.assessment.existing_exploit_usability.rating == facts_by_cve[k])}/{sum(1 for k in llm_by_cve if facts_by_cve.get(k))}",
+            "usability_from_facts": "set by code from KEV/SSVC/references (since prompt 2026-10-12.1)",
+            "ai_ratings_contradicting_facts": sum(1 for v in llm_by_cve.values() for o in v.rating_overrides
+                                                  if o.path == "usability.rating"),
             "per_cve": {k: {"status": v.status.value, "detail": v.detail, "supported": v.supported_claims,
                             "total": v.total_claims,
                             "difficulty": v.assessment.exploit_development_difficulty.rating if v.assessment else None,
@@ -317,8 +305,9 @@ def _markdown(r: dict[str, Any]) -> str:
                   f"(removed: {m['claims_removed']}) · rating overrides: {m['rating_overrides']}",
                   f"- Removed claims by reason: {m.get('removed_by_reason') or 'none'} · prompt version "
                   f"{m.get('prompt_version')}",
-                  f"- Usability rating matches what deterministic facts show (where facts decide it): "
-                  f"{m.get('usability_matches_facts', 'n/a')}", ""]
+                  "- Attack-evidence (usability) rating: set by code from KEV/SSVC/exploit references, not by the "
+                  f"model. Model ratings that contradicted the facts and were corrected: "
+                  f"{m.get('ai_ratings_contradicting_facts', 'n/a')}", ""]
         lines += ["| CVE | Status | Difficulty | Usability | Claims passing checks | Overrides |", "|---|---|---|---|---|---|"]
         for k, v in m["per_cve"].items():
             lines.append(f"| {k} | {v['status']} | {v['difficulty']} | {v['usability']} | {v['supported']}/{v['total']} | "
