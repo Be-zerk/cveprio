@@ -27,6 +27,16 @@ them is at the end of this file.
 
 ## What was run
 
+**2026-10-12, release 0.3.0 (branch `release-0.3.0`, commit `2f322f1`), Python 3.13.2, macOS:**
+
+- `pytest`: **277 passed, 3 skipped** (the opt-in live tests). `CVEPRIO_LIVE_TESTS=1 pytest -m live`: **3 passed**.
+- `ruff check cveprio tests` and `mypy cveprio`: clean.
+- Fresh `git clone` of the release branch into a new virtualenv: install OK, `cveprio --version` → 0.3.0,
+  277 passed, and `cveprio demo` succeeded with all HTTP(S) traffic pointed at a dead proxy.
+- `cveprio evaluate`: dev 13/14 (baseline 6/14), applicability 14/14, 0 unsafe, 231/231 citations.
+  Held-out (4 labelled): applicability 3/4, decisions 2/4, 0 unsafe.
+- With `--auto-resolve` (patterns only, no model): dev unchanged; held-out applicability 4/4, decisions 3/4, 0 unsafe.
+
 **2026-10-11, branch `portfolio-polish` (based on `a4d701e`), version 0.2.0, Python 3.13.2, macOS:**
 
 - `pytest`: **236 passed, 3 skipped** (the 3 skipped are the opt-in live tests).
