@@ -402,7 +402,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
     {% endif %}
 
     <details>
-      <summary><b>Evidence ({{ r.bundle.evidence|length }} items) and source status</b></summary>
+      <summary><b>Evidence ({{ r.bundle.evidence|length }} item{{ "" if r.bundle.evidence|length == 1 else "s" }}) and source status</b></summary>
       <p class="meta">Sources: {% for s in r.bundle.sources %}{{ s.source }}=<b>{{ s.status }}</b>{% if s.detail %} ({{ s.detail|truncate(120) }}){% endif %}{{ "; " if not loop.last }}{% endfor %}</p>
       <div class="table-wrap"><table>
         <thead><tr><th>ID</th><th>Source</th><th>Summary</th><th>Retrieved</th><th>Published / updated</th></tr></thead>

@@ -27,6 +27,16 @@ them is at the end of this file.
 
 ## What was run
 
+**2026-10-12, release 0.3.0 (branch `release-0.3.0`, commit `2f322f1`), Python 3.13.2, macOS:**
+
+- `pytest`: **277 passed, 3 skipped** (the opt-in live tests). `CVEPRIO_LIVE_TESTS=1 pytest -m live`: **3 passed**.
+- `ruff check cveprio tests` and `mypy cveprio`: clean.
+- Fresh `git clone` of the release branch into a new virtualenv: install OK, `cveprio --version` → 0.3.0,
+  277 passed, and `cveprio demo` succeeded with all HTTP(S) traffic pointed at a dead proxy.
+- `cveprio evaluate`: dev 13/14 (baseline 6/14), applicability 14/14, 0 unsafe, 231/231 citations.
+  Held-out (4 labelled): applicability 3/4, decisions 2/4, 0 unsafe.
+- With `--auto-resolve` (patterns only, no model): dev unchanged; held-out applicability 4/4, decisions 3/4, 0 unsafe.
+
 **2026-10-11, branch `portfolio-polish` (based on `a4d701e`), version 0.2.0, Python 3.13.2, macOS:**
 
 - `pytest`: **236 passed, 3 skipped** (the 3 skipped are the opt-in live tests).
@@ -76,8 +86,9 @@ detection is heuristic only.
 
 The author has reviewed the evaluation reference judgements (no cases changed) and has run
 the demo, configured an NVD API key and run a live inventory analysis on their own machine.
-Version 0.2.0 added quote-grounded AI claims, Ubuntu/Red Hat advisories and the held-out set
-(see CHANGELOG.md).
+Version 0.2.0 added quote-grounded AI claims, Ubuntu/Red Hat advisories and the held-out set;
+0.3.0 (2026-10-12) added opt-in auto-resolution of version wording, dashboard fixes and the MIT
+license (see CHANGELOG.md).
 
 **Next: the author finishes labelling the held-out set** (h01, h06–h20) by following `evaluation/holdout/LABELING.md`
 *before* looking at the tool's output for those CVEs. Then run `cveprio evaluate --set holdout`

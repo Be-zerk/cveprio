@@ -3,29 +3,43 @@
 Notable changes, newest first. The project is a portfolio prototype; version numbers mark
 milestones, not production releases.
 
-## Unreleased
+## 0.3.0 — 2026-10-12
 
-- **Opt-in AI reading of free-text version statements** (`--auto-resolve`, `CVEPRIO_AUTO_RESOLVE`):
-  turns wording like "All versions prior to 26.6.5" into ranges with an exact quote; code compares
-  versions. Can confirm *affected* alone; *not affected* needs an agreeing structured source and
-  no open-ended wording or conditions. Adversarial tests in `tests/test_auto_resolve.py`.
-- Auto-resolution reads common wordings ("prior to X", "X and earlier", "5.3.x prior to 5.3.18") with
-  exact patterns in code, so it works without a model (it settles held-out h05). Model readings must
-  keep the record's own status; harmless slips are repaired only by widening an affected range; model
-  readings of "fixed" versions never clear anything; reading the wording never overrides another
-  source's open question. Tried with qwen2.5:3b: no unsafe result, but the small model resolved
-  nothing. Git commit IDs are no longer sent as "version wording".
-- MIT license. Step-by-step guide for using the tool on your own systems (`docs/USAGE.md`) and
-  "Using Ollama safely" notes (`docs/MODEL_PROVIDERS.md`). `*.local.json` is git-ignored for private inventories.
-- Dashboard: reserved, not-found and unloadable CVEs are grouped as *Cannot assess yet* and list
-  what is unknown, instead of "no action needed / nothing to do". A summary line reports failed or
-  rate-limited source lookups. New colour-theme switch, visible keyboard focus, a short legend
-  separating priority, attack activity, severity and exposure, and AI-raised questions labelled
-  as such.
-- Configurable model timeout (`CVEPRIO_LLM_TIMEOUT_S`); evaluation reports why model calls failed.
-- Held-out set: first 4 of 20 cases labelled by the author; spreadsheet-tolerant `labels.csv` parsing.
+**Settling "needs review" from vendors' version wording** (opt-in: `--auto-resolve`, `CVEPRIO_AUTO_RESOLVE`)
+- Common wordings ("All versions prior to 26.6.5", "2.4.7 and earlier", "5.3.x prior to 5.3.18") are
+  read by exact patterns in code that must match the whole sentence. This needs no AI model.
+- Unusual wording can go to the configured model, under strict rules. Versions are compared in code.
+  A model's reading may confirm *affected*. It can contribute to *not affected* only by showing a
+  version is outside an affected range, with no conditions or open-ended wording, and only when a
+  structured source independently agrees. It must keep the record's own affected/fixed status, and
+  harmless slips are repaired only by widening an affected range.
+- Reading the wording never overrides another source's open question (such as NVD's "only with
+  Oracle JDK"), so such cases stay *needs review*.
+- Results: with auto-resolve, held-out applicability 4/4 (was 3/4) and decisions 3/4 (was 2/4),
+  development set unchanged, 0 unsafe answers. A development result: the feature was designed after
+  held-out case h05. With qwen2.5:3b the model resolved nothing; every misreading was rejected or
+  contained. Adversarial tests in `tests/test_auto_resolve.py`.
+
+**Dashboard and reports**
+- Reserved, not-found and unloadable CVEs are grouped as *Cannot assess yet* and list what is
+  unknown, instead of "no action needed / nothing to do".
+- A summary line reports failed or rate-limited source lookups.
+- New colour-theme switch, visible keyboard focus, and a short legend separating priority, attack
+  activity, severity and exposure.
+- AI-raised questions and AI status are shown in plain words. Results that used a model's reading are
+  labelled "AI-read wording".
 - The declared-protection rule (attacked flaw → P2, not lower) is explained in reports and docs.
-- README rebuilt around the demo, with real screenshots and a per-outcome gallery (`docs/SCREENSHOTS.md`); setup and troubleshooting moved to `docs/USAGE.md`. AI status shown in plain words.
+
+**Evaluation**
+- Held-out set: the first 4 of 20 cases are labelled by the author, and `labels.csv` parsing tolerates
+  spreadsheet output.
+- Configurable model timeout (`CVEPRIO_LLM_TIMEOUT_S`); the evaluation reports why model calls failed.
+
+**Documentation and project**
+- README rebuilt around the demo, with real screenshots and a per-outcome gallery
+  (`docs/SCREENSHOTS.md`). Setup and troubleshooting moved to `docs/USAGE.md`, including a
+  step-by-step guide for real use and "Using Ollama safely" notes.
+- MIT license. `*.local.json` is git-ignored for private inventories.
 
 ## 0.2.0 — 2026-10-11
 

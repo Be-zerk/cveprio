@@ -1,15 +1,15 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-10-12T02:02:03.805838Z",
-  "tool_version": "0.2.0",
+  "generated_at": "2026-10-12T02:42:01.144443Z",
+  "tool_version": "0.3.0",
   "mode": "offline_demo",
   "organization": "Northbeam Logistics (fictional)",
   "fictional_context": true,
   "reports": [
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-12T02:02:03.689821Z",
-      "tool_version": "0.2.0",
+      "generated_at": "2026-10-12T02:42:01.007613Z",
+      "tool_version": "0.3.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2021-44228",
       "bundle": {
@@ -6410,8 +6410,8 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-12T02:02:03.769049Z",
-      "tool_version": "0.2.0",
+      "generated_at": "2026-10-12T02:42:01.089702Z",
+      "tool_version": "0.3.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2023-44487",
       "bundle": {
@@ -12531,8 +12531,8 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-12T02:02:03.791888Z",
-      "tool_version": "0.2.0",
+      "generated_at": "2026-10-12T02:42:01.118973Z",
+      "tool_version": "0.3.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2024-6387",
       "bundle": {
@@ -15661,8 +15661,8 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-12T02:02:03.795649Z",
-      "tool_version": "0.2.0",
+      "generated_at": "2026-10-12T02:42:01.125754Z",
+      "tool_version": "0.3.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2023-38545",
       "bundle": {
@@ -16573,8 +16573,8 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-12T02:02:03.710592Z",
-      "tool_version": "0.2.0",
+      "generated_at": "2026-10-12T02:42:01.032121Z",
+      "tool_version": "0.3.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2022-22965",
       "bundle": {
@@ -18716,8 +18716,8 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-12T02:02:03.799884Z",
-      "tool_version": "0.2.0",
+      "generated_at": "2026-10-12T02:42:01.131977Z",
+      "tool_version": "0.3.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2024-47176",
       "bundle": {
@@ -19534,8 +19534,8 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-12T02:02:03.804787Z",
-      "tool_version": "0.2.0",
+      "generated_at": "2026-10-12T02:42:01.140914Z",
+      "tool_version": "0.3.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2024-3094",
       "bundle": {
@@ -20506,8 +20506,8 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-12T02:02:03.805309Z",
-      "tool_version": "0.2.0",
+      "generated_at": "2026-10-12T02:42:01.142822Z",
+      "tool_version": "0.3.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2026-11415",
       "bundle": {
@@ -20690,8 +20690,8 @@
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-12T02:02:03.805800Z",
-      "tool_version": "0.2.0",
+      "generated_at": "2026-10-12T02:42:01.144376Z",
+      "tool_version": "0.3.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2026-99001",
       "bundle": {
