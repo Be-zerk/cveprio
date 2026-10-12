@@ -133,6 +133,7 @@ All from [examples/demo-output/report.md](examples/demo-output/report.md); syste
 | 14 development cases ([results](evaluation/results/eval-none.md)) | Rules within the reference set 13/14; CVSS-only baseline 6/14; applicability 14/14 | Same CVEs used while building the tool; labels drafted with AI help and reviewed by the author |
 | 20 held-out recent CVEs ([results](evaluation/results/eval-holdout-none.md)) | **4 of 20 labelled so far**: applicability 3/4, no unsafe answers, decisions 2/4 | Far too few to measure accuracy; one label fix after the first run is disclosed |
 | Local model qwen2.5:3b ([results](docs/EVALUATION.md#recorded-results-2026-10-10)) | Usability rating matched the facts 0/6; priority never changed by the model | A small CPU model; grounding passes do not mean the reasoning is correct |
+| Auto-resolve with qwen2.5:3b, 3 CVEs with vendor wording ([results](docs/EVALUATION.md#auto-resolution-with-a-real-model-2026-10-12-development-result)) | No unsafe result; resolved 0 of 2 *needs review* cases (the checks rejected or contained every bad reading) | Development result on the cases that shaped the feature; a stronger model is untested |
 
 None of this is a measure of real-world predictive accuracy. Details: [docs/EVALUATION.md](docs/EVALUATION.md).
 

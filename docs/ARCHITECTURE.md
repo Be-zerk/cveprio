@@ -130,8 +130,9 @@ configured, `cveprio/llm/versions.py` handles exactly those statements:
    affected. Otherwise the result stays `needs_review`, with the reason shown.
 
 Results that relied on a reading are flagged (`resolved_with_ai`) and labelled "AI-read wording" in
-the dashboard. Prompt version `2026-10-12.1`. This feature was designed after seeing held-out case
-h05, so h05 no longer tests it independently; it has not yet been evaluated with a real model.
+the dashboard. Prompt version `2026-10-12.2`. Git commit IDs listed as versions are not sent. This feature was designed after seeing held-out case
+h05, so h05 no longer tests it independently. A first real-model run (qwen2.5:3b) produced no unsafe
+result but resolved nothing; see docs/EVALUATION.md.
 
 ## Distribution advisories (0.2.0)
 

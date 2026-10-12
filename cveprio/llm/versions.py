@@ -31,7 +31,7 @@ from cveprio.llm.validate import InvalidModelOutput, extract_json
 from cveprio.models import EvidenceBundle
 from cveprio.versions import compare, parse_simple_constraint
 
-PROMPT_VERSION = "2026-10-12.1"
+PROMPT_VERSION = "2026-10-12.2"
 AFFECTED, NOT_AFFECTED, AMBIGUOUS = "affected", "not_affected", "ambiguous"
 
 SYSTEM_PROMPT = """You convert software vendors' version statements into version ranges.
@@ -49,7 +49,16 @@ Rules:
 - "conditions": any requirement besides the version (platform, configuration, enabled feature,
   deployment type), copied from the statement; "" if there is none.
 - "quote": the exact words of the statement your ranges come from, copied character for character.
-- If the statement cannot be turned into ranges, return status "unclear" and no ranges. Never guess."""
+- If the statement cannot be turned into ranges, return status "unclear" and no ranges. Never guess.
+- Every bound is either a version copied from the statement or the empty string "". Never write
+  words such as "default", "none", "any" or "n/a" in a bound.
+- Fill "below" OR "at_most", never both; leave the other "".
+
+Example. Statement: "Versions 2.x prior to 2.4.7, and 3.0 through 3.1.2"
+{"statements": [{"id": "S1", "quote": "Versions 2.x prior to 2.4.7, and 3.0 through 3.1.2",
+  "status": "affected", "conditions": "",
+  "ranges": [{"at_least": "", "below": "2.4.7", "at_most": ""},
+             {"at_least": "3.0", "below": "", "at_most": "3.1.2"}]}]}"""
 
 RANGE: dict[str, Any] = {
     "type": "object",
@@ -83,6 +92,7 @@ _OPEN_ENDED = re.compile(r"\b(old|older|oldest|earlier|previous|prior (?:version
                          r"and (?:above|later|newer)|or (?:above|later|newer)|onwards?)\b", re.IGNORECASE)
 
 
+_COMMIT = re.compile(r"[0-9a-f]{12,40}", re.IGNORECASE)  # git commit IDs are not version wording
 _PLACEHOLDERS = {"n/a", "na", "*", "-", "unspecified", "unknown", "all", "all versions"}
 
 
@@ -164,7 +174,8 @@ def free_text_statements(bundle: EvidenceBundle) -> list[Statement]:
         for spec in entry.versions:
             text = (spec.version or "").strip()
             if not text or text.lower() in _PLACEHOLDERS or spec.less_than or spec.less_than_or_equal \
-                    or parse_simple_constraint(text):
+                    or parse_simple_constraint(text) or (spec.version_type or "").lower() == "git" \
+                    or _COMMIT.fullmatch(text):
                 continue
             if compare(text, text, spec.version_type) is not None or (entry.evidence_id, text) in seen:
                 continue

@@ -9,6 +9,9 @@ milestones, not production releases.
   turns wording like "All versions prior to 26.6.5" into ranges with an exact quote; code compares
   versions. Can confirm *affected* alone; *not affected* needs an agreeing structured source and
   no open-ended wording or conditions. Adversarial tests in `tests/test_auto_resolve.py`.
+- Auto-resolution tried with a real model (qwen2.5:3b): the checks rejected or contained every bad
+  reading (no unsafe result), but it resolved none of the review cases. Git commit IDs are no longer
+  sent as "version wording"; reading prompt `2026-10-12.2` adds a worked example.
 - MIT license. Step-by-step guide for using the tool on your own systems (`docs/USAGE.md`) and
   "Using Ollama safely" notes (`docs/MODEL_PROVIDERS.md`). `*.local.json` is git-ignored for private inventories.
 - Dashboard: reserved, not-found and unloadable CVEs are grouped as *Cannot assess yet* and list

@@ -167,8 +167,9 @@ def test_old_and_unsupported_wording_blocks_clearing():
     assert not next(iter(out.readings.values())).may_clear
 
 
-def test_placeholder_statements_are_not_sent():
-    assert free_text_statements(bundle("n/a")) == []
+@pytest.mark.parametrize("text", ["n/a", "2f3839075a5f8dcf116c1abe35b36b018ac62445"])
+def test_placeholders_and_commit_ids_are_not_sent(text):
+    assert free_text_statements(bundle(text)) == []
 
 
 def test_offline_demo_auto_resolve_uses_scripted_reading():
