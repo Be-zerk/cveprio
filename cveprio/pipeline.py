@@ -8,22 +8,26 @@ from pathlib import Path
 from typing import Literal
 
 from cveprio import __version__
-from cveprio.applicability import assess
+from cveprio.applicability import _identity_match, assess
 from cveprio.config import DEFAULT_FIXTURES, Settings
 from cveprio.discovery import discover
 from cveprio.llm import analyze
 from cveprio.llm.providers import NoProvider, Provider, ProviderError, make_provider
+from cveprio.llm.versions import PROMPT_VERSION as VERSION_PROMPT_VERSION
+from cveprio.llm.versions import Reading, free_text_statements, read_versions
 from cveprio.models import (
     ApplicabilityResult,
     Asset,
     CveReport,
     DiscoverySummary,
     Evidence,
+    EvidenceBundle,
     Inventory,
     LlmAnalysis,
     LlmStatus,
     RunReport,
     SourceName,
+    VersionReadingLog,
 )
 from cveprio.net import Fetcher, FixtureFetcher, ResponseCache, SafeFetcher
 from cveprio.normalize import build_bundle
@@ -48,6 +52,28 @@ class Runtime:
     settings: Settings
     offline: bool
     provider_error: str | None = None
+
+
+def _read_version_statements(bundle: EvidenceBundle, assets: dict[str, Asset], rt: Runtime,
+                             ) -> tuple[VersionReadingLog | None, dict[tuple[str, str], Reading] | None]:
+    """Ask the model to read free-text version statements for products in the inventory (auto-resolution).
+
+    Only the public statements and product names are sent; installed versions stay local.
+    """
+    items = [item for a in assets.values() for item in a.software]
+    matched = {e.evidence_id for e in bundle.affected if any(_identity_match(i, e)[0] for i in items)}
+    statements = [s for s in free_text_statements(bundle) if s.evidence_id in matched]
+    if not statements:
+        return None, None
+    out = read_versions(statements, rt.provider, bundle.cve_id)
+    log = VersionReadingLog(
+        status=out.status, provider=out.provider, model=out.model, scripted=out.scripted,
+        prompt_version=VERSION_PROMPT_VERSION, detail=out.detail,
+        accepted=[{"statement": r.statement.text, "quote": r.quote, "status": r.status, "conditions": r.conditions,
+                   "ranges": r.describe(), "may_clear": r.may_clear, "evidence_id": r.statement.evidence_id}
+                  for r in out.readings.values()],
+        rejected=[{"statement": t, "problem": p} for t, p in out.rejected])
+    return log, out.readings
 
 
 def make_runtime(settings: Settings, *, offline: bool, provider_name: str | None = None,
@@ -110,9 +136,13 @@ def run(cve_ids: list[str], rt: Runtime, inventory: Inventory | None = None,
                               fields={"purl": m.purl, "advisories": m.advisory_ids, "asset": m.asset_id})
                 bundle.evidence.append(ev)
                 osv_ids[(m.asset_id, m.purl)] = ev.id
+        reading_log, readings = None, None
+        if assets and rt.settings.auto_resolve and not rt.provider_error and rt.provider.name != "none" \
+                and bundle.record_state.value == "published":
+            reading_log, readings = _read_version_statements(bundle, assets, rt)
         if assets:
-            results = [assess(bundle, a.id, item, osv_ids.get((a.id, item.purl or ""))) for a in assets.values()
-                       for item in a.software]
+            results = [assess(bundle, a.id, item, osv_ids.get((a.id, item.purl or "")), readings)
+                       for a in assets.values() for item in a.software]
             for res in results:
                 a = assets[res.asset_id]
                 res.asset_criticality, res.asset_internet_facing = a.criticality, a.internet_facing
@@ -129,7 +159,7 @@ def run(cve_ids: list[str], rt: Runtime, inventory: Inventory | None = None,
             applicability=[r for r in results if r.status.value != "no_product_match"], llm=llm,
             decision=decision, known=known, uncertain=uncertain, context_supplied=assets is not None,
             summary=explain_decision(bundle, results, decision, llm),
-            discovered_by=found_by.get(cid, [])))
+            discovered_by=found_by.get(cid, []), version_reading=reading_log))
 
     order = {"P1": 0, "P2": 1, "NEEDS_REVIEW": 2, "P3": 3, "P4": 4, "NOT_APPLICABLE": 6, "NOT_IN_INVENTORY": 7}
     strength = {"confirmed": 0, "elevated": 1, "evidence_incomplete": 2, "claimed_unverified": 3, "low_observed": 4}

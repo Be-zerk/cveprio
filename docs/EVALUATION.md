@@ -120,6 +120,14 @@ free-text ranges like h05 should be built and tested on *other* CVEs, then re-ch
 The severity-only baseline matched 2 of 4. It got h03 and h04 "right" only because it ignores
 context and applicability, and it said P1 or P2 for both not-affected systems.
 
+## Auto-resolution (not yet evaluated)
+
+The opt-in AI reading of version statements (`--auto-resolve`, see docs/ARCHITECTURE.md) is covered
+by adversarial unit tests and a scripted demo example, but has **not** been evaluated with a real
+model. It was designed after held-out case h05 showed the free-text gap, so h05 cannot serve as an
+independent test of it; new held-out cases are needed. Its key safety property (an AI reading alone
+never yields "not affected") is enforced in code and tested.
+
 ## What these results can and cannot show
 
 - They show the implementation behaves as designed on these cases, and how a contextual

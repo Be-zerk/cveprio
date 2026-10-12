@@ -1,6 +1,6 @@
 # Evaluation results (none)
 
-Generated 2026-10-11T22:55:36Z on the recorded fixtures (offline).
+Generated 2026-10-12T01:35:01Z on the recorded fixtures (offline).
 
 > Small evaluation set over the recorded fixtures in fixtures/demo. Each case pairs one CVE with one software item and (optionally) asset context, plus a reference judgement: the applicability status a careful analyst should reach from the cited source fields, and the set of priority outcomes the reference reviewer considers defensible. Reference judgements were DRAFTED WITH AI ASSISTANCE (Claude Code) from the cited source data and then REVIEWED BY THE PROJECT AUTHOR, who kept them unchanged; they are one reviewer's judgement, not expert ground truth. 14 cases cannot support claims about real-world predictive accuracy.
 

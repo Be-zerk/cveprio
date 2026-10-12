@@ -37,6 +37,8 @@ class Settings:
     ollama_url: str = "http://localhost:11434"
     llm_num_ctx_max: int = 16384
     llm_timeout_s: float = 600.0
+    # Let a configured model resolve "needs review" caused by free-text version statements (off by default).
+    auto_resolve: bool = False
     anthropic_api_key: str | None = None
     anthropic_model: str = "claude-opus-5-5"
     anthropic_fallbacks: bool = True
@@ -60,6 +62,7 @@ class Settings:
             ollama_url=opt("CVEPRIO_OLLAMA_URL") or cls.ollama_url,
             llm_num_ctx_max=int(opt("CVEPRIO_LLM_NUM_CTX_MAX") or cls.llm_num_ctx_max),
             llm_timeout_s=float(opt("CVEPRIO_LLM_TIMEOUT_S") or cls.llm_timeout_s),
+            auto_resolve=(opt("CVEPRIO_AUTO_RESOLVE") or "off").lower() in {"on", "1", "true", "yes"},
             anthropic_api_key=opt("ANTHROPIC_API_KEY"),
             anthropic_model=opt("CVEPRIO_ANTHROPIC_MODEL") or cls.anthropic_model,
             anthropic_fallbacks=(opt("CVEPRIO_ANTHROPIC_FALLBACKS") or "on").lower() not in {"off", "0", "false"},

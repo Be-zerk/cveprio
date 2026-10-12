@@ -31,6 +31,8 @@ exploit-development difficulty with at least two claims that passed validation r
 exploitation to `elevated`. That can move a CVE up (to P2, or P1 with high exposure and
 high/critical severity); it can never lower one. A prompt injection that talks a model into
 "low difficulty" could therefore raise a priority. That is the accepted failure direction.
+With `--auto-resolve`, the model may also read free-text version statements (see "AI reading of
+version statements" below); that path is designed so an AI reading alone can never clear a system.
 
 **2. Every claim points at evidence IDs; citations are verified in code.** IDs like
 `CVE.desc`, `NVD.cvss.2`, `KEV` are stable and human-readable. Claims that cite nothing or
@@ -103,6 +105,33 @@ version, number or ISO date in the statement must also appear there. Claims that
 removed, and the reason is recorded per claim. This is a grounding check, not entailment: a model
 can quote a true sentence and still draw a wrong conclusion. The check catches invented details
 and mis-attributed sources, which were the failures actually observed.
+
+## AI reading of version statements (auto-resolution, opt-in)
+
+Some CNA records give affected versions as prose ("All versions prior to 26.6.5", "5.3.x prior to
+5.3.18+ and all old and unsupported versions"). The version engine cannot compare prose, so the
+result is `needs_review`. With `--auto-resolve` (or `CVEPRIO_AUTO_RESOLVE=on`) and a model
+configured, `cveprio/llm/versions.py` handles exactly those statements:
+
+1. **Input:** only the public statement text and the product name from the CVE record, for
+   records whose product matches an inventory item. The installed version is never sent.
+2. **Output:** per statement, version ranges (`at_least`, `below`/`at_most`), a status, any stated
+   conditions, and a `quote`.
+3. **Checks (code):** the quote must be in the statement; every range version must occur in the
+   quote as a whole version (`6.5` inside `26.6.5` is rejected) and be comparable; a range cannot
+   have both kinds of upper bound. Failing readings are discarded and listed in the report.
+4. **Comparison (code):** the installed version is compared with the ranges by the same version
+   engine as everywhere else.
+5. **Asymmetric acceptance:** a reading may confirm *affected* on its own (a wrong "affected" costs an
+   unneeded patch). It may contribute to *not affected* only if it has no conditions, the statement
+   has no open-ended wording (old, older, earlier, unsupported, any, …), every version number in
+   the statement is used by a range (nothing dropped), **and** a structured source (NVD ranges or
+   another structured CNA statement) independently says not affected, with no source saying
+   affected. Otherwise the result stays `needs_review`, with the reason shown.
+
+Results that relied on a reading are flagged (`resolved_with_ai`) and labelled "AI-read wording" in
+the dashboard. Prompt version `2026-10-12.1`. This feature was designed after seeing held-out case
+h05, so h05 no longer tests it independently; it has not yet been evaluated with a real model.
 
 ## Distribution advisories (0.2.0)
 

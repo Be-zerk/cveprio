@@ -262,6 +262,8 @@ class ApplicabilityResult(BaseModel):
     reasons: list[str]
     evidence_ids: list[str] = Field(default_factory=list)
     fixed_version_hint: str | None = None
+    # True when the outcome relied on an AI reading of a free-text version statement (auto-resolution).
+    resolved_with_ai: bool = False
     # Context of the asset, copied from the inventory so reports can explain exposure specifically.
     asset_criticality: str | None = None
     asset_internet_facing: bool | None = None
@@ -353,6 +355,19 @@ class Decision(BaseModel):
     actions: list[str]
 
 
+class VersionReadingLog(BaseModel):
+    """What the AI read from free-text version statements (auto-resolution), and what the checks rejected."""
+
+    status: str  # ok | not_run | failed | invalid_output
+    provider: str
+    model: str | None = None
+    scripted: bool = False
+    prompt_version: str
+    detail: str = ""
+    accepted: list[dict[str, Any]] = Field(default_factory=list)  # statement, quote, status, ranges, may_clear
+    rejected: list[dict[str, str]] = Field(default_factory=list)  # statement, problem
+
+
 class CveReport(BaseModel):
     schema_version: str = "1.0"
     generated_at: datetime
@@ -368,6 +383,7 @@ class CveReport(BaseModel):
     context_supplied: bool
     summary: list[str] = Field(default_factory=list)  # 1–3 plain sentences specific to this CVE and your systems
     discovered_by: list[str] = Field(default_factory=list)  # empty = supplied by the user (watchlist/CLI)
+    version_reading: VersionReadingLog | None = None  # set only when auto-resolution ran
 
 
 class DiscoveryQuery(BaseModel):
