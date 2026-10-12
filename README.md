@@ -100,15 +100,18 @@ narrow, labelled ways:
    affected system is highly exposed and severity is high or critical). Code: `exploitation_level()`
    in [cveprio/prioritize.py](cveprio/prioritize.py).
 2. **Reading vendor version wording (only with `--auto-resolve`).** Some records state versions in
-   prose ("All versions prior to 26.6.5"), which otherwise ends in *needs review*. The model turns
-   the wording into version ranges with an exact quote; the checker verifies the quote and every
-   version in it, and **code** does the comparison. A reading can confirm *affected* on its own,
-   but it can **never mark a system *not affected* unless a structured source (such as NVD's
-   ranges) independently agrees**, and open-ended wording ("all older versions") or stated
-   conditions block clearing entirely. Code: [cveprio/llm/versions.py](cveprio/llm/versions.py);
+   prose ("All versions prior to 26.6.5"), which otherwise ends in *needs review*. Common wordings
+   are read by **code**, from exact patterns that must match the whole sentence (no AI involved).
+   Only unusual wording goes to the model, which returns version ranges with an exact quote; the
+   checker verifies the quote and every version in it, and code does the comparison. A model's
+   reading can confirm *affected*, but it can **never mark a system *not affected* unless a
+   structured source (such as NVD's ranges) independently agrees**. It cannot clear anything by
+   calling versions "fixed", and open-ended wording ("all older versions") or stated conditions
+   block clearing entirely. Reading the wording also never overrides another source's open
+   question (such as NVD's "only with Oracle JDK"). Code: [cveprio/llm/versions.py](cveprio/llm/versions.py);
    adversarial tests: [tests/test_auto_resolve.py](tests/test_auto_resolve.py).
 
-Both are shown in the report as AI judgements. Only public CVE text is sent to the model: never
+Model judgements from either path are labelled as such in the report. Only public CVE text is sent to the model: never
 the inventory, system names, business context or installed versions.
 
 More: [architecture](docs/ARCHITECTURE.md) · [prioritization rules](docs/PRIORITIZATION.md) ·
@@ -133,7 +136,7 @@ All from [examples/demo-output/report.md](examples/demo-output/report.md); syste
 | 14 development cases ([results](evaluation/results/eval-none.md)) | Rules within the reference set 13/14; CVSS-only baseline 6/14; applicability 14/14 | Same CVEs used while building the tool; labels drafted with AI help and reviewed by the author |
 | 20 held-out recent CVEs ([results](evaluation/results/eval-holdout-none.md)) | **4 of 20 labelled so far**: applicability 3/4, no unsafe answers, decisions 2/4 | Far too few to measure accuracy; one label fix after the first run is disclosed |
 | Local model qwen2.5:3b ([results](docs/EVALUATION.md#recorded-results-2026-10-10)) | Usability rating matched the facts 0/6; priority never changed by the model | A small CPU model; grounding passes do not mean the reasoning is correct |
-| Auto-resolve with qwen2.5:3b, 3 CVEs with vendor wording ([results](docs/EVALUATION.md#auto-resolution-with-a-real-model-2026-10-12-development-result)) | No unsafe result; resolved 0 of 2 *needs review* cases (the checks rejected or contained every bad reading) | Development result on the cases that shaped the feature; a stronger model is untested |
+| Auto-resolve (`--auto-resolve`) ([results](docs/EVALUATION.md#auto-resolution-2026-10-12-development-result)) | Applicability 14/14 (dev) and 4/4 (held-out), 0 unsafe; resolves ScreenConnect (h05) by exact wording pattern. The small AI model resolved nothing; every misreading was rejected or contained | Development result: designed after seeing h05; needs new held-out cases |
 
 None of this is a measure of real-world predictive accuracy. Details: [docs/EVALUATION.md](docs/EVALUATION.md).
 

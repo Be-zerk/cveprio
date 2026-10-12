@@ -58,6 +58,7 @@ class Verdict:
     evidence_id: str
     fixed_hint: str | None = None
     ai: bool = False  # depends on an AI reading of a free-text version statement
+    wording: bool = False  # depends on reading free-text wording (by rules or AI) instead of a structured range
 
 
 @dataclass
@@ -154,6 +155,7 @@ def _eval_entry(item: SoftwareItem, entry: AffectedEntry, readings: Mapping[tupl
                 ) -> Verdict:
     verdicts = []
     ai_notes: list[str] = []
+    ai_used = False
     for s in entry.versions:
         v = _spec_verdict(item.version, s)
         reading = (readings or {}).get((entry.evidence_id, (s.version or "").strip()[:500]))
@@ -161,12 +163,13 @@ def _eval_entry(item: SoftwareItem, entry: AffectedEntry, readings: Mapping[tupl
             verdict, why = reading.evaluate(item.version, s.version_type)
             v = (verdict, why, None)
             ai_notes.append(why)
+            ai_used = ai_used or reading.source == "ai"
         verdicts.append(v)
     covered = [(v, r, f) for v, r, f in verdicts if v is not None]
     label = f"{entry.provider} '{entry.product or entry.package_name}'"
     out = _combine_entry(entry, covered, label)
     if ai_notes:
-        out.ai = True
+        out.ai, out.wording = ai_used, True
         if not any(n in out.reason for n in ai_notes):
             out.reason = f"{'; '.join(ai_notes)}; so: {out.reason}"
     return out
@@ -431,6 +434,13 @@ def assess(bundle: EvidenceBundle, asset_id: str, item: SoftwareItem,
         return result(ApplicabilityStatus.NEEDS_REVIEW, ["Sources disagree for this version:", *reasons], ids)
     if distro and kinds != {NOT_AFFECTED}:
         return result(ApplicabilityStatus.NEEDS_REVIEW, reasons, ids)
+    if AFFECTED in kinds and all(v.wording for v in acc.verdicts if v.verdict == AFFECTED) \
+            and any(v.verdict == AMBIGUOUS and not v.wording for v in acc.verdicts):
+        # Reading a vendor's wording settles only the wording's ambiguity, not another source's open question
+        # (for example a platform condition the inventory does not record).
+        return result(ApplicabilityStatus.NEEDS_REVIEW, [*reasons, "The vendor's wording says this version is "
+                      "affected, but another source raises a separate open question, so a person should check it."],
+                      ids)
     if AFFECTED in kinds:
         firm = [v for v in acc.verdicts if v.verdict == AFFECTED and not v.ai]
         hit = (firm or [v for v in acc.verdicts if v.verdict == AFFECTED])[0]

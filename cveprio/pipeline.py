@@ -14,7 +14,7 @@ from cveprio.discovery import discover
 from cveprio.llm import analyze
 from cveprio.llm.providers import NoProvider, Provider, ProviderError, make_provider
 from cveprio.llm.versions import PROMPT_VERSION as VERSION_PROMPT_VERSION
-from cveprio.llm.versions import Reading, free_text_statements, read_versions
+from cveprio.llm.versions import Reading, free_text_statements, read_by_rules, read_versions
 from cveprio.models import (
     ApplicabilityResult,
     Asset,
@@ -56,24 +56,42 @@ class Runtime:
 
 def _read_version_statements(bundle: EvidenceBundle, assets: dict[str, Asset], rt: Runtime,
                              ) -> tuple[VersionReadingLog | None, dict[tuple[str, str], Reading] | None]:
-    """Ask the model to read free-text version statements for products in the inventory (auto-resolution).
+    """Read free-text version statements for products in the inventory (auto-resolution).
 
-    Only the public statements and product names are sent; installed versions stay local.
+    Exact wording patterns are read by code first; only the rest goes to the model, if one is
+    configured. Only the public statements and product names are sent; installed versions stay local.
     """
     items = [item for a in assets.values() for item in a.software]
     matched = {e.evidence_id for e in bundle.affected if any(_identity_match(i, e)[0] for i in items)}
     statements = [s for s in free_text_statements(bundle) if s.evidence_id in matched]
     if not statements:
         return None, None
-    out = read_versions(statements, rt.provider, bundle.cve_id)
+    readings: dict[tuple[str, str], Reading] = {}
+    rest = []
+    for s in statements:
+        r = read_by_rules(s)
+        if r:
+            readings[(s.evidence_id, s.text)] = r
+        else:
+            rest.append(s)
+    status, provider, model, scripted, detail, rejected = "ok", "rules", None, False, "", []
+    if rest and not rt.provider_error and rt.provider.name != "none":
+        out = read_versions(rest, rt.provider, bundle.cve_id)
+        readings.update(out.readings)
+        status, model, scripted, detail = out.status, out.model, out.scripted, out.detail
+        provider = f"rules + {out.provider}"
+        rejected = [{"statement": t, "problem": p} for t, p in out.rejected]
+    elif rest:
+        detail = f"{len(rest)} statement(s) need an AI model or a person; none is configured"
+        rejected = [{"statement": s.text, "problem": "no exact wording pattern matched and no model configured"}
+                    for s in rest]
     log = VersionReadingLog(
-        status=out.status, provider=out.provider, model=out.model, scripted=out.scripted,
-        prompt_version=VERSION_PROMPT_VERSION, detail=out.detail,
+        status=status, provider=provider, model=model, scripted=scripted, prompt_version=VERSION_PROMPT_VERSION,
+        detail=detail, rejected=rejected,
         accepted=[{"statement": r.statement.text, "quote": r.quote, "status": r.status, "conditions": r.conditions,
-                   "ranges": r.describe(), "may_clear": r.may_clear, "evidence_id": r.statement.evidence_id}
-                  for r in out.readings.values()],
-        rejected=[{"statement": t, "problem": p} for t, p in out.rejected])
-    return log, out.readings
+                   "ranges": r.describe(), "may_clear": r.may_clear, "evidence_id": r.statement.evidence_id,
+                   "source": r.source, "repairs": r.repairs} for r in readings.values()])
+    return log, readings
 
 
 def make_runtime(settings: Settings, *, offline: bool, provider_name: str | None = None,
@@ -137,8 +155,7 @@ def run(cve_ids: list[str], rt: Runtime, inventory: Inventory | None = None,
                 bundle.evidence.append(ev)
                 osv_ids[(m.asset_id, m.purl)] = ev.id
         reading_log, readings = None, None
-        if assets and rt.settings.auto_resolve and not rt.provider_error and rt.provider.name != "none" \
-                and bundle.record_state.value == "published":
+        if assets and rt.settings.auto_resolve and bundle.record_state.value == "published":
             reading_log, readings = _read_version_statements(bundle, assets, rt)
         if assets:
             results = [assess(bundle, a.id, item, osv_ids.get((a.id, item.purl or "")), readings)

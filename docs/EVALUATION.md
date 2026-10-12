@@ -120,27 +120,41 @@ free-text ranges like h05 should be built and tested on *other* CVEs, then re-ch
 The severity-only baseline matched 2 of 4. It got h03 and h04 "right" only because it ignores
 context and applicability, and it said P1 or P2 for both not-affected systems.
 
-## Auto-resolution with a real model (2026-10-12, development result)
+## Auto-resolution (2026-10-12, development result)
 
-The opt-in AI reading of version statements (`--auto-resolve`, see docs/ARCHITECTURE.md) was run with
-qwen2.5:3b via Ollama on a laptop CPU, on every recorded CVE that has free-text version wording:
-Spring4Shell (demo, installed 5.3.17), h03 Adobe Commerce (2.4.4) and h05 ScreenConnect (26.6.5.9742).
-Only the version-reading call was made (8–60 seconds per CVE).
+`--auto-resolve` reads free-text version wording: first by exact wording patterns in code, then, for
+anything left, by the configured model under strict checks (docs/ARCHITECTURE.md).
 
-| Run | Spring4Shell | h03 Adobe Commerce | h05 ScreenConnect |
+**With exact wording patterns only (no model):** `cveprio evaluate --auto-resolve` and
+`cveprio evaluate --set holdout --auto-resolve`.
+
+| Set | Applicability exact | Unsafe (definite but wrong) | Decisions in reference set |
 |---|---|---|---|
-| Prompt `2026-10-12.1` | rejected: both upper-bound kinds filled | all 3 statements rejected: same | rejected: wrote `default` as a lower bound |
-| Prompt `2026-10-12.2` (added an example and "never write words in a bound") | rejected: used `5.3.0`, which is not in the text (`5.3.X`) | 3 statements accepted, read a version **list** as "below 2.4.9" (drops 2.4.9 itself, a misreading); marked *cannot clear* because not every listed version was used | rejected: both upper-bound kinds filled again |
-| Outcome | stays *needs review* | stays *affected* (already affected from structured data) | stays *needs review* |
+| Development (14) | 14/14 (unchanged) | 0 | 13/14 (unchanged) |
+| Held-out, labelled (4) | **4/4** (was 3/4) | 0 | **3/4** (was 2/4) |
 
-- **Safety held:** across 6 real answers, nothing produced or contributed to a "not affected", and no
-  decision changed for the worse. The checks caught every malformed or unsupported reading, and the
-  coverage rule stopped the misread Adobe list from ever clearing a version.
-- **Value with this model: none yet.** 0 of the 2 *needs review* cases were resolved; the small
-  model's output format is inconsistent between runs.
-- **Not independent:** prompt `2026-10-12.2` was written after seeing the first run on these same three
-  cases, and h05 motivated the feature. A stronger model and new held-out cases are needed before
-  claiming the feature resolves anything in practice.
+- h05 ScreenConnect: "All versions prior to 26.6.5" is read by code as below 26.6.5; 26.6.5.9742 is
+  outside, and NVD agrees, so *not affected*, matching the author's label.
+- Spring4Shell (dev): the vendor wording covers 5.3.17, but NVD adds an Oracle JDK condition the
+  inventory does not record, so it correctly stays *needs review*. An earlier version of this
+  feature answered *affected* here and was fixed: reading the wording may settle only the wording's
+  own ambiguity, never another source's open question.
+
+**With the small model (qwen2.5:3b) on wording the patterns cannot read.** ScreenConnect and Spring were
+also tried with the model before the patterns existed; after that, the only such case is h03 Adobe
+Commerce, whose statements are lists of exact *fixed* builds ("2.4.9-2026-aug, 2.4.8-2026-aug, …").
+
+| Prompt | What the model did | What the checks did |
+|---|---|---|
+| `2026-10-12.1` | filled both upper-bound kinds (all three CVEs); wrote `default` as a bound (ScreenConnect) | rejected every answer |
+| `2026-10-12.2` (worked example) | read the fixed-build list as "affected below 2.4.9" (wrong status and range); used `5.3.0`, not in the text (Spring) | rejected or contained: could only confirm *affected* |
+| `2026-10-12.3` (record status sent) | correct status, but read the fixed list as "**everything below 2.4.9 is fixed**", the dangerous misreading (3 runs) | blocked: model readings of fixed versions can never clear; Adobe stays *affected* |
+
+- **Safety held in every run:** no model answer produced or contributed to a wrong "not affected".
+  Each failure mode seen led to a rule that is now enforced in code and tested.
+- **Value of the small model: none here.** The patterns, not the model, resolved the case that changed.
+- **Not independent:** the patterns and rules were developed while looking at these cases (h05
+  motivated the feature). New held-out cases with free-text wording are needed to measure it.
 
 ## What these results can and cannot show
 
