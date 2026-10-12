@@ -16,6 +16,86 @@ Requires Python ≥ 3.11 (CI runs 3.11, 3.12 and 3.13). Installing downloads pac
 after that, the offline demo needs no network. For the exact dependency versions used during
 development: `pip install -r requirements-lock.txt && pip install -e . --no-deps`.
 
+## Use it on your own systems, step by step
+
+The demo uses recorded data and a fictional company. To check your own software against live data:
+
+**1. Install** (above), then stay in the `cveprio` folder with the virtualenv active.
+
+**2. Describe your systems.** Start from a short inventory file. Name it `*.local.json` so Git
+ignores it and your system list is never committed by accident:
+
+```bash
+cp examples/inventory.json my-systems.local.json
+```
+
+Open `my-systems.local.json`, delete the fictional assets, and add yours. Remove the
+`"fictional": true` line and the `watchlist`. A minimal file:
+
+```json
+{
+  "organization": "My company",
+  "assets": [
+    {
+      "id": "web-01",
+      "name": "Public website",
+      "criticality": "high",
+      "internet_facing": true,
+      "software": [
+        {"vendor": "F5", "product": "nginx", "version": "1.24.0",
+         "cpe": "cpe:2.3:a:f5:nginx:1.24.0:*:*:*:*:*:*:*"}
+      ]
+    }
+  ]
+}
+```
+
+- `criticality` is `low`, `medium`, `high` or `critical`; `internet_facing` is `true` or `false`.
+  Leave a field out if you don't know it: missing context is reported as unknown, never guessed.
+- A `cpe` (look it up on [NVD's CPE search](https://nvd.nist.gov/products/cpe/search)) or a `purl`
+  (for packages, e.g. `pkg:pypi/requests@2.31.0`) lets the tool find CVEs automatically.
+- For a Linux package, add `"distro": "ubuntu:24.04"` (or `rhel:9`) and the distribution's own
+  version string (see [Inventory format](#inventory-format)).
+- Already have an SBOM? Skip the inventory and use `--sbom` ([below](#using-an-sbom-instead-of-a-hand-written-list)).
+
+**3. Optional: get a free NVD API key.** It raises NVD's rate limit tenfold, so lookups are much
+faster. [Request one](https://nvd.nist.gov/developers/request-an-api-key), then:
+
+```bash
+cp .env.example .env        # then put your key after NVD_API_KEY= in .env
+cveprio check-config        # confirms the key is loaded (shown masked)
+```
+
+**4. Run it.** Either let the tool find CVEs from your software list, or name the CVEs you care about:
+
+```bash
+cveprio analyze --inventory my-systems.local.json --discover
+cveprio analyze CVE-2024-6387 CVE-2024-3094 --inventory my-systems.local.json
+```
+
+**5. Read the results:**
+
+```bash
+cveprio serve out/latest    # open http://127.0.0.1:8765/dashboard.html
+```
+
+`out/latest/report.md` and `report.json` hold the same results. Treat *needs review* and
+*provisional* decisions as tasks for a person, and check the evidence before acting: this is a
+prototype (see the README's limitations).
+
+**6. Optional: turn on the AI analysis with a local model.**
+
+1. Install Ollama from [ollama.com](https://ollama.com) and start it.
+2. Download a model: `ollama pull qwen2.5:3b` (about 1.9 GB).
+3. In `.env`, set `CVEPRIO_LLM_PROVIDER=ollama` and `CVEPRIO_LLM_MODEL=qwen2.5:3b`.
+4. Run as in step 4; the AI section appears on each card.
+
+Be realistic about quality: in this project's evaluation, qwen2.5:3b on a laptop CPU was slow
+(several minutes per CVE) and missed obvious attack evidence (see [EVALUATION.md](EVALUATION.md)).
+A larger model may do better but has not been tested here. Whatever the model, the priority still
+comes from the rules, and the AI's claims are checked against their sources. Read
+[Using Ollama safely](MODEL_PROVIDERS.md#using-ollama-safely) first.
+
 ## Live use
 
 ```bash

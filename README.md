@@ -4,6 +4,7 @@
 
 [![tests](https://github.com/Be-zerk/cveprio/actions/workflows/tests.yml/badge.svg)](https://github.com/Be-zerk/cveprio/actions/workflows/tests.yml)
 ![Python 3.11 | 3.12 | 3.13](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13-blue)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 A command-line tool and dashboard that decides which vulnerabilities to fix first, and shows its
 working. Give it CVE IDs and a list of your systems (or an SBOM). It collects evidence from CVE.org,
@@ -51,7 +52,11 @@ Installation needs network access to download packages. **The demo itself makes 
 requests**: it replays real API responses recorded on 2026-10-10 (`fixtures/demo/`). Every output is
 labelled `OFFLINE DEMO`. The company inventory is fictional, and the AI section shows **scripted
 examples written for the demo**, labelled as such, not model output. Walkthrough:
-[docs/DEMO.md](docs/DEMO.md). Live use, SBOMs and configuration: [docs/USAGE.md](docs/USAGE.md).
+[docs/DEMO.md](docs/DEMO.md).
+
+**Use it on your own systems:** follow the [step-by-step guide](docs/USAGE.md#use-it-on-your-own-systems-step-by-step).
+It covers describing your systems, an optional free NVD key, running against live data, and optionally a
+local AI model with Ollama ([how to run Ollama safely](docs/MODEL_PROVIDERS.md#using-ollama-safely)).
 
 ## What it does
 
@@ -157,3 +162,8 @@ applicability matching and transparent rules. The project is not endorsed by Mat
 
 *This product uses the NVD API but is not endorsed or certified by the NVD.* Source attributions
 appear in every report.
+
+## License
+
+[MIT](LICENSE) © 2026 Suayip Ada. Third-party data keeps its own terms (NVD, CISA KEV, FIRST EPSS,
+OSV.dev, Ubuntu, Red Hat); see the attributions in each report.
