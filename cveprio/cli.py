@@ -258,16 +258,18 @@ def build_parser() -> argparse.ArgumentParser:
     a.add_argument("--max-cves", type=int, default=150, help="cap on discovered CVEs to analyse (default 150)")
     a.add_argument("--out", default="out/latest")
     a.add_argument("--auto-resolve", action="store_true", dest="auto_resolve",
-                   help="let the configured AI model read free-text version statements to resolve 'needs review' "
-                        "(an AI reading alone never marks a system 'not affected'; off by default)")
+                   help="read vendors' free-text version wording to resolve 'needs review': exact patterns in "
+                        "code first, then the configured model (a model reading alone never marks a system "
+                        "'not affected'; off by default)")
     a.set_defaults(func=cmd_analyze)
 
     d = sub.add_parser("demo", help="offline demonstration with fictional inventory")
     d.add_argument("--llm", default="scripted", choices=["none", "scripted", "ollama", "openai_compatible", "anthropic"])
     d.add_argument("--out", default="out/demo")
     d.add_argument("--auto-resolve", action="store_true", dest="auto_resolve",
-                   help="let the configured AI model read free-text version statements to resolve 'needs review' "
-                        "(an AI reading alone never marks a system 'not affected'; off by default)")
+                   help="read vendors' free-text version wording to resolve 'needs review': exact patterns in "
+                        "code first, then the configured model (a model reading alone never marks a system "
+                        "'not affected'; off by default)")
 
     d.set_defaults(func=cmd_demo)
 
@@ -287,8 +289,9 @@ def build_parser() -> argparse.ArgumentParser:
                    help="dev = the original 14 cases; holdout = the held-out set (needs human labels)")
     e.add_argument("--out", default="evaluation/results")
     e.add_argument("--auto-resolve", action="store_true", dest="auto_resolve",
-                   help="let the configured AI model read free-text version statements to resolve 'needs review' "
-                        "(an AI reading alone never marks a system 'not affected'; off by default)")
+                   help="read vendors' free-text version wording to resolve 'needs review': exact patterns in "
+                        "code first, then the configured model (a model reading alone never marks a system "
+                        "'not affected'; off by default)")
 
     e.set_defaults(func=cmd_evaluate)
 

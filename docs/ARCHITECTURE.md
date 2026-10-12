@@ -106,32 +106,43 @@ removed, and the reason is recorded per claim. This is a grounding check, not en
 can quote a true sentence and still draw a wrong conclusion. The check catches invented details
 and mis-attributed sources, which were the failures actually observed.
 
-## AI reading of version statements (auto-resolution, opt-in)
+## Reading version wording (auto-resolution, opt-in)
 
 Some CNA records give affected versions as prose ("All versions prior to 26.6.5", "5.3.x prior to
 5.3.18+ and all old and unsupported versions"). The version engine cannot compare prose, so the
-result is `needs_review`. With `--auto-resolve` (or `CVEPRIO_AUTO_RESOLVE=on`) and a model
-configured, `cveprio/llm/versions.py` handles exactly those statements:
+result is `needs_review`. With `--auto-resolve` (or `CVEPRIO_AUTO_RESOLVE=on`),
+`cveprio/llm/versions.py` handles statements about products in the inventory in two stages:
 
-1. **Input:** only the public statement text and the product name from the CVE record, for
-   records whose product matches an inventory item. The installed version is never sent.
-2. **Output:** per statement, version ranges (`at_least`, `below`/`at_most`), a status, any stated
-   conditions, and a `quote`.
-3. **Checks (code):** the quote must be in the statement; every range version must occur in the
-   quote as a whole version (`6.5` inside `26.6.5` is rejected) and be comparable; a range cannot
-   have both kinds of upper bound. Failing readings are discarded and listed in the report.
-4. **Comparison (code):** the installed version is compared with the ranges by the same version
-   engine as everywhere else.
-5. **Asymmetric acceptance:** a reading may confirm *affected* on its own (a wrong "affected" costs an
-   unneeded patch). It may contribute to *not affected* only if it has no conditions, the statement
-   has no open-ended wording (old, older, earlier, unsupported, any, …), every version number in
-   the statement is used by a range (nothing dropped), **and** a structured source (NVD ranges or
-   another structured CNA statement) independently says not affected, with no source saying
-   affected. Otherwise the result stays `needs_review`, with the reason shown.
+1. **Exact wording patterns (code, no AI).** "prior to / before / earlier than X", "through / up to
+   and including X", "X and earlier", "A up to and including B", "5.3.x prior to 5.3.18", in lists
+   joined by commas or "and", optionally after the product name and "all versions". The **whole**
+   statement must match; any extra words (a platform, a feature, an exception) mean no reading. A
+   trailing "and all old/older/unsupported versions" is accepted, but then the reading can only
+   confirm *affected*. Such readings are treated like structured ranges and work without any model.
+2. **Model reading (only what the patterns cannot read, and only if a model is configured).** The
+   model gets the statement, the product name and the record's own status for the statement
+   (affected or fixed), never the inventory or installed version. It returns ranges, status,
+   conditions and a quote. Code checks that the quote is in the statement, that every version occurs
+   in the quote as a whole version, and that the status matches the record's. Two harmless slips are
+   repaired, only for *affected* statements and only by widening the range (which can only make "not
+   affected" harder): a non-version lower bound such as `default` is dropped, and if both upper-bound
+   kinds are given, the one covering more versions is kept. Anything else is rejected.
 
-Results that relied on a reading are flagged (`resolved_with_ai`) and labelled "AI-read wording" in
-the dashboard. Prompt version `2026-10-12.1`. This feature was designed after seeing held-out case
-h05, so h05 no longer tests it independently; it has not yet been evaluated with a real model.
+**Acceptance rules (code):**
+- Versions are always compared in code.
+- A model reading may confirm *affected* on its own (a wrong "affected" costs an unneeded patch).
+- A model reading may contribute to *not affected* only by showing the version is **outside an
+  affected range**, never by calling versions "fixed"; only with no conditions, no open-ended wording
+  (old, older, earlier, unsupported, any, …) and every version in the statement used; and only when a
+  structured source independently says not affected and none says affected.
+- A reading of the wording (by pattern or model) never overrides another source's open question,
+  such as an NVD platform condition the inventory does not record: the result stays `needs_review`.
+
+Results that relied on a model reading are flagged `resolved_with_ai`, labelled "AI-read wording" in
+the dashboard and listed under "What's uncertain"; every reading and rejection is listed in the report.
+Model prompt version `2026-10-12.3`. Git commit IDs listed as versions are not sent. Results:
+docs/EVALUATION.md, "Auto-resolution". The feature was designed after held-out case h05, which
+therefore does not test it independently.
 
 ## Distribution advisories (0.2.0)
 

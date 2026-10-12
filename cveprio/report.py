@@ -147,12 +147,13 @@ def plain_reason(line: str) -> str:
     rest = re.sub(r"exact (?:CPE )?version (\S+)(?: → affected)?", r"version \1 is listed as affected", rest)
     rest = re.sub(r"upper bound '([^']+)' is not a comparable version", r"its upper version limit ('\1') is not a "
                   "normal version number", rest)
-    ai = re.match(r'AI reading of the vendor text "(.+?)" \((\w+): (.+?)\): (.+?)(?:; so: (.*))?$', rest)
+    ai = re.match(r'(AI|Rule-based) reading of the vendor text "(.+?)" \((\w+): (.+?)\): (.+?)(?:; so: (.*))?$', rest)
     if ai:
-        quote, _, ranges, outcome, then = ai.groups()
+        who, quote, _, ranges, outcome, then = ai.groups()
         outcome = outcome.replace("is inside", "falls inside it").replace("is outside", "falls outside it")
         tail = f" ({_plain_default(then)})" if then else ""
-        rest = f"an AI read the vendor's wording \"{quote}\" as {ranges}; {outcome}{tail}"
+        reader = "an AI read" if who == "AI" else "the tool read"
+        rest = f"{reader} the vendor's wording \"{quote}\" as {ranges}; {outcome}{tail}"
     rest = rest.replace("OSV lists", "lists").replace(" → affected", "")
     return f"{_plain_source(src)}: {rest}"
 

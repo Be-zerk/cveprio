@@ -31,7 +31,7 @@ from cveprio.llm.validate import InvalidModelOutput, extract_json
 from cveprio.models import EvidenceBundle
 from cveprio.versions import compare, parse_simple_constraint
 
-PROMPT_VERSION = "2026-10-12.1"
+PROMPT_VERSION = "2026-10-12.3"
 AFFECTED, NOT_AFFECTED, AMBIGUOUS = "affected", "not_affected", "ambiguous"
 
 SYSTEM_PROMPT = """You convert software vendors' version statements into version ranges.
@@ -44,12 +44,21 @@ Rules:
   "through X" and "up to and including X" mean at_most X; "5.3.x prior to 5.3.18" means at_least
   5.3, below 5.3.18.
 - Every version you put in a range must appear in the statement exactly as written.
-- "status" is "affected" if the statement lists affected versions, "unaffected" if it lists fixed
-  or unaffected versions, and "unclear" if you cannot tell.
+- "status" must be the statement's "record_status" (the CVE record already says whether the
+  statement lists affected or fixed versions); use "unclear" only if the ranges cannot be read.
 - "conditions": any requirement besides the version (platform, configuration, enabled feature,
   deployment type), copied from the statement; "" if there is none.
 - "quote": the exact words of the statement your ranges come from, copied character for character.
-- If the statement cannot be turned into ranges, return status "unclear" and no ranges. Never guess."""
+- If the statement cannot be turned into ranges, return status "unclear" and no ranges. Never guess.
+- Every bound is either a version copied from the statement or the empty string "". Never write
+  words such as "default", "none", "any" or "n/a" in a bound.
+- Fill "below" OR "at_most", never both; leave the other "".
+
+Example. Statement: "Versions 2.x prior to 2.4.7, and 3.0 through 3.1.2"
+{"statements": [{"id": "S1", "quote": "Versions 2.x prior to 2.4.7, and 3.0 through 3.1.2",
+  "status": "affected", "conditions": "",
+  "ranges": [{"at_least": "", "below": "2.4.7", "at_most": ""},
+             {"at_least": "3.0", "below": "", "at_most": "3.1.2"}]}]}"""
 
 RANGE: dict[str, Any] = {
     "type": "object",
@@ -83,6 +92,7 @@ _OPEN_ENDED = re.compile(r"\b(old|older|oldest|earlier|previous|prior (?:version
                          r"and (?:above|later|newer)|or (?:above|later|newer)|onwards?)\b", re.IGNORECASE)
 
 
+_COMMIT = re.compile(r"[0-9a-f]{12,40}", re.IGNORECASE)  # git commit IDs are not version wording
 _PLACEHOLDERS = {"n/a", "na", "*", "-", "unspecified", "unknown", "all", "all versions"}
 
 
@@ -103,6 +113,7 @@ class Statement:
     product: str
     text: str
     scheme: str | None = None
+    status: str = "affected"  # the record's status for this statement
 
 
 @dataclass
@@ -113,6 +124,8 @@ class Reading:
     conditions: str
     ranges: list[tuple[str, str, bool]]  # (at_least, upper, upper_inclusive); "" = unbounded
     may_clear: bool
+    source: str = "ai"  # "rules" (exact wording pattern) or "ai" (model reading, checked)
+    repairs: list[str] = field(default_factory=list)  # cautious fixes applied to a model's answer
 
     def describe(self) -> str:
         parts = []
@@ -123,7 +136,8 @@ class Reading:
 
     def evaluate(self, version: str, scheme: str | None) -> tuple[str | None, str]:
         """(verdict or None if the statement does not cover this version, reason)."""
-        head = f'AI reading of the vendor text "{self.quote}" ({self.status}: {self.describe()})'
+        who = "Rule-based" if self.source == "rules" else "AI"
+        head = f'{who} reading of the vendor text "{self.quote}" ({self.status}: {self.describe()})'
         if self.status == "unclear" or not self.ranges:
             return AMBIGUOUS, f"{head}: unclear, left for review"
         hits = []
@@ -164,18 +178,19 @@ def free_text_statements(bundle: EvidenceBundle) -> list[Statement]:
         for spec in entry.versions:
             text = (spec.version or "").strip()
             if not text or text.lower() in _PLACEHOLDERS or spec.less_than or spec.less_than_or_equal \
-                    or parse_simple_constraint(text):
+                    or parse_simple_constraint(text) or (spec.version_type or "").lower() == "git" \
+                    or _COMMIT.fullmatch(text):
                 continue
             if compare(text, text, spec.version_type) is not None or (entry.evidence_id, text) in seen:
                 continue
             seen.add((entry.evidence_id, text))
             out.append(Statement(f"S{len(out) + 1}", entry.evidence_id, entry.product or entry.package_name or "",
-                                 text[:500], spec.version_type))
+                                 text[:500], spec.version_type, (spec.status or "affected").lower()))
     return out
 
 
 def build_user_prompt(statements: list[Statement]) -> str:
-    data = [{"id": s.id, "product": s.product, "statement": s.text} for s in statements]
+    data = [{"id": s.id, "product": s.product, "record_status": s.status, "statement": s.text} for s in statements]
     payload = json.dumps(data, ensure_ascii=False).replace("<", "\\u003c").replace(">", "\\u003e")
     return f"Convert each statement into version ranges.\n<statements>\n{payload}\n</statements>"
 
@@ -186,13 +201,28 @@ def _check(stmt: Statement, item: dict[str, Any]) -> Reading | str:
     status = str(item.get("status") or "")
     if status not in {"affected", "unaffected", "unclear"}:
         return f"unknown status '{status[:20]}'"
+    if stmt.status in {"affected", "unaffected"} and status not in {stmt.status, "unclear"}:
+        # The record itself says whether this statement lists affected or fixed versions; the model may not flip it.
+        return f"it calls the statement '{status}', but the record marks it '{stmt.status}'"
     if not quote or _norm(quote) not in _norm(stmt.text):
         return "its quote is not in the vendor statement"
     ranges: list[tuple[str, str, bool]] = []
+    repairs: list[str] = []
     for r in item.get("ranges") or []:
         lo, below, at_most = (str(r.get(k) or "").strip() for k in ("at_least", "below", "at_most"))
+        # Harmless slips are repaired only by widening an *affected* range, which can only make
+        # "not affected" harder to reach. Anything else is rejected.
+        if status == "affected" and lo.lower() in _NOT_A_VERSION:
+            repairs.append(f"ignored lower bound '{lo[:20]}' (not a version), so the range starts at the beginning")
+            lo = ""
         if below and at_most:
-            return "a range has both an exclusive and an inclusive upper bound"
+            if status != "affected" or compare(below, at_most, stmt.scheme) is None:
+                return "a range has both an exclusive and an inclusive upper bound"
+            if (compare(below, at_most, stmt.scheme) or 0) > 0:
+                at_most = ""
+            else:
+                below = ""
+            repairs.append("both upper-bound kinds were given; kept the one covering more versions")
         for v in (lo, below, at_most):
             if v and (not _contains_version(v, quote) or compare(v, v, stmt.scheme) is None):
                 return f"version '{v[:40]}' is not in its quote or is not a comparable version"
@@ -200,9 +230,61 @@ def _check(stmt: Statement, item: dict[str, Any]) -> Reading | str:
     conditions = str(item.get("conditions") or "").strip()
     used = {_norm(v) for lo, up, _ in ranges for v in (lo, up) if v}
     in_statement = {_norm(v.rstrip("+")) for v in _VERSION_TOKEN.findall(stmt.text)}
-    may_clear = (status in {"affected", "unaffected"} and bool(ranges) and not conditions
+    # A model may help clear a version only by showing it is *outside an affected* range. Reading a list of
+    # fixed versions as a range ("everything below 2.4.9 is fixed") is the risky misreading seen in testing,
+    # so "unaffected" readings from a model never clear anything.
+    may_clear = (status == "affected" and bool(ranges) and not conditions
                  and not _OPEN_ENDED.search(stmt.text) and in_statement <= used)
-    return Reading(stmt, quote, status, conditions, ranges, may_clear)
+    return Reading(stmt, quote, status, conditions, ranges, may_clear, repairs=repairs)
+
+
+# --------------------------------------------------------------- exact wording patterns (no AI)
+
+_RV = r"(\d+(?:\.\d+)+[a-z0-9]*)\+?"          # a version such as 26.6.5 or 5.3.18+
+_RB = r"(\d+(?:\.\d+)*)\.x"                    # a branch such as 5.3.x
+_BELOW = r"(?:prior to|before|earlier than|lower than|older than|below|less than)"
+_AT_MOST = r"(?:up to and including|through|thru)"
+_ITEM_PATTERNS = [
+    (re.compile(rf"^(?:{_RB}\s+)?(?:versions?\s+)?{_BELOW}\s+{_RV}$"), False),
+    (re.compile(rf"^(?:{_RB}\s+)?(?:versions?\s+)?{_AT_MOST}\s+{_RV}$"), True),
+    (re.compile(rf"^(){_RV}\s+(?:and|or)\s+(?:earlier|prior|before|below|lower|older)(?:\s+versions?)?$"), True),
+    (re.compile(rf"^(?:from\s+)?{_RV}\s+{_AT_MOST}\s+{_RV}$"), True),
+]
+_LEAD = re.compile(r"^(?:all\s+)?(?:affected\s+)?(?:versions?|releases?|builds?)?\s*(?:of\s+)?")
+_OPEN_TAIL = re.compile(r",?\s*(?:and|&)\s+all\s+(?:old|older|earlier|prior|previous)"
+                        r"(?:\s*(?:and|,)?\s*unsupported)?\s+(?:versions?|releases?)$")
+_NOT_A_VERSION = {"default", "none", "null", "n/a", "na", "any", "unbounded", "min", "minimum", "start", "0.0", "-",
+                  "*", "?"}
+
+
+def read_by_rules(stmt: Statement) -> Reading | None:
+    """Read a statement that exactly matches a known wording pattern; None if any part does not match.
+
+    The whole statement must be accounted for, so extra words (conditions, platforms, exceptions)
+    make it fall through to review or to the AI. Such a reading is as exact as a structured range.
+    """
+    text = _norm(stmt.text).rstrip(".")
+    product = _norm(stmt.product)
+    if product and text.startswith(product + " "):
+        text = text[len(product) + 1:]
+    open_ended = bool(_OPEN_TAIL.search(text))
+    text = _OPEN_TAIL.sub("", text)
+    text = _LEAD.sub("", text, count=1).replace("up to and including", "UPTOINCL")
+    text = re.sub(r"\b(and|or) (earlier|prior|before|below|lower|older)\b", r"\1_\2", text)
+    ranges: list[tuple[str, str, bool]] = []
+    for part in re.split(r"\s*,\s*(?:and\s+)?|\s+and\s+", text):
+        part = re.sub(r"\b(and|or)_(\w+)", r"\1 \2", part.replace("UPTOINCL", "up to and including").strip())
+        part = _LEAD.sub("", part, count=1)
+        for pattern, inclusive in _ITEM_PATTERNS:
+            m = pattern.match(part)
+            if m:
+                ranges.append((m.group(1) or "", m.group(2), inclusive))
+                break
+        else:
+            return None
+    if not ranges or stmt.status not in {"affected", "unaffected"}:
+        return None
+    return Reading(stmt, stmt.text, stmt.status, "", ranges, may_clear=not open_ended, source="rules")
 
 
 def read_versions(statements: list[Statement], provider: Provider, cve_id: str) -> VersionReadings:

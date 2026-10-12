@@ -20,9 +20,3 @@ validator removes claims whose quote cannot be found in the evidence they cite.
 for exploit-development difficulty.
 
 Real model output is produced only with `--llm openai_compatible` or `--llm anthropic`.
-
-`CVE-2022-22965.versions.json` is a scripted reading of the Spring Framework CNA's free-text
-version statement, used only by `cveprio demo --auto-resolve` to show auto-resolution offline.
-It reads the statement as "from 5.3 below 5.3.18; from 5.2 below 5.2.20". Because the statement
-also says "all old and unsupported versions", the checker allows it to confirm *affected* but
-never to clear a version.
