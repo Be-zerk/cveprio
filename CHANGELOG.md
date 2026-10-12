@@ -5,6 +5,8 @@ milestones, not production releases.
 
 ## Unreleased
 
+- MIT license. Step-by-step guide for using the tool on your own systems (`docs/USAGE.md`) and
+  "Using Ollama safely" notes (`docs/MODEL_PROVIDERS.md`). `*.local.json` is git-ignored for private inventories.
 - Dashboard: reserved, not-found and unloadable CVEs are grouped as *Cannot assess yet* and list
   what is unknown, instead of "no action needed / nothing to do". A summary line reports failed or
   rate-limited source lookups. New colour-theme switch, visible keyboard focus, a short legend

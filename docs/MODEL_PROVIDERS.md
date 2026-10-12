@@ -33,6 +33,25 @@ discarded for this reason.
 Small local models are slow on CPU and produce weaker, sometimes invalid output — the
 validator handles that, but expect more `invalid_output` and removed claims.
 
+### Using Ollama safely
+
+Ollama is a separate program you install yourself; this repository does not include it or any
+model. Ollama has no login of its own, so its safety depends on how it is set up:
+
+- **Keep it on your own machine.** By default Ollama only accepts connections from the same
+  computer (`127.0.0.1:11434`), and cveprio's default `CVEPRIO_OLLAMA_URL` points there. Do not
+  set `OLLAMA_HOST=0.0.0.0` or open port 11434 to a network or the internet: anyone who can reach
+  it could use your models or attack the server. If you must share it, put it behind
+  authentication and a firewall.
+- **Keep it updated.** Older Ollama versions had real vulnerabilities (for example a path
+  traversal, CVE-2024-37032, fixed in 0.1.34). Update through the app or from ollama.com.
+- **Use models from a source you trust**, such as Ollama's official library. Untrusted model
+  files can be malicious.
+
+What cveprio sends is limited by design: only public CVE evidence goes to the model, never your
+inventory, system names or business context. The model's answers are treated as text to check,
+never run as commands, and they cannot set a priority.
+
 ## `openai_compatible`
 
 Any server implementing `POST /v1/chat/completions` (OpenAI, vLLM, LM Studio, …).
