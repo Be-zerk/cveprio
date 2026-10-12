@@ -76,8 +76,9 @@ detection is heuristic only.
 
 The author has reviewed the evaluation reference judgements (no cases changed) and has run
 the demo, configured an NVD API key and run a live inventory analysis on their own machine.
-Version 0.2.0 added quote-grounded AI claims, Ubuntu/Red Hat advisories and the held-out set
-(see CHANGELOG.md).
+Version 0.2.0 added quote-grounded AI claims, Ubuntu/Red Hat advisories and the held-out set;
+0.3.0 (2026-10-12) added opt-in auto-resolution of version wording, dashboard fixes and the MIT
+license (see CHANGELOG.md).
 
 **Next: the author finishes labelling the held-out set** (h01, h06–h20) by following `evaluation/holdout/LABELING.md`
 *before* looking at the tool's output for those CVEs. Then run `cveprio evaluate --set holdout`
