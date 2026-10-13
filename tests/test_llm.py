@@ -152,8 +152,10 @@ def test_failed_sources_give_insufficient_evidence_not_none_found():
 def test_model_is_not_asked_for_facts_code_already_knows():
     from cveprio.llm.prompt import SYSTEM_PROMPT
     assert "rating" not in ASSESSMENT_SCHEMA["properties"]["existing_exploit_usability"]["properties"]
-    assert "Prefer insufficient_evidence over guessing" not in SYSTEM_PROMPT
     assert "deterministic_findings are reliable facts" in SYSTEM_PROMPT
+    # Kept deliberately: pushing the small model to always rate difficulty made far fewer of its claims
+    # quote-grounded (docs/EVALUATION.md, prompt 2026-10-12.1 vs .2).
+    assert "Prefer insufficient_evidence over guessing" in SYSTEM_PROMPT
 
 
 # ------------------------------------------------------------ AC12 injection

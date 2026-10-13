@@ -18,7 +18,7 @@ from typing import Any
 
 from cveprio.models import EvidenceBundle
 
-PROMPT_VERSION = "2026-10-12.1"  # attack-evidence rating now set by code; balanced "insufficient" guidance
+PROMPT_VERSION = "2026-10-12.2"  # attack-evidence rating set by code; findings are facts; cautious difficulty kept
 
 SYSTEM_PROMPT = """You are assisting a vulnerability-management analyst. You receive an evidence bundle about one CVE, collected from CVE.org, NVD, CISA KEV and FIRST EPSS. Produce a structured assessment of two things:
 
@@ -31,7 +31,8 @@ Rules:
 - Every claim must include "quote": 5–30 words copied EXACTLY, word for word, from one of the cited evidence items (its summary, excerpt or fields), showing what the claim rests on. If no such words exist in the evidence, do not make the claim. Claims whose quote is not found in the cited items are removed automatically.
 - type "fact": restates what a cited item says. type "inference": your reasoning from the cited items; say what it rests on.
 - A reference tagged "Exploit" means exploit material is claimed to exist at that URL; it does not show the exploit is reliable or works against a given deployment. KEV absence does not mean "not exploited". EPSS is a 30-day exploitation-activity probability, not a difficulty measure.
-- The deterministic_findings are reliable facts computed from the sources; rely on them. For exploit_development_difficulty, give "low", "moderate" or "high" whenever the evidence describes the prerequisites or complexity (attack vector, privileges, user interaction, attack complexity, public research), even partly. Use "insufficient_evidence" only when the evidence genuinely says nothing about them, and put the unanswered questions in open_questions. Do not guess beyond the evidence.
+- The deterministic_findings are reliable facts computed from the sources; rely on them and do not contradict them.
+- If public evidence does not support a difficulty rating, use "insufficient_evidence" and put the unanswered questions in open_questions. Prefer insufficient_evidence over guessing.
 - Do not give numeric probabilities or confidence percentages. Do not write exploit code, payloads or step-by-step exploitation instructions; describe conditions and difficulty at the level an analyst needs to prioritise remediation.
 - Return only the JSON object required by the schema."""
 

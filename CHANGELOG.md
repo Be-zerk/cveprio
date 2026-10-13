@@ -9,10 +9,11 @@ milestones, not production releases.
   reported / attack code claimed / none found) is set by code from CISA KEV, CISA SSVC and exploit
   references. A model rating that contradicts those facts is replaced and recorded as a correction,
   and the evaluation counts such contradictions. This fixes the small model's 0/6 miss for good.
-- Prompt `2026-10-12.1`: the deterministic findings are described as reliable facts, and the
-  "prefer insufficient evidence over guessing" line was replaced with balanced guidance. A spot check
-  with qwen2.5:3b on Log4Shell showed the attack rating now correct, but its difficulty rating still
-  wrong ("high"), so the small model remains the limit.
+- Prompt `2026-10-12.2`: the deterministic findings are described as reliable facts. An intermediate
+  prompt (`.1`) that pushed the model to always rate difficulty was tested on held-out CVEs: it raised no
+  priority, but far fewer of its claims were quote-grounded (2/10 and 3/9 vs 4/10 and 10/10), so the
+  cautious "prefer insufficient evidence over guessing" guidance was kept. A Log4Shell spot check showed
+  the attack rating now correct, but the small model still rates its difficulty wrongly ("high").
 
 ## 0.3.0 — 2026-10-12
 
