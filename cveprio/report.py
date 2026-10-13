@@ -311,6 +311,67 @@ def _list_assets(rs: list[ApplicabilityResult], limit: int = 3) -> str:
     return "; ".join(parts) + more
 
 
+# How each CVSS exploitability metric reads, and whether it is a barrier for an attacker (0 = none).
+_CONDITIONS: dict[str, dict[str, tuple[str, int]]] = {
+    "AV": {"N": ("reachable over the network", 0), "A": ("needs access to the same local network", 1),
+           "L": ("needs local access to the machine", 1), "P": ("needs physical access to the device", 2)},
+    "AC": {"L": ("no special conditions", 0), "M": ("some special conditions", 1),
+           "H": ("needs special conditions or precise timing", 1)},
+    "AT": {"N": ("", 0), "P": ("certain deployment conditions must be present", 1)},
+    "PR": {"N": ("no login needed", 0), "L": ("needs a normal user account", 1), "H": ("needs an administrator account", 2)},
+    "Au": {"N": ("no login needed", 0), "S": ("needs a login", 1), "M": ("needs several logins", 2)},
+    "UI": {"N": ("no user action needed", 0), "R": ("someone must act, e.g. open a file or click a link", 1),
+           "P": ("someone must act, e.g. open a file or click a link", 1),
+           "A": ("someone must act, e.g. open a file or click a link", 1)},
+}
+_AI_WORD = {"low": "easy", "moderate": "moderately hard", "high": "hard"}
+
+
+def attack_difficulty(bundle: EvidenceBundle, llm: LlmAnalysis | None) -> list[str]:
+    """'How hard is an attack?' in plain words: the attack conditions from the CVE record, the AI's view on
+    building an exploit (with its reason), and whether an exploit already exists. Display only."""
+    if bundle.record_state != RecordState.PUBLISHED:
+        return []
+    from cveprio.llm.validate import usability_from_facts
+    out: list[str] = []
+    p = bundle.primary_cvss
+    if p and p.vector:
+        parts = dict(x.split(":", 1) for x in p.vector.split("/")[1 if p.vector.startswith("CVSS:") else 0:] if ":" in x)
+        found = [(_CONDITIONS[k][v]) for k, v in parts.items() if k in _CONDITIONS and v in _CONDITIONS[k]]
+        barriers = sum(b for _, b in found)
+        reasons = ", ".join(t for t, _ in found if t)
+        level = "Easy to reach" if barriers == 0 else "Some barriers to an attack" if barriers <= 2 else "Hard to reach"
+        out.append(item(f"{level}: {reasons}", "From the attack conditions in the CVE's severity score "
+                        f"({p.vector}). These describe what an attacker needs, not how hard an exploit is to write.",
+                        [p.evidence_id]))
+    a = llm.assessment if llm and llm.status == LlmStatus.OK else None
+    if a:
+        d = a.exploit_development_difficulty
+        who = "The scripted AI example" if llm and llm.scripted else "The AI"
+        if d.rating in _AI_WORD:
+            claim = next(iter(d.complexity_factors + d.prerequisites + d.research_availability), None)
+            because = f" because: {claim.statement.rstrip('.')}" if claim else ""
+            out.append(item(f"{who} rates building an exploit as {_AI_WORD[d.rating]}{because}",
+                            "An AI judgement from the cited evidence, not a fact; see the AI-assisted assessment below.",
+                            claim.evidence_ids if claim else []))
+        else:
+            out.append(item(f"{who} found not enough evidence to judge how hard an exploit is to build"))
+    facts = usability_from_facts(bundle)
+    f = bundle.findings
+    if facts == "exploitation_reported":
+        fe = f["exploited_in_wild"]
+        out.append(item("Attackers are already exploiting it, so how hard an exploit is to build matters less",
+                        f"{fe.detail} CISA reports real attacks, not a prediction. It shows the flaw is exploited "
+                        "somewhere, not that an attack would work against your particular system or setup, and "
+                        "offline demo data can be out of date.", fe.evidence_ids))
+    elif facts == "public_exploit_claimed":
+        fc = f["public_exploit_claimed"]
+        out.append(item("Attack code is reported to be public, so attackers may not need to build their own",
+                        f"{fc.detail} This is a claim: the tool does not download or check exploit code, and links "
+                        "tagged 'Exploit' sometimes point to advisories rather than working code.", fc.evidence_ids))
+    return out
+
+
 def explain_decision(bundle: EvidenceBundle, results: list[ApplicabilityResult], decision: Decision,
                      llm: LlmAnalysis | None = None) -> list[str]:
     """1–3 plain sentences saying, for THIS CVE and YOUR systems, why the decision came out as it did."""
@@ -445,6 +506,7 @@ def render_cve_markdown(r: CveReport) -> str:
         + f" · **Severity score alone would say:** {d.baseline_label}",
         "",
         *([f"**In short:** {' '.join(r.summary)}", ""] if r.summary else []),
+        *(["### How hard is an attack?", *[f"- {x}" for x in r.difficulty], ""] if r.difficulty else []),
         "### What is known (sourced facts)", *[f"- {k}" for k in r.known], "",
         "### What remains uncertain", *([f"- {u}" for u in r.uncertain] or ["- Nothing flagged."]), "",
         "### Why this priority (rule trace)", *[f"{i}. {t}" for i, t in enumerate(d.trace, 1)], "",

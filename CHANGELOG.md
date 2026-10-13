@@ -5,6 +5,11 @@ milestones, not production releases.
 
 ## Unreleased
 
+- **"How hard is an attack?"** on every card, for context only (it does not change the priority): the attack
+  conditions from the CVE's severity score (network or local, complexity, login, user action) in plain words;
+  the AI's view on building an exploit, with its reason; and, from CISA, whether attackers are already
+  exploiting it or attack code is claimed, with what that does and does not show. So Log4Shell reads "easy to
+  reach … attackers are already exploiting it", whatever the AI thinks.
 - **The model is no longer asked what code already knows.** The attack-evidence rating (attacks
   reported / attack code claimed / none found) is set by code from CISA KEV, CISA SSVC and exploit
   references. A model rating that contradicts those facts is replaced and recorded as a correction,

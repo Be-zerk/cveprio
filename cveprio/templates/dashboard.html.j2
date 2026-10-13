@@ -277,6 +277,14 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
     </div>
     {% endif %}
 
+    {% if r.difficulty %}
+    <section class="sec sec-hard">
+      <h3><span class="ico" aria-hidden="true">⚙</span>How hard is an attack?</h3>
+      <p class="hint">Shown for context; it does not change the priority.</p>
+      <ul class="items">{% for x in r.difficulty %}{{ bullet(r.cve_id, x) }}{% endfor %}</ul>
+    </section>
+    {% endif %}
+
     <section class="sec sec-why">
       <h3><span class="ico" aria-hidden="true">→</span>Why this priority</h3>
       <p class="hint">The rules that produced this decision, step by step.</p>

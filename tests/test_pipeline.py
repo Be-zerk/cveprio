@@ -235,3 +235,16 @@ def test_ai_status_shown_in_plain_words(demo_run):
     html = render_dashboard(demo_run)
     assert "No AI assessment</b>: No scripted example" in html and "AI assessment not run</b>: Record is reserved" in html
     assert "<b>not_configured</b>" not in html and "<b>skipped</b>" not in html
+
+
+def test_how_hard_section_separates_conditions_ai_view_and_exploit_status(demo_run):
+    log4j = next(r for r in demo_run.reports if r.cve_id == "CVE-2021-44228")
+    assert log4j.difficulty[0].startswith("Easy to reach: reachable over the network")
+    assert any("already exploiting it" in x and "not that an attack would work against your" in x
+               for x in log4j.difficulty)
+    ssh = next(r for r in demo_run.reports if r.cve_id == "CVE-2024-6387")
+    assert ssh.difficulty[0].startswith("Some barriers to an attack")        # AC:H, a timing race
+    assert any("rates building an exploit as moderately hard because" in x for x in ssh.difficulty)
+    assert any("is a claim" in x for x in ssh.difficulty)                    # exploit links are claims only
+    rejected = next(r for r in demo_run.reports if r.bundle.record_state.value == "rejected")
+    assert rejected.difficulty == []

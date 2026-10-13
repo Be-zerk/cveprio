@@ -386,6 +386,7 @@ class CveReport(BaseModel):
     summary: list[str] = Field(default_factory=list)  # 1–3 plain sentences specific to this CVE and your systems
     discovered_by: list[str] = Field(default_factory=list)  # empty = supplied by the user (watchlist/CLI)
     version_reading: VersionReadingLog | None = None  # set only when auto-resolution ran
+    difficulty: list[str] = Field(default_factory=list)  # "How hard is an attack?": conditions, AI view, exploit status
 
 
 class DiscoveryQuery(BaseModel):
