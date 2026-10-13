@@ -342,7 +342,8 @@ def attack_difficulty(bundle: EvidenceBundle, llm: LlmAnalysis | None) -> list[s
         reasons = ", ".join(t for t, _ in found if t)
         level = "Easy to reach" if barriers == 0 else "Some barriers to an attack" if barriers <= 2 else "Hard to reach"
         out.append(item(f"{level}: {reasons}", "From the attack conditions in the CVE's severity score "
-                        f"({p.vector}). These describe what an attacker needs, not how hard an exploit is to write.",
+                        f"({p.vector}). These describe what an attacker needs for this flaw in general, not on your systems (your configuration, open "
+                        "ports or enabled features are not known to the tool), and not how hard an exploit is to write.",
                         [p.evidence_id]))
     a = llm.assessment if llm and llm.status == LlmStatus.OK else None
     if a:

@@ -1,6 +1,6 @@
 # CVE prioritization report
 
-Generated 2026-10-13T00:30:15+00:00 · mode **offline_demo** · cveprio 0.3.0 · organisation: Northbeam Logistics (fictional)
+Generated 2026-10-13T00:30:41+00:00 · mode **offline_demo** · cveprio 0.3.0 · organisation: Northbeam Logistics (fictional)
 
 > OFFLINE DEMO MODE: data comes from recorded fixtures (see retrieval times), not live sources. Results may be out of date.
 > Inventory and business context are FICTIONAL example data.
@@ -31,7 +31,7 @@ Generated 2026-10-13T00:30:15+00:00 · mode **offline_demo** · cveprio 0.3.0 ·
 **In short:** Attackers are known to be using it: it is on CISA's list of actively attacked flaws (added 2021-12-10), and CISA rates exploitation as active. It affects web-portal-01 (log4j-core 2.14.1) — internet-facing, high importance. Also check legacy-billing-03: it may be affected too, but this could not be confirmed automatically.
 
 ### How hard is an attack?
-- Easy to reach: reachable over the network, no special conditions, no login needed, no user action needed — From the attack conditions in the CVE's severity score (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H). These describe what an attacker needs, not how hard an exploit is to write. [CVE.cvss.1]
+- Easy to reach: reachable over the network, no special conditions, no login needed, no user action needed — From the attack conditions in the CVE's severity score (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H). These describe what an attacker needs for this flaw in general, not on your systems (your configuration, open ports or enabled features are not known to the tool), and not how hard an exploit is to write. [CVE.cvss.1]
 - Attackers are already exploiting it, so how hard an exploit is to build matters less — Attacks have been seen: it is listed in CISA's Known Exploited Vulnerabilities catalogue and CISA's SSVC assessment rates exploitation as active. CISA reports real attacks, not a prediction. It shows the flaw is exploited somewhere, not that an attack would work against your particular system or setup, and offline demo data can be out of date. [KEV, CVE.ssvc]
 
 ### What is known (sourced facts)
@@ -134,7 +134,7 @@ What the 10.0 score says: Attack from: the network (remotely); Attack complexity
 **In short:** Attackers are known to be using it: it is on CISA's list of actively attacked flaws (added 2023-10-10), and CISA rates exploitation as active. It affects web-portal-01 (nginx 1.25.2) — internet-facing, high importance.
 
 ### How hard is an attack?
-- Easy to reach: reachable over the network, no special conditions, no login needed, no user action needed — From the attack conditions in the CVE's severity score (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H). These describe what an attacker needs, not how hard an exploit is to write. [CVE.cvss.1]
+- Easy to reach: reachable over the network, no special conditions, no login needed, no user action needed — From the attack conditions in the CVE's severity score (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H). These describe what an attacker needs for this flaw in general, not on your systems (your configuration, open ports or enabled features are not known to the tool), and not how hard an exploit is to write. [CVE.cvss.1]
 - Attackers are already exploiting it, so how hard an exploit is to build matters less — Attacks have been seen: it is listed in CISA's Known Exploited Vulnerabilities catalogue and CISA's SSVC assessment rates exploitation as active. CISA reports real attacks, not a prediction. It shows the flaw is exploited somewhere, not that an attack would work against your particular system or setup, and offline demo data can be out of date. [KEV, CVE.ssvc]
 
 ### What is known (sourced facts)
@@ -227,7 +227,7 @@ What the 7.5 score says: Attack from: the network (remotely); Attack complexity:
 **In short:** Attacks are likely: CISA says demo attack code exists; 9 public sources point to attack code; the predicted chance of attacks in the next 30 days is 99.5%. No confirmed attacks are on record. It affects bastion-01 (OpenSSH 9.6p1) — internet-facing, high importance.
 
 ### How hard is an attack?
-- Some barriers to an attack: reachable over the network, needs special conditions or precise timing, no login needed, no user action needed — From the attack conditions in the CVE's severity score (CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H). These describe what an attacker needs, not how hard an exploit is to write. [CVE.cvss.1]
+- Some barriers to an attack: reachable over the network, needs special conditions or precise timing, no login needed, no user action needed — From the attack conditions in the CVE's severity score (CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H). These describe what an attacker needs for this flaw in general, not on your systems (your configuration, open ports or enabled features are not known to the tool), and not how hard an exploit is to write. [CVE.cvss.1]
 - The scripted AI example rates building an exploit as moderately hard because: The flaw is a race condition in signal handling, and the CNA scores attack complexity as High, which suggests exploitation depends on winning a timing window — An AI judgement from the cited evidence, not a fact; see the AI-assisted assessment below. [CVE.desc, CVE.cvss.1]
 - Attack code is reported to be public, so attackers may not need to build their own — CISA's SSVC assessment says proof-of-concept code exists; 9 references are tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool. This is a claim: the tool does not download or check exploit code, and links tagged 'Exploit' sometimes point to advisories rather than working code. [CVE.ssvc, NVD.ref.1, NVD.ref.2, NVD.ref.3, NVD.ref.5, NVD.ref.6, NVD.ref.7, NVD.ref.8, NVD.ref.12, NVD.ref.13]
 
@@ -364,7 +364,7 @@ What the 8.1 score says: Attack from: the network (remotely); Attack complexity:
 **In short:** Attacks are likely: CISA says demo attack code exists; the predicted chance of attacks in the next 30 days is 78.5%. No confirmed attacks are on record. It affects ops-ubuntu-02 (curl 8.3.0) — internal, medium importance; dev-laptop-17 (curl 8.3.0) — internet exposure and importance not recorded.
 
 ### How hard is an attack?
-- Easy to reach: reachable over the network, no special conditions, no login needed, no user action needed — From the attack conditions in the CVE's severity score (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H). These describe what an attacker needs, not how hard an exploit is to write. [NVD.cvss.1]
+- Easy to reach: reachable over the network, no special conditions, no login needed, no user action needed — From the attack conditions in the CVE's severity score (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H). These describe what an attacker needs for this flaw in general, not on your systems (your configuration, open ports or enabled features are not known to the tool), and not how hard an exploit is to write. [NVD.cvss.1]
 - Attack code is reported to be public, so attackers may not need to build their own — CISA's SSVC assessment says proof-of-concept code exists. Whether that code exists, works or is reliable is NOT verified by this tool. This is a claim: the tool does not download or check exploit code, and links tagged 'Exploit' sometimes point to advisories rather than working code. [CVE.ssvc]
 
 ### What is known (sourced facts)
@@ -452,7 +452,7 @@ What the 9.8 score says: Attack from: the network (remotely); Attack complexity:
 **In short:** Attackers are known to be using it: it is on CISA's list of actively attacked flaws (added 2022-04-04), and CISA rates exploitation as active. It is unclear whether web-portal-01's Spring Framework 5.3.17 is affected: its version is in the affected range, but the flaw only applies together with Oracle JDK, which your inventory does not record.
 
 ### How hard is an attack?
-- Easy to reach: reachable over the network, no special conditions, no login needed, no user action needed — From the attack conditions in the CVE's severity score (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H). These describe what an attacker needs, not how hard an exploit is to write. [CVE.cvss.1]
+- Easy to reach: reachable over the network, no special conditions, no login needed, no user action needed — From the attack conditions in the CVE's severity score (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H). These describe what an attacker needs for this flaw in general, not on your systems (your configuration, open ports or enabled features are not known to the tool), and not how hard an exploit is to write. [CVE.cvss.1]
 - Attackers are already exploiting it, so how hard an exploit is to build matters less — Attacks have been seen: it is listed in CISA's Known Exploited Vulnerabilities catalogue and CISA's SSVC assessment rates exploitation as active. CISA reports real attacks, not a prediction. It shows the flaw is exploited somewhere, not that an attack would work against your particular system or setup, and offline demo data can be out of date. [KEV, CVE.ssvc]
 
 ### What is known (sourced facts)
@@ -538,7 +538,7 @@ What the 9.8 score says: Attack from: the network (remotely); Attack complexity:
 **In short:** Attacks are likely: CISA says demo attack code exists; 2 public sources point to attack code; the predicted chance of attacks in the next 30 days is 50.6%. No confirmed attacks are on record. It affects print-srv-01 (cups-browsed 2.0.1) — internal, low importance; protected by: Host firewall drops inbound traffic to port 631 except from the warehouse printer VLAN (not checked by this tool).
 
 ### How hard is an attack?
-- Easy to reach: reachable over the network, no special conditions, no login needed, no user action needed — From the attack conditions in the CVE's severity score (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N). These describe what an attacker needs, not how hard an exploit is to write. [CVE.cvss.1]
+- Easy to reach: reachable over the network, no special conditions, no login needed, no user action needed — From the attack conditions in the CVE's severity score (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N). These describe what an attacker needs for this flaw in general, not on your systems (your configuration, open ports or enabled features are not known to the tool), and not how hard an exploit is to write. [CVE.cvss.1]
 - The scripted AI example found not enough evidence to judge how hard an exploit is to build
 - Attack code is reported to be public, so attackers may not need to build their own — CISA's SSVC assessment says proof-of-concept code exists; 2 references are tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool. This is a claim: the tool does not download or check exploit code, and links tagged 'Exploit' sometimes point to advisories rather than working code. [CVE.ssvc, NVD.ref.1, NVD.ref.2]
 
@@ -640,7 +640,7 @@ What the 5.3 score says: Attack from: the network (remotely); Attack complexity:
 **In short:** Your installed version is outside the affected versions: ops-ubuntu-02's xz 5.4.6. For reference (it does not change the decision): attacks are likely — the predicted chance of attacks in the next 30 days is 86.0%. No confirmed attacks are on record.
 
 ### How hard is an attack?
-- Easy to reach: reachable over the network, no special conditions, no login needed, no user action needed — From the attack conditions in the CVE's severity score (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H). These describe what an attacker needs, not how hard an exploit is to write. [CVE.cvss.1]
+- Easy to reach: reachable over the network, no special conditions, no login needed, no user action needed — From the attack conditions in the CVE's severity score (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H). These describe what an attacker needs for this flaw in general, not on your systems (your configuration, open ports or enabled features are not known to the tool), and not how hard an exploit is to write. [CVE.cvss.1]
 
 ### What is known (sourced facts)
 - CVE status: Published (active) — assigned by redhat; published 2024-03-29; last updated 2026-08-04 [CVE.state]
