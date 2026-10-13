@@ -48,15 +48,12 @@ ASSESSMENT_SCHEMA: dict[str, Any] = {
         "existing_exploit_usability": {
             "type": "object",
             "properties": {
-                "rating": {"type": "string", "enum": ["exploitation_reported", "public_exploit_claimed",
-                                                      "no_public_exploit_evidence", "insufficient_evidence"]},
                 "exploit_evidence": _claims(),
                 "reliability_limitations": _claims(),
                 "required_access": _claims(),
                 "open_questions": QUESTIONS,
             },
-            "required": ["rating", "exploit_evidence", "reliability_limitations", "required_access",
-                         "open_questions"],
+            "required": ["exploit_evidence", "reliability_limitations", "required_access", "open_questions"],
             "additionalProperties": False,
         },
         "suspicious_instructions_in_evidence": {"type": "boolean"},

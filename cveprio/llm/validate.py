@@ -106,6 +106,19 @@ def _filter(claims: list[Claim], path: str, valid_ids: set[str], removed: list[V
     return kept
 
 
+def usability_from_facts(bundle: EvidenceBundle) -> str:
+    """Attack-evidence rating supported by the deterministic findings (KEV, CISA SSVC, exploit references)."""
+    f = bundle.findings
+    exploited, claimed = f.get("exploited_in_wild"), f.get("public_exploit_claimed")
+    if exploited and exploited.value == Truth.TRUE:
+        return "exploitation_reported"
+    if claimed and claimed.value == Truth.TRUE:
+        return "public_exploit_claimed"
+    if any(x is None or x.value == Truth.RETRIEVAL_FAILED for x in (exploited, claimed)):
+        return "insufficient_evidence"
+    return "no_public_exploit_evidence"
+
+
 def validate_against_evidence(
     a: ModelAssessment, bundle: EvidenceBundle
 ) -> tuple[ModelAssessment, list[ValidationIssue], list[ValidationIssue], int, int]:
@@ -126,29 +139,22 @@ def validate_against_evidence(
     u.required_access = _filter(u.required_access, "usability.required_access", valid, removed, texts)
     supported = total - len(removed)
 
-    exploited = bundle.findings.get("exploited_in_wild")
-    claimed = bundle.findings.get("public_exploit_claimed")
-    is_exploited = bool(exploited and exploited.value == Truth.TRUE)
-    is_claimed = bool(claimed and claimed.value == Truth.TRUE)
-
     def override(path: str, old: str, new: str, why: str) -> str:
         overrides.append(ValidationIssue(path=path, problem=f"rating '{old}' → '{new}': {why}"))
         return new
 
-    if u.rating == "exploitation_reported" and not is_exploited:
-        u.rating = override("usability.rating", u.rating,  # type: ignore[assignment]
-                            "public_exploit_claimed" if is_claimed else "insufficient_evidence",
-                            "no source in the bundle reports in-the-wild exploitation")
-    elif u.rating == "public_exploit_claimed" and not (is_claimed or is_exploited):
-        u.rating = override("usability.rating", u.rating, "insufficient_evidence",  # type: ignore[assignment]
-                            "no exploit-tagged reference or SSVC PoC signal in the bundle")
-    elif u.rating == "no_public_exploit_evidence" and (is_claimed or is_exploited):
-        u.rating = override("usability.rating", u.rating,  # type: ignore[assignment]
-                            "exploitation_reported" if is_exploited else "public_exploit_claimed",
-                            "contradicts deterministic findings from KEV/SSVC/NVD references")
-    if u.rating != "insufficient_evidence" and not (u.exploit_evidence or u.required_access):
-        u.rating = override("usability.rating", u.rating, "insufficient_evidence",  # type: ignore[assignment]
-                            "no supported claims remain for this assessment")
+    # The attack-evidence rating comes from the sources, not the model. The model is no longer asked for it;
+    # if it sends one that differs, the correction is recorded so contradictions stay visible.
+    facts = usability_from_facts(bundle)
+    if "rating" in u.model_fields_set and u.rating != facts:
+        if u.rating == "exploitation_reported":
+            why = "no source in the bundle reports in-the-wild exploitation"
+        elif u.rating == "public_exploit_claimed" and facts != "exploitation_reported":
+            why = "no exploit-tagged reference or SSVC PoC signal in the bundle"
+        else:
+            why = "contradicts deterministic findings from KEV/SSVC/NVD references"
+        override("usability.rating", u.rating, facts, why)
+    u.rating = facts  # type: ignore[assignment]
     if d.rating != "insufficient_evidence" and not (d.prerequisites or d.complexity_factors
                                                      or d.research_availability):
         d.rating = override("difficulty.rating", d.rating, "insufficient_evidence",  # type: ignore[assignment]

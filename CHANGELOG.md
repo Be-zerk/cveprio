@@ -3,6 +3,23 @@
 Notable changes, newest first. The project is a portfolio prototype; version numbers mark
 milestones, not production releases.
 
+## Unreleased
+
+- **"How hard is an attack?"** on every card, for context only (it does not change the priority): the attack
+  conditions from the CVE's severity score (network or local, complexity, login, user action) in plain words;
+  the AI's view on building an exploit, with its reason; and, from CISA, whether attackers are already
+  exploiting it or attack code is claimed, with what that does and does not show. So Log4Shell reads "easy to
+  reach … attackers are already exploiting it", whatever the AI thinks.
+- **The model is no longer asked what code already knows.** The attack-evidence rating (attacks
+  reported / attack code claimed / none found) is set by code from CISA KEV, CISA SSVC and exploit
+  references. A model rating that contradicts those facts is replaced and recorded as a correction,
+  and the evaluation counts such contradictions. This fixes the small model's 0/6 miss for good.
+- Prompt `2026-10-12.2`: the deterministic findings are described as reliable facts. An intermediate
+  prompt (`.1`) that pushed the model to always rate difficulty was tested on held-out CVEs: it raised no
+  priority, but far fewer of its claims were quote-grounded (2/10 and 3/9 vs 4/10 and 10/10), so the
+  cautious "prefer insufficient evidence over guessing" guidance was kept. A Log4Shell spot check showed
+  the attack rating now correct, but the small model still rates its difficulty wrongly ("high").
+
 ## 0.3.0 — 2026-10-12
 
 **Settling "needs review" from vendors' version wording** (opt-in: `--auto-resolve`, `CVEPRIO_AUTO_RESOLVE`)

@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-10-12T02:42:01.144443Z",
+  "generated_at": "2026-10-13T00:30:41.582554Z",
   "tool_version": "0.3.0",
   "mode": "offline_demo",
   "organization": "Northbeam Logistics (fictional)",
@@ -8,7 +8,7 @@
   "reports": [
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-12T02:42:01.007613Z",
+      "generated_at": "2026-10-13T00:30:41.470593Z",
       "tool_version": "0.3.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2021-44228",
@@ -6406,11 +6406,15 @@
         "Also check legacy-billing-03: it may be affected too, but this could not be confirmed automatically."
       ],
       "discovered_by": [],
-      "version_reading": null
+      "version_reading": null,
+      "difficulty": [
+        "Easy to reach: reachable over the network, no special conditions, no login needed, no user action needed \u2014 From the attack conditions in the CVE's severity score (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H). These describe what an attacker needs for this flaw in general, not on your systems (your configuration, open ports or enabled features are not known to the tool), and not how hard an exploit is to write. [CVE.cvss.1]",
+        "Attackers are already exploiting it, so how hard an exploit is to build matters less \u2014 Attacks have been seen: it is listed in CISA's Known Exploited Vulnerabilities catalogue and CISA's SSVC assessment rates exploitation as active. CISA reports real attacks, not a prediction. It shows the flaw is exploited somewhere, not that an attack would work against your particular system or setup, and offline demo data can be out of date. [KEV, CVE.ssvc]"
+      ]
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-12T02:42:01.089702Z",
+      "generated_at": "2026-10-13T00:30:41.545462Z",
       "tool_version": "0.3.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2023-44487",
@@ -12527,11 +12531,15 @@
         "It affects web-portal-01 (nginx 1.25.2) \u2014 internet-facing, high importance."
       ],
       "discovered_by": [],
-      "version_reading": null
+      "version_reading": null,
+      "difficulty": [
+        "Easy to reach: reachable over the network, no special conditions, no login needed, no user action needed \u2014 From the attack conditions in the CVE's severity score (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H). These describe what an attacker needs for this flaw in general, not on your systems (your configuration, open ports or enabled features are not known to the tool), and not how hard an exploit is to write. [CVE.cvss.1]",
+        "Attackers are already exploiting it, so how hard an exploit is to build matters less \u2014 Attacks have been seen: it is listed in CISA's Known Exploited Vulnerabilities catalogue and CISA's SSVC assessment rates exploitation as active. CISA reports real attacks, not a prediction. It shows the flaw is exploited somewhere, not that an attack would work against your particular system or setup, and offline demo data can be out of date. [KEV, CVE.ssvc]"
+      ]
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-12T02:42:01.118973Z",
+      "generated_at": "2026-10-13T00:30:41.568542Z",
       "tool_version": "0.3.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2024-6387",
@@ -15498,7 +15506,7 @@
         "provider": "scripted",
         "model": "scripted-example",
         "scripted": true,
-        "prompt_version": "2026-10-11.1",
+        "prompt_version": "2026-10-12.2",
         "detail": null,
         "assessment": {
           "exploit_development_difficulty": {
@@ -15657,11 +15665,16 @@
         "It affects bastion-01 (OpenSSH 9.6p1) \u2014 internet-facing, high importance."
       ],
       "discovered_by": [],
-      "version_reading": null
+      "version_reading": null,
+      "difficulty": [
+        "Some barriers to an attack: reachable over the network, needs special conditions or precise timing, no login needed, no user action needed \u2014 From the attack conditions in the CVE's severity score (CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H). These describe what an attacker needs for this flaw in general, not on your systems (your configuration, open ports or enabled features are not known to the tool), and not how hard an exploit is to write. [CVE.cvss.1]",
+        "The scripted AI example rates building an exploit as moderately hard because: The flaw is a race condition in signal handling, and the CNA scores attack complexity as High, which suggests exploitation depends on winning a timing window \u2014 An AI judgement from the cited evidence, not a fact; see the AI-assisted assessment below. [CVE.desc, CVE.cvss.1]",
+        "Attack code is reported to be public, so attackers may not need to build their own \u2014 CISA's SSVC assessment says proof-of-concept code exists; 9 references are tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool. This is a claim: the tool does not download or check exploit code, and links tagged 'Exploit' sometimes point to advisories rather than working code. [CVE.ssvc, NVD.ref.1, NVD.ref.2, NVD.ref.3, NVD.ref.5, NVD.ref.6, NVD.ref.7, NVD.ref.8, NVD.ref.12, NVD.ref.13]"
+      ]
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-12T02:42:01.125754Z",
+      "generated_at": "2026-10-13T00:30:41.573360Z",
       "tool_version": "0.3.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2023-38545",
@@ -16569,11 +16582,15 @@
         "It affects ops-ubuntu-02 (curl 8.3.0) \u2014 internal, medium importance; dev-laptop-17 (curl 8.3.0) \u2014 internet exposure and importance not recorded."
       ],
       "discovered_by": [],
-      "version_reading": null
+      "version_reading": null,
+      "difficulty": [
+        "Easy to reach: reachable over the network, no special conditions, no login needed, no user action needed \u2014 From the attack conditions in the CVE's severity score (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H). These describe what an attacker needs for this flaw in general, not on your systems (your configuration, open ports or enabled features are not known to the tool), and not how hard an exploit is to write. [NVD.cvss.1]",
+        "Attack code is reported to be public, so attackers may not need to build their own \u2014 CISA's SSVC assessment says proof-of-concept code exists. Whether that code exists, works or is reliable is NOT verified by this tool. This is a claim: the tool does not download or check exploit code, and links tagged 'Exploit' sometimes point to advisories rather than working code. [CVE.ssvc]"
+      ]
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-12T02:42:01.032121Z",
+      "generated_at": "2026-10-13T00:30:41.491786Z",
       "tool_version": "0.3.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2022-22965",
@@ -18712,11 +18729,15 @@
         "It is unclear whether web-portal-01's Spring Framework 5.3.17 is affected: its version is in the affected range, but the flaw only applies together with Oracle JDK, which your inventory does not record."
       ],
       "discovered_by": [],
-      "version_reading": null
+      "version_reading": null,
+      "difficulty": [
+        "Easy to reach: reachable over the network, no special conditions, no login needed, no user action needed \u2014 From the attack conditions in the CVE's severity score (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H). These describe what an attacker needs for this flaw in general, not on your systems (your configuration, open ports or enabled features are not known to the tool), and not how hard an exploit is to write. [CVE.cvss.1]",
+        "Attackers are already exploiting it, so how hard an exploit is to build matters less \u2014 Attacks have been seen: it is listed in CISA's Known Exploited Vulnerabilities catalogue and CISA's SSVC assessment rates exploitation as active. CISA reports real attacks, not a prediction. It shows the flaw is exploited somewhere, not that an attack would work against your particular system or setup, and offline demo data can be out of date. [KEV, CVE.ssvc]"
+      ]
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-12T02:42:01.131977Z",
+      "generated_at": "2026-10-13T00:30:41.576693Z",
       "tool_version": "0.3.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2024-47176",
@@ -19390,7 +19411,7 @@
         "provider": "scripted",
         "model": "scripted-example",
         "scripted": true,
-        "prompt_version": "2026-10-11.1",
+        "prompt_version": "2026-10-12.2",
         "detail": null,
         "assessment": {
           "exploit_development_difficulty": {
@@ -19530,11 +19551,16 @@
         "It affects print-srv-01 (cups-browsed 2.0.1) \u2014 internal, low importance; protected by: Host firewall drops inbound traffic to port 631 except from the warehouse printer VLAN (not checked by this tool)."
       ],
       "discovered_by": [],
-      "version_reading": null
+      "version_reading": null,
+      "difficulty": [
+        "Easy to reach: reachable over the network, no special conditions, no login needed, no user action needed \u2014 From the attack conditions in the CVE's severity score (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N). These describe what an attacker needs for this flaw in general, not on your systems (your configuration, open ports or enabled features are not known to the tool), and not how hard an exploit is to write. [CVE.cvss.1]",
+        "The scripted AI example found not enough evidence to judge how hard an exploit is to build",
+        "Attack code is reported to be public, so attackers may not need to build their own \u2014 CISA's SSVC assessment says proof-of-concept code exists; 2 references are tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool. This is a claim: the tool does not download or check exploit code, and links tagged 'Exploit' sometimes point to advisories rather than working code. [CVE.ssvc, NVD.ref.1, NVD.ref.2]"
+      ]
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-12T02:42:01.140914Z",
+      "generated_at": "2026-10-13T00:30:41.581415Z",
       "tool_version": "0.3.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2024-3094",
@@ -20502,11 +20528,14 @@
         "For reference (it does not change the decision): attacks are likely \u2014 the predicted chance of attacks in the next 30 days is 86.0%. No confirmed attacks are on record."
       ],
       "discovered_by": [],
-      "version_reading": null
+      "version_reading": null,
+      "difficulty": [
+        "Easy to reach: reachable over the network, no special conditions, no login needed, no user action needed \u2014 From the attack conditions in the CVE's severity score (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H). These describe what an attacker needs for this flaw in general, not on your systems (your configuration, open ports or enabled features are not known to the tool), and not how hard an exploit is to write. [CVE.cvss.1]"
+      ]
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-12T02:42:01.142822Z",
+      "generated_at": "2026-10-13T00:30:41.581960Z",
       "tool_version": "0.3.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2026-11415",
@@ -20686,11 +20715,12 @@
         "This CVE was cancelled (rejected) by the organisation that issued it, so there is nothing to fix."
       ],
       "discovered_by": [],
-      "version_reading": null
+      "version_reading": null,
+      "difficulty": []
     },
     {
       "schema_version": "1.0",
-      "generated_at": "2026-10-12T02:42:01.144376Z",
+      "generated_at": "2026-10-13T00:30:41.582514Z",
       "tool_version": "0.3.0",
       "mode": "offline_demo",
       "cve_id": "CVE-2026-99001",
@@ -20838,7 +20868,8 @@
         "This CVE number has been reserved, but no details have been published yet."
       ],
       "discovered_by": [],
-      "version_reading": null
+      "version_reading": null,
+      "difficulty": []
     }
   ],
   "notices": [

@@ -1,6 +1,6 @@
 # CVE prioritization report
 
-Generated 2026-10-12T02:42:01+00:00 · mode **offline_demo** · cveprio 0.3.0 · organisation: Northbeam Logistics (fictional)
+Generated 2026-10-13T00:30:41+00:00 · mode **offline_demo** · cveprio 0.3.0 · organisation: Northbeam Logistics (fictional)
 
 > OFFLINE DEMO MODE: data comes from recorded fixtures (see retrieval times), not live sources. Results may be out of date.
 > Inventory and business context are FICTIONAL example data.
@@ -29,6 +29,10 @@ Generated 2026-10-12T02:42:01+00:00 · mode **offline_demo** · cveprio 0.3.0 ·
 **Decision:** Fix now (P1) · **Severity score alone would say:** P1
 
 **In short:** Attackers are known to be using it: it is on CISA's list of actively attacked flaws (added 2021-12-10), and CISA rates exploitation as active. It affects web-portal-01 (log4j-core 2.14.1) — internet-facing, high importance. Also check legacy-billing-03: it may be affected too, but this could not be confirmed automatically.
+
+### How hard is an attack?
+- Easy to reach: reachable over the network, no special conditions, no login needed, no user action needed — From the attack conditions in the CVE's severity score (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H). These describe what an attacker needs for this flaw in general, not on your systems (your configuration, open ports or enabled features are not known to the tool), and not how hard an exploit is to write. [CVE.cvss.1]
+- Attackers are already exploiting it, so how hard an exploit is to build matters less — Attacks have been seen: it is listed in CISA's Known Exploited Vulnerabilities catalogue and CISA's SSVC assessment rates exploitation as active. CISA reports real attacks, not a prediction. It shows the flaw is exploited somewhere, not that an attack would work against your particular system or setup, and offline demo data can be out of date. [KEV, CVE.ssvc]
 
 ### What is known (sourced facts)
 - CVE status: Published (active) — assigned by apache; published 2021-12-10; last updated 2025-10-21 [CVE.state]
@@ -129,6 +133,10 @@ What the 10.0 score says: Attack from: the network (remotely); Attack complexity
 
 **In short:** Attackers are known to be using it: it is on CISA's list of actively attacked flaws (added 2023-10-10), and CISA rates exploitation as active. It affects web-portal-01 (nginx 1.25.2) — internet-facing, high importance.
 
+### How hard is an attack?
+- Easy to reach: reachable over the network, no special conditions, no login needed, no user action needed — From the attack conditions in the CVE's severity score (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H). These describe what an attacker needs for this flaw in general, not on your systems (your configuration, open ports or enabled features are not known to the tool), and not how hard an exploit is to write. [CVE.cvss.1]
+- Attackers are already exploiting it, so how hard an exploit is to build matters less — Attacks have been seen: it is listed in CISA's Known Exploited Vulnerabilities catalogue and CISA's SSVC assessment rates exploitation as active. CISA reports real attacks, not a prediction. It shows the flaw is exploited somewhere, not that an attack would work against your particular system or setup, and offline demo data can be out of date. [KEV, CVE.ssvc]
+
 ### What is known (sourced facts)
 - CVE status: Published (active) — assigned by mitre; published 2023-10-10; last updated 2026-07-14 [CVE.state]
 - Severity: 7.5 / 10 (High) — CVSS 3.1 score from CISA; 3 sources agree. Full breakdown in Severity score details. [CVE.cvss.1]
@@ -218,6 +226,11 @@ What the 7.5 score says: Attack from: the network (remotely); Attack complexity:
 
 **In short:** Attacks are likely: CISA says demo attack code exists; 9 public sources point to attack code; the predicted chance of attacks in the next 30 days is 99.5%. No confirmed attacks are on record. It affects bastion-01 (OpenSSH 9.6p1) — internet-facing, high importance.
 
+### How hard is an attack?
+- Some barriers to an attack: reachable over the network, needs special conditions or precise timing, no login needed, no user action needed — From the attack conditions in the CVE's severity score (CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H). These describe what an attacker needs for this flaw in general, not on your systems (your configuration, open ports or enabled features are not known to the tool), and not how hard an exploit is to write. [CVE.cvss.1]
+- The scripted AI example rates building an exploit as moderately hard because: The flaw is a race condition in signal handling, and the CNA scores attack complexity as High, which suggests exploitation depends on winning a timing window — An AI judgement from the cited evidence, not a fact; see the AI-assisted assessment below. [CVE.desc, CVE.cvss.1]
+- Attack code is reported to be public, so attackers may not need to build their own — CISA's SSVC assessment says proof-of-concept code exists; 9 references are tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool. This is a claim: the tool does not download or check exploit code, and links tagged 'Exploit' sometimes point to advisories rather than working code. [CVE.ssvc, NVD.ref.1, NVD.ref.2, NVD.ref.3, NVD.ref.5, NVD.ref.6, NVD.ref.7, NVD.ref.8, NVD.ref.12, NVD.ref.13]
+
 ### What is known (sourced facts)
 - CVE status: Published (active) — assigned by redhat; published 2024-07-01; last updated 2026-09-01 [CVE.state]
 - Severity: 8.1 / 10 (High) — CVSS 3.1 score from redhat, which published the CVE; 3 sources agree. Full breakdown in Severity score details. [CVE.cvss.1]
@@ -253,14 +266,14 @@ What the 7.5 score says: Attack from: the network (remotely); Attack complexity:
 
 > **SCRIPTED EXAMPLE** — hand-written by the project author to demonstrate validation in the offline demo. It was NOT produced by a language model.
 
-Provider `scripted`, model `scripted-example`, prompt version 2026-10-11.1. 6 of 9 claims passed the checks (cited evidence exists, the quote appears in it word for word, numbers and dates match). That shows grounding, not that the reasoning is right. Ratings are opinions, not probabilities.
+Provider `scripted`, model `scripted-example`, prompt version 2026-10-12.2. 6 of 9 claims passed the checks (cited evidence exists, the quote appears in it word for word, numbers and dates match). That shows grounding, not that the reasoning is right. Ratings are opinions, not probabilities.
 
 **Exploit-development difficulty:** `moderate`
 - *Prerequisites:* The attacker needs only network access to sshd and no credentials; the trigger is failing to authenticate within the login time limit. (fact) [CVE.desc, CVE.cvss.1] — quote: “An unauthenticated, remote attacker may be able to trigger it by failing to authenticate within a set time period”
 - *Complexity:* The flaw is a race condition in signal handling, and the CNA scores attack complexity as High, which suggests exploitation depends on winning a timing window. (inference) [CVE.desc, CVE.cvss.1] — quote: “There is a race condition which can lead sshd to handle some signals in an unsafe manner”
 - *Research availability:* Several references tagged 'Exploit' by NVD, including a researcher advisory, indicate detailed public research exists. (fact) [NVD.ref.2, NVD.ref.12] — quote: “NVD reference tagged 'Exploit' — indicates public exploit or PoC material may exist”
 
-**Existing-exploit usability:** `public_exploit_claimed`
+**Existing attacks and attack code (set from the sources, not the AI):** `public_exploit_claimed`
 - *Exploit evidence:* CISA's SSVC assessment records Exploitation=poc. (fact) [CVE.ssvc] — quote: “SSVC decision points: Exploitation=poc”
 - *Reliability limits:* A race-condition exploit is likely to need many connection attempts, which may be visible in authentication logs. (inference) [CVE.desc, CVE.cvss.1] — quote: “There is a race condition which can lead sshd to handle some signals”
 - *Required access:* Network reachability to the SSH service; no privileges or user interaction. (fact) [CVE.desc, CVE.cvss.1] — quote: “An unauthenticated, remote attacker may be able to trigger it”
@@ -350,6 +363,10 @@ What the 8.1 score says: Attack from: the network (remotely); Attack complexity:
 
 **In short:** Attacks are likely: CISA says demo attack code exists; the predicted chance of attacks in the next 30 days is 78.5%. No confirmed attacks are on record. It affects ops-ubuntu-02 (curl 8.3.0) — internal, medium importance; dev-laptop-17 (curl 8.3.0) — internet exposure and importance not recorded.
 
+### How hard is an attack?
+- Easy to reach: reachable over the network, no special conditions, no login needed, no user action needed — From the attack conditions in the CVE's severity score (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H). These describe what an attacker needs for this flaw in general, not on your systems (your configuration, open ports or enabled features are not known to the tool), and not how hard an exploit is to write. [NVD.cvss.1]
+- Attack code is reported to be public, so attackers may not need to build their own — CISA's SSVC assessment says proof-of-concept code exists. Whether that code exists, works or is reliable is NOT verified by this tool. This is a claim: the tool does not download or check exploit code, and links tagged 'Exploit' sometimes point to advisories rather than working code. [CVE.ssvc]
+
 ### What is known (sourced facts)
 - CVE status: Published (active) — assigned by hackerone; published 2023-10-18; last updated 2026-07-14 [CVE.state]
 - Severity: 9.8 / 10 (Critical) — CVSS 3.1 score from NVD; the highest of 2 different scores from 3 sources (see What's uncertain). Full breakdown in Severity score details. [NVD.cvss.1]
@@ -434,6 +451,10 @@ What the 9.8 score says: Attack from: the network (remotely); Attack complexity:
 
 **In short:** Attackers are known to be using it: it is on CISA's list of actively attacked flaws (added 2022-04-04), and CISA rates exploitation as active. It is unclear whether web-portal-01's Spring Framework 5.3.17 is affected: its version is in the affected range, but the flaw only applies together with Oracle JDK, which your inventory does not record.
 
+### How hard is an attack?
+- Easy to reach: reachable over the network, no special conditions, no login needed, no user action needed — From the attack conditions in the CVE's severity score (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H). These describe what an attacker needs for this flaw in general, not on your systems (your configuration, open ports or enabled features are not known to the tool), and not how hard an exploit is to write. [CVE.cvss.1]
+- Attackers are already exploiting it, so how hard an exploit is to build matters less — Attacks have been seen: it is listed in CISA's Known Exploited Vulnerabilities catalogue and CISA's SSVC assessment rates exploitation as active. CISA reports real attacks, not a prediction. It shows the flaw is exploited somewhere, not that an attack would work against your particular system or setup, and offline demo data can be out of date. [KEV, CVE.ssvc]
+
 ### What is known (sourced facts)
 - CVE status: Published (active) — assigned by vmware; published 2022-04-01; last updated 2025-10-21 [CVE.state]
 - Severity: 9.8 / 10 (Critical) — CVSS 3.1 score from CISA; 3 sources agree. Full breakdown in Severity score details. [CVE.cvss.1]
@@ -516,6 +537,11 @@ What the 9.8 score says: Attack from: the network (remotely); Attack complexity:
 
 **In short:** Attacks are likely: CISA says demo attack code exists; 2 public sources point to attack code; the predicted chance of attacks in the next 30 days is 50.6%. No confirmed attacks are on record. It affects print-srv-01 (cups-browsed 2.0.1) — internal, low importance; protected by: Host firewall drops inbound traffic to port 631 except from the warehouse printer VLAN (not checked by this tool).
 
+### How hard is an attack?
+- Easy to reach: reachable over the network, no special conditions, no login needed, no user action needed — From the attack conditions in the CVE's severity score (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N). These describe what an attacker needs for this flaw in general, not on your systems (your configuration, open ports or enabled features are not known to the tool), and not how hard an exploit is to write. [CVE.cvss.1]
+- The scripted AI example found not enough evidence to judge how hard an exploit is to build
+- Attack code is reported to be public, so attackers may not need to build their own — CISA's SSVC assessment says proof-of-concept code exists; 2 references are tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool. This is a claim: the tool does not download or check exploit code, and links tagged 'Exploit' sometimes point to advisories rather than working code. [CVE.ssvc, NVD.ref.1, NVD.ref.2]
+
 ### What is known (sourced facts)
 - CVE status: Published (active) — assigned by GitHub_M; published 2024-09-26; last updated 2025-11-04 [CVE.state]
 - Severity: 5.3 / 10 (Medium) — CVSS 3.1 score from GitHub_M, which published the CVE; 2 sources agree. Full breakdown in Severity score details. [CVE.cvss.1]
@@ -549,7 +575,7 @@ What the 9.8 score says: Attack from: the network (remotely); Attack complexity:
 
 > **SCRIPTED EXAMPLE** — hand-written by the project author to demonstrate validation in the offline demo. It was NOT produced by a language model.
 
-Provider `scripted`, model `scripted-example`, prompt version 2026-10-11.1. 7 of 7 claims passed the checks (cited evidence exists, the quote appears in it word for word, numbers and dates match). That shows grounding, not that the reasoning is right. Ratings are opinions, not probabilities.
+Provider `scripted`, model `scripted-example`, prompt version 2026-10-12.2. 7 of 7 claims passed the checks (cited evidence exists, the quote appears in it word for word, numbers and dates match). That shows grounding, not that the reasoning is right. Ratings are opinions, not probabilities.
 
 **Exploit-development difficulty:** `insufficient_evidence`
 - *Prerequisites:* cups-browsed listens on port 631 on all interfaces and trusts packets from any source. (fact) [CVE.desc] — quote: “binds to `INADDR_ANY:631`, causing it to trust any packet from any source”
@@ -557,7 +583,7 @@ Provider `scripted`, model `scripted-example`, prompt version 2026-10-11.1. 7 of
 - *Complexity:* On its own this CVE is scored as integrity-low with no confidentiality or availability impact; the severe outcome depends on the chain. (inference) [CVE.cvss.1, CVE.desc] — quote: “CVSS 3.1 base score 5.3 (MEDIUM)”
 - *Research availability:* NVD tags a researcher write-up and the vendor advisory as exploit references. (fact) [NVD.ref.1, NVD.ref.2] — quote: “NVD reference tagged 'Exploit'”
 
-**Existing-exploit usability:** `public_exploit_claimed`
+**Existing attacks and attack code (set from the sources, not the AI):** `public_exploit_claimed`
 - *Exploit evidence:* CISA SSVC records Exploitation=poc and Automatable=no. (fact) [CVE.ssvc] — quote: “SSVC decision points: Exploitation=poc, Automatable=no”
 - *Reliability limits:* Full impact requires user interaction (printing to a malicious printer), which limits automated exploitation. (inference) [CVE.desc, CVE.ssvc] — quote: “when a malicious printer is printed to”
 - *Required access:* Network access to port 631 on the target; no authentication. (fact) [CVE.desc, CVE.cvss.1] — quote: “trust any packet from any source”
@@ -612,6 +638,9 @@ What the 5.3 score says: Attack from: the network (remotely); Attack complexity:
 **Decision:** Not affected — no action needed · **Severity score alone would say:** P1
 
 **In short:** Your installed version is outside the affected versions: ops-ubuntu-02's xz 5.4.6. For reference (it does not change the decision): attacks are likely — the predicted chance of attacks in the next 30 days is 86.0%. No confirmed attacks are on record.
+
+### How hard is an attack?
+- Easy to reach: reachable over the network, no special conditions, no login needed, no user action needed — From the attack conditions in the CVE's severity score (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H). These describe what an attacker needs for this flaw in general, not on your systems (your configuration, open ports or enabled features are not known to the tool), and not how hard an exploit is to write. [CVE.cvss.1]
 
 ### What is known (sourced facts)
 - CVE status: Published (active) — assigned by redhat; published 2024-03-29; last updated 2026-08-04 [CVE.state]

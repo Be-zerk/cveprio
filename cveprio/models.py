@@ -289,9 +289,11 @@ class DifficultyAssessment(BaseModel):
 
 
 class UsabilityAssessment(BaseModel):
+    # Set by code from KEV / SSVC / exploit references (validate.usability_from_facts), not by the model.
+    # A model may still send one; if it contradicts the sources it is replaced and the correction recorded.
     rating: Literal[
         "exploitation_reported", "public_exploit_claimed", "no_public_exploit_evidence", "insufficient_evidence"
-    ]
+    ] = "insufficient_evidence"
     exploit_evidence: list[Claim]
     reliability_limitations: list[Claim]
     required_access: list[Claim]
@@ -384,6 +386,7 @@ class CveReport(BaseModel):
     summary: list[str] = Field(default_factory=list)  # 1–3 plain sentences specific to this CVE and your systems
     discovered_by: list[str] = Field(default_factory=list)  # empty = supplied by the user (watchlist/CLI)
     version_reading: VersionReadingLog | None = None  # set only when auto-resolution ran
+    difficulty: list[str] = Field(default_factory=list)  # "How hard is an attack?": conditions, AI view, exploit status
 
 
 class DiscoveryQuery(BaseModel):

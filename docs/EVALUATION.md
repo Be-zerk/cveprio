@@ -93,8 +93,35 @@ rated "high" for a famously easy exploit.
    (`CVEPRIO_LLM_TIMEOUT_S`).
 2. **The small local model adds little value here.** It defaulted to "insufficient
    evidence", possibly encouraged by the prompt's instruction to prefer that over guessing
-   (a hypothesis, not tested). A larger model and a revised prompt should be compared on
-   this same evaluation.
+   (a hypothesis, tested below). *Changed in assessment prompt 2026-10-12.1:* the model is no longer asked
+   for the attack-evidence rating at all, because code sets it from KEV, CISA SSVC and exploit
+   references. Any model rating that contradicts those facts is corrected and counted ("model
+   ratings that contradicted the facts"). Prompt `.1` also replaced the "prefer insufficient
+   evidence" line with a push to always rate difficulty; that was tested and reverted in `.2`
+   (below). So the 0/6 failure above can no longer
+   reach a report. A spot check on 2026-10-12 (Log4Shell, qwen2.5:3b, prompt 2026-10-12.1, about
+   10 minutes): attack evidence shown as "exploitation reported" (set by code, correct); difficulty
+   still rated **"high"** for a famously easy exploit, so the prompt change did **not** fix the
+   small model's difficulty judgement; 6 of 10 claims passed (4 removed for quotes not in the
+   source). One CVE only; a stronger model is the next thing to compare.
+
+   **Old vs new assessment instructions (2026-10-12, qwen2.5:3b, 4 held-out CVEs without strong attack signals,
+   where a "low difficulty" rating could raise a priority).** Each CVE was run with prompt
+   `2026-10-11.1` (old) and `2026-10-12.1` (which pushed the model to rate difficulty whenever possible).
+   3 of 8 calls timed out after 30 minutes, leaving 2 comparable pairs:
+
+   | CVE | Old: difficulty, claims passing checks | `.1`: difficulty, claims passing checks |
+   |---|---|---|
+   | h13 CVE-2026-15793 | insufficient evidence, 4/10 | moderate, **2/10** |
+   | h12 CVE-2026-58036 | insufficient evidence, 10/10 | moderate, **3/9** |
+   | h09 CVE-2026-63041 | insufficient evidence, 6/6 | timed out |
+
+   No answer rated difficulty "low", so no priority was raised (the risk being checked). But the
+   push to always rate made far fewer claims quote-grounded. On this tiny sample that is a
+   warning sign, not proof. **Decision:** prompt `2026-10-12.2` keeps the "deterministic findings
+   are reliable facts" line and the code-set attack-evidence rating, and restores the cautious
+   "prefer insufficient evidence over guessing" guidance for difficulty. Fewer, better-grounded
+   claims are the safer trade for a security tool.
 3. **The design limited the damage.** None of the wrong model output changed a priority,
    because the rules decide and the model can only raise one factor.
 4. An earlier run was discarded after discovering Ollama silently truncated prompts on its
@@ -144,7 +171,7 @@ anything left, by the configured model under strict checks (docs/ARCHITECTURE.md
 also tried with the model before the patterns existed; after that, the only such case is h03 Adobe
 Commerce, whose statements are lists of exact *fixed* builds ("2.4.9-2026-aug, 2.4.8-2026-aug, …").
 
-| Prompt | What the model did | What the checks did |
+| Version-reading prompt | What the model did | What the checks did |
 |---|---|---|
 | `2026-10-12.1` | filled both upper-bound kinds (all three CVEs); wrote `default` as a bound (ScreenConnect) | rejected every answer |
 | `2026-10-12.2` (worked example) | read the fixed-build list as "affected below 2.4.9" (wrong status and range); used `5.3.0`, not in the text (Spring) | rejected or contained: could only confirm *affected* |

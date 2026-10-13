@@ -277,6 +277,14 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
     </div>
     {% endif %}
 
+    {% if r.difficulty %}
+    <section class="sec sec-hard">
+      <h3><span class="ico" aria-hidden="true">⚙</span>How hard is an attack?</h3>
+      <p class="hint">Shown for context; it does not change the priority.</p>
+      <ul class="items">{% for x in r.difficulty %}{{ bullet(r.cve_id, x) }}{% endfor %}</ul>
+    </section>
+    {% endif %}
+
     <section class="sec sec-why">
       <h3><span class="ico" aria-hidden="true">→</span>Why this priority</h3>
       <p class="hint">The rules that produced this decision, step by step.</p>
@@ -359,6 +367,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
         </div>
         <div>
           <h3>Existing attacks and attack code: {{ AI_RATING.get(a.existing_exploit_usability.rating, a.existing_exploit_usability.rating) }}</h3>
+          <p class="meta">This rating comes from CISA's lists and exploit references, not from the AI. The points below are the AI's cited details.</p>
           <ul class="tight">
           {% for title, claims in [("Exploit evidence", a.existing_exploit_usability.exploit_evidence), ("Reliability limit", a.existing_exploit_usability.reliability_limitations), ("Required access", a.existing_exploit_usability.required_access)] %}
             {% for c in claims %}<li><span class="bshort">{{ c.statement }}</span><details class="bmore"><summary>details</summary><div class="bdetail">{% if c.quote %}Quoted from the source: “{{ c.quote }}”<br>{% endif %}{{ title }} · {{ "restates a source" if c.type == "fact" else "AI inference" }} <span class="srcs">Sources: {{ chips(r.cve_id, c.evidence_ids) }}</span></div></details></li>{% endfor %}

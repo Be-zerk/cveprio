@@ -32,7 +32,7 @@ from cveprio.models import (
 from cveprio.net import Fetcher, FixtureFetcher, ResponseCache, SafeFetcher
 from cveprio.normalize import build_bundle
 from cveprio.prioritize import prioritize
-from cveprio.report import explain_decision, known_and_uncertain
+from cveprio.report import attack_difficulty, explain_decision, known_and_uncertain
 from cveprio.sources import fetch_cve_org, fetch_distro, fetch_epss, fetch_kev, fetch_nvd, normalize_cve_id
 
 NVD_NOTICE = "This product uses the NVD API but is not endorsed or certified by the NVD."
@@ -175,7 +175,7 @@ def run(cve_ids: list[str], rt: Runtime, inventory: Inventory | None = None,
             generated_at=datetime.now(UTC), tool_version=__version__, mode=mode, cve_id=cid, bundle=bundle,
             applicability=[r for r in results if r.status.value != "no_product_match"], llm=llm,
             decision=decision, known=known, uncertain=uncertain, context_supplied=assets is not None,
-            summary=explain_decision(bundle, results, decision, llm),
+            summary=explain_decision(bundle, results, decision, llm), difficulty=attack_difficulty(bundle, llm),
             discovered_by=found_by.get(cid, []), version_reading=reading_log))
 
     order = {"P1": 0, "P2": 1, "NEEDS_REVIEW": 2, "P3": 3, "P4": 4, "NOT_APPLICABLE": 6, "NOT_IN_INVENTORY": 7}

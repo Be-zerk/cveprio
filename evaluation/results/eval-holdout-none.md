@@ -1,6 +1,6 @@
 # Evaluation results (none)
 
-Generated 2026-10-12T02:39:54Z on the recorded fixtures (offline).
+Generated 2026-10-12T21:35:22Z on the recorded fixtures (offline).
 
 > HELD-OUT evaluation set, selected mechanically by `cveprio holdout-select` (see cveprio/holdout.py) with seed 2026 from CVEs dated 2026-07-01 to 2026-09-30. None of these CVEs were used while building the tool. Expected answers must be filled in by a human labeller from the linked sources BEFORE running `cveprio evaluate --set holdout`; see LABELING.md.
 

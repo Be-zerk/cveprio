@@ -164,7 +164,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
   <h1>CVE prioritization · Northbeam Logistics (fictional)</h1>
   <button id="theme" class="theme" type="button" aria-label="Colour theme: automatic">Theme: auto</button>
   </div>
-  <div class="meta">Generated 2026-10-12 02:42 UTC · <b>offline demo data</b> · 9 CVEs · cveprio 0.3.0</div>
+  <div class="meta">Generated 2026-10-13 00:30 UTC · <b>offline demo data</b> · 9 CVEs · cveprio 0.3.0</div>
   <div class="banner" role="note">⚠ OFFLINE DEMO DATA — recorded fixtures, not live results.
     <small>Source responses were recorded at the retrieval times shown in each evidence table and may be out of date. The inventory and business context are fictional.</small></div>
 </header>
@@ -256,6 +256,12 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
 
     <div class="fgrid">
 <div class="fcard"><div class="fname">Attack activity</div><div class="fval">Being attacked: on CISA&#39;s list since 2021-12-10</div></div><div class="fcard"><div class="fname">Severity on paper</div><div class="fval">10.0 out of 10 (critical)</div></div><div class="fcard"><div class="fname">Your exposure</div><div class="fval">web-portal-01 is internet-facing and high importance</div></div>    </div>
+
+    <section class="sec sec-hard">
+      <h3><span class="ico" aria-hidden="true">⚙</span>How hard is an attack?</h3>
+      <p class="hint">Shown for context; it does not change the priority.</p>
+      <ul class="items"><li><span class="bshort">Easy to reach: reachable over the network, no special conditions, no login needed, no user action needed</span><details class="bmore"><summary>details</summary><div class="bdetail">From the attack conditions in the CVE&#39;s severity score (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H). These describe what an attacker needs for this flaw in general, not on your systems (your configuration, open ports or enabled features are not known to the tool), and not how hard an exploit is to write. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2021-44228-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a></span></span></div></details></li><li><span class="bshort">Attackers are already exploiting it, so how hard an exploit is to build matters less</span><details class="bmore"><summary>details</summary><div class="bdetail">Attacks have been seen: it is listed in CISA&#39;s Known Exploited Vulnerabilities catalogue and CISA&#39;s SSVC assessment rates exploitation as active. CISA reports real attacks, not a prediction. It shows the flaw is exploited somewhere, not that an attack would work against your particular system or setup, and offline demo data can be out of date. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2021-44228-KEV" title="Show evidence KEV">KEV</a><a class="chip" href="#CVE-2021-44228-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li></ul>
+    </section>
 
     <section class="sec sec-why">
       <h3><span class="ico" aria-hidden="true">→</span>Why this priority</h3>
@@ -590,6 +596,12 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
     <div class="fgrid">
 <div class="fcard"><div class="fname">Attack activity</div><div class="fval">Being attacked: on CISA&#39;s list since 2023-10-10</div></div><div class="fcard"><div class="fname">Severity on paper</div><div class="fval">7.5 out of 10 (high)</div></div><div class="fcard"><div class="fname">Your exposure</div><div class="fval">web-portal-01 is internet-facing and high importance</div></div>    </div>
 
+    <section class="sec sec-hard">
+      <h3><span class="ico" aria-hidden="true">⚙</span>How hard is an attack?</h3>
+      <p class="hint">Shown for context; it does not change the priority.</p>
+      <ul class="items"><li><span class="bshort">Easy to reach: reachable over the network, no special conditions, no login needed, no user action needed</span><details class="bmore"><summary>details</summary><div class="bdetail">From the attack conditions in the CVE&#39;s severity score (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H). These describe what an attacker needs for this flaw in general, not on your systems (your configuration, open ports or enabled features are not known to the tool), and not how hard an exploit is to write. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-44487-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a></span></span></div></details></li><li><span class="bshort">Attackers are already exploiting it, so how hard an exploit is to build matters less</span><details class="bmore"><summary>details</summary><div class="bdetail">Attacks have been seen: it is listed in CISA&#39;s Known Exploited Vulnerabilities catalogue and CISA&#39;s SSVC assessment rates exploitation as active. CISA reports real attacks, not a prediction. It shows the flaw is exploited somewhere, not that an attack would work against your particular system or setup, and offline demo data can be out of date. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-44487-KEV" title="Show evidence KEV">KEV</a><a class="chip" href="#CVE-2023-44487-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li></ul>
+    </section>
+
     <section class="sec sec-why">
       <h3><span class="ico" aria-hidden="true">→</span>Why this priority</h3>
       <p class="hint">The rules that produced this decision, step by step.</p>
@@ -877,6 +889,12 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
     <div class="fgrid">
 <div class="fcard"><div class="fname">Attack activity</div><div class="fval">Demo attack code exists (CISA)</div></div><div class="fcard"><div class="fname">Severity on paper</div><div class="fval">8.1 out of 10 (high)</div></div><div class="fcard"><div class="fname">Your exposure</div><div class="fval">bastion-01 is internet-facing and high importance</div></div>    </div>
 
+    <section class="sec sec-hard">
+      <h3><span class="ico" aria-hidden="true">⚙</span>How hard is an attack?</h3>
+      <p class="hint">Shown for context; it does not change the priority.</p>
+      <ul class="items"><li><span class="bshort">Some barriers to an attack: reachable over the network, needs special conditions or precise timing, no login needed, no user action needed</span><details class="bmore"><summary>details</summary><div class="bdetail">From the attack conditions in the CVE&#39;s severity score (CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H). These describe what an attacker needs for this flaw in general, not on your systems (your configuration, open ports or enabled features are not known to the tool), and not how hard an exploit is to write. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a></span></span></div></details></li><li><span class="bshort">The scripted AI example rates building an exploit as moderately hard because: The flaw is a race condition in signal handling, and the CNA scores attack complexity as High, which suggests exploitation depends on winning a timing window</span><details class="bmore"><summary>details</summary><div class="bdetail">An AI judgement from the cited evidence, not a fact; see the AI-assisted assessment below. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-CVE.desc" title="Show evidence CVE.desc">CVE.desc</a><a class="chip" href="#CVE-2024-6387-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a></span></span></div></details></li><li><span class="bshort">Attack code is reported to be public, so attackers may not need to build their own</span><details class="bmore"><summary>details</summary><div class="bdetail">CISA&#39;s SSVC assessment says proof-of-concept code exists; 9 references are tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool. This is a claim: the tool does not download or check exploit code, and links tagged &#39;Exploit&#39; sometimes point to advisories rather than working code. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a><a class="chip" href="#CVE-2024-6387-NVD.ref.1" title="Show evidence NVD.ref.1">NVD.ref.1</a><a class="chip" href="#CVE-2024-6387-NVD.ref.2" title="Show evidence NVD.ref.2">NVD.ref.2</a><details class="more-chips"><summary class="chip more" title="NVD.ref.3, NVD.ref.5, NVD.ref.6, NVD.ref.7, NVD.ref.8, NVD.ref.12, NVD.ref.13">+7 more</summary><a class="chip" href="#CVE-2024-6387-NVD.ref.3" title="Show evidence NVD.ref.3">NVD.ref.3</a><a class="chip" href="#CVE-2024-6387-NVD.ref.5" title="Show evidence NVD.ref.5">NVD.ref.5</a><a class="chip" href="#CVE-2024-6387-NVD.ref.6" title="Show evidence NVD.ref.6">NVD.ref.6</a><a class="chip" href="#CVE-2024-6387-NVD.ref.7" title="Show evidence NVD.ref.7">NVD.ref.7</a><a class="chip" href="#CVE-2024-6387-NVD.ref.8" title="Show evidence NVD.ref.8">NVD.ref.8</a><a class="chip" href="#CVE-2024-6387-NVD.ref.12" title="Show evidence NVD.ref.12">NVD.ref.12</a><a class="chip" href="#CVE-2024-6387-NVD.ref.13" title="Show evidence NVD.ref.13">NVD.ref.13</a></details></span></span></div></details></li></ul>
+    </section>
+
     <section class="sec sec-why">
       <h3><span class="ico" aria-hidden="true">→</span>Why this priority</h3>
       <p class="hint">The rules that produced this decision, step by step.</p>
@@ -937,7 +955,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
 
     <div class="ai">
       <div class="tag">AI-assisted assessment · judgement, not fact</div>
-<div class="scripted">SCRIPTED EXAMPLE — hand-written by the project author for the offline demo. Not produced by a language model.</div>      <p class="meta">Provider <b>scripted</b>, model <b>scripted-example</b>, prompt version 2026-10-11.1 · <b>6 of 9</b> claims passed the checks (the cited evidence exists, the claim's quote appears in it word for word, and any version numbers or dates it mentions are in it). This shows the claim is grounded in its source, not that the reasoning is correct. Ratings are opinions, not probabilities.</p>
+<div class="scripted">SCRIPTED EXAMPLE — hand-written by the project author for the offline demo. Not produced by a language model.</div>      <p class="meta">Provider <b>scripted</b>, model <b>scripted-example</b>, prompt version 2026-10-12.2 · <b>6 of 9</b> claims passed the checks (the cited evidence exists, the claim's quote appears in it word for word, and any version numbers or dates it mentions are in it). This shows the claim is grounded in its source, not that the reasoning is correct. Ratings are opinions, not probabilities.</p>
       <div class="cols">
         <div>
           <h3>How hard to build an attack: Moderate</h3>
@@ -946,6 +964,7 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
         </div>
         <div>
           <h3>Existing attacks and attack code: Public attack code claimed</h3>
+          <p class="meta">This rating comes from CISA's lists and exploit references, not from the AI. The points below are the AI's cited details.</p>
           <ul class="tight">
 <li><span class="bshort">CISA&#39;s SSVC assessment records Exploitation=poc.</span><details class="bmore"><summary>details</summary><div class="bdetail">Quoted from the source: “SSVC decision points: Exploitation=poc”<br>Exploit evidence · restates a source <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">A race-condition exploit is likely to need many connection attempts, which may be visible in authentication logs.</span><details class="bmore"><summary>details</summary><div class="bdetail">Quoted from the source: “There is a race condition which can lead sshd to handle some signals”<br>Reliability limit · AI inference <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-CVE.desc" title="Show evidence CVE.desc">CVE.desc</a><a class="chip" href="#CVE-2024-6387-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a></span></span></div></details></li><li><span class="bshort">Network reachability to the SSH service; no privileges or user interaction.</span><details class="bmore"><summary>details</summary><div class="bdetail">Quoted from the source: “An unauthenticated, remote attacker may be able to trigger it”<br>Required access · restates a source <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-6387-CVE.desc" title="Show evidence CVE.desc">CVE.desc</a><a class="chip" href="#CVE-2024-6387-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a></span></span></div></details></li>          </ul>
         </div>
@@ -1302,6 +1321,12 @@ footer { margin-top: 40px; color: var(--text-2); font-size: 13px; }
     <div class="fgrid">
 <div class="fcard"><div class="fname">Attack activity</div><div class="fval">Demo attack code exists (CISA)</div></div><div class="fcard"><div class="fname">Severity on paper</div><div class="fval">9.8 out of 10 (critical)</div></div><div class="fcard"><div class="fname">Your exposure</div><div class="fval">dev-laptop-17: internet exposure and importance not recorded (+1 more system)</div></div>    </div>
 
+    <section class="sec sec-hard">
+      <h3><span class="ico" aria-hidden="true">⚙</span>How hard is an attack?</h3>
+      <p class="hint">Shown for context; it does not change the priority.</p>
+      <ul class="items"><li><span class="bshort">Easy to reach: reachable over the network, no special conditions, no login needed, no user action needed</span><details class="bmore"><summary>details</summary><div class="bdetail">From the attack conditions in the CVE&#39;s severity score (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H). These describe what an attacker needs for this flaw in general, not on your systems (your configuration, open ports or enabled features are not known to the tool), and not how hard an exploit is to write. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-38545-NVD.cvss.1" title="Show evidence NVD.cvss.1">NVD.cvss.1</a></span></span></div></details></li><li><span class="bshort">Attack code is reported to be public, so attackers may not need to build their own</span><details class="bmore"><summary>details</summary><div class="bdetail">CISA&#39;s SSVC assessment says proof-of-concept code exists. Whether that code exists, works or is reliable is NOT verified by this tool. This is a claim: the tool does not download or check exploit code, and links tagged &#39;Exploit&#39; sometimes point to advisories rather than working code. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2023-38545-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li></ul>
+    </section>
+
     <section class="sec sec-why">
       <h3><span class="ico" aria-hidden="true">→</span>Why this priority</h3>
       <p class="hint">The rules that produced this decision, step by step.</p>
@@ -1529,6 +1554,12 @@ URL that curl has been told to operate with.</p>
 
     <div class="fgrid">
 <div class="fcard"><div class="fname">Attack activity</div><div class="fval">Being attacked: on CISA&#39;s list since 2022-04-04</div></div><div class="fcard"><div class="fname">Severity on paper</div><div class="fval">9.8 out of 10 (critical)</div></div><div class="fcard"><div class="fname">Your exposure</div><div class="fval">Unclear whether web-portal-01 is affected</div></div>    </div>
+
+    <section class="sec sec-hard">
+      <h3><span class="ico" aria-hidden="true">⚙</span>How hard is an attack?</h3>
+      <p class="hint">Shown for context; it does not change the priority.</p>
+      <ul class="items"><li><span class="bshort">Easy to reach: reachable over the network, no special conditions, no login needed, no user action needed</span><details class="bmore"><summary>details</summary><div class="bdetail">From the attack conditions in the CVE&#39;s severity score (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H). These describe what an attacker needs for this flaw in general, not on your systems (your configuration, open ports or enabled features are not known to the tool), and not how hard an exploit is to write. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2022-22965-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a></span></span></div></details></li><li><span class="bshort">Attackers are already exploiting it, so how hard an exploit is to build matters less</span><details class="bmore"><summary>details</summary><div class="bdetail">Attacks have been seen: it is listed in CISA&#39;s Known Exploited Vulnerabilities catalogue and CISA&#39;s SSVC assessment rates exploitation as active. CISA reports real attacks, not a prediction. It shows the flaw is exploited somewhere, not that an attack would work against your particular system or setup, and offline demo data can be out of date. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2022-22965-KEV" title="Show evidence KEV">KEV</a><a class="chip" href="#CVE-2022-22965-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li></ul>
+    </section>
 
     <section class="sec sec-why">
       <h3><span class="ico" aria-hidden="true">→</span>Why this priority</h3>
@@ -1769,6 +1800,12 @@ URL that curl has been told to operate with.</p>
     <div class="fgrid">
 <div class="fcard"><div class="fname">Attack activity</div><div class="fval">Demo attack code exists (CISA)</div></div><div class="fcard"><div class="fname">Severity on paper</div><div class="fval">5.3 out of 10 (medium)</div></div><div class="fcard"><div class="fname">Your exposure</div><div class="fval">print-srv-01 is protected by a declared control (not verified)</div></div>    </div>
 
+    <section class="sec sec-hard">
+      <h3><span class="ico" aria-hidden="true">⚙</span>How hard is an attack?</h3>
+      <p class="hint">Shown for context; it does not change the priority.</p>
+      <ul class="items"><li><span class="bshort">Easy to reach: reachable over the network, no special conditions, no login needed, no user action needed</span><details class="bmore"><summary>details</summary><div class="bdetail">From the attack conditions in the CVE&#39;s severity score (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N). These describe what an attacker needs for this flaw in general, not on your systems (your configuration, open ports or enabled features are not known to the tool), and not how hard an exploit is to write. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-47176-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a></span></span></div></details></li><li><span class="bshort">The scripted AI example found not enough evidence to judge how hard an exploit is to build</span></li><li><span class="bshort">Attack code is reported to be public, so attackers may not need to build their own</span><details class="bmore"><summary>details</summary><div class="bdetail">CISA&#39;s SSVC assessment says proof-of-concept code exists; 2 references are tagged as exploit material. Whether that code exists, works or is reliable is NOT verified by this tool. This is a claim: the tool does not download or check exploit code, and links tagged &#39;Exploit&#39; sometimes point to advisories rather than working code. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-47176-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a><a class="chip" href="#CVE-2024-47176-NVD.ref.1" title="Show evidence NVD.ref.1">NVD.ref.1</a><a class="chip" href="#CVE-2024-47176-NVD.ref.2" title="Show evidence NVD.ref.2">NVD.ref.2</a></span></span></div></details></li></ul>
+    </section>
+
     <section class="sec sec-why">
       <h3><span class="ico" aria-hidden="true">→</span>Why this priority</h3>
       <p class="hint">The rules that produced this decision, step by step.</p>
@@ -1828,7 +1865,7 @@ URL that curl has been told to operate with.</p>
 
     <div class="ai">
       <div class="tag">AI-assisted assessment · judgement, not fact</div>
-<div class="scripted">SCRIPTED EXAMPLE — hand-written by the project author for the offline demo. Not produced by a language model.</div>      <p class="meta">Provider <b>scripted</b>, model <b>scripted-example</b>, prompt version 2026-10-11.1 · <b>7 of 7</b> claims passed the checks (the cited evidence exists, the claim's quote appears in it word for word, and any version numbers or dates it mentions are in it). This shows the claim is grounded in its source, not that the reasoning is correct. Ratings are opinions, not probabilities.</p>
+<div class="scripted">SCRIPTED EXAMPLE — hand-written by the project author for the offline demo. Not produced by a language model.</div>      <p class="meta">Provider <b>scripted</b>, model <b>scripted-example</b>, prompt version 2026-10-12.2 · <b>7 of 7</b> claims passed the checks (the cited evidence exists, the claim's quote appears in it word for word, and any version numbers or dates it mentions are in it). This shows the claim is grounded in its source, not that the reasoning is correct. Ratings are opinions, not probabilities.</p>
       <div class="cols">
         <div>
           <h3>How hard to build an attack: Not enough evidence to say</h3>
@@ -1837,6 +1874,7 @@ URL that curl has been told to operate with.</p>
         </div>
         <div>
           <h3>Existing attacks and attack code: Public attack code claimed</h3>
+          <p class="meta">This rating comes from CISA's lists and exploit references, not from the AI. The points below are the AI's cited details.</p>
           <ul class="tight">
 <li><span class="bshort">CISA SSVC records Exploitation=poc and Automatable=no.</span><details class="bmore"><summary>details</summary><div class="bdetail">Quoted from the source: “SSVC decision points: Exploitation=poc, Automatable=no”<br>Exploit evidence · restates a source <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-47176-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">Full impact requires user interaction (printing to a malicious printer), which limits automated exploitation.</span><details class="bmore"><summary>details</summary><div class="bdetail">Quoted from the source: “when a malicious printer is printed to”<br>Reliability limit · AI inference <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-47176-CVE.desc" title="Show evidence CVE.desc">CVE.desc</a><a class="chip" href="#CVE-2024-47176-CVE.ssvc" title="Show evidence CVE.ssvc">CVE.ssvc</a></span></span></div></details></li><li><span class="bshort">Network access to port 631 on the target; no authentication.</span><details class="bmore"><summary>details</summary><div class="bdetail">Quoted from the source: “trust any packet from any source”<br>Required access · restates a source <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-47176-CVE.desc" title="Show evidence CVE.desc">CVE.desc</a><a class="chip" href="#CVE-2024-47176-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a></span></span></div></details></li>          </ul>
         </div>
@@ -2003,6 +2041,12 @@ URL that curl has been told to operate with.</p>
 
     <div class="fgrid">
 <div class="fcard"><div class="fname">Attack activity</div><div class="fval">Attacks likely: 86.0% predicted chance in 30 days</div></div><div class="fcard"><div class="fname">Severity on paper</div><div class="fval">10.0 out of 10 (critical)</div></div><div class="fcard"><div class="fname">Your exposure</div><div class="fval">Not affected: your installed version is outside the affected range</div></div>    </div>
+
+    <section class="sec sec-hard">
+      <h3><span class="ico" aria-hidden="true">⚙</span>How hard is an attack?</h3>
+      <p class="hint">Shown for context; it does not change the priority.</p>
+      <ul class="items"><li><span class="bshort">Easy to reach: reachable over the network, no special conditions, no login needed, no user action needed</span><details class="bmore"><summary>details</summary><div class="bdetail">From the attack conditions in the CVE&#39;s severity score (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H). These describe what an attacker needs for this flaw in general, not on your systems (your configuration, open ports or enabled features are not known to the tool), and not how hard an exploit is to write. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2024-3094-CVE.cvss.1" title="Show evidence CVE.cvss.1">CVE.cvss.1</a></span></span></div></details></li></ul>
+    </section>
 
     <section class="sec sec-why">
       <h3><span class="ico" aria-hidden="true">→</span>Why this priority</h3>
@@ -2278,6 +2322,7 @@ Through a series of complex obfuscations, the liblzma build process extracts a p
     </div>
 
 
+
     <section class="sec sec-why">
       <h3><span class="ico" aria-hidden="true">→</span>Why this priority</h3>
       <p class="hint">The rules that produced this decision, step by step.</p>
@@ -2367,6 +2412,7 @@ Through a series of complex obfuscations, the liblzma build process extracts a p
 <p class="sum-why">This CVE number has been reserved, but no details have been published yet.</p>      <h4>What to do</h4>
       <ul class="items"><li><span class="bshort">Check the CVE ID and look again later</span><details class="bmore"><summary>details</summary><div class="bdetail">a reserved ID has no public details yet. <span class="srcs">Sources: <span class="chips"><a class="chip" href="#CVE-2026-99001-CVE.state" title="Show evidence CVE.state">CVE.state</a></span></span></div></details></li></ul>
     </div>
+
 
 
     <section class="sec sec-why">
